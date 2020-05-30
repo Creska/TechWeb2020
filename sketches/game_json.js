@@ -4,8 +4,8 @@
 {
 	"activities": [
 		{
-			"activity_name": "...", // indica se l'attività è una quest oppure una spiegazione
-			"activity_code": "...", // codice alfanumerico che identifica univocamente l'attività
+			"activity_type": "...", // indica se l'attività è una quest oppure una spiegazione
+			"activity_ID": "...", // codice alfanumerico che identifica in modo univoco l'attività
 			"activity_paragraph": [
 				{
 					"text": "..."
@@ -13,7 +13,7 @@
 				}
 			],
 			"answer_field": "..." // html del campo risposta. può essere un campo testo, una scelta multipla o un prosegui
-			"right_answer": "..." // stringa corrispondente alla risposta giusta (o accettabile)
+			"expected_answer": "..." // stringa corrispondente alla risposta giusta (o accettabile)
 			"action_on_answer": "..." // JS corrispondente all'azione da eseguire in caso di risposta giusta o errata
 			"activity_UI_style": "...", // CSS dell'interfaccia trasposto sottoforma di stringa
 		}

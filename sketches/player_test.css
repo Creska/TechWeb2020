@@ -1,0 +1,10 @@
+body {
+    background-color: white;
+}
+
+#main {
+    margin: 5vw;
+    border-width: 1pt;
+    border-color: grey;
+    border-style: solid;
+}

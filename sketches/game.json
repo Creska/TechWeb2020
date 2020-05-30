@@ -1,0 +1,25 @@
+{
+	"quests": [{
+		"quest_ID": "...",
+		"activities": [
+			{
+				"activity_type": "...",
+				"activity_ID": "...", 
+				"activity_paragraph": [
+					{
+						"text": "...",
+						"images": [] 
+					}
+				],
+				"answer_field": "...", 
+				"expected_answer": "...", 
+				"action_on_activity_answer": "...", 
+				"activity_UI_style": "..."
+			}
+		],
+		"action_on_quest_completion": "..." 
+	}
+	],
+	"story_style": "...", 
+	"story_code": "..."
+}

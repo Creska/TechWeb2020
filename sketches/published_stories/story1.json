@@ -1,20 +1,20 @@
 {
 	"quests": [
 		{
-			"quest_ID": "...",
+			"quest_ID": "quest1",
 			"activities": [
 				{
-					"activity_type": "...",
-					"activity_ID": "...",
+					"activity_type": "subquest",
+					"activity_ID": "q1s1",
 					"activity_paragraph": [
 						{
-							"text": "...",
+							"text": "Questa è la subquest 1 della quest 1. Per passare alla prossima missione, clicca su PROSEGUI.",
 							"images": []
 						}
 					],
-					"answer_field": "...",
-					"expected_answer": "...",
-					"action_on_activity_answer": "...",
+					"answer_field": "<button onclick='nextActivity()'>PROSEGUI</button>",
+					"expected_answer": "",
+					"action_on_activity_answer": "",
 					"activity_UI_style": "..."
 				}
 			],

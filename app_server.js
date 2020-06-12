@@ -29,17 +29,37 @@ app.get('/player', function (req, res) {
         //trying to read the game file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
-                res.status(404).send("Error 404: Game not found.");
+                res.status(404).send("Error 404: Game not found.").end();
                 //the game wasn't found, so I answer with a 404 status response
             }
         }
         else {
             console.log("Request for " + game + " received successfully. Returning the page with the correctly-loaded player.");
             //TODO inserting json values inside the player. Probably with a template?
-            res.sendFile('public/Player/player_test.html', { root: __dirname })
+            res.status(200);
+            res.sendFile('public/Player/player_test.html', { root: __dirname }).end()
             //sending back the player page
         }
     });
+})
+
+app.post('/chat', function (req, res) {
+    var name = req.body.teamname || req.body.username;
+    var text = req.body.text;
+    //TODO player chat handling
+
+})
+
+app.get('/chat', function (req, res) {
+    //todo valutator chat handling
+})
+
+app.post('/updates', function (req, res) {
+    //todo player updates handling
+})
+
+app.get('/updates', function (req, res) {
+    //todo valutator updates handling
 })
 app.listen(3000, function () {
     console.log("Server listening on port 3000.")

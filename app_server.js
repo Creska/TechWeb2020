@@ -2,7 +2,10 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
-app.use(express.static('public')) //Luca: this makes the content of the public folder available for stati loading. This is needed since the player loads .css and .js files
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const cheerio = require('cheerio')
+app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/hello', function (req, res) {
@@ -25,7 +28,7 @@ app.get('/player', function (req, res) {
     //handling GET request to /player
     var game = req.query.game;
     //retrieving parameters in the URL since it's a GET request
-    fs.readFile('public/games/' + game + '.json', function read(err, data) {
+    fs.readFile('public/games/' + game + '.json', function read(err,data) {
         //trying to read the game file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
@@ -35,31 +38,31 @@ app.get('/player', function (req, res) {
         }
         else {
             console.log("Request for " + game + " received successfully. Returning the page with the correctly-loaded player.");
-            //TODO inserting json values inside the player. Probably with a template?
+            const $ = cheerio.load(fs.readFileSync('public/Player/player_test.html'));
+            //loading the player
+            $('body').append('<template id="game-info">' + data + '</template>');
+            //appending to the body a template with the actual .json inside
             res.status(200);
-            res.sendFile('public/Player/player_test.html', { root: __dirname }).end()
+            res.send($.html()).end();
             //sending back the player page
         }
     });
 })
 
 app.post('/chat', function (req, res) {
-    var name = req.body.teamname || req.body.username;
+    if (!req.body.valutator) {
+        var name = (req.body.teamname || req.body.username);
+    }
     var text = req.body.text;
     //TODO player chat handling
-
-})
-
-app.get('/chat', function (req, res) {
-    //todo valutator chat handling
 })
 
 app.post('/updates', function (req, res) {
-    //todo player updates handling
+    //TODO player updates handling
 })
 
 app.get('/updates', function (req, res) {
-    //todo valutator updates handling
+    //TODO valutator updates handling
 })
 app.listen(3000, function () {
     console.log("Server listening on port 3000.")

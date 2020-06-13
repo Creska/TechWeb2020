@@ -8,9 +8,9 @@ const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
 // app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/hello', function (req, res) {
-    res.send('Hello World')
-})
+// app.get('/hello', function (req, res) {
+//     res.send('Hello World')
+// })
 
 // app.post('/login', function (req, res) {
 //     console.log("Username:" + req.body.user);
@@ -28,7 +28,7 @@ app.get('/player', function (req, res) {
     //handling GET request to /player
     var game = req.query.game;
     //retrieving parameters in the URL since it's a GET request
-    fs.readFile('public/games/' + game + '.json', function read(err,data) {
+    fs.readFile('public/games/' + game + '.json', function read(err, data) {
         //trying to read the game file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
@@ -42,8 +42,7 @@ app.get('/player', function (req, res) {
             //loading the player
             $('body').append('<template id="game-info">' + data + '</template>');
             //appending to the body a template with the actual .json inside
-            res.status(200);
-            res.send($.html()).end();
+            res.status(200).send($.html()).end();
             //sending back the player page
         }
     });

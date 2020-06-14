@@ -1,4 +1,4 @@
-example = {
+var example = {
 	"story_name": "Storia di prova",
 	"settings": {},
 	"quests": [
@@ -11,7 +11,7 @@ example = {
 					"right_answer": "",
 					"need_human_evaluation": false,
 					"next_activities": [1],
-					"action_on_activity_answer": "<script> if (document.geElementById('button1').clicked == 1) goToActivity(1); </script>",
+					"action_on_activity_answer": "goToActivity(1);",
 					"activity_style": ""
 				},
 				{
@@ -20,7 +20,7 @@ example = {
 					"right_answer": "",
 					"need_human_evaluation": false,
 					"next_activities": [],
-					"action_on_activity_answer": "<script> if (document.geElementById('button1').clicked == 1) window.alert('Test andato a buon fine'); </script>",
+					"action_on_activity_answer": "if (document.getElementById('button1').clicked == 1) window.alert('Test andato a buon fine');",
 					"activity_style": ""
 				}
 			],
@@ -31,11 +31,11 @@ example = {
 	"score": []
 };
 
-story = JSON.parse(JSON.stringify(example));
+var story = JSON.parse(JSON.stringify(example));
 
 var currentStatus = {
-	currentQuest = 0,
-	currentActivity = 0
+	currentQuest: 0,
+	currentActivity: 0
 };
 
 function createStory() {
@@ -78,8 +78,6 @@ function createQuest(quest_n) {
 
 function createActivity(quest_n, activity_n) {
 	var newActivityNode = document.createElement("div");
-
-	newActivityNode.innerHTML = story.quests[quest_n].activities[activity_n].activity_text;
 	
 	var newActivityNodeClass = document.createAttribute("class");
 	var newActivityNodeId = document.createAttribute("id");
@@ -89,16 +87,34 @@ function createActivity(quest_n, activity_n) {
 	newActivityNodeId.value = "activity" + String(activity_n + 1);
 	newActivityNodeStyle.value = story.quests[quest_n].activities[activity_n].activity_style;
 
+	newActivityNode.innerHTML = story.quests[quest_n].activities[activity_n].activity_text;
+
+	var UserInteraction = document.createElement("div");
+	var UserInteractionId = document.createAttribute("id");
+	UserInteractionId.value = "interaction_field" + String(activity_n + 1);
+
+	UserInteraction.setAttributeNode(UserInteractionId);
+	UserInteraction.innerHTML = story.quests[quest_n].activities[activity_n].answer_field;
+	newActivityNode.appendChild(UserInteraction);
+
+	if (UserInteraction.tagName == "button") {
+		var JSAction = document.createAttribute("onclick");
+		JSAction.value = story.quests[quest_n].activities[activity_n].action_on_activity_answer;
+		UserInteraction.setAttributeNode(JSAction);
+	}
+	// oppure viene settato in altro modo, coerentemente con la tipologia del campo risposta
+	
+
 	return newActivityNode;
 };
 
 // Inizializza la quest specificata, sostituendola a quella precedente
 function goToQuest(quest_n) {
 	if (quest_n != 0) {
-		document.removeChild(document.getElementById("quest" + String(quest_n - 1)));
+		document.body.main.removeChild(document.getElementById("quest" + String(quest_n - 1)));
 	}
 	
-	document.getElementById("main").appendChild(quest_n);
+	document.getElementById("main").appendChild(createQuest(quest_n));
 
 	currentStatus.currentQuest = quest_n;
 	currentStatus.currentActivity = 0;
@@ -108,13 +124,13 @@ function goToQuest(quest_n) {
 function goToActivity(activity_n) {
 	var newActivityNode = createActivity(currentStatus.currentQuest, activity_n);
 
-	document.replaceChild(newActivityNode, document.getElementById("activity" + String(currentStatus.currentActivity + 1)));
+	document.body.main.replaceChild(newActivityNode, document.getElementById("activity" + String(currentStatus.currentActivity + 1)));
 
 	currentStatus.currentActivity = activity_n;
 };
 
 function startGame() {
-	document.replaceChild(createStory(), document.getElementById("welcome"));
+	document.body.replaceChild(createStory(), document.getElementById("welcome"));
 
 	goToQuest(0);
 };

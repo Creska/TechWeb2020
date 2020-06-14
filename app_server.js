@@ -28,7 +28,7 @@ app.get('/player', function (req, res) {
     //handling GET request to /player
     var game = req.query.game;
     //retrieving parameters in the URL since it's a GET request
-    fs.readFile('public/games/' + game + '.json', function read(err, data) {
+    fs.readFile('public/player/games/' + game + '.json', function read(err, data) {
         //trying to read the game file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
@@ -37,11 +37,13 @@ app.get('/player', function (req, res) {
             }
         }
         else {
-            console.log("Request for " + game + " received successfully. Returning the page with the correctly-loaded player.");
-            const $ = cheerio.load(fs.readFileSync('public/Player/player_test.html'));
-            //loading the player
-            $('body').append('<template id="game-info">' + data + '</template>');
-            //appending to the body a template with the actual .json inside
+            console.log("Request for " + game + " received successfully. Returning the player and the game to be loaded.");
+            const $ = cheerio.load(fs.readFileSync('public/player/player_test.html'));
+            //loading the player, TODO handling file not found
+            // $('head').append('<script type="text/javascript" src="../games/'+game+'.json"></script>');
+            // $('head').append('<template id="game-info">' + data + '</template>');
+            $('head').append('<template id="game-name">' + game + '</template>');
+            //appending to the body a template with the JSON to load
             res.status(200).send($.html()).end();
             //sending back the player page
         }

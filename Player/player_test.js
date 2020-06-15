@@ -1,3 +1,10 @@
+/*
+NOTE:
+* Per semplicità, l'applicazione internamente identifica le quest e le attività il base all'indice che esse hanno nell'array di cui fanno parte
+* La parte per associare l'action on answer al rispettivo answer field rischia di non andare bene per altre tipologie di elemento (form per esempio). Quindi forse è da rifare
+* La parte per lo stile lasciatela perdere perché è da rifare e probabilmente non serve includere così tanti campi appositi nel JSON
+*/
+
 var example = {
 	"story_name": "Storia di prova",
 	"settings": {},
@@ -15,12 +22,12 @@ var example = {
 					"activity_style": ""
 				},
 				{
-					"activity_text": "<p>Questa è la seconda attività.</p>",
+					"activity_text": "<p>Questa è la seconda attività.<br>Clicca su FINE per terminare il test.</p>",
 					"answer_field": "<button id='button1'>Fine</button>",
 					"right_answer": "",
 					"need_human_evaluation": false,
 					"next_activities": [],
-					"action_on_activity_answer": "if (document.getElementById('button1').clicked == 1) window.alert('Test andato a buon fine');",
+					"action_on_activity_answer": "window.alert('Test andato a buon fine');",
 					"activity_style": ""
 				}
 			],
@@ -33,20 +40,55 @@ var example = {
 
 var story = JSON.parse(JSON.stringify(example));
 
+// indica il numero della quest attiva ed il numero dell'attività attiva
 var currentStatus = {
 	currentQuest: 0,
 	currentActivity: 0
 };
 
+/**
+ * funzione utilizzata per gestire le condizioni di errore all'interno del player
+ * in generale sarebbe meglio fermare l'applicazione e basta
+ */
+function handleError() {
+	window.alert("!!! MAJOR ERROR !!!");
+}
+
+/**
+ * @param node --> nodo a cui aggiungere gli attributi
+ * @param nodeClass 
+ * @param nodeId 
+ * @param nodeStyle
+ * funzione che aggiunge i tre attributi principali, qualora specificati
+ */
+function addNodeMainAttributes(node, nodeClass, nodeId, nodeStyle) {
+	if (node != null) {
+		if (nodeClass) {
+			var ClassAttr = document.createAttribute("class");
+			ClassAttr.value = nodeClass;
+			node.setAttributeNode(ClassAttr);
+		}
+		if (nodeId) {
+			var IdAttr = document.createAttribute("id");
+			IdAttr.value = nodeId;
+			node.setAttributeNode(IdAttr);
+		}
+		if (nodeStyle) {
+			var StyleAttr = document.createAttribute("style");
+			StyleAttr.value = nodeStyle;
+			node.setAttributeNode(StyleAttr);
+		}
+	}
+	else handleError();
+}
+
+/**
+ * crea un nodo apposito per la storia
+ */
 function createStory() {
 	var newStory = document.createElement("div");
-	var newStoryName = document.createAttribute("id");
-	var newStoryStyle = document.createAttribute("style");
 
-	newStoryName.value = "main";
-	newStoryStyle.value = story.story_style;
-	newStory.setAttributeNode(newStoryName);
-	newStory.setAttributeNode(newStoryStyle);
+	addNodeMainAttributes(newStory, "", "main", story.story_style);
 
 	var StoryTitle = document.createElement("div");
 	StoryTitle.innerHTML = story.story_name;
@@ -56,59 +98,56 @@ function createStory() {
 	return newStory;
 };
 
-// Crea un nodo quest con la prima attività come nodo figlio
+/**
+ * @param quest_n --> numero della quest da creare
+ * 
+ * crea un nodo per la quest specificata e per la sua prima attività (come figlio)
+ * l'attività 0 è infatti la quest "apripista"
+ */
 function createQuest(quest_n) {
 	var newQuestNode = document.createElement("div");
 
-	var newQuestNodeClass = document.createAttribute("class");
-	var newQuestNodeId = document.createAttribute("id");
-	var newQuestNodeStyle = document.createAttribute("style");
+	addNodeMainAttributes(newQuestNode, "quest", "quest" + String(quest_n), story.quests[quest_n].quest_style);
 
-	newQuestNodeClass.value = "quest";
-	newQuestNodeId.value = "quest" + String(quest_n + 1);
-	newQuestNodeStyle.value = story.quests[quest_n].quest_style;
-    newQuestNode.setAttributeNode(newQuestNodeClass);
-	newQuestNode.setAttributeNode(newQuestNodeId);
-	newQuestNode.setAttributeNode(newQuestNodeStyle);
-
-	newQuestNode.appendChild(createActivity(quest_n, 0));
+	newQuestNode.appendChild(createActivity(0));
 
 	return newQuestNode;
 };
 
-function createActivity(quest_n, activity_n) {
+/**
+ * @param activity_n --> attività da creare
+ * crea il nodo relativo all'attività specificata
+ */
+function createActivity(activity_n) {
 	var newActivityNode = document.createElement("div");
-	
-	var newActivityNodeClass = document.createAttribute("class");
-	var newActivityNodeId = document.createAttribute("id");
-	var newActivityNodeStyle = document.createAttribute("style");
 
-	newActivityNodeClass.value = "activity";
-	newActivityNodeId.value = "activity" + String(activity_n + 1);
-	newActivityNodeStyle.value = story.quests[quest_n].activities[activity_n].activity_style;
+	addNodeMainAttributes(newActivityNode, "activity", "activity" + String(activity_n), story.quests[currentStatus.currentQuest].activities[activity_n].activity_style);
 
-	newActivityNode.innerHTML = story.quests[quest_n].activities[activity_n].activity_text;
+	newActivityNode.innerHTML = story.quests[currentStatus.currentQuest].activities[activity_n].activity_text;
 
-	var UserInteraction = document.createElement("div");
+	var UserInteraction = new DOMParser().parseFromString(story.quests[currentStatus.currentQuest].activities[activity_n].answer_field, "text/html").body.firstElementChild;
+
 	var UserInteractionId = document.createAttribute("id");
-	UserInteractionId.value = "interaction_field" + String(activity_n + 1);
-
+	UserInteractionId.value = "interaction_field" + String(activity_n);
 	UserInteraction.setAttributeNode(UserInteractionId);
-	UserInteraction.innerHTML = story.quests[quest_n].activities[activity_n].answer_field;
-	newActivityNode.appendChild(UserInteraction);
 
-	if (UserInteraction.tagName == "button") {
+	if (UserInteraction.tagName == "BUTTON") {
 		var JSAction = document.createAttribute("onclick");
-		JSAction.value = story.quests[quest_n].activities[activity_n].action_on_activity_answer;
+		JSAction.value = story.quests[currentStatus.currentQuest].activities[activity_n].action_on_activity_answer;
 		UserInteraction.setAttributeNode(JSAction);
 	}
 	// oppure viene settato in altro modo, coerentemente con la tipologia del campo risposta
 	
+	newActivityNode.appendChild(UserInteraction);
 
 	return newActivityNode;
 };
 
-// Inizializza la quest specificata, sostituendola a quella precedente
+/**
+ * @param quest_n --> quest da mostrare
+ * attiva la quest specificata, rendendola visibile a schermo, e aggiorna i campi status
+ * eventualmente viene sostituita l'eventuale quest precedentemente attiva
+ */
 function goToQuest(quest_n) {
 	if (quest_n != 0) {
 		document.body.main.removeChild(document.getElementById("quest" + String(quest_n - 1)));
@@ -120,15 +159,23 @@ function goToQuest(quest_n) {
 	currentStatus.currentActivity = 0;
 };
 
-// Attiva l'attività corrispondente all'indice specificato e disattiva quella precedente
+/**
+ * @param activity_n --> attività da mostrare
+ * attiva l'attività specificata, rendendola visibile a schermo, e aggiorna i campi status
+ * questa funzione viene usata esclusivamente per attività successive alla zero, dato che questa è attivata automaticamente all'inizio di una quest
+ */
 function goToActivity(activity_n) {
-	var newActivityNode = createActivity(currentStatus.currentQuest, activity_n);
+	
+	var newActivityNode = createActivity(activity_n);
 
-	document.body.main.replaceChild(newActivityNode, document.getElementById("activity" + String(currentStatus.currentActivity + 1)));
+	document.getElementById("quest" + String(currentStatus.currentQuest)).replaceChild(newActivityNode, document.getElementById("activity" + String(currentStatus.currentActivity)));
 
 	currentStatus.currentActivity = activity_n;
 };
 
+/**
+ * attiva la storia, rimpiazzando la schermata di welcome con un nodo appositamente creato per la storia
+ */
 function startGame() {
 	document.body.replaceChild(createStory(), document.getElementById("welcome"));
 

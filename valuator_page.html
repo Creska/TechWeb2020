@@ -1,17 +1,15 @@
 <html>
+
 <head>
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
     $(function () {
-        var socket = io();
-        socket.emit('createRoom','')
-        $('form').submit(function (e) {
-
-        })
+        var socket = io.connect('', { query: "type=valuator" });
     })
 </script>
+
 <body>
     <div id="history"></div>
     <form action="">
@@ -19,4 +17,5 @@
         <input type="submit">
     </form>
 </body>
+
 </html>

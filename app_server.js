@@ -6,9 +6,9 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
-var playerIndex = 0; //Each player will join a separate room on his own by default, but I need an index to make the valuator join all of them
-var joinedRooms = 0; //I need this so I won't join the same room twice
-var valuatorIndex = 0; //TODO? In case of multiple valuators? The "account" is shared tho.
+var playerIndex = 0; //Each player will join a separate room on his own by default, but I need an index to make the valuator join all of them. This can also work as the number of existing rooms
+var joinedRooms = 0; //I need this so I won't join the same room twice, it would probably throw an error
+var valuatorIndex = 0; //TODO? In case of multiple valuators? The "account" is shared tho
 var valuatorID = undefined; //starts with undefined, in case players connect before valuator(s)
 
 io.on('connection', (socket) => {
@@ -16,8 +16,9 @@ io.on('connection', (socket) => {
     if (socket.handshake.query['type'] == 'player') {
         console.log("A player(" + (playerIndex + 1) + ") connected and joined: Room" + playerIndex);
         socket.join("Room" + playerIndex + "");
-        //valuator needs to join new clients that connected AFTER him. I can retrieve the valuator socket and make him join new rooms
+        //checking if a valuator connected before the player
         if (valuatorID) {
+            //valuator needs to join new clients that connected AFTER him. I can retrieve the valuator socket and make him join new rooms
             let ValSocket = io.sockets.sockets[valuatorID];
             ValSocket.join("Room" + playerIndex + "");
             console.log("Valuator joined: Room" + playerIndex)
@@ -31,6 +32,7 @@ io.on('connection', (socket) => {
         //TODO? check if a valuator enters when the number of rooms and joined rooms is the same? This would mean there's at least another valuator online.
         //check if valuator entered before there were any players
         if (playerIndex != 0) {
+            //if some player connected before the valuator, connect him to all existing player rooms
             for (joinedRooms; joinedRooms < playerIndex; joinedRooms++) {
                 socket.join("Room" + joinedRooms + "")
                 console.log("Valuator joined: Room" + joinedRooms)

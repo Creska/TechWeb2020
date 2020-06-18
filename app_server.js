@@ -6,43 +6,51 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
-var playerIndex = 0; //Each player will join a separate room on his own by default, but I need an index to make the valuator join all of them. This can also work as the number of existing rooms
-var joinedRooms = 0; //I need this so I won't join the same room twice, it would probably throw an error
+var playerIndex = 1; //player counter
 var valuatorIndex = 0; //TODO? In case of multiple valuators? The "account" is shared tho
 var valuatorID = undefined; //starts with undefined, in case players connect before valuator(s)
 
+//TODO, I probably don't need the room astraction at all. I just need the valuator in the room0 and everyone else in another room of which I know the ID
 io.on('connection', (socket) => {
     //handling sockets for chat: I need to configure players and valuator separately
+    console.log("Connection:" + socket.id)
     if (socket.handshake.query['type'] == 'player') {
-        console.log("A player(" + (playerIndex + 1) + ") connected and joined: Room" + playerIndex);
-        socket.join("Room" + playerIndex + "");
-        //checking if a valuator connected before the player
-        if (valuatorID) {
-            //valuator needs to join new clients that connected AFTER him. I can retrieve the valuator socket and make him join new rooms
-            let ValSocket = io.sockets.sockets[valuatorID];
-            ValSocket.join("Room" + playerIndex + "");
-            console.log("Valuator joined: Room" + playerIndex)
-        }
+        //socket automatically joins a room with his ID as its name
+        console.log("A player(" + playerIndex + ") connected and joined the room: " + socket.id);
         playerIndex++;
+        if (valuatorID) {
+            socket.to("Room0").emit('user-joined', socket.id);
+        }
+        else {
+            //TODO store join event in case the valuator is still not connected
+        }
     }
     else if (socket.handshake.query['type'] == 'valuator') {
-        console.log("A valuator page connected. Saving the socket ID.")
+        //TODO load join event in case the valuator is still not connected
+        //TODO multiple valuators handling?
+        console.log("A valuator page connected.")
         valuatorID = socket.id;
-        //Valuator will join all rooms, so he will have 1:1 chat with everyone
-        //TODO? check if a valuator enters when the number of rooms and joined rooms is the same? This would mean there's at least another valuator online.
-        //check if valuator entered before there were any players
-        if (playerIndex != 0) {
-            //if some player connected before the valuator, connect him to all existing player rooms
-            for (joinedRooms; joinedRooms < playerIndex; joinedRooms++) {
-                socket.join("Room" + joinedRooms + "")
-                console.log("Valuator joined: Room" + joinedRooms)
-            }
-        }
-        tempSocket = socket;
+        //valuator will join Room0 by default, so I have a nice way to know where to emit message events
+        socket.join("Room0", () => {
+            console.log("Valuator joined the default Room0.")
+        })
     }
     else {
-        console.log("Someone connected. This shouldn't be possible. Probably there are some old pages still online.");
+        console.log("Someone connected without querying for player or valuator. This shouldn't be possible,psrobably there are some old pages's socket still online.");
     }
+    socket.on('disconnect', () => {
+        console.log("Disconnecting: " + socket.id)
+        //a player is disconnected, I have to decrement the number of players, since when the room population is 0 then it gets deleted
+        if (socket.id !== valuatorID) {
+            //sending the disconnect event to the valuator so I can remove the chat
+            socket.to("Room0").emit('user-left', socket.id);
+            playerIndex--;
+        }
+    })
+    socket.on('chat-message', (message, id) => {
+        //sending the chat event to the valuator page
+        socket.to("Room0").emit('chat-message', message, id);
+    })
 })
 
 app.get('/player', function (req, res) {

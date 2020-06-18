@@ -7,14 +7,34 @@
 <script>
     $(function () {
         var socket = io.connect('', { query: "type=valuator" });
+        $('form').submit(function (e) {
+            e.preventDefault();
+            console.log(socket.id);
+            socket.emit('valuator-message', $('#message').val());
+            $('#message').val('');
+            return false;
+        })
+        socket.on('chat-message', (message, room) => {
+            //TODO adding 'user is typing..'? Adding chat ack?
+            console.log("Received a chat message from " + room + ": " + message);
+
+        })
+        socket.on('user-joined', (room) => {
+            console.log("User of " + room + " joined.");
+            //TODO creating a chat-room div for that room
+        })
+        socket.on('user-left', (room) => {
+            console.log("User of " + room + " left.");
+            //TODO removing the chat-room div of that room
+        })
     })
 </script>
 
 <body>
-    <div id="history"></div>
+    <div id="chat-room"></div>
     <form action="">
-        Text: <input type="text" name="pwd"><br>
-        <input type="submit">
+        Text: <input id="message" type="text" autocomplete="off"><br>
+        <button>Send</button>
     </form>
 </body>
 

@@ -8,32 +8,30 @@ const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
 var playerIndex = 1; //player counter
 var valuatorIndex = 0; //TODO? In case of multiple valuators? The "account" is shared tho
-var valuatorID = undefined; //starts with undefined, in case players connect before valuator(s)
+var valuatorID; //starts with undefined, in case players connect before valuator(s)
+var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
+var storedMessages = []; //storing messages of the player in case the valuator is still not connected
 
-//TODO, I probably don't need the room astraction at all. I just need the valuator in the room0 and everyone else in another room of which I know the ID
 io.on('connection', (socket) => {
     //handling sockets for chat: I need to configure players and valuator separately
-    console.log("Connection:" + socket.id)
+    console.log("Connection: " + socket.id)
     if (socket.handshake.query['type'] == 'player') {
         //socket automatically joins a room with his ID as its name
-        console.log("A player(" + playerIndex + ") connected and joined the room: " + socket.id);
+        console.log("A player(" + playerIndex + ") connected.");
         playerIndex++;
         if (valuatorID) {
-            socket.to("Room0").emit('user-joined', socket.id);
+            socket.to(valuatorID).emit('user-joined', socket.id);
         }
         else {
-            //TODO store join event in case the valuator is still not connected
+            //storing join event in case the valuator is still not connected
+            console.log("Valuator is offline, storing the join event.")
+            storedJoins.push(socket.id);
         }
     }
     else if (socket.handshake.query['type'] == 'valuator') {
-        //TODO load join event in case the valuator is still not connected
         //TODO multiple valuators handling?
         console.log("A valuator page connected.")
         valuatorID = socket.id;
-        //valuator will join Room0 by default, so I have a nice way to know where to emit message events
-        socket.join("Room0", () => {
-            console.log("Valuator joined the default Room0.")
-        })
     }
     else {
         console.log("Someone connected without querying for player or valuator. This shouldn't be possible,psrobably there are some old pages's socket still online.");
@@ -43,14 +41,37 @@ io.on('connection', (socket) => {
         //a player is disconnected, I have to decrement the number of players, since when the room population is 0 then it gets deleted
         if (socket.id !== valuatorID) {
             //sending the disconnect event to the valuator so I can remove the chat
-            socket.to("Room0").emit('user-left', socket.id);
+            socket.to(valuatorID).emit('user-left', socket.id);
             playerIndex--;
         }
     })
-    socket.on('chat-message', (message, id) => {
+    socket.on('chat-message', (message, id, fn) => {
         //sending the chat event to the valuator page
-        socket.to("Room0").emit('chat-message', message, id);
+        console.log("The player " + id + " is sending the message: " + message);
+        if (valuatorID) {
+            console.log("Sending the message to the valuator.")
+            socket.to(valuatorID).emit('chat-message', message, id);
+        }
+        else {
+            console.log("Valuator is offline, storing the message.")
+            storedMessages.push({ message: message, id: id });
+        }
+
     })
+})
+
+app.get('/valuator/history', function (req, res) {
+    var data = { messages: undefined, joins: undefined };
+    if (storedMessages.length) {
+        data.messages = storedMessages;
+    }
+    if (storedJoins.length) {
+        data.joins = storedJoins;
+    }
+    //check if the number of properties is at least 1, otherwise there's no data
+    if (Object.keys(data).length > 0) {
+        res.status(200).send(data).end();
+    }
 })
 
 app.get('/player', function (req, res) {

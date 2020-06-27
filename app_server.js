@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
         valuatorID = socket.id;
     }
     else {
-        console.log("Someone connected without querying for player or valuator. This shouldn't be possible,psrobably there are some old pages's socket still online.");
+        console.log("Someone connected without querying for player or valuator. This shouldn't be possible,probably there are some old pages's socket still online.");
     }
     socket.on('disconnect', () => {
         console.log("Disconnecting: " + socket.id)
@@ -71,6 +71,9 @@ app.get('/valuator/history', function (req, res) {
     //check if the number of properties is at least 1, otherwise there's no data
     if (Object.keys(data).length > 0) {
         res.status(200).send(data).end();
+    }
+    else{
+        res.status(200).end();
     }
 })
 

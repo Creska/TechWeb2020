@@ -19,28 +19,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <title>Player</title>
 </head>
-<script>
-    $(function () {
-        var socket = io.connect('', { query: "type=player" });
-        $.get("/player/games/" + $('#game-name').html() + ".json", function (data) {
-            //removing the useless template
-            $('#game-name').remove();
-            var game = data;
-            console.log(game);
-        })
-        $('form').submit(function (e) {
-            e.preventDefault();
-            //client can't route the rooms: only the server can. I need to send the data there
-            socket.emit('chat-message', $('#message').val(), socket.id);
-            $('#message').val('');
-            return false;
-        })
-        socket.on('valuator-message', (message) => {
-            //TODO rendering the valuator message
-        })
-    })
-</script>
-
 <body>
     <div id='welcome'>
         Schermata iniziale del gioco. Per avviare una nuova partita, premere START<br>

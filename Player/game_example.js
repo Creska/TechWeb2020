@@ -29,6 +29,7 @@ ORGANIZZAZIONE:
 * Ogni attività avrà un array i cui numeri indicano le possibili attività successive. Un campo javascript avrà gli IF-ELSE appositi per determinare quale attività attribuire in base alla risposta data. Se un'attività avrà una sola transizione possibile, l'array avrà un numero unico
 * La primissima quest sarà quella che chiederà al giocatore di inserire alcuni parametri. Su questi si basano alcune varianze come la presenza di campi risposta aggiuntivi, le successioni di alcune quest, ecc. Queste varianze sono stabilite a priori dall'autore.
 * Il CSS viene abbinato ad ogni elemento tramite apposito id, che viene settato automaticamente dall'ambiente editor
+* Per il processing dei valori di input client-side ci si può riferire a questo esempio --> https://www.w3schools.com/Js/tryit.asp?filename=tryjs_form_elements
 
 TODO:
 * Aggiungere gli elementi necessari per chat e script vari
@@ -42,6 +43,7 @@ TODO:
 game_example = {
 	"game_html": "",
 	"settings": {},
+	"settings_form": "",
 	/* La storia è un array di quests. Le quests possono essere in un unico ordine.
 	Di conseguenza, ad ogni elemento corrisponde uno e un solo elemento successivo. */
 	"quests": [

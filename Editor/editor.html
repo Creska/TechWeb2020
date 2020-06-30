@@ -21,31 +21,43 @@
     <title>Editor</title>
 </head>
 <body>
-    <div class="EditorSection" id="MainMenu">
-        <div>
-            Editor
-        </div>
-        <div>
-            Clicca su una delle opzioni per partire
-        </div>
-        <!-- MainButtonGroup = gruppo di pulsanti grandi -->
-        <div class="MainButtonGroup" id="MainMenuButtonGroup">
-            <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'ChooseAccessibilitySection');"><strong>NEW</strong><br>Crea una nuova storia</button>
-            <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'EditExistingStorySection');"><strong>EDIT</strong><br>Modifica una storia</button>
-        </div>
+    <div class="btn-group btn-group-lg" id="EditorNavbar" role="group" aria-label="...">
+        <!-- aggiungere icone di FontAwesome -->
+        <button type="button" class="btn btn-secondary">Back</button>
+        <button type="button" class="btn btn-secondary">Save</button>
+        <button type="button" class="btn btn-secondary">Post</button>
+        <button type="button" class="btn btn-secondary">Close</button>
     </div>
 
-    <div class="EditorSection" id="ChooseAccessibilitySection">
-        <div>
-            Editor
+    <div>
+        <div class="EditorSection" id="MainMenu">
+            <div>
+                Clicca su una delle opzioni per partire
+            </div>
+            <!-- MainButtonGroup = gruppo di pulsanti grandi -->
+            <div class="MainButtonGroup" id="MainMenuButtonGroup">
+                <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'ChooseAccessibilitySection');"><strong>NEW</strong><br>Crea una nuova storia</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'EditExistingStorySection');"><strong>EDIT</strong><br>Modifica una storia</button>
+            </div>
         </div>
-        <div>
-            Clicca su una delle opzioni per partire
-        </div>
-        <div class="MainButtonGroup">
-            <button class="btn btn-primary btn-lg btn-block" onclick="Accessible = 1; goToEditStory()"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
-            <button class="btn btn-primary btn-lg btn-block" onclick="goToEditStory()"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
+    
+        <div class="EditorSection" id="ChooseAccessibilitySection">
+            <div>
+                Clicca su una delle opzioni per partire
+            </div>
+            <div class="MainButtonGroup">
+                <button class="btn btn-primary btn-lg btn-block" onclick="Accessible = 1; goToEditStory()"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToEditStory()"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
+            </div>
         </div>
     </div>
 </body>
 </html>
+
+<!--
+    TASTI DI INTERFACCIA
+    "Salva" -> Aggiorna il JSON. Il campo "nome" è già compilato se il JSON esiste già. Nel caso venga cambiato, viene creato un nuovo JSON
+    "Indietro" -> Torna alla sezione precedente senza salvare (magari aggiungere il widget di avvertimento)
+    "Chiudi" -> Torna al menu principale mostrando il widget che chiede se si vuole salvare
+    "Pubblica" -> Pubblica la storia; ovviamente se il lavoro è salvato e i requisiti minimi sono raggiunti
+-->

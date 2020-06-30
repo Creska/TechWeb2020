@@ -1,0 +1,28 @@
+body {
+    background-color: snow;
+    /*margin: auto;*/
+}
+
+.EditorSection {
+    border-color: black; /* debugging */
+    border-style: solid; /* debugging */
+    display: none; /* con la proprietà di visibility le animazioni fade di jQuery non funzionano */
+    margin: auto;
+    text-align: center;
+}
+
+#MainMenu {
+   display: block;
+}
+
+.MainButtonGroup {
+    width: auto;
+}
+
+/*
+
+APPUNTI IMPORTANTI
+* margin per elementi div: https://stackoverflow.com/questions/35817096/css-margin-0-auto-not-centering
+
+
+*/

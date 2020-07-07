@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/Creska/TechWeb2020/issues"
   },
-  "homepage": "https://github.com/Creska/TechWeb2020#readme"
+  "homepage": "https://github.com/Creska/TechWeb2020#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
 }

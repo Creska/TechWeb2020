@@ -1,0 +1,58 @@
+<html>
+
+<head>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    $(function () {
+        var socket = io.connect('', { query: "type=valuator" });
+        $.get("/valuator/history", function (data) {
+            if (data) {
+                if (data.joins) {
+                    console.log("History joins found.");
+                    data.joins.forEach(element => {
+                        console.log("User of room " + element + " has joined.");
+                    });
+                }
+                if (data.messages) {
+                    console.log("History messages found.");
+                    data.messages.forEach(element => {
+                        console.log("Received a chat message from " + element.id + ": " + element.message);
+                    })
+                }
+            } else {
+                console.log("History was found empty.")
+            }
+        })
+        $('form').submit(function (e) {
+            e.preventDefault();
+            console.log(socket.id);
+            socket.emit('valuator-message', $('#message').val());
+            $('#message').val('');
+            return false;
+        })
+        socket.on('chat-message', (message, id) => {
+            //maybe adding chat ack
+            console.log("Received a chat message from " + id + ": " + message);
+        })
+        socket.on('user-joined', (id) => {
+            console.log("User  " + id + " has joined.");
+            //TODO creating a chat-room div for that room
+        })
+        socket.on('user-left', (id) => {
+            console.log("User  " + id + " left.");
+            //TODO removing the chat-room div of that room
+        })
+    })
+</script>
+
+<body>
+    <div id="chat-room"></div>
+    <form action="">
+        Text: <input id="message" type="text" autocomplete="off"><br>
+        <button>Send</button>
+    </form>
+</body>
+
+</html>

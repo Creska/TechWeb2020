@@ -9,6 +9,7 @@ Questo è solo un test, quindi presenta vari bug che bisogna evitare conoscendo 
 Alla schermata dei settings viene richiesto di scegliere una delle due opzioni (evitare di cliccarle entrambe o nessuna). A seconda dell'opzione scelta, cambierà l'attività successiva alla prima.
 */
 
+/* ROBA DI DEBUGGING
 var example = {
 	"game_html": "<div id='game'> <div id='storytitle'>Titolo della storia</div> </div>",
 	"settings": {},
@@ -43,52 +44,80 @@ var example = {
 };
 
 var story = JSON.parse( JSON.stringify( example ) );
+*/
 
-// indica il numero della quest attiva ed il numero dell'attività attiva
-var currentStatus = {
-	currentQuest: -1,
-	currentActivity: -1
-};
 
-/**
- * funzione utilizzata per gestire le condizioni di errore all'interno del player
- * in generale sarebbe meglio fermare l'applicazione e basta
- */
-function handleError() {
-	window.alert( "!!! MAJOR ERROR !!!" );
-};
+$(function () {
+	$.get("/player/games/" + $('#game-name').html() + ".json", function (data) {
+		//removing the useless template
+		$('#game-name').remove();
+		var story = data;
+		console.log(data)
+		var socket = io.connect('', { query: "type=player" });
+		$('form').submit(function (e) {
+			e.preventDefault();
+			//client can't route the rooms: only the server can. I need to send the data there
+			socket.emit('chat-message', $('#message').val(), socket.id);
+			$('#message').val('');
+			return false;
+		})
+		socket.on('valuator-message', (message) => {
+			//TODO rendering the valuator message
+		})
 
-function goToActivity( activity_n ) {
-	if ( activity_n ) {
-		$( "#activity" + String( currentStatus.currentActivity ) ).replaceWith( story.quests[currentStatus.currentQuest].activities[activity_n].activity_html );
-	}
-	else {
-		$( "#quest" + String( currentStatus.currentQuest ) ).append( story.quests[currentStatus.currentQuest].activities[activity_n].activity_html );
-	}
+		// indica il numero della quest attiva ed il numero dell'attività attiva
+		var currentStatus = {
+			currentQuest: -1,
+			currentActivity: -1
+		};
 
-	currentStatus.currentActivity = activity_n;
-};
+		/**
+ 		* funzione utilizzata per gestire le condizioni di errore all'interno del player
+ 		* in generale sarebbe meglio fermare l'applicazione e basta
+ 		*/
+		function handleError() {
+			window.alert( "!!! MAJOR ERROR !!!" );
+		};
 
-function goToQuest( quest_n ) {
-	if ( quest_n ) {
-		$( "#quest" + String( currentStatus.currentQuest ) ).replaceWith( story.quests[quest_n].quest_html );
-	}
-	else {
-		if (document.getElementById("settingsform") == null) window.alert("errore"); // debugging
-		$( "#settingsform" ).replaceWith( story.quests[0].quest_html );
-	}
+		function goToActivity( activity_n ) {
+			if ( activity_n ) {
+				$( "#activity" + String( currentStatus.currentActivity ) ).replaceWith( story.quests[currentStatus.currentQuest].activities[activity_n].activity_html );
+			}
+			else {
+				$( "#quest" + String( currentStatus.currentQuest ) ).append( story.quests[currentStatus.currentQuest].activities[activity_n].activity_html );
+			}
 
-	currentStatus.currentQuest = quest_n;
+			currentStatus.currentActivity = activity_n;
+		};
 
-	goToActivity( 0 ); // per convenzione ogni quest inizia con l'attività zero --> facciamo così???
-};
+		function goToQuest( quest_n ) {
+			if ( quest_n ) {
+				$( "#quest" + String( currentStatus.currentQuest ) ).replaceWith( story.quests[quest_n].quest_html );
+			}
+			else {
+				if (document.getElementById("settingsform") == null) window.alert("errore"); // debugging
+				$( "#settingsform" ).replaceWith( story.quests[0].quest_html );
+			}
 
-function goToSettings() {
-	$( "#game" ).append( story.settings_form );
-};
+			currentStatus.currentQuest = quest_n;
 
-function startGame() {
-	$( "#welcome" ).replaceWith( story.game_html );
+			goToActivity( 0 ); // per convenzione ogni quest inizia con l'attività zero --> facciamo così???
+		};
 
-	goToSettings(); // invio alla schermata dei settings, che precede la quest 0
-};
+		function goToSettings() {
+			$( "#game" ).append( story.settings_form );
+		};
+
+		function startGame() {
+			$( "#welcome" ).replaceWith( story.game_html );
+
+			goToSettings(); // invio alla schermata dei settings, che precede la quest 0
+		};
+	})
+});
+
+
+
+
+
+

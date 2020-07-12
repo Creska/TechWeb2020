@@ -11,12 +11,33 @@ body {
     text-align: center;
 }
 
-#MainMenu {
-   display: block;
-}
-
 .MainButtonGroup {
     width: auto;
+}
+
+.StageList {
+    border-color: gray;
+    border-width: 1pt;
+    border-style: solid;
+    margin: 25pt 25pt 25pt 25pt;
+    overflow-x: scroll;
+}
+
+.StageList ul {
+    border-color: black; /* debugging */
+    border-style: solid; /* debugging */
+    list-style-type: none;
+    margin: none;
+    padding: 50pt 25pt 50pt 25pt;
+}
+
+.StageList ul li {
+    display: inline;
+}
+
+.StageList button {
+    height: 100pt;
+    width: 100pt;
 }
 
 /*

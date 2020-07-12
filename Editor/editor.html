@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!--
-        OBIETTIVO
-        Usare Boostrap per la grafica generale degli editor e gli elementi del player
-        Usare jQuery UI per i widget dell'editor
-    -->
     
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -23,9 +17,9 @@
 <body>
     <div class="btn-group btn-group-lg" id="EditorNavbar" role="group" aria-label="...">
         <!-- aggiungere icone di FontAwesome -->
+        <!-- aggiungere metodo per rendere i pulsanti non cliccabili in determinate situazioni -->
         <button type="button" class="btn btn-secondary" onclick="goBack();">Back</button>
         <button type="button" class="btn btn-secondary">Save</button>
-        <button type="button" class="btn btn-secondary">Post</button>
         <button type="button" class="btn btn-secondary">Close</button>
     </div>
 
@@ -36,18 +30,45 @@
             </div>
             <!-- MainButtonGroup = gruppo di pulsanti grandi -->
             <div class="MainButtonGroup" id="MainMenuButtonGroup">
-                <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'ChooseAccessibilitySection');"><strong>NEW</strong><br>Crea una nuova storia</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="switchSection('MainMenu', 'EditExistingStorySection');"><strong>EDIT</strong><br>Modifica una storia</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseAccessibility');"><strong>NEW</strong><br>Crea una nuova storia</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryFromServer');"><strong>EDIT</strong><br>Modifica una storia</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryFromServer');"><strong>RELEASE</strong><br>Gestisci la pubblicazione delle storie</button>
             </div>
         </div>
     
-        <div class="EditorSection" id="ChooseAccessibilitySection">
+        <div class="EditorSection" id="ChooseAccessibility">
             <div>
                 Clicca su una delle opzioni per partire
             </div>
             <div class="MainButtonGroup">
-                <button class="btn btn-primary btn-lg btn-block" onclick="Accessible = 1; goToEditStory()"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="goToEditStory()"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="ACCESSIBILITY = 1; goToSection('EditStory')"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('EditStory')"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
+            </div>
+        </div>
+
+        <div class="EditorSection" id="ChooseStoryFromServer">
+            <div class="SectionTitle">
+                mah
+            </div>
+        </div>
+
+        <div class="EditorSection" id="EditStory">
+            <div>
+                Modifica le impostazioni generali della storia
+            </div>
+            <div>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica titolo</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema</button>
+            </div>
+            <div class="StageList" id="QuestList">
+                <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
+                <ul>
+                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="">+</button></li>
+                </ul>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
             </div>
         </div>
     </div>
@@ -59,5 +80,4 @@
     "Salva" -> Aggiorna il JSON. Il campo "nome" è già compilato se il JSON esiste già. Nel caso venga cambiato, viene creato un nuovo JSON
     "Indietro" -> Torna alla sezione precedente senza salvare (magari aggiungere il widget di avvertimento)
     "Chiudi" -> Torna al menu principale mostrando il widget che chiede se si vuole salvare
-    "Pubblica" -> Pubblica la storia; ovviamente se il lavoro è salvato e i requisiti minimi sono raggiunti
 -->

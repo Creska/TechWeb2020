@@ -42,7 +42,7 @@ TODO:
 
 game_example = {
 	"game_html": "",
-	"accessibility": 0, // booleano che indica se la storia è accessibile. Serve più che altro all'editor
+	"ACCESSIBILITY": 0, // flag che indica se la storia è accessibile. Serve più che altro all'editor
 	"settings": {},
 	"settings_form": "",
 	/* La storia è un array di quests. Le quests possono essere in un unico ordine.
@@ -57,7 +57,8 @@ game_example = {
 				{
 					"activity_html": "", // testo HTML dell'attività
 					"right_answer": "", // contiene la risposta giusta
-					"need_human_evaluation": 0, // booleano che indica se c'è necessità di valutazione umana per la risposta
+					"answer_score": "", // punteggio per la risposta giusta
+					"ASK_EVAL": 0, // flag che indica se c'è necessità di valutazione umana per la risposta
 					"next_activities": [], // probabilmente inutile
 					"action_on_activity_answer": "" // probabilmente inutile; calcola il punteggio, richiama la valutazione umana, decide l'attività successiva
 				}

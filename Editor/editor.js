@@ -11,13 +11,39 @@ var Parent = {
     "MainMenu": "MainMenu",
     "ChooseAccessibility": "MainMenu",
     "ChooseStoryFromServer": "MainMenu",
-    "EditStory": "MainMenu" // ci dovrebbe essere anche ChooseStoryFromServer - capire come fare in questo caso
+    "EditStory": "MainMenu", // ci dovrebbe essere anche ChooseStoryFromServer - capire come fare in questo caso
+    "EditQuest": "EditStory"
 };
 
-var ACCESSIBILITY = 0; /* flag che indica se la storia che si sta creando è accessibile o no */
 var CurrentSection = "MainMenu"; /* indica la sezione dell'editor dove l'utente sta attualmente lavorando */
-var CurrentWork; /* variabile usata per i salvataggi temporanei del JSON */
 
+/* variabile usata per i salvataggi temporanei del JSON */
+var CurrentWork = {
+	"ACCESSIBILITY": 0,
+	"story_title": "",
+	"settings": {},
+	"settings_form": "",
+	"quests": [
+		{	
+			"quest_title": "",
+			"activities": [
+				{
+					"activity_html": "",
+					"right_answer": "",
+					"answer_score": "",
+					"ASK_EVAL": 0
+				}
+			]
+		}
+	],
+	"stylesheet": "",
+	"score": []
+};
+
+/* sta roba è per il debugging */
+function sayHello() {
+	window.alert('hello');
+};
 
 /**
 * @param newSectionId
@@ -32,6 +58,28 @@ function goToSection( newSectionId ) {
     CurrentSection = newSectionId;
 };
 
+function toggleTextInput( WidgetId ) {
+	if ( WidgetId == "EditStoryTitle" ) {
+		if ( CurrentWork.story_title == '' ) {
+			$( '#' + 'StoryTitleInput' ).val() = 'MyStory';
+		}
+		else {
+			$( '#' + 'StoryTitleInput' ).val() = CurrentWork.story_title;
+		}
+
+		console.log("prova");
+
+		$( "#EditStoryTitle" ).modal( "toggle" );
+	}
+};
+
+function saveDataFragment( type, value ) {
+    if ( type == 'STORYTITLE' ) {
+        CurrentWork.story_title = value;
+    }
+
+    window.alert( CurrentWork.story_title ); // debugging
+};
 
 function promptSave() {
     /* TODO */

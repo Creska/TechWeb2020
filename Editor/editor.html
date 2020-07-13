@@ -41,7 +41,7 @@
                 Clicca su una delle opzioni per partire
             </div>
             <div class="MainButtonGroup">
-                <button class="btn btn-primary btn-lg btn-block" onclick="ACCESSIBILITY = 1; goToSection('EditStory')"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="CurrentWork.ACCESSIBILITY = 1; goToSection('EditStory')"><strong>ACCESSIBILE</strong><br>Aggiungi il supporto per accessibilità (scelta consigliata)</button>
                 <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('EditStory')"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
             </div>
         </div>
@@ -57,17 +57,55 @@
                 Modifica le impostazioni generali della storia
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica titolo</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema</button>
+                <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="/*toggleTextInput( 'EditStoryTitle' );*/ sayHello();">Modifica titolo</button>
+                <div class="modal fade" id="EditStoryTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Inserire il titolo della storia</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" id="StoryTitleInput" name="StoryTitleInput">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'STORYTITLE', $( '#' + 'StoryTitleInput' ).val() );">Procedi</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <button class="btn btn-primary btn-lg btn-block">Modifica tema</button>
             </div>
             <div class="StageList" id="QuestList">
+                <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
+                <ul>
+                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="goToSection('EditQuest');">+</button></li>
+                </ul>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
+            </div>
+        </div>
+
+        <div class="EditorSection" id="EditQuest">
+            <div>
+                Modifica le impostazioni della quest
+            </div>
+            <div>
+                <button class="btn btn-primary btn-lg btn-block">Modifica titolo</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema</button>
+            </div>
+            <div class="StageList" id="ActivityList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
                 <ul>
                     <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="">+</button></li>
                 </ul>
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings</button>
                 <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
             </div>
         </div>

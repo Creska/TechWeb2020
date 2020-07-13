@@ -212,13 +212,12 @@ app.get('/editor/getStory', function (req, res) {
     }
     fs.readFile('public/player/stories/' + story, function (err, data) {
         if (err) {
-            console.log("An error accourred inside /editor/getStory, while retrieving a published story: " + err);
+            console.log("An error accourred inside /editor/getStory, while retrieving a story: " + err);
             res.status(404).send(err).end();
         }
         else {
-
-        } res.status(200).send(JSON.stringify(JSON.parse(data))).end();
-
+            res.status(200).send(JSON.stringify(JSON.parse(data))).end();
+        }
     })
 })
 
@@ -241,7 +240,7 @@ app.post('/editor/saveStory', function (req, res) {
         else {
             fs.writeFile('public/player/stories/' + story_name, JSON.stringify(story_data), (err) => {
                 if (err) {
-                    console.log("An error accourred inside /editor/getStory, while saving story: " + err);
+                    console.log("An error accourred inside /editor/getStory, while saving a story: " + err);
                     res.status(404).send(err).end();
                 } else {
                     console.log("Story saved successfully.")

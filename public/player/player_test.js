@@ -1,5 +1,5 @@
 $(function () {
-	$.get("/player/games/" + $('#game-name').html() + ".json", function (data) {
+	$.get("/player/games/" + $('#game-name').html(), function (data) {
 		//removing the useless template
 		$('#game-name').remove();
 		var story = data;

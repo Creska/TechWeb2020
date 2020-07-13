@@ -1,0 +1,18 @@
+ROBA DA FARE:
+* Aggiungere la parte dei settings. Specifiche:
+    * Vi sono due tipi di input:
+        * Checkbox
+        * Numero (l'autore specifica un range)
+* Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
+* Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
+
+
+
+
+
+appunti:
+* get() --> utilizzato per la query
+* res --> parametro per la risposta da restituire al client
+* al caricamento della pagina del player viene aggiunto nell'head un template per il json
+* la sintassi $(function()) è uno shortcut per window.onload
+* per avviare un app in Node basta fare node app.js dal cmd

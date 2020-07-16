@@ -5,15 +5,32 @@ var io = require('socket.io')(http);
 const fs = require('fs');
 const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
-app.use(express.json());
-var playerIndex = 1; //player counter
-var valuatorIndex = 0; //TODO? In case of multiple valuators? The "account" is shared tho
+app.use(express.json()); //JSON loaded gets automatically parsed into an object
+var playerIndex = 0; //player counter
+var playerMax; //max number of players allowed for the story
+var groups = new Map(); //DINT in case the story is made of multiple groups. 
+var valuatorIndex = 0; //IDK Only one valuator, if another valuator is present, reutrn an error.
 var valuatorID; //starts with undefined, in case players connect before valuator(s)
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
-//TODO changing all the errors into objects
+var current_story; //stores the current story. Are multiple games with multiple valuator possible? Probably it's not a request, but I guess it won't be a bad thing to implement. It will be hard tho.
+var player_data = new Map(); //stores some player data, need this to be able to do a game summary
 
+/* 
+    ASSUMPTIONS
+=> only one valuator is allowed to be online 
+=> only one story can be played at a time(could be wrong),
 
+    TODO
+=> should I change all the "else" statements by putting a return after the if?
+=> warning about players stopped for too long on a game's specific phase
+=> different handling for help-request
+=> different handling for an input to be valued from a valuator
+=> Return a JSON with the game summary, I think it'll have to contain:
+    -Rankings
+    -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
+    -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
+*/
 io.on('connection', (socket) => {
     //handling sockets for chat: I need to configure players and valuator separately
     console.log("Connection: " + socket.id)
@@ -31,6 +48,11 @@ io.on('connection', (socket) => {
         }
     }
     else if (socket.handshake.query['type'] == 'valuator') {
+        if (valuatorIndex > 0) {
+            res.status(409).send({ code: "CONFLICT", message: "Anothe valuator page is already open. Please close it if you want to open another valuator." }).end();
+            return;
+        }
+        valuatorIndex++;
         //TODO multiple valuators handling?
         console.log("A valuator page connected.")
         valuatorID = socket.id;
@@ -40,23 +62,37 @@ io.on('connection', (socket) => {
     }
     socket.on('disconnect', () => {
         console.log("Disconnecting: " + socket.id)
+        //Removing history from a player that connected,sent some messages and then disconnected before the valuator logged in
+        if (valuatorID == undefined) {
+            console.log("Removing history from this socket, since the valuator is still not connected.")
+            storedMessages = storedMessages.filter(function (value) {
+                return value.id != socket.id;
+            });
+            storedJoins = storedJoins.filter(function (value) {
+                return value != socket.id;
+            })
+        }
         //a player is disconnected, I have to decrement the number of players, since when the room population is 0 then it gets deleted
         if (socket.id !== valuatorID) {
             //sending the disconnect event to the valuator so I can remove the chat
             socket.to(valuatorID).emit('user-left', socket.id);
             playerIndex--;
         }
+        else {
+            valuatorIndex--;
+        }
     })
-    socket.on('chat-message', (message, id, fn) => {
+    socket.on('chat-message', (message, id, type) => {
+        //TODO handling what to do depending on the type(not here, on the valuator page's own javascript)
+        console.log("The player " + id + " is sending the message: " + message + ". Type: " + type);
         //sending the chat event to the valuator page
-        console.log("The player " + id + " is sending the message: " + message);
         if (valuatorID) {
             console.log("Sending the message to the valuator.")
-            socket.to(valuatorID).emit('chat-message', message, id);
+            socket.to(valuatorID).emit('chat-message', message, id, type);
         }
         else {
             console.log("Valuator is offline, storing the message.")
-            storedMessages.push({ message: message, id: id });
+            storedMessages.push({ message: message, id: id, type: type });
         }
 
     })
@@ -66,14 +102,16 @@ io.on('connection', (socket) => {
 app.get('/player', function (req, res) {
     //handling GET request to 
     var story = req.query.story;
+    console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
-    //TODO i have to read published stories
-    fs.readFile('public/player/stories/' + story, function read(err, data) {
+    //TODO I have to read published stories
+    fs.readFile('public/player/stories/' + story, function read(err, story_data) {
         //trying to read the story file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
                 res.status(404).send({ code: "ENOENT", message: "Story not found." }).end();
                 //the story wasn't found, so I answer with a 404 status response
+                console.log("An error accourred inside /player, story not found.")
             }
             else {
                 console.log("An error accourred inside /player, while retrieving the story: " + err);
@@ -82,10 +120,15 @@ app.get('/player', function (req, res) {
         }
         else {
             console.log("Request for " + story + " received successfully. Returning the player and the story to be loaded.");
-            fs.readFile('public/player/player_test.html', function (err, data) {
+            //saving the current game, the first player locks the game until it gets closed.
+            if (current_story == undefined) {
+                current_story = JSON.parse(story_data);
+            }
+            fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {
                         res.status(404).send({ code: "ENOENT", message: "Player not found." }).end();
+                        console.log("An error accourred inside /player, player not found. " + err);
                     }
                     else {
                         console.log("An error accourred inside /player, while retrieving the player: " + err);
@@ -93,7 +136,8 @@ app.get('/player', function (req, res) {
                     }
                 }
                 else {
-                    const $ = cheerio.load(data);
+                    //TODO this needs to be tested(JSON parse required?), stores the current game server-side
+                    const $ = cheerio.load(player_data);
                     $('head').append('<template id="story-name">' + story + '</template>');
                     //appending to the body a template with the JSON to load
                     res.status(200).send($.html()).end();
@@ -111,6 +155,7 @@ app.get('/valuator', function (req, res) {
         if (err) {
             if (err.code == "ENOENT") {
                 res.status(404).send({ code: "ENOENT", message: "Valuator page not found." }).end();
+                console.log("An error accourred inside /valuator, valuator page not found.");
                 //the story wasn't found, so I answer with a 404 status response
             }
             else {
@@ -143,6 +188,13 @@ app.get('/valuator/history', function (req, res) {
         //retrieve nothing in case no history was found
         res.status(200).end();
     }
+})
+
+app.post('/valuator/return', function (req, res) {
+    //TODO ending summary
+
+    //game ends, so I unset the story
+    current_story = undefined;
 })
 
 app.get('/editor/getStories', function (req, res) {
@@ -222,9 +274,11 @@ app.get('/editor/getStory', function (req, res) {
 })
 
 app.post('/editor/saveStory', function (req, res) {
+    //TODO this needs to be tested...
     var story_data = req.body.story;
     var story_name = req.body.story_name;
     var published = req.body.published || false;
+    console.log("saveStory request received for: " + story_name)
     if (story_name) {
         if (published) {
             fs.writeFile('public/player/stories/published/' + story_name, JSON.stringify(story_data), (err) => {
@@ -257,6 +311,9 @@ app.post('/editor/saveStory', function (req, res) {
 
 app.post('/updates', function (req, res) {
     //TODO player updates handling
+    /*
+
+    */
 })
 
 app.get('/updates', function (req, res) {

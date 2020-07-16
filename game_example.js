@@ -41,15 +41,15 @@ TODO:
 // Struttura del JSON
 
 game_example = {
-	"game_html": "",
-	"ACCESSIBILITY": 0, // flag che indica se la storia è accessibile. Serve più che altro all'editor
-	"settings": {},
-	"settings_form": "",
+	"ACCESSIBILITY": 0, // flag che indica se la storia è accessibile
+	"story_title": "", // probabilmente servirà un div per contenerlo
+	"settings": {}, // oggetto con parametri vuoti inizializzati dall'autore
+	"settings_form": "", // form che il player usa per compilare i settings
 	/* La storia è un array di quests. Le quests possono essere in un unico ordine.
 	Di conseguenza, ad ogni elemento corrisponde uno e un solo elemento successivo. */
 	"quests": [
 		{	
-			"quest_html": "",
+			"quest_title": "", // probabilmente servirà un div per contenerlo
 			/* Ogni quest è un array di attività. Ad ognuna di esse può succedere una sola attività.
 			Tuttavia, una particolare attività può avere esiti diversi. La scena successiva sarà quindi
 			decisa dal codice JS "action_on_activity_answer". */
@@ -58,9 +58,7 @@ game_example = {
 					"activity_html": "", // testo HTML dell'attività
 					"right_answer": "", // contiene la risposta giusta
 					"answer_score": "", // punteggio per la risposta giusta
-					"ASK_EVAL": 0, // flag che indica se c'è necessità di valutazione umana per la risposta
-					"next_activities": [], // probabilmente inutile
-					"action_on_activity_answer": "" // probabilmente inutile; calcola il punteggio, richiama la valutazione umana, decide l'attività successiva
+					"ASK_EVAL": 0 // flag che indica se c'è necessità di valutazione umana per la risposta
 				}
 			]
 		}

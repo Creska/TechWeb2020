@@ -5,6 +5,7 @@ ROBA DA FARE:
         * Numero (l'autore specifica un range)
 * Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
 * Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
+* Theming --> ogni elemento, in base al gruppo di cui fa parte (attività, quest o storia), viene etichettato in una classe come ActivityElement, ecc.
 
 
 

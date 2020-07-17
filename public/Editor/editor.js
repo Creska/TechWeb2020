@@ -1,42 +1,49 @@
 /* NOTA
 Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
-* opzione "modifica storia esistente"
 * salvataggio
-* pubblicazione di una storia
-* ritiro di una storia
+* apertura dell'explorer (per editare/pubblicare/ritirare una storia già esistente)
 */
 
 /* questa sezione indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
-    "MainMenu": "MainMenu",
-    "ChooseAccessibility": "MainMenu",
-    "EditStory": "MainMenu",
-    "EditQuest": "EditStory"
+    MainMenu: "MainMenu",
+    ChooseAccessibility: "MainMenu",
+    EditStory: "MainMenu",
+    EditQuest: "EditStory"
 };
 
-var CurrentSection = "MainMenu"; /* indica la sezione dell'editor dove l'utente sta attualmente lavorando */
+/* indica le sezioni dell'editor dove l'utente sta attualmente lavorando */
+var CurrentNavStatus = {
+	Section: "MainMenu",
+	QuestN: -1,
+	ActivityN: -1
+};
 
-/* variabile usata per i salvataggi temporanei del JSON */
+/* variabile usata per i salvataggi temporanei del JSON e degli oggetti su cui l'utente sta lavorando:
+* Story --> contiene l'astrazione del JSON su cui si sta lavorando. ad ogni attivazione di "Save" viene fatto il salvataggio su server
+* Quest e Activity --> contengono l'astrazione della quest e dell'attività attualmente in modifica. quando viene premuto il tasto di salvataggio, l'oggetto "Story" viene aggiornato
+*/
 var CurrentWork = {
-	"ACCESSIBILITY": 0,
-	"story_title": "",
-	"settings": {},
-	"settings_form": "",
-	"quests": [
-		{	
-			"quest_title": "",
-			"activities": [
-				{
-					"activity_html": "",
-					"right_answer": "",
-					"answer_score": "",
-					"ASK_EVAL": 0
-				}
-			]
-		}
-	],
-	"stylesheet": "",
-	"score": []
+	Story: {
+		ACCESSIBILITY: 0,
+		story_title: "",
+		settings: {},
+		settings_form: "",
+		quests: [],
+		stylesheet: "",
+		score: []
+	},
+	Quest: {	
+		quest_title: "",
+		activities: []
+	},
+	Activity: {
+		activity_html: "",
+		right_answer: "",
+		answer_score: "",
+		ASK_EVAL: 0,
+		expected_time: 0
+	}
 };
 
 /* sta roba è per il debugging */
@@ -49,17 +56,17 @@ function sayHello() {
 * fa scomparire la sezione corrente e, appena l'animazione è finita, fa comparire quella nuova indicata
 */
 function goToSection( newSectionId ) {
-    $( "#" + CurrentSection ).fadeOut( function(){
+    $( "#" + CurrentNavStatus.Section ).fadeOut( function(){
         $( "#" + newSectionId ).fadeIn(); 
     }
     );
 
-    CurrentSection = newSectionId;
+    CurrentNavStatus.Section = newSectionId;
 };
 
 /**
  * @param WidgetId
- * attiva il widget specificato, apposito per il l'input di un testo
+ * attiva il widget specificato, apposito per l'input di un testo
  * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
  */
 function toggleTextInput( WidgetId ) {
@@ -98,6 +105,6 @@ function promptSave() {
 function goBack() {
     // promptSave();
 
-    goToSection( Parent[CurrentSection] );
+    goToSection( Parent[CurrentNavStatus.Section] );
 };
 

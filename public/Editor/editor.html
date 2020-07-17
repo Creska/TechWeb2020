@@ -32,8 +32,8 @@
             <!-- MainButtonGroup = gruppo di pulsanti grandi -->
             <div class="MainButtonGroup" id="MainMenuButtonGroup">
                 <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseAccessibility');"><strong>NEW</strong><br>Crea una nuova storia</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryToEdit');"><strong>EDIT</strong><br>Modifica una storia</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('Explorer');"><strong>EXPLORE</strong><br>Gestisci le storie salvate e pubblicate</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryToEdit');"><strong>EDIT</strong><br>Modifica una storia // TODO</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('Explorer');"><strong>EXPLORE</strong><br>Gestisci le storie salvate e pubblicate // TODO</button>
             </div>
         </div>
     
@@ -74,24 +74,25 @@
                       </div>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-lg btn-block">Modifica tema</button>
+                <button class="btn btn-primary btn-lg btn-block">Modifica tema // TODO</button>
             </div>
             <div class="StageList" id="QuestList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
                 <ul>
+                    <!-- i bottoni di modifica quest sono aggiunti dinamicamente appena avviene il salvataggio di una nuova quest. richiamano un'apposita funzione di modifica quest -->
                     <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="addQuest();">+</button></li>
                 </ul>
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings // TODO</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima // TODO</button>
             </div>
         </div>
 
         <!-- SCHERMATA DI EDITING DELLA QUEST -->
         <div class="EditorSection" id="EditQuest">
             <div>
-                Modifica le impostazioni della quest
+                Modifica le impostazioni della quest <strong>// TODO</strong>
             </div>
             <div>
                 <button class="btn btn-primary btn-lg btn-block" id="EditQuestTitleButton" onclick="toggleTextInput( 'EditQuestTitle' );">Modifica titolo</button>

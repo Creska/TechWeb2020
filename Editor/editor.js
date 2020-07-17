@@ -10,8 +10,7 @@ Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
 var Parent = {
     "MainMenu": "MainMenu",
     "ChooseAccessibility": "MainMenu",
-    "ChooseStoryFromServer": "MainMenu",
-    "EditStory": "MainMenu", // ci dovrebbe essere anche ChooseStoryFromServer - capire come fare in questo caso
+    "EditStory": "MainMenu",
     "EditQuest": "EditStory"
 };
 
@@ -58,27 +57,38 @@ function goToSection( newSectionId ) {
     CurrentSection = newSectionId;
 };
 
+/**
+ * @param WidgetId
+ * attiva il widget specificato, apposito per il l'input di un testo
+ * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
+ */
 function toggleTextInput( WidgetId ) {
 	if ( WidgetId == "EditStoryTitle" ) {
 		if ( CurrentWork.story_title == '' ) {
-			$( '#' + 'StoryTitleInput' ).val() = 'MyStory';
+			$( '#' + 'StoryTitleInput' ).val( 'MyStory' );
 		}
 		else {
-			$( '#' + 'StoryTitleInput' ).val() = CurrentWork.story_title;
+			$( '#' + 'StoryTitleInput' ).val( CurrentWork.story_title );
 		}
-
-		console.log("prova");
 
 		$( "#EditStoryTitle" ).modal( "toggle" );
 	}
 };
 
-function saveDataFragment( type, value ) {
+/**
+ * @param type indica a cosa si riferisce il valore da salvare
+ * @param value 
+ * @param WidgetId widget tramite cui è stato inserito l'input
+ * salva un valore nell'apposito campo, dopodiché chiude il widget di input
+ */
+function saveDataFragment( type, value, WidgetId ) {
     if ( type == 'STORYTITLE' ) {
         CurrentWork.story_title = value;
-    }
+	}
+	
+	$( "#" + WidgetId ).modal( "hide" );
 
-    window.alert( CurrentWork.story_title ); // debugging
+    console.log( CurrentWork.story_title ); // debugging
 };
 
 function promptSave() {

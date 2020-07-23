@@ -24,6 +24,7 @@
     </div>
 
     <div>
+        <!-- MENU PRINCIPALE -->
         <div class="EditorSection" id="MainMenu">
             <div>
                 Clicca su una delle opzioni per partire
@@ -31,11 +32,12 @@
             <!-- MainButtonGroup = gruppo di pulsanti grandi -->
             <div class="MainButtonGroup" id="MainMenuButtonGroup">
                 <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseAccessibility');"><strong>NEW</strong><br>Crea una nuova storia</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryFromServer');"><strong>EDIT</strong><br>Modifica una storia</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryFromServer');"><strong>RELEASE</strong><br>Gestisci la pubblicazione delle storie</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryToEdit');"><strong>EDIT</strong><br>Modifica una storia // TODO</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('Explorer');"><strong>EXPLORE</strong><br>Gestisci le storie salvate e pubblicate // TODO</button>
             </div>
         </div>
     
+        <!-- SCELTA DI ACCESSIBILITA' -->
         <div class="EditorSection" id="ChooseAccessibility">
             <div>
                 Clicca su una delle opzioni per partire
@@ -46,18 +48,13 @@
             </div>
         </div>
 
-        <div class="EditorSection" id="ChooseStoryFromServer">
-            <div class="SectionTitle">
-                mah
-            </div>
-        </div>
-
+        <!-- SCHERMATA DI EDITING DELLA STORIA -->
         <div class="EditorSection" id="EditStory">
             <div>
                 Modifica le impostazioni generali della storia
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="/*toggleTextInput( 'EditStoryTitle' );*/ sayHello();">Modifica titolo</button>
+                <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="toggleTextInput( 'EditStoryTitle' );">Modifica titolo</button>
                 <div class="modal fade" id="EditStoryTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content">
@@ -72,35 +69,57 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'STORYTITLE', $( '#' + 'StoryTitleInput' ).val() );">Procedi</button>
+                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'STORYTITLE', $( '#' + 'StoryTitleInput' ).val(), 'EditStoryTitle' );">Salva</button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                <button class="btn btn-primary btn-lg btn-block">Modifica tema</button>
+                </div>
+                <button class="btn btn-primary btn-lg btn-block">Modifica tema // TODO</button>
             </div>
             <div class="StageList" id="QuestList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
                 <ul>
-                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="goToSection('EditQuest');">+</button></li>
+                    <!-- i bottoni di modifica quest sono aggiunti dinamicamente appena avviene il salvataggio di una nuova quest. richiamano un'apposita funzione di modifica quest -->
+                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="addQuest();">+</button></li>
                 </ul>
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings</button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica schermata dei settings // TODO</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima // TODO</button>
             </div>
         </div>
 
+        <!-- SCHERMATA DI EDITING DELLA QUEST -->
         <div class="EditorSection" id="EditQuest">
             <div>
-                Modifica le impostazioni della quest
+                Modifica le impostazioni della quest <strong>// TODO</strong>
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block">Modifica titolo</button>
+                <button class="btn btn-primary btn-lg btn-block" id="EditQuestTitleButton" onclick="toggleTextInput( 'EditQuestTitle' );">Modifica titolo</button>
+                <div class="modal fade" id="EditQuestTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Inserire il titolo della quest</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" id="QuestTitleInput" name="QuestTitleInput">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'QUESTTITLE', $( '#' + 'QuestTitleInput' ).val(), 'EditQuestTitle' );">Salva</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
                 <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema</button>
             </div>
             <div class="StageList" id="ActivityList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
+                <!-- forse è meglio non utilizzare una UL -->
                 <ul>
                     <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="">+</button></li>
                 </ul>

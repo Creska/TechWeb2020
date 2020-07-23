@@ -11,6 +11,10 @@ body {
     text-align: center;
 }
 
+#MainMenu {
+    display: block;
+}
+
 .MainButtonGroup {
     width: auto;
 }

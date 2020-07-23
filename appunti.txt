@@ -1,3 +1,15 @@
+CONCEPT PLAYER-EDITOR:
+* Il player avrà un foglio CSS opportuno. Tutti gli elementi del player hanno nomi standard come: "class='AnswerField' id='Quest1Activity1AnswerField'" e via dicendo. Oppure per il caso dei ligi si può utilizzare la notazione gerarchica di CSS (#Quest0 > #Activity0 per esempio)
+* ESEMPIO DI STRUTTURA - con i nomi delle classi:
+    * Quest
+        * Activity
+            * ActivityParagraph
+            * AnswerField
+        * Activity ...
+
+
+
+
 ROBA DA FARE:
 * Aggiungere la parte dei settings. Specifiche:
     * Vi sono due tipi di input:
@@ -5,6 +17,7 @@ ROBA DA FARE:
         * Numero (l'autore specifica un range)
 * Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
 * Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
+* IMPORTANTE: valutare come effettuare i salvataggi locali
 
 
 

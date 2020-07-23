@@ -55,10 +55,11 @@ game_example = {
 			decisa dal codice JS "action_on_activity_answer". */
 			"activities": [
 				{
-					"activity_html": "", // testo HTML dell'attività
+					"activity_html": "", // testo HTML dell'attività e del campo risposta
 					"right_answer": "", // contiene la risposta giusta
 					"answer_score": "", // punteggio per la risposta giusta
-					"ASK_EVAL": 0 // flag che indica se c'è necessità di valutazione umana per la risposta
+					"ASK_EVAL": 0, // flag che indica se c'è necessità di valutazione umana per la risposta
+					"expected_time": 0 // tempo in ms previsto per il completamento dell'attività
 				}
 			]
 		}

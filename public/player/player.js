@@ -49,7 +49,7 @@ var story = JSON.parse( JSON.stringify( example ) );
 var story;
 
 $(function () {
-	$.get("/player/stories/" + $('#story-name').html(), function (data) {
+	$.get("/player/stories/published/" + $('#story-name').html(), function (data) {
 		//removing the useless template
 		// $('#game-name').remove();
 		story = data;

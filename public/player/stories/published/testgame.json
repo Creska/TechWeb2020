@@ -1,0 +1,35 @@
+{
+	"story_name": "Storia di prova",
+	"story_ID": 1,
+	"settings": {},
+	"quests": [
+		{
+			"quest_name": "Prima missione",
+			"activities": [
+				{
+					"activity_text": "<p>Questa è la prima attività.<br>Clicca su PROSEGUI per andare alla seconda.</p>",
+					"answer_field": "<button id='button1'>Prosegui</button>",
+					"right_answer": "",
+					"need_human_evaluation": false,
+					"next_activities": [
+						1
+					],
+					"action_on_activity_answer": "<script> if (document.geElementById('button1').clicked == 1) goToActivity(1); </script>",
+					"activity_style": ""
+				},
+				{
+					"activity_text": "<p>Questa è la seconda attività.</p>",
+					"answer_field": "<button id='button1'>Fine</button>",
+					"right_answer": "",
+					"need_human_evaluation": false,
+					"next_activities": [],
+					"action_on_activity_answer": "<script> if (document.geElementById('button1').clicked == 1) window.alert('Test andato a buon fine'); </script>",
+					"activity_style": ""
+				}
+			],
+			"quest_style": ""
+		}
+	],
+	"story_style": "",
+	"score": []
+}

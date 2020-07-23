@@ -11,13 +11,14 @@ CONCEPT PLAYER-EDITOR:
 
 
 ROBA DA FARE:
+* Aggiornare il pdf
+* Approfondire la faccenda del metodo click() in aggiunta al metodo onclick
 * Aggiungere la parte dei settings. Specifiche:
     * Vi sono due tipi di input:
         * Checkbox
         * Numero (l'autore specifica un range)
 * Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
 * Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
-* IMPORTANTE: valutare come effettuare i salvataggi locali
 
 
 

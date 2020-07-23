@@ -55,32 +55,13 @@
             </div>
             <div>
                 <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="toggleTextInput( 'EditStoryTitle' );">Modifica titolo</button>
-                <div class="modal fade" id="EditStoryTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Inserire il titolo della storia</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="text" id="StoryTitleInput" name="StoryTitleInput">
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'STORYTITLE', $( '#' + 'StoryTitleInput' ).val(), 'EditStoryTitle' );">Salva</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
                 <button class="btn btn-primary btn-lg btn-block">Modifica tema // TODO</button>
             </div>
             <div class="StageList" id="QuestList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
                 <ul>
                     <!-- i bottoni di modifica quest sono aggiunti dinamicamente appena avviene il salvataggio di una nuova quest. richiamano un'apposita funzione di modifica quest -->
-                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="addQuest();">+</button></li>
+                    <li><button class="btn btn-secondary btn-lg" class="AddStageButton" onclick="addQuest();">+</button></li>
                 </ul>
             </div>
             <div>
@@ -89,45 +70,73 @@
             </div>
         </div>
 
+        <!-- WIDGET DI INSERIMENTO TITOLO STORIA -->
+        <div class="modal fade" id="EditStoryTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Inserire il titolo della storia</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="StoryTitleInput" name="StoryTitleInput">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                  <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'STORYTITLE', $( '#' + 'StoryTitleInput' ).val(), 'EditStoryTitle' );">Salva</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
         <!-- SCHERMATA DI EDITING DELLA QUEST -->
         <div class="EditorSection" id="EditQuest">
             <div>
-                Modifica le impostazioni della quest <strong>// TODO</strong>
+                Modifica le impostazioni della quest
             </div>
             <div>
                 <button class="btn btn-primary btn-lg btn-block" id="EditQuestTitleButton" onclick="toggleTextInput( 'EditQuestTitle' );">Modifica titolo</button>
-                <div class="modal fade" id="EditQuestTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Inserire il titolo della quest</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="text" id="QuestTitleInput" name="QuestTitleInput">
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'QUESTTITLE', $( '#' + 'QuestTitleInput' ).val(), 'EditQuestTitle' );">Salva</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Modifica tema // TODO</button>
             </div>
             <div class="StageList" id="ActivityList">
                 <!-- questa lista viene aggiornata dinamicamente da un'apposita funzione - sulla base del lavoro attuale dell'autore -->
                 <!-- forse è meglio non utilizzare una UL -->
                 <ul>
-                    <li><button class="btn btn-secondary btn-lg" class="AddStage" onclick="">+</button></li>
+                    <li><button class="btn btn-secondary btn-lg" class="AddStage" id="AddActivityButton" onclick="">+</button></li>
                 </ul>
             </div>
             <div>
-                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Elimina // TODO</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima // TODO</button>
+            </div>
+            <div>
+                
             </div>
         </div>
+
+        <!-- WIDGET DI INSERIMENTO TITOLO QUEST -->
+        <div class="modal fade" id="EditQuestTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Inserire il titolo della quest</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="QuestTitleInput" name="QuestTitleInput">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                  <button type="button" class="btn btn-primary" id="SaveQuestName" onclick="saveDataFragment( 'QUESTTITLE', $( '#' + 'QuestTitleInput' ).val(), 'EditQuestTitle' );">Salva</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        
     </div>
 </body>
 </html>

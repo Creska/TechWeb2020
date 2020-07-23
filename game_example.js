@@ -43,6 +43,7 @@ TODO:
 game_example = {
 	"ACCESSIBILITY": 0, // flag che indica se la storia è accessibile
 	"story_title": "", // probabilmente servirà un div per contenerlo
+	"story_ID": -1, // ID di identificazione univoca. Inizializzato a -1
 	"settings": {}, // oggetto con parametri vuoti inizializzati dall'autore
 	"settings_form": "", // form che il player usa per compilare i settings
 	/* La storia è un array di quests. Le quests possono essere in un unico ordine.

@@ -6,77 +6,83 @@ const fs = require('fs');
 const cheerio = require('cheerio')
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
 app.use(express.json()); //JSON loaded gets automatically parsed into an object
-var playerMax; //DINT max number of players allowed for the story
-var groups = new Map(); //DINT in case the story is made of multiple groups.
 var valuatorID; //starts with undefined, in case players connect before valuator(s)
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
-var gamesent = undefined; //the last game that was requested, so I can know where to put the new player.
-var playerIndexes = new Map(); //player counter for each story: story(key),counter(value)
-var playersInStories = new Map(); //storing which players(array,value) are in which story(key)
-var stories_played = []; //stores all stories being played
-var valuatorIDs = []; //all valuators
+var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
+var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
+var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}
+
 /*
+    TEAMS
+    Teams can be made of maximum 5 people, minumum 2
+    assumption(it's not specified anywhere, so who knows?): each team has ONLY one device, so it's the same as handling non-teams stories.
+
+    VALUATORS
+    There can be multiple valuators online, they share all games and all chats being played.
+
+    SOCKETS
+    All text messages(help,validation ones) will be sent using the socket.io library.
+    This library simulates an high-level TCP/IP protocol, it's really handy for exchanging informations between clients.
+    I couldn't find another method to send data between clients, and socket.io is nice and fast to implement anyway...
+
     TODO
-=> multiple valuator/stories, tho most has been done. Multiple valuators are possible, they supervision all active stories. Multiple games should work(untested)
-=> handling teams, I should split things up based on the story
 => should I change all the "else" statements by putting a return after the if?
 => warning about players stopped for too long on a game's specific phase
-=> different handling for help-request
-=> different handling for an input to be valued from a valuator
+=> test to-be-valuated handling
+=> what the fuck does "parallel teams" mean???
 => Return a JSON with the game summary, I think it'll have to contain:
     -Rankings
     -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
 */
 
-function valuator_emit(method, socket) {
-    valuatorIDs.forEach(valuatorID => {
-        socket.to(valuatorID).emit(method, socket.id);
-    })
+function valuator_emit(method, socket, data) {
+    //emits the event passed with the arg to the valuator
+    socket.to(valuatorID).emit(method, socket.id, data);
+    console.log("Sending the event '" + method + "' to the valuator, from: " + socket.id);
 }
 
-function getStoryFromSocketId(id) {
-    var story = false;
-    playersInStories.forEach((v, k) => {
-        if (v.includes(id)) {
-            story = k;
+function removePlayer(id) {
+    //by passing the socket id, this specific player will be removed from the story he's playing
+    stories_map.forEach((v, k) => {
+        if (v.players.includes(id)) {
+            v.players = v.players.filter((value) => {
+                return value !== id;
+            })
+            if (!v.players.length) {
+                //if there's no players for this story, delete it
+                stories_map.delete(k);
+                console.log("The story with ID " + k + " has no more players, deleting the record.");
+            }
         }
     })
-    return story;
 }
 
 io.on('connection', (socket) => {
-    //handling sockets for chat: I need to configure players and valuator separately
+    /* handling sockets for chat: I need to configure players and valuator separately
+       sockets automatically join a room with his ID as its name
+    */
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
-        //playerIndexes: increment the number of players(value) of that specific story(key)
-        if (playerIndexes.has(gamesent.story_ID)) {
-            playerIndexes.set(gamesent.story_ID, playerIndexes.get(gamesent.story_ID) + 1);
-            console.log("A new player arrived(" + playerIndexes.get(gamesent.story_ID) + ") for the story: " + gamesent.story_ID);
-        } else {
-            playerIndexes.set(gamesent.story_ID, 1);
-            console.log("The first player arrived for the story: " + gamesent.story_ID);
+        if (stories_map.has(storysent.story_ID)) {
+            //A player entered a game already instanciated, updating it
+            let temp_game = stories_map.get(storysent.story_ID);
+            temp_game.players.push(socket.id)
+            stories_map.set(storysent.story_ID, temp_game);
+            console.log("A new player arrived(" + temp_game.players.length + ") for the story: " + storysent.story_ID);
         }
-        //stories_played: adding a new story being played
-        if (!stories_played.includes(gamesent.story_ID)) {
-            stories_played.push(gamesent.story_ID);
-            console.log("A new story is being played: " + gamesent.story_ID)
+        else {
+            //A player entered with a new game, creating the record for it
+            stories_map.set(storysent.story_ID, { story: storysent, players: [socket.id] })
+            console.log("A new player arrived(1) for the new story: " + storysent.story_ID + ", creating the record for it.");
         }
-        //playersInStories: set the socket id(value) to be playing to that story(key)
-        if (playersInStories.has(gamesent.story_ID)) {
-            playersInStories.get(gamesent.story_ID).push(socket.id)
-        } else {
-            playersInStories.set(gamesent.story_ID, [socket.id]);
-        }
-        console.log("Setting this socket id(" + socket.id + ") to be playing: " + gamesent.story_ID);
-        //set an empty array for the current player, so I can push activities data with /update. I know that [0] is the game name
-        player_data.set(socket.id, [gamesent.story_ID]);
-        //set gamesent to undefined, so other players can go
-        gamesent = undefined;
-        //socket automatically joins a room with his ID as its name
-        if (valuatorIDs.length) {
+        //Set an array for the current player, so I can push activities data with /update. I know that [0] is the game name
+        player_data.set(socket.id, [storysent.story_ID]);
+        //Set gamesent to undefined, so /player can continue
+        storysent = undefined;
+        if (valuatorID) {
             valuator_emit('user-joined', socket)
         }
         else {
@@ -87,56 +93,69 @@ io.on('connection', (socket) => {
     }
     else if (socket.handshake.query['type'] == 'valuator') {
         console.log("A valuator page connected.")
-        valuatorIDs.push(socket.id);
+        if (!valuatorID) {
+            //saving the valuator socket ID
+            valuatorID = socket.id;
+        }
+        else {
+            console.log("A valuator tried to connect while another valuator was already connected.");
+        }
     }
     else {
         console.log("Someone connected without querying for player or valuator. This shouldn't be possible,probably there are some old pages's socket still online.");
     }
     socket.on('disconnect', () => {
         console.log("Disconnecting: " + socket.id)
-        //Removing history from a player that connected,sent some messages and then disconnected before the valuator logged in
-        if (!valuatorIDs.length) {
-            console.log("Removing history from this socket, since the valuator is still not connected.")
-            storedMessages = storedMessages.filter(function (value) {
+        if (valuatorID) {
+            if (valuatorID != socket.id) {
+                //A player is disconnected
+                //sending the disconnect event to the valuator so I can remove the chat
+                valuator_emit('user-left', socket);
+                //removes the player(socket) from the story he's in, also decreasing the number of players for that story
+                removePlayer(socket.id);
+            } else {
+                //A valuator is disconnected
+                valuatorID = undefined;
+                console.log("A valuator disconnected. Setting valuatorID to undefined.")
+            }
+        }
+        else {
+            //Removing history from a player that connected, sent some messages and then disconnected while the valuator wasn't online
+            console.log("Removing history from this socket, since the valuator is still not connected or disconnected.")
+            storedMessages = storedMessages.filter((value) => {
                 return value.id != socket.id;
             });
-            storedJoins = storedJoins.filter(function (value) {
+            storedJoins = storedJoins.filter((value) => {
                 return value != socket.id;
             })
         }
-        //A player is disconnected, I have to decrement the number of players, since when the room population is 0 then it gets deleted
-        if (!valuatorIDs.includes(socket.id)) {
-            //sending the disconnect event to the valuator so I can remove the chat
-            valuator_emit('user-left', socket.id);
-            var game_from_socket = getStoryFromSocketId(socket.id);
-            if (game_from_socket) {
-                console.log("Decreasing the player index of game: "+game_from_socket)
-                playerIndexes.set(game_from_socket, playerIndexes.get(game_from_socket) - 1);
-            }
-            else {
-                console.log("ERROR: getStoryFromSocketId returned FALSE.")
-            }
-        }
     })
-    socket.on('chat-message', (message, id, type) => {
-        //TODO handling what to do depending on the type(not here, on the valuator page's own javascript)
-        console.log("The player " + id + " is sending the message: " + message + ". Type: " + type);
+    socket.on('chat-message', (message, id) => {
+        //handler for CHAT MESSAGES (help)
+        console.log("The player " + id + " is sending the message: " + message);
         //sending the chat event to the valuator page
         if (valuatorID) {
             console.log("Sending the message to the valuator.")
-            socket.to(valuatorID).emit('chat-message', message, id, type);
+            valuator_emit('chat-message', socket, { message: message, id: id });
         }
         else {
             console.log("Valuator is offline, storing the message.")
-            storedMessages.push({ message: message, id: id, type: type });
+            storedMessages.push({ message: message, id: id });
         }
 
     })
+    //TODO this need to be tested
+    socket.on('validate-input-player', (question, answer, socketID) => {
+        //handling input validation to the valuator
+        socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
+    })
+    socket.on('validate-input-valuator', (answer_is_right, socketID) => {
+        //input validation was handled, sending the result back
+        socket.to(socketID).emit('input-valued', answer_is_right);
+    })
 })
-
-
 app.get('/player', function (req, res) {
-    //handling GET request to
+    //handling GET request to /player
     var story = req.query.story;
     console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
@@ -156,12 +175,12 @@ app.get('/player', function (req, res) {
         }
         else {
             console.log("Request for " + story + " received successfully. Returning the player and the story to be loaded.");
-            //saving the current game, the first player locks the game until it gets closed.
+            //saving the current game
             //DINT there could be race conditions between 2 players
-            while (gamesent != undefined) {
+            while (storysent != undefined) {
                 ;;
             }
-            gamesent = JSON.parse(story_data);
+            storysent = JSON.parse(story_data);
             fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {
@@ -182,22 +201,50 @@ app.get('/player', function (req, res) {
                     //sending back the player page
                 }
             });
-
         }
     });
 })
 
 app.post('/player/activityUpdate', function (req, res) {
-    //Every time an activity is finished, I send the time spent, how many time a help message was sent and the ID of the socket, I need this for the summary
-    var time = req.query.time;
-    var help = req.query.help;
-    var socketID = req.query.socket;
-    player_data.get(socketID).push({ time: time, help: help });
+    /*Every time an activity is finished, I send the time spent, how many time a help message was sent and the ID of the socket.
+    I know that [0] cointains the game name, and every push is an activity(so I know the flow of the game)
+    This is needed for the summary, NOT for the warnings
+    */
+    var time = req.query.time || undefined;
+    var help = req.query.help || undefined;
+    var socketID = req.query.socket || undefined;
+    if (time && help && socketID) {
+        player_data.get(socketID).push({ time: time, help: help });
+        console.log("Sending an activityUpdate for: " + socketID)
+        res.status(200).end();
+    }
+    else {
+        console.log("/player/activityUpdate BAD REQUEST, a parameter was not provided.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID) was not provided." }).end();
+    }
 })
 
 app.post('/player/playerWarnings', function (req, res) {
-    //TODO player storing how much time has passed inside an activity, this will be sent every 10 seconds
-    //I will use socket.io to send a special message to the valuator from here
+    /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
+    player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
+    */
+    var story_ID = req.body.story_ID || undefined
+    var quest_index = req.body.quest || undefined
+    var activity_index = req.body.activity || undefined
+    var time_elapsed = req.body.time || undefined
+    if (story_ID && activity_index && time_elapsed) {
+        var maximum_time = stories_map.get(story_ID).game.quests[quest_index].activities[activity_index].expected_time;
+        if (time_elapsed > maximum_time) {
+            var socketID = req.body.socket_id;
+            let tempsocket = io.sockets.connected[socketID];
+            valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
+            console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+            res.status(200).end();
+        }
+    } else {
+        console.log("/player/playerWarnings BAD REQUEST, a parameter was not provided.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." }).end();
+    }
 })
 
 app.get('/editor', function (req, res) {
@@ -328,7 +375,7 @@ app.post('/editor/saveStory', function (req, res) {
             })
         }
     } else {
-        console.log("Trying to save a story without providing the story name.")
+        console.log("/editor/saveStory BAD REQUEST: Trying to save a story without providing the story name.")
         res.status(400).send({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name." })
     }
 
@@ -336,25 +383,31 @@ app.post('/editor/saveStory', function (req, res) {
 
 app.get('/valuator', function (req, res) {
     //reading valuator page
-    fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
-        if (err) {
-            if (err.code == "ENOENT") {
-                res.status(404).send({ code: "ENOENT", message: "Valuator page not found." }).end();
-                console.log("An error accourred inside /valuator, valuator page not found.");
-                //the story wasn't found, so I answer with a 404 status response
+    if (valuatorID) {
+        console.log("/valuator CONFLICT: A valuator is already in use");
+        res.status(409).send("409 CONFLICT - A valuator is already in use.").end();
+    }
+    else {
+        fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
+            if (err) {
+                if (err.code == "ENOENT") {
+                    res.status(404).send({ code: "ENOENT", message: "Valuator page not found." }).end();
+                    console.log("An error accourred inside /valuator, valuator page not found.");
+                    //the story wasn't found, so I answer with a 404 status response
+                }
+                else {
+                    console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
+                    res.status(500).send(err).end();
+                }
             }
             else {
-                console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
-                res.status(500).send(err).end();
+                console.log("Request for the valuator page received successfully. Returning the page.");
+                //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
+                const $ = cheerio.load(data);
+                res.status(200).send($.html()).end();
             }
-        }
-        else {
-            console.log("Request for the valuator page received successfully. Returning the page.");
-            //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
-            const $ = cheerio.load(data);
-            res.status(200).send($.html()).end();
-        }
-    })
+        })
+    }
 })
 
 app.get('/valuator/history', function (req, res) {

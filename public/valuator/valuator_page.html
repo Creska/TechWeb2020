@@ -5,6 +5,10 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
+    function valuateInput(answer_is_right, socketID) {
+        //the answer was valuated, sending whether or not it is right to the server, and then to the player
+        socket.emit('validate-input-valuator', answer_is_right, socketID);
+    }
     $(function () {
         var socket = io.connect('', { query: "type=valuator" });
         $.get("/valuator/history", function (data) {
@@ -43,6 +47,15 @@
         socket.on('user-left', (id) => {
             console.log("User  " + id + " left.");
             //TODO removing the chat-room div of that room
+        })
+        socket.on('valuate-input', (question, answer, socketID) => {
+            /*TODO creating input field for the answer to be valued
+            It will show the question of the activity and the answer given by the player
+            Dynamically creating a prompt with jQuery for that, that will execute a function
+            I do this because I can't do callbacks between clients with socket.io, so I need
+            something to hold the values for this specific answer
+            this fragment will execute valuateInput()
+            */
         })
     })
 </script>

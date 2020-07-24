@@ -46,12 +46,21 @@ var example = {
 var story = JSON.parse( JSON.stringify( example ) );
 */
 
-var story;
+var story; // conains the current story
+var socket; // contains the socket for this specific player
+
+function validateInput(answer, current_quest, current_activity) {
+	/*send the input to be validated from the valuator
+	args: the current question being asked, the answer from the player, the ID of the player(socket)
+	*/
+	var tempactivity = story.quests[current_quest].activities[current_activity];
+	socket.emit('validate-input-player', tempactivity.question, answer, socket.id)
+}
 
 $(function () {
 	$.get("/player/stories/published/" + $('#story-name').html(), function (data) {
 		//removing the useless template
-		// $('#game-name').remove();
+		$('#story-name').remove();
 		story = data;
 		console.log(data)
 	})
@@ -64,7 +73,7 @@ $(function () {
 	// 			console.log(data)
 	// 	}
 	// })
-	var socket = io.connect('', { query: "type=player" });
+	socket = io.connect('', { query: "type=player" });
 	$('form').submit(function (e) {
 		e.preventDefault();
 		//client can't route the rooms: only the server can. I need to send the data there
@@ -75,7 +84,18 @@ $(function () {
 	socket.on('valuator-message', (message) => {
 		//TODO rendering the valuator message
 	})
-
+	socket.on('input-valued', (answer_is_right) => {
+		//values: -1(no valuator online),0(wrong),1(right)
+		if (answer_is_right == -1) {
+			//TODO no valuator online handling
+		}
+		else if (answer_is_right == 0) {
+			//TODO wrong input handling
+		}
+		else {
+			//TODO right input handling
+		}
+	});
 	// indica il numero della quest attiva ed il numero dell'attività attiva
 	var currentStatus = {
 		currentQuest: -1,

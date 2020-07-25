@@ -1,0 +1,109 @@
+<html>
+
+<head></head>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+<script type="text/javascript" src="codemirror.js"></script>
+<link rel="stylesheet" href="codemirror.css">
+<link rel="stylesheet" href="monokai.css">
+<script src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
+<script type="text/javascript" src="lint.js"></script>
+<script type="text/javascript" src="css-lint.js"></script>
+<script type="text/javascript" src="css.js"></script>
+<link rel="stylesheet" href="lint.css">
+<script>
+    var css_editor;
+    $(function () {
+        css_editor = CodeMirror(document.querySelector('#css-editor'), {
+            lineNumbers: true,
+            tabSize: 50,
+            value: `@charset "UTF-8";
+
+@import url("booya.css") print, screen;
+@import "whatup.css" screen;
+@import "wicked.css";
+
+/*Error*/
+@charset "UTF-8";
+
+
+@namespace "http://www.w3.org/1999/xhtml";
+@namespace svg "http://www.w3.org/2000/svg";
+
+/*Warning: empty ruleset */
+.foo {
+}
+
+h1 {
+    font-weight: bold;
+}
+
+/*Warning: qualified heading */
+.foo h1 {
+    font-weight: bold;
+}
+
+/*Warning: adjoining classes */
+.foo.bar {
+    zoom: 1;
+}
+
+li.inline {
+    width: 100%;  /*Warning: 100% can be problematic*/
+}
+
+li.last {
+  display: inline;
+  padding-left: 3px !important;
+  padding-right: 3px;
+  border-right: 0px;
+}
+
+@media print {
+    li.inline {
+      color: black;
+    }
+}
+
+@page {
+  margin: 10%;
+  counter-increment: page;
+
+  @top-center {
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 2em;
+    content: counter(page);
+  }
+}
+`,
+            theme: 'monokai',
+            mode: 'css',
+            gutters: ["CodeMirror-lint-markers"],
+            lint: true
+
+        });
+        $('#cssvaluator').click(function () {
+            var text = encodeURIComponent(css_editor.getValue());
+            $.ajax({
+                url: 'https://jigsaw.w3.org/css-validator/validator?profile=css3&warning=0&output=text/html&text=' + text,
+                method: 'GET',
+                success: function (data) {
+                    //TODO handling how to show errors
+                    $('#csserror').html(data);
+                },
+                error: function (errorMessage) {
+                    console.log(errorMessage);
+                }
+            })
+        })
+    })
+</script>
+
+<body>
+    <div id="css-editor"></div>
+    <div id="csserror"></div>
+    <button id="cssvaluator">Validate CSS</button>
+</body>
+
+</html>

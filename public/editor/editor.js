@@ -21,32 +21,16 @@ var CurrentNavStatus = {
 
 /* variabile usata per i salvataggi temporanei del JSON e degli oggetti su cui l'utente sta lavorando:
 * Story --> contiene l'astrazione del JSON su cui si sta lavorando. ad ogni attivazione di "Save" viene fatto il salvataggio su server
-* Quest e Activity --> contengono l'astrazione della quest e dell'attività attualmente in modifica. quando viene premuto il tasto di salvataggio, l'oggetto "Story" viene aggiornato
-*
-* NOTA: PROBABILMENTE NON SERVONO I CAMPI QUEST E ACTIVITY
 */
 var CurrentWork = {
-	Story: {
-		ACCESSIBILITY: 0,
-		story_title: "",
-		story_ID: -1,
-		settings: {},
-		settings_form: "",
-		quests: [],
-		stylesheet: "",
-		score: []
-	},
-	Quest: {	
-		quest_title: "",
-		activities: []
-	},
-	Activity: {
-		activity_html: "",
-		right_answer: "",
-		answer_score: "",
-		ASK_EVAL: 0,
-		expected_time: 0
-	}
+	ACCESSIBILITY: 0,
+	story_title: "",
+	story_ID: -1,
+	settings: {},
+	settings_form: "",
+	quests: [],
+	stylesheet: "",
+	score: []
 };
 
 
@@ -59,14 +43,12 @@ function sayHello() {
 };
 
 function printCurrentJson() {
-	console.log( JSON.stringify(CurrentWork.Story ));
+	console.log( JSON.stringify(CurrentWork ));
 }
 
 
 
 /* --------------------------------------------------------------------------------------------- */
-
-
 
 
 function printError() {
@@ -87,62 +69,6 @@ function goToSection( newSectionId ) {
     CurrentNavStatus.Section = newSectionId;
 };
 
-/**
- * @param WidgetId
- * attiva il widget specificato, apposito per l'input di un testo
- * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
- */
-function toggleTextInput( WidgetId ) {
-	switch ( WidgetId ) {
-		case 'EditStoryTitle':
-			if ( CurrentWork.Story.story_title == '' ) {
-				$( '#' + 'StoryTitleInput' ).val( 'MyStory' );
-			}
-			else {
-				$( '#' + 'StoryTitleInput' ).val( CurrentWork.Story.story_title );
-			}
-		
-			$( "#EditStoryTitle" ).modal( "toggle" );
-			break;
-		case 'EditQuestTitle':
-			if ( CurrentWork.Quest.quest_title == '' ) {
-				$( '#' + 'QuestTitleInput' ).val( 'NewQuest' );
-			}
-			else {
-				$( '#' + 'QuestTitleInput' ).val( CurrentWork.Quest.quest_title );
-			}
-		
-			$( "#EditQuestTitle" ).modal( "toggle" );
-			break;
-		default:
-			printError();
-			break;
-	}
-};
-
-/**
- * @param type indica a cosa si riferisce il valore da salvare
- * @param value 
- * @param WidgetId widget tramite cui è stato inserito l'input
- * salva un valore nell'apposito campo, dopodiché chiude il widget di input
- */
-function saveDataFragment( type, value, WidgetId ) {
-	switch ( type ) {
-		case 'STORYTITLE':
-			CurrentWork.Story.story_title = value;
-			break;
-		case 'QUESTTITLE':
-			CurrentWork.Quest.quest_title = value;
-			break;
-		default:
-			printError();
-			break;
-	}
-	
-	$( "#" + WidgetId ).modal( "hide" );
-
-	printCurrentJson(); // debugging
-};
 
 function promptSave() {
     /* TODO */
@@ -175,35 +101,172 @@ function initActivity() {
 	return EmptyActivity;
 };
 
-function saveQuest() {
-	CurrentWork.Story.quests[CurrentNavStatus.QuestN] = CurrentWork.Quest;
-}
-
-function saveActivity() {
-	CurrentWork.Story.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN] = CurrentWork.Activity;
-}
-
-function editQuest( quest_n ) {
-	goToSection( "EditQuest" );
-
-	CurrentNavStatus.QuestN = quest_n;
-	CurrentWork.Quest = CurrentWork.Story.quests[quest_n];
-	CurrentWork.Activity = initActivity();
-};
-
-function addQuest() {
-	CurrentNavStatus.QuestN = CurrentWork.Story.quests.length;
-	CurrentWork.Quest = initQuest();
-	CurrentWork.Activity = initActivity();
-
-	toggleTextInput( 'EditQuestTitle' );
-
-	/* questa parte qui sotto va fatta meglio */
-	$( '#SaveQuestName' ).click( function() {
-		saveQuest(); // salva la quest corrente nel json
-
-		goToSection( "EditQuest" );
-	});
-};
-
 /* APPUNTO: fare una funzione di reload che prende come argomento un valore che indica qual è la sezione da reloadare. usarlo in goToSection */
+
+/**
+ * @param WidgetId
+ * attiva il widget specificato, apposito per l'input di un testo
+ * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
+ */
+function toggleTextInput( WidgetId ) {
+	switch ( WidgetId ) {
+		case 'EditStoryTitle':
+			if ( CurrentWork.story_title == '' ) {
+				$( '#' + 'StoryTitleInput' ).val( 'MyStory' );
+			}
+			else {
+				$( '#' + 'StoryTitleInput' ).val( CurrentWork.story_title );
+			}
+		
+			$( "#EditStoryTitle" ).modal( "toggle" );
+			break;
+		case 'EditQuestTitle':
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title == '' ) {
+				$( '#' + 'QuestTitleInput' ).val( 'NewQuest' );
+			}
+			else {
+				$( '#' + 'QuestTitleInput' ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
+			}
+		
+			$( "#EditQuestTitle" ).modal( "toggle" );
+			break;
+		default:
+			printError();
+			break;
+	}
+};
+
+function toggleIndexInput() {
+	let UseLastIndex = $( "#UseLastIndex" );
+	let SelectIndex = $( "#SelectIndex" );
+	let IndexInput = $( "#IndexInput" );
+
+	/* inizializzazione dei valori di default */
+	UseLastIndex.prop("checked", true);
+	SelectIndex.prop("checked", false);
+	IndexInput.attr("disabled", true);
+
+	if ( CurrentNavStatus.QuestN < 0 ) {
+		IndexInput.val( CurrentWork.quests.length );
+		IndexInput.attr('max', IndexInput.val() );
+	}
+	else {
+		IndexInput.val( CurrentWork.quests[QuestN].activities.length );
+		IndexInput.attr('max', IndexInput.val() );
+	}
+
+	$( "#InsertStageIndex" ).modal( "toggle" );
+};
+
+function insertNewStage() {
+	let UseLastIndex = $( "#UseLastIndex" );
+	let SelectIndex = $( "#SelectIndex" );
+	let IndexInput = $( "#IndexInput" );
+
+	let ChosenIndex;
+
+	if ( CurrentNavStatus.QuestN < 0 ) {
+		if ( UseLastIndex.prop( "checked" ) ) {
+			ChosenIndex = CurrentWork.quests.length;
+		}
+		else {
+			ChosenIndex = IndexInput.val();
+		}
+
+		CurrentWork.quests.splice( ChosenIndex, 0, initQuest() );
+
+		/* decidere cosa fare */
+	}
+	else {
+		if ( UseLastIndex.prop( "checked" ) ) {
+			ChosenIndex = CurrentWork.quests[CurrentNavStatus.QuestN].activities.length;
+		}
+		else {
+			ChosenIndex = IndexInput.val();
+		}
+
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice( ChosenIndex, 0, initActivity() );
+
+		/* decidere cosa fare */
+	}
+
+	$('#InsertStageIndex').modal('hide');
+}
+
+
+function saveDataFragment( field, value, quest_n, activity_n ) {
+	switch ( field ) {
+		case 'story_title':
+			CurrentWork.story_title = value;
+			break;
+		case 'settings':
+			/* TODO */
+			break;
+		case 'settings_form':
+			/* TODO */
+			break;
+		case 'quest_title':
+			if ( quest_n < 0 || quest_n > CurrentWork.quests.length ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].quest_title = value;
+			}
+			break;
+		case 'activity_html':
+			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].activities[activity_n].activity_html = value;
+			}
+			break;
+		case 'right_answer':
+			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].activities[activity_n].right_answer = value;
+			}
+			break;
+		case 'answer_score':
+			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].activities[activity_n].answer_score = value;
+			}
+			break;
+		case 'ASK_EVAL':
+			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].activities[activity_n].ASK_EVAL = value;
+			}
+			break;
+		case 'expected_time':
+			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
+				printError();
+			}
+			else {
+				CurrentWork.quests[quest_n].activities[activity_n].expected_time = value;
+			}
+			break;
+		case 'stylesheet':
+			/* TODO */
+			break;
+		case 'score':
+			/* TODO */
+			break;
+		case 'ACCESSIBILITY':
+		case 'story_ID':
+			window.alert( "non è possibile effettuare questa modifica" ); // migliorare l'alert
+			break;
+		default:
+			printError();
+			break;
+	}
+
+	printCurrentJson(); // debugging
+};

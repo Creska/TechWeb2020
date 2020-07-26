@@ -13,6 +13,7 @@ CONCEPT PLAYER-EDITOR:
 ROBA DA FARE:
 * Aggiornare il pdf
 * Approfondire la faccenda del metodo click() in aggiunta al metodo onclick
+* Capire la differenza tra attr() e prop()
 * Aggiungere la parte dei settings. Specifiche:
     * Vi sono due tipi di input:
         * Checkbox

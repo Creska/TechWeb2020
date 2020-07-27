@@ -24,7 +24,6 @@ body {
     border-width: 1pt;
     border-style: solid;
     margin: 25pt 25pt 25pt 25pt;
-    overflow-x: scroll;
 }
 
 .StageList ul {
@@ -32,17 +31,26 @@ body {
     border-style: solid; /* debugging */
     list-style-type: none;
     margin: none;
+    overflow: scroll; /* sistemare - non funziona per bene */
     padding: 50pt 25pt 50pt 25pt;
 }
 
 .StageList ul li {
-    display: inline;
+    display: inline-block;
 }
 
-.StageList button {
+.StageButton {
     height: 100pt;
+    margin: 10pt;
     width: 100pt;
+    overflow: hidden;
 }
+
+/*
+.GoToStage {
+
+}
+*/
 
 /*
 

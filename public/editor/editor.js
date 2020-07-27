@@ -1,27 +1,26 @@
 /* NOTA
 Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
-* salvataggio
+* salvataggio su server
 * apertura dell'explorer (per editare/pubblicare/ritirare una storia già esistente)
 */
 
-/* questa sezione indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
+/* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
     MainMenu: "MainMenu",
     ChooseAccessibility: "MainMenu",
     EditStory: "MainMenu",
-    EditQuest: "EditStory"
+	EditQuest: "EditStory",
+	EditActivity: "EditQuest"
 };
 
-/* indica le sezioni dell'editor dove l'utente sta attualmente lavorando */
+/* indica la dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
 	QuestN: -1,
 	ActivityN: -1
 };
 
-/* variabile usata per i salvataggi temporanei del JSON e degli oggetti su cui l'utente sta lavorando:
-* Story --> contiene l'astrazione del JSON su cui si sta lavorando. ad ogni attivazione di "Save" viene fatto il salvataggio su server
-*/
+/* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork = {
 	ACCESSIBILITY: 0,
 	story_title: "",
@@ -32,8 +31,6 @@ var CurrentWork = {
 	stylesheet: "",
 	score: []
 };
-
-
 
 
 /* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
@@ -50,31 +47,35 @@ function printCurrentJson() {
 
 /* --------------------------------------------------------------------------------------------- */
 
-
+/**
+ * Funzione da evolvere poi in una procedura di errore - che magari resetta l'applicazione
+ */
 function printError() {
 	window.alert( "!!! MAJOR ERROR !!!");
 };
 
 
+/**
+ * @param SectionId
+ * Ricarica le sezioni dell'editor la cui interfaccia cambia a seconda del lavoro svolto dall'utente
+ */
 function loadSection( SectionId ) {
-	/* In vari casi va aggiunto il comando di aggiornamento del nome della sezione */
+	/* TODO: mettere il comando di aggiornamento del nome della sezione */
+	/* TODO: ricontrollare la correttezza delle procedure di creazione elementi */
 
 	switch ( SectionId ) {
 		case "EditStory":
 			$( "#QuestList ul" ).empty();
 
 			for ( i = 0; i < CurrentWork.quests.length; i++ ) {
-				/* probabilmente non è correttissimo e infatti funziona male  */
 				let NewButton = $( "<button/>",
 				{
 					class: "btn btn-secondary btn-lg StageButton GoToStage",
 					onclick: "editQuest(" + String( i ) + ");",
 					text: "Quest" + String( i ),
-				}).wrap("<li></li>");
+				}).wrap( "<li></li>" );
 
 				$( "#QuestList ul" ).append( NewButton );
-
-				console.log(NewButton.attr("style")); // debugging
 			}
 
 			let AddQuestButton = $( "<button/>",
@@ -82,7 +83,7 @@ function loadSection( SectionId ) {
 					class: "btn btn-secondary btn-lg StageButton AddStage",
 					onclick: "toggleIndexInput();",
 					text: "+"
-				}).wrap("<li></li>");
+				}).wrap( "<li></li>" );
 
 			$( "#QuestList ul" ).append( AddQuestButton );
 			break;
@@ -96,11 +97,9 @@ function loadSection( SectionId ) {
 					class: "btn btn-secondary btn-lg StageButton GoToStage",
 					onclick: "editActivity(" + String( i ) + ");",
 					text: "Activity" + String( i ),
-				}).wrap("<li></li>");
+				}).wrap( "<li></li>" );
 
 				$( "#ActivityList ul" ).append( NewButton );
-
-				console.log(NewButton.attr("style")); // debugging
 			}
 
 			let AddActivityButton = $( "<button/>",
@@ -108,7 +107,7 @@ function loadSection( SectionId ) {
 					class: "btn btn-secondary btn-lg StageButton AddStage",
 					onclick: "toggleIndexInput();",
 					text: "+"
-				}).wrap("<li></li>");
+				}).wrap( "<li></li>" );
 
 			$( "#ActivityList ul" ).append( AddActivityButton );
 			break;
@@ -116,14 +115,13 @@ function loadSection( SectionId ) {
 			printError();
 			break;
 	}
-
 };
 
 
 /**
-* @param newSectionId
-* fa scomparire la sezione corrente e, appena l'animazione è finita, fa comparire quella nuova indicata
-*/
+ * @param newSectionId
+ * Fa scomparire la sezione corrente e, appena l'animazione è finita, fa comparire quella nuova indicata
+ */
 function goToSection( newSectionId ) {
 	/* Reloading per le sezioni che ne necessitano */
 	switch ( newSectionId ) {
@@ -140,7 +138,7 @@ function goToSection( newSectionId ) {
 			break;
 	}
 
-    $( "#" + CurrentNavStatus.Section ).fadeOut( function(){
+    $( "#" + CurrentNavStatus.Section ).fadeOut( function() {
         $( "#" + newSectionId ).fadeIn(); 
     }
     );
@@ -153,14 +151,22 @@ function promptSave() {
     /* TODO */
 };
 
+
+/**
+ * Attiva il ritorno alla sezione precedente, eventualmente richiedendo un salvataggio
+ */
 function goBack() {
     // promptSave();
 
     goToSection( Parent[CurrentNavStatus.Section] );
 };
 
+
+/**
+ * Inizializza un oggetto quest vuoto per il JSON
+ */
 function initQuest() {
-	var EmptyQuest = {	
+	let EmptyQuest = {	
 		quest_title: "",
 		activities: []
 	};
@@ -168,8 +174,12 @@ function initQuest() {
 	return EmptyQuest;
 };
 
+
+/**
+ * Inizializza un oggetto attività vuoto per il JSON
+ */
 function initActivity() {
-	var EmptyActivity = {
+	let EmptyActivity = {
 		activity_html: "",
 		right_answer: "",
 		answer_score: "",
@@ -180,6 +190,11 @@ function initActivity() {
 	return EmptyActivity;
 };
 
+
+/**
+ * @param quest_n
+ * Invia alla sezione di editing della quest specificata
+ */
 function editQuest( quest_n ) {
 	CurrentNavStatus.QuestN = quest_n;
 	CurrentNavStatus.ActivityN = -1;
@@ -187,29 +202,30 @@ function editQuest( quest_n ) {
 	goToSection( "EditQuest" );
 };
 
+
 /**
  * @param WidgetId
- * attiva il widget specificato, apposito per l'input di un testo
- * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
+ * Attiva il widget specificato, apposito per l'input di un testo
+ * Viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
  */
 function toggleTextInput( WidgetId ) {
 	switch ( WidgetId ) {
-		case 'EditStoryTitle':
-			if ( CurrentWork.story_title == '' ) {
-				$( '#' + 'StoryTitleInput' ).val( 'MyStory' );
+		case "EditStoryTitle":
+			if ( CurrentWork.story_title == "" ) {
+				$( "#" + "StoryTitleInput" ).val( "MyStory" );
 			}
 			else {
-				$( '#' + 'StoryTitleInput' ).val( CurrentWork.story_title );
+				$( "#" + "StoryTitleInput" ).val( CurrentWork.story_title );
 			}
 		
 			$( "#EditStoryTitle" ).modal( "toggle" );
 			break;
-		case 'EditQuestTitle':
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title == '' ) {
-				$( '#' + 'QuestTitleInput' ).val( 'NewQuest' );
+		case "EditQuestTitle":
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title == "" ) {
+				$( "#" + "QuestTitleInput" ).val( "NewQuest" );
 			}
 			else {
-				$( '#' + 'QuestTitleInput' ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
+				$( "#" + "QuestTitleInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
 			}
 		
 			$( "#EditQuestTitle" ).modal( "toggle" );
@@ -220,31 +236,40 @@ function toggleTextInput( WidgetId ) {
 	}
 };
 
+
+/**
+ * Attiva il widget di inserimento dell'indice di una quest o attività.
+ * Il tipo di oggetto da indicizzare viene detto sulla base dei valori attuali nel CurrentNavStatus
+ */
 function toggleIndexInput() {
 	let UseLastIndex = $( "#UseLastIndex" );
 	let SelectIndex = $( "#SelectIndex" );
 	let IndexInput = $( "#IndexInput" );
 
 	/* inizializzazione dei valori di default */
-	UseLastIndex.prop("checked", true);
-	SelectIndex.prop("checked", false);
-	IndexInput.attr("disabled", true);
+	UseLastIndex.prop( "checked", true );
+	SelectIndex.prop( "checked", false );
+	IndexInput.attr( "disabled", true );
 
 	if ( CurrentNavStatus.QuestN < 0 ) {
 		IndexInput.val( CurrentWork.quests.length );
-		IndexInput.attr('max', IndexInput.val() );
+		IndexInput.attr( "max", IndexInput.val() );
 	}
 	else {
 		IndexInput.val( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length );
-		IndexInput.attr('max', IndexInput.val() );
+		IndexInput.attr( "max", IndexInput.val() );
 	}
 
 	$( "#InsertStageIndex" ).modal( "toggle" );
 };
 
+
+/**
+ * Inserisce una nuova quest/attività all'interno del JSON, sulla base dei dati inseriti dall'utente nel widget di inserimento indice
+ */
 function insertNewStage() {
+	/* TODO: decidere cosa fare in seguito all'inserimento dello stage - mandare nella sua apposita sezione di editing? */
 	let UseLastIndex = $( "#UseLastIndex" );
-	let SelectIndex = $( "#SelectIndex" );
 	let IndexInput = $( "#IndexInput" );
 
 	let ChosenIndex;
@@ -258,8 +283,6 @@ function insertNewStage() {
 		}
 
 		CurrentWork.quests.splice( ChosenIndex, 0, initQuest() );
-
-		/* decidere cosa fare */
 	}
 	else {
 		if ( UseLastIndex.prop( "checked" ) ) {
@@ -270,84 +293,53 @@ function insertNewStage() {
 		}
 
 		CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice( ChosenIndex, 0, initActivity() );
-
-		/* decidere cosa fare */
 	}
 
-	$('#InsertStageIndex').modal('hide');
+	$( "#InsertStageIndex" ).modal( "hide" );
 
 	loadSection( CurrentNavStatus.Section );
 };
 
 
-function saveDataFragment( field, value, quest_n, activity_n ) {
+/**
+ * @param field --> campo del JSON
+ * @param value --> valore da assegnare al campo specificato
+ * Aggiorna il campo del JSON con il suo valore
+ */
+function saveDataFragment( field, value ) {
 	switch ( field ) {
-		case 'story_title':
+		case "story_title":
 			CurrentWork.story_title = value;
 			break;
-		case 'settings':
+		case "settings":
 			/* TODO */
 			break;
-		case 'settings_form':
+		case "settings_form":
 			/* TODO */
 			break;
-		case 'quest_title':
-			if ( quest_n < 0 || quest_n > CurrentWork.quests.length ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].quest_title = value;
-			}
+		case "quest_title":
+			CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = value;
 			break;
-		case 'activity_html':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].activity_html = value;
-			}
+		case "activity_html":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_html = value;
 			break;
-		case 'right_answer':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].right_answer = value;
-			}
+		case "right_answer":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = value;
 			break;
-		case 'answer_score':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].answer_score = value;
-			}
+		case "answer_score":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score = value;
 			break;
-		case 'ASK_EVAL':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].ASK_EVAL = value;
-			}
+		case "ASK_EVAL":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL = value;
 			break;
-		case 'expected_time':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].expected_time = value;
-			}
+		case "expected_time":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = value;
 			break;
-		case 'stylesheet':
+		case "stylesheet":
 			/* TODO */
 			break;
-		case 'score':
+		case "score":
 			/* TODO */
-			break;
-		case 'ACCESSIBILITY':
-		case 'story_ID':
-			window.alert( "non è possibile effettuare questa modifica" ); // migliorare l'alert
 			break;
 		default:
 			printError();

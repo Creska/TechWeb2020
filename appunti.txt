@@ -6,20 +6,41 @@ CONCEPT PLAYER-EDITOR:
             * ActivityParagraph
             * AnswerField
         * Activity ...
+    
+* COSA DOVREBBE VEDERE IL GIOCATORE:
+
+____________________________________
+|                                   |
+|            NOME STORIA            |
+|___________________________________|
+|                                   |
+|            NOME QUEST             |
+|___________________________________|
+|                                   |
+|        testo, immagini, ecc.      |
+|                                   |
+.                                   .
+.                                   .
+.                                   .
+|                                   |
+| CAMPO RISPOSTA DI FINE ATTIVITA'  |
+|___________________________________|
 
 
 
 
 ROBA DA FARE:
-* Aggiornare il pdf
-* Approfondire la faccenda del metodo click() in aggiunta al metodo onclick
-* Capire la differenza tra attr() e prop()
-* Aggiungere la parte dei settings. Specifiche:
-    * Vi sono due tipi di input:
-        * Checkbox
-        * Numero (l'autore specifica un range)
-* Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
-* Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
+* GENERALE
+    * Approfondire la faccenda del metodo click() in aggiunta all'attributo onclick
+    * Capire la differenza tra attr() e prop()
+* EDITOR
+    * Aggiornare il pdf
+    * Aggiungere la parte dei settings. Specifiche:
+        * Vi sono due tipi di input:
+            * Checkbox
+            * Numero (l'autore specifica un range)
+* PLAYER
+    * Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
 
 
 

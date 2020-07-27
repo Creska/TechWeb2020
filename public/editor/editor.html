@@ -15,6 +15,12 @@
   <title>Editor</title>
 </head>
 <body>
+  <!--
+    TASTI DI INTERFACCIA
+    "Salva" -> Salva su server. Il campo "nome" è già compilato se il JSON esiste già. Nel caso venga cambiato, viene creato un nuovo JSON
+    "Indietro" -> Torna alla sezione precedente chiedendo se si vuole salvare il lavoro effettuato
+    "Chiudi" -> Torna al menu principale mostrando il widget che chiede se si vuole salvare
+  -->
   <div class="btn-group btn-group-lg" id="EditorNavbar" role="group" aria-label="...">
     <!-- aggiungere icone di FontAwesome -->
     <!-- aggiungere metodo per rendere i pulsanti non cliccabili in determinate situazioni -->
@@ -36,7 +42,8 @@
       <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('Explorer');"><strong>SERVER</strong><br>Gestisci le storie salvate e pubblicate // TODO</button>
     </div>
   </div>
-    
+
+
   <!-- SCELTA DI ACCESSIBILITA' -->
   <div class="EditorSection" id="ChooseAccessibility">
     <div>
@@ -47,6 +54,7 @@
       <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('EditStory')"><strong>NON ACCESSIBILE</strong><br>Non usare il supporto per accessibilità (scelta sconsigliata)</button>
     </div>
   </div>
+
 
   <!-- SCHERMATA DI EDITING DELLA STORIA -->
   <div class="EditorSection" id="EditStory">
@@ -70,6 +78,7 @@
     </div>
   </div>
 
+
   <!-- WIDGET DI INSERIMENTO TITOLO STORIA -->
   <div class="modal fade" id="EditStoryTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -85,11 +94,12 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'story_title', $( '#' + 'StoryTitleInput' ).val(), 0, 0 ); $('#EditStoryTitle').modal('hide');">Salva</button>
+          <button type="button" class="btn btn-primary" onclick="saveDataFragment( 'story_title', $( '#' + 'StoryTitleInput' ).val() ); $('#EditStoryTitle').modal('hide');">Salva</button>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- SCHERMATA DI EDITING DELLA QUEST -->
   <div class="EditorSection" id="EditQuest">
@@ -113,6 +123,7 @@
     </div>
   </div>
 
+
   <!-- WIDGET DI INSERIMENTO TITOLO QUEST -->
   <div class="modal fade" id="EditQuestTitle" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -128,12 +139,13 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-          <button type="button" class="btn btn-primary" id="SaveQuestName" onclick="saveDataFragment( 'quest_title', $( '#' + 'QuestTitleInput' ).val(), CurrentNavStatus.QuestN, 0 ); $('#EditQuestTitle').modal('hide');">Salva</button>
+          <button type="button" class="btn btn-primary" id="SaveQuestName" onclick="saveDataFragment( 'quest_title', $( '#' + 'QuestTitleInput' ).val() ); $('#EditQuestTitle').modal('hide');">Salva</button>
         </div>
       </div>
     </div>
   </div>
 
+  
   <!-- WIDGET DI INSERIMENTO INDICE -->
   <div class="modal fade" id="InsertStageIndex" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -167,10 +179,3 @@
 
 </body>
 </html>
-
-<!--
-    TASTI DI INTERFACCIA
-    "Salva" -> Aggiorna il JSON. Il campo "nome" è già compilato se il JSON esiste già. Nel caso venga cambiato, viene creato un nuovo JSON
-    "Indietro" -> Torna alla sezione precedente senza salvare (magari aggiungere il widget di avvertimento)
-    "Chiudi" -> Torna al menu principale mostrando il widget che chiede se si vuole salvare
--->

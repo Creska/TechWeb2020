@@ -1,28 +1,4 @@
 /*
-
-Idea per il procedimento:
-
-COSA DOVREBBE VEDERE IL GIOCATORE:
-
-____________________________________
-|                                   |
-|            NOME STORIA            |
-|___________________________________|
-|                                   |
-|            NOME QUEST             |
-|___________________________________|
-|                                   |
-|        testo, immagini, ecc.      |
-|                                   |
-.                                   .
-.                                   .
-.                                   .
-|                                   |
-| CAMPO RISPOSTA DI FINE ATTIVITA'  |
-|___________________________________|
-
-
-
 ORGANIZZAZIONE:
 * La storia è un array di quests, che a loro volta sono un array di attività (spiegazioni o sfide)
 * Ogni quest avrà un numero che indica la quest successiva
@@ -33,8 +9,6 @@ ORGANIZZAZIONE:
 
 TODO:
 * Aggiungere gli elementi necessari per chat e script vari
-* Migliorare il posizionamento dei miniscript associati ai campi di risposta
-
 
 */
 

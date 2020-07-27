@@ -56,11 +56,90 @@ function printError() {
 };
 
 
+function loadSection( SectionId ) {
+	/* In vari casi va aggiunto il comando di aggiornamento del nome della sezione */
+
+	switch ( SectionId ) {
+		case "EditStory":
+			$( "#QuestList ul" ).empty();
+
+			for ( i = 0; i < CurrentWork.quests.length; i++ ) {
+				/* probabilmente non è correttissimo e infatti funziona male  */
+				let NewButton = $( "<button/>",
+				{
+					class: "btn btn-secondary btn-lg StageButton GoToStage",
+					onclick: "editQuest(" + String( i ) + ");",
+					text: "Quest" + String( i ),
+				}).wrap("<li></li>");
+
+				$( "#QuestList ul" ).append( NewButton );
+
+				console.log(NewButton.attr("style")); // debugging
+			}
+
+			let AddQuestButton = $( "<button/>",
+				{
+					class: "btn btn-secondary btn-lg StageButton AddStage",
+					onclick: "toggleIndexInput();",
+					text: "+"
+				}).wrap("<li></li>");
+
+			$( "#QuestList ul" ).append( AddQuestButton );
+			break;
+		case "EditQuest":
+			$( "#ActivityList ul" ).empty();
+
+			for ( i = 0; i < CurrentWork.quests[CurrentNavStatus.QuestN].activities.length; i++ ) {
+				/* probabilmente non è correttissimo e infatti funziona male  */
+				let NewButton = $( "<button/>",
+				{
+					class: "btn btn-secondary btn-lg StageButton GoToStage",
+					onclick: "editActivity(" + String( i ) + ");",
+					text: "Activity" + String( i ),
+				}).wrap("<li></li>");
+
+				$( "#ActivityList ul" ).append( NewButton );
+
+				console.log(NewButton.attr("style")); // debugging
+			}
+
+			let AddActivityButton = $( "<button/>",
+				{
+					class: "btn btn-secondary btn-lg StageButton AddStage",
+					onclick: "toggleIndexInput();",
+					text: "+"
+				}).wrap("<li></li>");
+
+			$( "#ActivityList ul" ).append( AddActivityButton );
+			break;
+		default:
+			printError();
+			break;
+	}
+
+};
+
+
 /**
 * @param newSectionId
 * fa scomparire la sezione corrente e, appena l'animazione è finita, fa comparire quella nuova indicata
 */
 function goToSection( newSectionId ) {
+	/* Reloading per le sezioni che ne necessitano */
+	switch ( newSectionId ) {
+		case "EditStory":
+			loadSection( "EditStory" );
+			break;
+		case "EditQuest":
+			loadSection( "EditQuest" );
+			break;
+		case "EditActivity":
+			loadSection( "EditActivity" );
+			break;
+		default:
+			break;
+	}
+
     $( "#" + CurrentNavStatus.Section ).fadeOut( function(){
         $( "#" + newSectionId ).fadeIn(); 
     }
@@ -101,7 +180,12 @@ function initActivity() {
 	return EmptyActivity;
 };
 
-/* APPUNTO: fare una funzione di reload che prende come argomento un valore che indica qual è la sezione da reloadare. usarlo in goToSection */
+function editQuest( quest_n ) {
+	CurrentNavStatus.QuestN = quest_n;
+	CurrentNavStatus.ActivityN = -1;
+	
+	goToSection( "EditQuest" );
+};
 
 /**
  * @param WidgetId
@@ -151,7 +235,7 @@ function toggleIndexInput() {
 		IndexInput.attr('max', IndexInput.val() );
 	}
 	else {
-		IndexInput.val( CurrentWork.quests[QuestN].activities.length );
+		IndexInput.val( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length );
 		IndexInput.attr('max', IndexInput.val() );
 	}
 
@@ -191,7 +275,9 @@ function insertNewStage() {
 	}
 
 	$('#InsertStageIndex').modal('hide');
-}
+
+	loadSection( CurrentNavStatus.Section );
+};
 
 
 function saveDataFragment( field, value, quest_n, activity_n ) {

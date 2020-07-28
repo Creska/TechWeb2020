@@ -40,7 +40,7 @@ function sayHello() {
 };
 
 function printCurrentJson() {
-	console.log( JSON.stringify(CurrentWork ));
+	console.log( CurrentWork );
 }
 
 
@@ -51,7 +51,7 @@ function printCurrentJson() {
  * Funzione da evolvere poi in una procedura di errore - che magari resetta l'applicazione
  */
 function printError() {
-	window.alert( "!!! MAJOR ERROR !!!");
+	window.alert( "!!! MAJOR ERROR !!!" );
 };
 
 
@@ -91,7 +91,6 @@ function loadSection( SectionId ) {
 			$( "#ActivityList ul" ).empty();
 
 			for ( i = 0; i < CurrentWork.quests[CurrentNavStatus.QuestN].activities.length; i++ ) {
-				/* probabilmente non è correttissimo e infatti funziona male  */
 				let NewButton = $( "<button/>",
 				{
 					class: "btn btn-secondary btn-lg StageButton GoToStage",
@@ -126,9 +125,12 @@ function goToSection( newSectionId ) {
 	/* Reloading per le sezioni che ne necessitano */
 	switch ( newSectionId ) {
 		case "EditStory":
+			CurrentNavStatus.QuestN = -1;
+			CurrentNavStatus.ActivityN = -1;
 			loadSection( "EditStory" );
 			break;
 		case "EditQuest":
+			CurrentNavStatus.ActivityN = -1;
 			loadSection( "EditQuest" );
 			break;
 		case "EditActivity":
@@ -180,7 +182,8 @@ function initQuest() {
  */
 function initActivity() {
 	let EmptyActivity = {
-		activity_html: "",
+		activity_text: "",
+		answer_field: "",
 		right_answer: "",
 		answer_score: "",
 		ASK_EVAL: 0,
@@ -200,6 +203,16 @@ function editQuest( quest_n ) {
 	CurrentNavStatus.ActivityN = -1;
 	
 	goToSection( "EditQuest" );
+};
+
+
+/**
+ * @param activity_n
+ * Invia alla sezione di editing dell'attività specificata - ovviamente facente parte della quest corrente
+ */
+function editActivity( activity_n ) {
+	CurrentNavStatus.ActivityN = activity_n;
+	goToSection( "EditActivity" );
 };
 
 
@@ -320,8 +333,8 @@ function saveDataFragment( field, value ) {
 		case "quest_title":
 			CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = value;
 			break;
-		case "activity_html":
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_html = value;
+		case "activity_text":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = value;
 			break;
 		case "right_answer":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = value;
@@ -345,6 +358,4 @@ function saveDataFragment( field, value ) {
 			printError();
 			break;
 	}
-
-	printCurrentJson(); // debugging
 };

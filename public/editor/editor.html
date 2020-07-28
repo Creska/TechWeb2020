@@ -26,7 +26,7 @@
     <!-- aggiungere metodo per rendere i pulsanti non cliccabili in determinate situazioni -->
     <button type="button" class="btn btn-secondary" onclick="goBack();">Back</button>
     <button type="button" class="btn btn-secondary">Save</button>
-    <button type="button" class="btn btn-secondary">Close</button>
+    <button type="button" class="btn btn-secondary" onclick="printCurrentJson();">Close</button>
   </div>
 
 
@@ -62,7 +62,7 @@
       Modifica le impostazioni generali della storia
     </div>
     <div>
-      <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="toggleTextInput();">Modifica titolo</button>
+      <button class="btn btn-primary btn-lg btn-block" id="EditStoryTitleButton" onclick="toggleTextInput( 'EditStoryTitle' );">Modifica titolo</button>
       <button class="btn btn-primary btn-lg btn-block">Modifica tema // TODO</button>
     </div>
     <div class="StageList" id="QuestList">

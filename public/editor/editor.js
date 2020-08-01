@@ -6,11 +6,13 @@ Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
 
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
-    MainMenu: "MainMenu",
-    ChooseAccessibility: "MainMenu",
+	MainMenu: "MainMenu",
+	ChooseGameMode: "MainMenu",
+    ChooseAccessibility: "ChooseGameMode",
     EditStory: "MainMenu",
 	EditQuest: "EditStory",
-	EditActivity: "EditQuest"
+	EditActivity: "EditQuest",
+	EditAnswerField: "EditActivity"
 };
 
 /* indica la dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
@@ -25,7 +27,8 @@ var CurrentWork = {
 	ACCESSIBILITY: 0,
 	story_title: "",
 	story_ID: -1,
-	settings: {},
+	game_mode: "",
+	settings: [],
 	settings_form: "",
 	quests: [],
 	stylesheet: "",
@@ -110,6 +113,21 @@ function loadSection( SectionId ) {
 
 			$( "#ActivityList ul" ).append( AddActivityButton );
 			break;
+		case "EditActivity":
+			// TODO, modificare solo il nome della sezione
+			break;
+		case "EditAnswerField":
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
+				// carica ciò che è salvato
+			}
+			else {
+				// per ogni caso di input
+					// compilare l'answer field
+					// caricare anteprima: per ogni input caricarlo ed inserire la risposta giusta
+
+				// compilare i campi di settings
+			}
+			break;
 		default:
 			printError();
 			break;
@@ -136,6 +154,8 @@ function goToSection( newSectionId ) {
 		case "EditActivity":
 			loadSection( "EditActivity" );
 			break;
+		case "EditAnswerField":
+			loadSection( "EditAnswerField" );
 		default:
 			break;
 	}
@@ -315,6 +335,23 @@ function insertNewStage() {
 
 
 /**
+ * Cancella l'attività o la quest specificata. Il tipo di oggetto da eliminare viene dedotto dai dati in CurrentNavStatus
+ */
+function removeSelectedStage() {
+	if ( CurrentNavStatus.ActivityN < 0 ) {
+		CurrentWork.quests.splice( CurrentNavStatus.QuestN, 1 );
+	}
+	else {
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice( CurrentNavStatus.ActivityN, 1 );
+	}
+
+	$( "#RemoveStage" ).modal( "hide" );
+
+	goBack();
+};
+
+
+/**
  * @param field --> campo del JSON
  * @param value --> valore da assegnare al campo specificato
  * Aggiorna il campo del JSON con il suo valore
@@ -359,3 +396,40 @@ function saveDataFragment( field, value ) {
 			break;
 	}
 };
+
+
+
+function saveAnswerFieldSettings() {
+	if ( $( "#AnswerTimer" ).val() < 0.5 ) {
+		// fai partire l'alert
+	}
+	else {
+		switch ( /* tipo di input */ ) {
+			case "text":
+				// prendi valore del campo testo
+				break;
+			case "number":
+				// prendi valore del campo numero
+				break;
+			case "radio":
+				let found = false;
+				while ( /* nodo:checked */ == false ) {
+					// passa al nodo successivo
+				}
+				// prendi l'id del radio checkato
+				break;
+			default:
+				printError();
+				break;
+		}
+		
+		saveDataFragment( answer_field, $( "#AnswerField" ).prop( "outerHTML" ) );
+		saveDataFragment( expected_time, $( "#AnswerTimer" ).val() * 60000 );
+		saveDataFragment( answer_score, $( "#AnswerScore" ).val() );
+		saveDataFragment( ASK_EVAL, "#NeedEvaluation".prop( "checked" ) );
+	}
+
+	goBack();
+
+	return;
+}

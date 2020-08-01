@@ -37,9 +37,36 @@
     </div>
     <!-- MainButtonGroup = gruppo di pulsanti grandi -->
     <div class="MainButtonGroup" id="MainMenuButtonGroup">
-      <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseAccessibility');"><strong>NEW</strong><br>Crea una nuova storia</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseGameMode');"><strong>NEW</strong><br>Crea una nuova storia</button>
       <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('ChooseStoryToEdit');"><strong>EDIT</strong><br>Modifica una storia // TODO</button>
       <button class="btn btn-primary btn-lg btn-block" onclick="goToSection('Explorer');"><strong>SERVER</strong><br>Gestisci le storie salvate e pubblicate // TODO</button>
+    </div>
+  </div>
+
+
+  <!-- SCELTA DI MODALITA' DI GIOCO -->
+  <div class="row EditorSection" id="ChooseGameMode">
+    <div class="card" onclick="CurrentWork.game_mode='SINGLE'; goToSection('ChooseAccessibility');">
+      <img src="https://sites.google.com/site/battutememes/_/rsrc/1364322577314/home/omino%20bianco.jpg?height=200&width=189" class="card-img-top" alt="..." >
+      <div class="card-body">
+        <h5 class="card-title">Individuale</h5>
+        <p class="card-text">In questa sessione di gioco si può giocare individualmente.</p>
+      </div>
+    </div>
+    <div class="card" onclick="CurrentWork.game_mode='GROUP'; goToSection('ChooseAccessibility');">
+      <img src="https://importanciadevivir.com/wp-content/uploads/2019/05/Sociedad-e-Individuo-1024x768.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Gruppo</h5>
+        <p class="card-text">Tramite l'utilizzo di uno smartphone, i componenti del gruppo possono partecipare all'attività di gioco.
+          Il gruppo è caratterizzato da 2 fino a 5 componenti.</p>
+      </div>
+    </div>
+    <div class="card" onclick="CurrentWork.game_mode='CLASS'; goToSection('ChooseAccessibility');">
+      <img src="https://www.merlinwizard.com/wp-content/uploads/gruppo-persone-stilizzato.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Classe</h5>
+        <p class="card-text">Con classe si intende gruppi da 15 a 20 persone e l'utilizzo dell'attività è uguale nel caso del gruppo.</p>
+      </div>
     </div>
   </div>
 
@@ -118,7 +145,7 @@
       </ul>
     </div>
     <div>
-      <button class="btn btn-primary btn-lg btn-block" onclick="">Elimina // TODO</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="$('#RemovalAlert').text('Confermare la rimozione della quest?'); $('#RemoveStage').modal('toggle');">Elimina</button>
       <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima // TODO</button>
     </div>
   </div>
@@ -177,5 +204,80 @@
     </div>
   </div>
 
+
+  <!-- WIDGET DI ELIMINAZIONE QUEST/ATTIVITA' -->
+  <div class="modal fade" id="RemoveStage" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="RemovalAlert"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-primary" onclick="removeSelectedStage();">Elimina</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
+  <div class="EditorSection" id="EditActivity">
+    <div>
+      Titolo sezione
+    </div>
+    <div>
+      <button>Modifica testo attività</button>
+      <button onclick="goToSection('AnswerField');">Modifica campo risposta</button>
+      <button>Modifica CSS</button>
+    </div>
+    <div>
+      <button class="btn btn-primary btn-lg btn-block" onclick="$('#RemovalAlert').text('Confermare la rimozione della quest? La programmazione delle attività sarà compromessa e si renderà quindi necessaria una completa revisione della storia.'); $('#RemoveStage').modal('toggle');">Elimina</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="">Visualizza anteprima // TODO</button>
+    </div>
+  </div>
+
+
+  <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
+  <div class="EditorSection" id="EditAnswerField">
+    <div>
+      Titolo sezione
+    </div>
+    <form id="ChooseInputType">
+      <div>Tipologia di input:</div>
+      <label for="Checklist">Checklist</label>
+      <input type="radio" name="InputTypeOption" id="Checklist" onclick="loadSection('EditAnswerField');">
+      <label for="Text">Testo</label>
+      <input type="radio" name="InputTypeOption" id="Text" onclick="loadSection('EditAnswerField');">
+      <label for="Number">Numero</label>
+      <input type="radio" name="InputTypeOption" id="Number" onclick="loadSection('EditAnswerField');">
+    </form>
+    <div>
+      <label for="AnswerFieldDescriptionInput">Indicazione per il giocatore:</label>
+      <input type=text id="AnswerFieldDescriptionInput">
+      <div id="AnswerField"> <!-- Nodo invisibile - serve principalmente per il json -->
+        <div id="AnswerFieldDescription"></div>
+        <!-- qui sotto ci vanno i campi in input ed una label per ognuno di loro -->
+      </div>
+    </div>
+    <div class="input-group" id="EnterCorrectAnswer">
+      <!-- mettere un alert con scritto "anteprima" e sotto la copia esatta dell'answerfield -->
+    </div>
+    <div class="input-group" id="AnswerFieldSettings">
+      <label for="AnswerTimer">Limite di tempo (minuti) per il completamento dell'obiettivo</label>
+      <input type="number" id="AnswerTimer"> <!-- metterlo in minuti - con un add di 0.5 -->
+      <label for="AnswerScore">Punteggio per il corretto completamento dell'obiettivo</label>
+      <input type="number" id="AnswerScore">
+      <label for="NeedEvaluation">Richiesta valutazione</label>
+      <input type="checkbox" id="NeedEvaluation">
+    </div>
+    <button onclick="saveAnswerFieldSettings();">Salva</button>
+  </div>
 </body>
 </html>

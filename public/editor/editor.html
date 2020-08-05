@@ -234,7 +234,8 @@
     </div>
     <div>
       <button>Modifica testo attività</button>
-      <button onclick="goToSection('AnswerField');">Modifica campo risposta</button>
+      <button onclick="goToSection('EditAnswerField');">Modifica campo risposta</button>
+      <button>Modifica programmazione dell'attività</button>
       <button>Modifica CSS</button>
     </div>
     <div>
@@ -249,26 +250,30 @@
     <div>
       Titolo sezione
     </div>
-    <form id="ChooseInputType">
-      <div>Tipologia di input:</div>
-      <label for="Checklist">Checklist</label>
-      <input type="radio" name="InputTypeOption" id="Checklist" onclick="loadSection('EditAnswerField');">
-      <label for="Text">Testo</label>
-      <input type="radio" name="InputTypeOption" id="Text" onclick="loadSection('EditAnswerField');">
-      <label for="Number">Numero</label>
-      <input type="radio" name="InputTypeOption" id="Number" onclick="loadSection('EditAnswerField');">
-    </form>
+
     <div>
-      <label for="AnswerFieldDescriptionInput">Indicazione per il giocatore:</label>
-      <input type=text id="AnswerFieldDescriptionInput">
-      <div id="AnswerField"> <!-- Nodo invisibile - serve principalmente per il json -->
-        <div id="AnswerFieldDescription"></div>
-        <!-- qui sotto ci vanno i campi in input ed una label per ognuno di loro -->
-      </div>
+      <div>Tipologia di input:</div>
+      <label for="QuestionType_Checklist">Checklist</label>
+      <input type="radio" name="QuestionType" id="QuestionType_Checklist" onclick="loadEditAnswerFieldSection(false);">
+      <label for="QuestionType_Text">Testo</label>
+      <input type="radio" name="QuestionType" id="QuestionType_Text" onclick="loadEditAnswerFieldSection(false);">
+      <label for="QuestionType_Number">Numero</label>
+      <input type="radio" name="QuestionType" id="QuestionType_Number" onclick="loadEditAnswerFieldSection(false);">
     </div>
-    <div class="input-group" id="EnterCorrectAnswer">
-      <!-- mettere un alert con scritto "anteprima" e sotto la copia esatta dell'answerfield -->
+    <!-- Nodo invisibile - serve principalmente per il json -->
+    <div id="AnswerField">
+      <div id="AnswerField_Description"></div>
+      <div id="AnswerField_Input"></div>
     </div>
+    <!-- Input della stringa di testo che poi diventerà la "AnswerFieldDescription" -->
+    <div>
+      <label for="InsertAnswerFieldDescription">Indicazione per il giocatore:</label>
+      <input type=text id="InsertAnswerFieldDescription">
+    </div>
+    <!-- Sezione visibile all'utente per gestire la creazione dell'AnswerField. In caso abbia scelto il tipo Checklist, il creator dovrà inserire una stringa di testo per ogni label, e avrà un pulsante per inserire altre opzioni -->
+    <div class="input-group" id="AnswerFieldPreview">
+    </div>
+    <!-- Sezione per il settaggio dell'AnswerField - non è soggetto a reload in caso il creator cambi opzione di input -->
     <div class="input-group" id="AnswerFieldSettings">
       <label for="AnswerTimer">Limite di tempo (minuti) per il completamento dell'obiettivo</label>
       <input type="number" id="AnswerTimer"> <!-- metterlo in minuti - con un add di 0.5 -->
@@ -281,3 +286,10 @@
   </div>
 </body>
 </html>
+
+<!--
+  Casi in cui bisogna ricaricare la pagina:
+  * prima apertura -> campi tutti vuoti e magari un'opzione di input checkata di default
+  * reload dopo un cambio di modalità input heck -> praticamente uguale alla prima apertura, ma i campi di settings rimangono invariati
+  * seconda apertura -> compilazione in base a ciò che c'è nel json
+-->

@@ -10,6 +10,8 @@ ORGANIZZAZIONE:
 
 // Struttura dell'oggetto JSON
 
+// NOTA IMPORTANTE - i campi relativi ai settings forse è meglio toglierli
+
 game_example = {
 	ACCESSIBILITY: 0, // flag che indica se la storia è accessibile
 	story_title: "", // probabilmente servirà un div per contenerlo
@@ -33,7 +35,7 @@ game_example = {
 			decisa dal codice JS "action_on_activity_answer". */
 			activities: [
 				{
-					activity_text: "", // testo HTML dell'attività e del campo risposta
+					activity_text: "", // testo HTML dell'attività - contiene un tasto "Prosegui" che poi può essere appositamente programmato in base alla risposta dell'attività
 					answer_field: "", // HTML del campo risposta
 					right_answer: "", // contiene la risposta giusta
 					answer_score: "", // punteggio per la risposta giusta

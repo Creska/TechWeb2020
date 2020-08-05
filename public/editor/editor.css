@@ -69,11 +69,9 @@ body {
     overflow: hidden;
 }
 
-/*
-.GoToStage {
-
+#AnswerField {
+    visibility: hidden;
 }
-*/
 
 /*
 

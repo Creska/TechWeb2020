@@ -116,22 +116,105 @@ function loadSection( SectionId ) {
 		case "EditActivity":
 			// TODO, modificare solo il nome della sezione
 			break;
-		case "EditAnswerField":
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
-				// carica ciò che è salvato
-			}
-			else {
-				// per ogni caso di input
-					// compilare l'answer field
-					// caricare anteprima: per ogni input caricarlo ed inserire la risposta giusta
-
-				// compilare i campi di settings
-			}
-			break;
 		default:
 			printError();
 			break;
 	}
+};
+
+
+
+function loadEditAnswerFieldSection( RESET ) {
+
+	if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
+		// spunta il tipo di input scelto e carica ciò che è salvato
+	}
+	else {
+		if ( RESET ) {
+			$( "#QuestionType_Checklist" ).prop( "checked", true );
+	
+			$( "#AnswerTimer" ).val( 0 );
+			$( "#AnswerScore" ).val( 0 );
+			$( "#NeedEvaluation" ).prop( "checked", false );
+		}
+
+		$( "#AnswerField_Description" ).empty();
+		$( "#AnswerField_Input" ).empty();
+		$( "#InsertAnswerFieldDescription" ).empty();
+		$( "#AnswerFieldPreview" ).empty();
+
+		buildAnswerField(); // Compilazione dell'AnswerField che andrà poi nel JSON
+
+		/* Creazione dell'answer field di anteprima */
+		$( "#AnswerFieldPreview" ).html( $( "#AnswerField_Input" ).html() );
+
+		if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+			let AddRadioButton = $( "<button/>",
+			{
+				class: "btn btn-secondary AddRadio",
+				onclick: "addRadio('AnswerField_Input');",
+				text: "+"
+			});
+			$( "#AnswerFieldPreview" ).append( AddRadioButton );
+
+			let LabelInput;
+			$( "#AnswerFieldPreview label" ).each( function( index ) {
+				LabelInput = $( "<input/>",
+				{
+					type: "text",
+					value: "Label" + String( index )
+				});
+
+				$( this ).replaceWith( LabelInput );
+			});
+		}
+	}
+	
+	return;
+}; 
+
+
+function buildAnswerField() {
+	let CurrentStorySection = "Quest" + String( CurrentNavStatus.QuestN ) + "Activity" + String( CurrentNavStatus.ActivityN );
+
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+
+		for ( i = 0; i < 2; i++ ) {
+			let NewRadio = $( "<input/>", 
+			{
+				type: "radio",
+				name: CurrentStorySection + "AnswerInputGroup",
+				id: CurrentStorySection + "AnswerInput" + String( i )
+			});
+			$( "#AnswerField_Input" ).append( NewRadio );
+			
+			let NewLabel = $( "<label/>",
+			{
+				for: NewRadio.attr( "id" ),
+				text: ""
+			});
+			$( "#AnswerField_Input" ).append( NewLabel );
+		}
+		
+	}
+	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
+		let NewTextInput = $( "<input/>",
+		{
+			type: "text",
+			id: CurrentStorySection + "AnswerInput"
+		});
+		$( "#AnswerField_Input" ).append( NewTextInput );
+	}
+	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
+		let NewNumInput = $( "<input/>",
+		{
+			type: "number",
+			id: CurrentStorySection + "AnswerInput"
+		});
+		$( "#AnswerField_Input" ).append( NewNumInput );
+	}
+
+	return;
 };
 
 
@@ -155,7 +238,7 @@ function goToSection( newSectionId ) {
 			loadSection( "EditActivity" );
 			break;
 		case "EditAnswerField":
-			loadSection( "EditAnswerField" );
+			loadEditAnswerFieldSection( true );
 		default:
 			break;
 	}
@@ -272,7 +355,7 @@ function toggleTextInput( WidgetId ) {
 
 /**
  * Attiva il widget di inserimento dell'indice di una quest o attività.
- * Il tipo di oggetto da indicizzare viene detto sulla base dei valori attuali nel CurrentNavStatus
+ * Il tipo di oggetto da indicizzare viene dedotto sulla base dei valori attuali nel CurrentNavStatus
  */
 function toggleIndexInput() {
 	let UseLastIndex = $( "#UseLastIndex" );
@@ -403,8 +486,10 @@ function saveAnswerFieldSettings() {
 	if ( $( "#AnswerTimer" ).val() < 0.5 ) {
 		// fai partire l'alert
 	}
+	
 	else {
-		switch ( /* tipo di input */ ) {
+		let prova = "text"; // debugging
+		switch ( prova ) { // qua poi ci andrà il tipo di input
 			case "text":
 				// prendi valore del campo testo
 				break;
@@ -413,7 +498,7 @@ function saveAnswerFieldSettings() {
 				break;
 			case "radio":
 				let found = false;
-				while ( /* nodo:checked */ == false ) {
+				while ( false ) {
 					// passa al nodo successivo
 				}
 				// prendi l'id del radio checkato
@@ -433,3 +518,8 @@ function saveAnswerFieldSettings() {
 
 	return;
 }
+
+/* ROBA DA FARE
+scomporre la loadSection in varie funzioni di load. sarà più semplice fare una gestione corretta
+per il caricamento della sezione di editAnswerField bisogna eventualmente pulire i campi di settings
+*/

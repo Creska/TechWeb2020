@@ -27,10 +27,17 @@
 </head>
 
 <body>
-    <div id="welcome">
-        Schermata iniziale del gioco. Per avviare una nuova partita, premere START<br>
+    <div id="StartScreen">
+        <div id="WelcomeText">
+            Schermata iniziale del gioco. Per avviare una nuova partita, premere START
+        </div>
         <button onclick="startGame();">START</button>
     </div>
+
+    <template>
+        <!-- Container di tutto ciò che si vede a schermo, ovvero titolo della quest e attività -->
+        <div class="Quest"></div>
+    </template>
 
     <div id='chat-room'>
         <form action="">

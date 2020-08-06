@@ -17,16 +17,6 @@ game_example = {
 	story_title: "", // probabilmente servirà un div per contenerlo
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)
-	/* i settings sono un array di coppie nome-valore che indicano un tipo di settaggio della partita */
-	settings: [
-		{
-			setting_name: "", // nome dell'opzione
-			setting_value: "" // valore - vuoto finché il giocatore non sceglie la sua preferenza
-		}
-	],
-	settings_form: "", // HTML del form che il player usa per compilare i settings
-	/* La storia è un array di quests. Le quests possono essere in un unico ordine.
-	Di conseguenza, ad ogni elemento corrisponde uno e un solo elemento successivo. */
 	quests: [
 		{	
 			quest_title: "", // probabilmente servirà un div per contenerlo
@@ -35,10 +25,11 @@ game_example = {
 			decisa dal codice JS "action_on_activity_answer". */
 			activities: [
 				{
-					activity_text: "", // testo HTML dell'attività - contiene un tasto "Prosegui" che poi può essere appositamente programmato in base alla risposta dell'attività
+					activity_text: "", // testo HTML dell'attività
 					answer_field: "", // HTML del campo risposta
 					right_answer: "", // contiene la risposta giusta
 					answer_score: "", // punteggio per la risposta giusta
+					answer_outcome: "", // miniscript che, a seconda della risposta data, dirige il player verso un'attività prestabilita appositamente
 					ASK_EVAL: 0, // flag che indica se c'è necessità di valutazione umana per la risposta
 					expected_time: 0 // tempo in ms previsto per il completamento dell'attività
 				}
@@ -48,3 +39,19 @@ game_example = {
 	stylesheet: "", // CSS della storia. eventuali stili particolari di quests o attività verranno sovrascritti ad esso
 	score: [] // array che il player trasformerà in matrice. contiene tutti i punteggi delle attività - sarà il player ad aggiornarlo volta per volta
 };
+
+
+/*
+SETTINGS
+Inizialmente era prevista anche questa feature - relativa alle impostazioni personalizzate del giocatore che poi andranno ad influire sulla storia.
+Aggiungerla solo se strettamente necessario.
+
+settings: [
+	{
+		setting_name: "", // nome dell'opzione
+		setting_value: "" // valore - vuoto finché il giocatore non sceglie la sua preferenza
+	}
+],
+settings_form: ""
+
+*/

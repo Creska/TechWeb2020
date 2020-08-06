@@ -28,8 +28,6 @@ var CurrentWork = {
 	story_title: "",
 	story_ID: -1,
 	game_mode: "",
-	settings: [],
-	settings_form: "",
 	quests: [],
 	stylesheet: "",
 	score: []
@@ -64,7 +62,6 @@ function printError() {
  */
 function loadSection( SectionId ) {
 	/* TODO: mettere il comando di aggiornamento del nome della sezione */
-	/* TODO: ricontrollare la correttezza delle procedure di creazione elementi */
 
 	switch ( SectionId ) {
 		case "EditStory":
@@ -139,13 +136,13 @@ function loadEditAnswerFieldSection( RESET ) {
 		}
 
 		$( "#AnswerField_Description" ).empty();
-		$( "#AnswerField_Input" ).empty();
+		$( "#AnswerField_Input" ).remove();
 		$( "#InsertAnswerFieldDescription" ).empty();
 		$( "#AnswerFieldPreview" ).empty();
 
-		buildAnswerField(); // Compilazione dell'AnswerField che andrà poi nel JSON
+		buildAnswerField(); // Creazione dell'AnswerField che andrà poi nel JSON
 
-		/* Creazione dell'answer field di anteprima */
+		/* Preparazione dell'answer field di anteprima */
 		$( "#AnswerFieldPreview" ).html( $( "#AnswerField_Input" ).html() );
 
 		if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
@@ -175,47 +172,92 @@ function loadEditAnswerFieldSection( RESET ) {
 
 
 function buildAnswerField() {
-	let CurrentStorySection = "Quest" + String( CurrentNavStatus.QuestN ) + "Activity" + String( CurrentNavStatus.ActivityN );
+	let NewInputField; // nodo HMTL corrispondente al campo di input
 
 	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		NewInputField = $( "<ul/>",
+		{
+			class: "AnswerInput",
+			id: assignID( "AnswerInput" )
+		});
 
 		for ( i = 0; i < 2; i++ ) {
-			let NewRadio = $( "<input/>", 
+			let NewRadioElement = $( "<li/>" );
+
+			NewRadioElement.append( $( "<input/>", 
 			{
 				type: "radio",
-				name: CurrentStorySection + "AnswerInputGroup",
-				id: CurrentStorySection + "AnswerInput" + String( i )
-			});
-			$( "#AnswerField_Input" ).append( NewRadio );
+				name: assignID( "AnswerInputGroup" ),
+				id: assignID( "AnswerInput" + String( i ) )
+			}));
 			
-			let NewLabel = $( "<label/>",
+			NewRadioElement.append( $( "<label/>",
 			{
-				for: NewRadio.attr( "id" ),
+				for: assignID( "AnswerInput" + String( i ) ),
 				text: ""
-			});
-			$( "#AnswerField_Input" ).append( NewLabel );
+			}));
+
+			NewInputField.append( NewRadioElement );
 		}
-		
 	}
 	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
-		let NewTextInput = $( "<input/>",
+		NewInputField = $( "<input/>",
 		{
 			type: "text",
-			id: CurrentStorySection + "AnswerInput"
+			class: "AnswerInput",
+			id: assignID( "AnswerInput" )
 		});
-		$( "#AnswerField_Input" ).append( NewTextInput );
 	}
 	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
-		let NewNumInput = $( "<input/>",
+		NewInputField = $( "<input/>",
 		{
 			type: "number",
-			id: CurrentStorySection + "AnswerInput"
+			class: "AnswerInput",
+			id: assignID( "AnswerInput" )
 		});
-		$( "#AnswerField_Input" ).append( NewNumInput );
 	}
 
-	return;
+	$( "#AnswerField" ).append( NewInputField );
 };
+
+
+
+function saveAnswerFieldSettings() {
+	if ( $( "#AnswerTimer" ).val() < 0.5 ) {
+		// fai partire l'alert
+	}
+	
+	else {
+		// salvataggio dell'html
+		$( "#AnswerField div" ).id( assignID( "AnswerInput_Description" ) );
+		$( "#AnswerField input" ).id( assignID( "AnswerInput" ) );
+		saveDataFragment( answer_field, $( "#AnswerField" ).html() );
+
+		// salvataggio della risposta corretta
+		if ( $( "#AnswerField_Input" ).prop( "tagName" ) == "li" ) {
+			// cicla sulle opzioni e salva l'id della risposta giusta
+		}
+		else {
+			saveDataFragment( "right_answer", $( "#AnswerField"))
+		}
+		
+		let AnswerFieldtoSave = $( "<div/>",
+		{
+			class: "AnswerField",
+			id: addGamePhaseIdentification( "AnswerField" )
+		});
+		AnswerFieldtoSave.append( $( "#AnswerField" ).html() );
+
+		saveDataFragment( answer_field, AnswerFieldtoSave );
+		saveDataFragment( expected_time, $( "#AnswerTimer" ).val() * 60000 );
+		saveDataFragment( answer_score, $( "#AnswerScore" ).val() );
+		saveDataFragment( ASK_EVAL, "#NeedEvaluation".prop( "checked" ) );
+	}
+
+	goBack();
+
+	return;
+}
 
 
 /**
@@ -289,6 +331,7 @@ function initActivity() {
 		answer_field: "",
 		right_answer: "",
 		answer_score: "",
+		answer_outcome: "",
 		ASK_EVAL: 0,
 		expected_time: 0
 	};
@@ -437,30 +480,57 @@ function removeSelectedStage() {
 /**
  * @param field --> campo del JSON
  * @param value --> valore da assegnare al campo specificato
- * Aggiorna il campo del JSON con il suo valore
+ * Aggiorna il campo del JSON con il suo valore - inserendolo eventualmente in un'apposita struttura HTML (ovvero tag + id e classe)
  */
 function saveDataFragment( field, value ) {
 	switch ( field ) {
 		case "story_title":
-			CurrentWork.story_title = value;
+			let NewStoryTitle = $( "<div/>",
+			{
+				id: "StoryTitle",
+				text: value
+			});
+			CurrentWork.story_title = NewStoryTitle.prop( "outerHTML" );
 			break;
-		case "settings":
-			/* TODO */
+		case "story_ID":
+			CurrentWork.story_ID = value;
 			break;
-		case "settings_form":
+		case "game_mode":
 			/* TODO */
 			break;
 		case "quest_title":
-			CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = value;
+			let NewQuestTitle = $( "<div/>",
+			{
+				class: "QuestTitle",
+				id: assignID( "QuestTitle" ),
+				text: value
+			});
+			CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
 			break;
 		case "activity_text":
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = value;
+			let NewActivityText = $( "<div/>",{
+				class: "ActivityText",
+				id: assignID( "ActivityText" ),
+				text: value
+			});
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = NewActivityText.prop( "outerHTML" );
 			break;
+		case "answer_field":
+			let NewAnswerField = $( "<div/>",{
+				class: "AnswerField",
+				id: assignID( "AnswerField" ),
+				text: value
+			});
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = NewAnswerField.prop( "OuterHTML" );
+			console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field); // debugging
 		case "right_answer":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = value;
 			break;
 		case "answer_score":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score = value;
+			break;
+		case "answer_outcome":
+			/* TODO */
 			break;
 		case "ASK_EVAL":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL = value;
@@ -481,45 +551,16 @@ function saveDataFragment( field, value ) {
 };
 
 
-
-function saveAnswerFieldSettings() {
-	if ( $( "#AnswerTimer" ).val() < 0.5 ) {
-		// fai partire l'alert
+function assignID( name ) {
+	if ( CurrentNavStatus.ActivityN >= 0 ) {
+		return ( "Q" + String ( CurrentNavStatus.QuestN ) + "A" + String( CurrentNavStatus.ActivityN ) + "_" + name );
 	}
-	
 	else {
-		let prova = "text"; // debugging
-		switch ( prova ) { // qua poi ci andrà il tipo di input
-			case "text":
-				// prendi valore del campo testo
-				break;
-			case "number":
-				// prendi valore del campo numero
-				break;
-			case "radio":
-				let found = false;
-				while ( false ) {
-					// passa al nodo successivo
-				}
-				// prendi l'id del radio checkato
-				break;
-			default:
-				printError();
-				break;
-		}
-		
-		saveDataFragment( answer_field, $( "#AnswerField" ).prop( "outerHTML" ) );
-		saveDataFragment( expected_time, $( "#AnswerTimer" ).val() * 60000 );
-		saveDataFragment( answer_score, $( "#AnswerScore" ).val() );
-		saveDataFragment( ASK_EVAL, "#NeedEvaluation".prop( "checked" ) );
+		return ( "Q" + String ( CurrentNavStatus.QuestN ) + "_" + name );
 	}
+};
 
-	goBack();
-
-	return;
-}
 
 /* ROBA DA FARE
 scomporre la loadSection in varie funzioni di load. sarà più semplice fare una gestione corretta
-per il caricamento della sezione di editAnswerField bisogna eventualmente pulire i campi di settings
 */

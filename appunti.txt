@@ -29,8 +29,6 @@ ____________________________________
 
 ROBA DA FARE IMPORTANTE:
 * EDITOR
-    * Completare saveAnswerFieldSettings e addRadioButton - sistemare i bug!
-    * Rinominare #AnswerField in #AnswerFieldPlaceholder per fare meno confusione
     * Mettere un alert sul cambio di input dell'AnswerField che segnali attenzione nel cambiare idea
 * Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)
 * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni

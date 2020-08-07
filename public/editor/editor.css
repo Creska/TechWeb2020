@@ -69,8 +69,13 @@ body {
     overflow: hidden;
 }
 
-#AnswerField {
-    visibility: hidden;
+#AnswerFieldPreview {
+    /* aggiungere una grandezza fissa e lo scroll in caso di overflow */
+    background-color: gray;
+}
+
+#AnswerFieldPreview ul {
+    list-style-type: none;
 }
 
 /*

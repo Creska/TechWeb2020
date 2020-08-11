@@ -29,26 +29,23 @@ ____________________________________
 
 ROBA DA FARE IMPORTANTE:
 * EDITOR
+    * Togliere l'assignID
+    * Sistemare la creazione dinamica degli elementi
     * Mettere un alert sul cambio di input dell'AnswerField che segnali attenzione nel cambiare idea
-* Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)
-* Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
-* Aggiungere una guida all'editor css
-
-
-ROBA DA FARE:
-* GENERALE
-    * Approfondire la faccenda del metodo click() in aggiunta all'attributo onclick
-    * Capire la differenza tra attr() e prop()
-* EDITOR
-    * Aggiornare il pdf
-    * Aggiungere la parte dei settings. Specifiche:
-        * Vi sono due tipi di input:
-            * Checkbox
-            * Numero (l'autore specifica un range)
+    * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
+    * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest)
+    * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
+* EDITOR E PLAYER
+    * Nell'answer outcome inserire la chiamata alla funzione per incrementare il punteggio, nel caso la risposta sia giusta
+    * Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)
 * PLAYER
-    * Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
-
-
+    * Aggiungere la funzione di controllo sulla scadenza del tempo
+    * Creare un oggetto che contenga questi parametri:
+        * tempo passato da partenza attività a risposta inviata
+        * numero di volte per cui è usata la chat durante la medesima attività
+        * sezione in cui si trova
+* AGGIUNGERE LA ROBA DI ACCESSIBILITA'
+* approfondire la differenza tra attr e prop
 
 
 

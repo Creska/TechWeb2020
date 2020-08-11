@@ -5,20 +5,21 @@ NOTE:
 * Per semplicità, l'applicazione internamente identifica le quest e le attività il base all'indice che esse hanno nell'array di cui fanno parte.
 */
 
-var Storia = {
+var StoryObj = {
 	ACCESSIBILITY: 0,
-	story_title: "<div id='StoryTitle'>Storia di prova</div>",
+	story_title: "",
 	story_ID: -1,
-	game_mode: "Singleplayer",
+	game_mode: "",
 	quests: [
 		{	
-			quest_title: "<div class='QuestTitle'>Prima quest</div>",
+			quest_title: "",
 			activities: [
 				{
-					activity_text: "<div class='ActivityText'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div><div class='AnswerField'></div>",
-					answer_field: "<div class='AnswerField_Description>Inserire la risposta</div><div class='AnswerField_Input'><input type='text'></div>",
+					activity_text: "",
+					answer_field: "",
 					right_answer: "",
 					answer_score: "",
+					answer_outcome: "",
 					ASK_EVAL: 0,
 					expected_time: 0
 				}
@@ -29,8 +30,8 @@ var Storia = {
 	score: []
 };
 
-// bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione dle gioco, il player lo inserisce alla fine di ogni attività
-var NextActivityButtonTemplate = "<button class='NextActivity'>PROSEGUI</button>";
+// bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
+var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
 
 
 var socket; // contains the socket for this specific player
@@ -89,23 +90,42 @@ $(function () {
 		ActivityN: -1
 	};
 
-	$( "#StartScreen" ).prepend( Storia.story_title );
+
+	/* ----------------- FUNZIONI DEL PLAYER --------------------------- */
 
 	/**
-		* funzione utilizzata per gestire le condizioni di errore all'interno del player
-		* in generale sarebbe meglio fermare l'applicazione e basta
-		*/
+	* funzione utilizzata per gestire le condizioni di errore all'interno del player
+	* in generale sarebbe meglio fermare l'applicazione e basta
+	*/
 	function handleError() {
 		window.alert( "!!! MAJOR ERROR !!!" );
 	};
 
-	function goToActivity( activity_n ) {
-		CurrentStatus.ActivityN = activity_n;
+	
+	/**
+	 * Semplicemente avvia il gioco sostituendo alla schermata di benvenuto il container "Quest"
+	 */
+	function startGame() {
+		$( "#StartScreen" ).replaceWith( $( "template" ).content );
 
-		let NewActivity = Storia.quests[CurrentStatus.QuestN].activities[activity_n].activity_text;
-		NewActivity.attr( "id", "Quest" + String( CurrentStatus.QuestN ) + "Activity" + String( activity_n ) + "Text" );
+		goToQuest( 0 );
+	};
 
-
+	
+	/**
+	 * @param name
+	 * Assegna un ID ad alcuni particolari eleenti, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
+	 */
+	function assignID( name ) {
+		if ( name == "Quest") {
+			return ( name + String( CurrentStatus.QuestN ) );
+		}
+		else if ( name == "Activity" ) {
+			return ( "Quest" + String( CurrentStatus.QuestN ) + name + String( CurrentStatus.ActivityN ) );
+		}
+		else {
+			return ( "Q" + String( CurrentStatus.QuestN ) + "A" + String( CurrentStatus.ActivityN ) + "_" + name );
+		}
 	};
 
 
@@ -116,24 +136,42 @@ $(function () {
 	function goToQuest( quest_n ) {
 		CurrentStatus.QuestN = quest_n;
 
-		let Container = $( ".Quest" );
-		Container.empty();
+		let NewQuest = $( ".Quest" );
+		NewQuest.empty();
+		NewQuest.attr( "id", assignID( "Quest" ) );
 
-		Container.append( Storia.quests[quest_n].quest_title );
-		$( ".QuestTitle" ).attr( "id", "Quest" + String( quest_n ) + "QuestTitle" );
+		NewQuest.append( StoryObj.quests[quest_n].quest_title );
 
 		goToActivity( 0 );
 	};
 
 
 	/**
-	 * Semplicemente avvia il gioco sostituendo alla schermata di benvenuto il container "Quest"
+	 * @param activity_n
+	 * Carica a schermo l'attività specificata, inserendo il suo nodo come figlio del nodo Quest attivo.
+	 * Inserisce anche un pulsante per andare all'attività successiva
 	 */
-	function startGame() {
-		$( "#StartScreen" ).replaceWith( $( "template" ).content );
+	function goToActivity( activity_n ) {
+		CurrentStatus.ActivityN = activity_n;
 
-		goToQuest( 0 );
+		let NewActivity = $( "<div/>",
+		{
+			"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
+			id: assignID( "Activity" )
+		});
+		console.log( NewActivity.attr("class")); // debugging
+
+		NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
+		NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
+		
+		let NewNextActivityBtn = $.parseHTML( NextActivityBtn );
+		NewNextActivityBtn.attr( "onclick", StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome ); // qua va controllata la faccenda di traduzione degli apici
+		NewActivity.append( NewNextActivityBtn );
+
+		$( ".Quest" ).append( NewActivity );
 	};
+
+	
 
 });
 

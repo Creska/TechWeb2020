@@ -136,18 +136,21 @@ function loadEditAnswerFieldSection( RESET ) {
 			$( "#AnswerTimer" ).val( 0.5 );
 			$( "#AnswerScore" ).val( 0 );
 			$( "#NeedEvaluation" ).prop( "checked", false );
+			$( "#AnswerFieldPreview" ).empty();
+		}
+		else {
+			buildAnswerFieldPreview();
 		}
 
 		$( "#InsertAnswerFieldDescription" ).val( "" );
-		$( "#AnswerFieldPreview" ).empty();
-
-		buildAnswerFieldPreview();
 	}
 }; 
 
 
 function buildAnswerFieldPreview() {
-	let NewInputField; // nodo HMTL corrispondente al campo di input
+	$( "#AnswerFieldPreview" ).empty();
+	
+	let NewInputField; // variabile di supporto per il nodo HMTL corrispondente al campo di input
 
 	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
 		NewInputField = $( "<ul/>",
@@ -156,7 +159,7 @@ function buildAnswerFieldPreview() {
 			id: assignID( "AnswerInput" )
 		});
 
-		for ( i = 0; i < 2; i++ ) {
+		for ( i = 0; i < 2; i++ ) {  // sostituire con due addradio
 			let NewRadioElement = $( "<li/>" );
 
 			NewRadioElement.append( $( "<input/>", 
@@ -200,29 +203,38 @@ function buildAnswerFieldPreview() {
 	}
 
 	$( "#AnswerFieldPreview" ).prepend( NewInputField );
+
+	console.log( $( "#AnswerFieldPreview" ).prop("outerHTML") ); // debugging
+
+	console.log( "id = " + $("#AnswerFieldPreview :first-child").attr("id")); // debugging
 };
 
 
 
 function addRadio( Container ) {
+	console.log($( "#AnswerFieldPreview").prop("outerHTML") ); // debugging
+
 	let newButton = $( "<input/>",
 	{
 		type: "radio"
 	});
 
-	let newli = $( "<li/>" );
+	let newli = $( "<li/>", {});
+	let containerID;
 
 	switch ( Container ) {
 		case "AnswerInput":
+			containerID = $( "#AnswerPreview ul" ).attr( "id" );
 			newButton.attr( "name", assignID( "AnswerInputGroup" ) );
-			newButton.attr( "id", assignID( "AnswerInput" ) + String( $( "#AnswerInput ul li" ).length ) );
+			newButton.attr( "id", assignID( "AnswerInput" ) + String( $( "#" + containerID + " li" ).length ) );
 			newli.append( newButton );
 			newli.append( $( "<input/>",
 			{
 				type: "text",
-				value: "Opzione" + String(  $( "#AnswerInput ul li" ).length )
+				value: "Opzione" + String( $( "#" + containerID + " li" ).length )
 			}));
-			$( "#AnswerInput" ).append( newli );
+			$( containerID ).append( newli );
+			console.log( "Lunghezza" + String( $( "#" + containerID + " li" ).length ) ); // debugging
 			break;
 		default:
 			break;

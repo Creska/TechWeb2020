@@ -7,44 +7,129 @@ NOTE:
 
 var StoryObj = {
 	ACCESSIBILITY: 0,
-	story_title: "",
+	story_title: "<div id='StoryTitle'>Storia di prova</div>",
 	story_ID: -1,
 	game_mode: "",
 	quests: [
 		{	
-			quest_title: "",
+			quest_title: "<div class='QuestTitle'>Prima quest</div>",
 			activities: [
 				{
-					activity_text: "",
-					answer_field: "",
+					activity_text: 
+					`<div class='ActivityText' id='Q0A0_ActivityText'>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</div>`,
+					answer_field: 
+					`<div class='AnswerField'>
+						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
+						<input type='text'>
+					</div>`,
 					right_answer: "",
 					answer_score: "",
-					answer_outcome: "",
+					answer_outcome: "goToActivity(1);",
+					ASK_EVAL: 0,
+					expected_time: 0
+				},
+				{
+					activity_text:
+					`<div class='ActivityText' id='Q0A1_ActivityText'>
+						Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.
+						<div id="Q0A1_Carousel" class="carousel slide" data-ride="carousel">
+							<div class="carousel-inner">
+					 			<div class="carousel-item active">
+						  			<img src="../images/milan.jpg" class="d-block w-100" alt="...">
+					  			</div>
+					  			<div class="carousel-item">
+									<img src="../images/turin.jpg" class="d-block w-100" alt="...">
+					  			</div>
+							</div>
+							<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
+    							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    							<span class="sr-only">Previous</span>
+  							</a>
+  							<a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
+    							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+    							<span class="sr-only">Next</span>
+  							</a>
+						</div>
+					</div>`,
+					answer_field:
+					`<div class='AnswerField'>
+						<div class='AnswerFieldDescription'>Checklist a caso:</div>
+						<ul class='AnswerInput'>
+							<li>
+								<input type='radio' id='radio0'>
+								<label for='radio0'>Prima</label>
+							</li>
+							<li>
+								<input type='radio' id='radio1'>
+								<label for='radio1'>Seconda</label>
+							</li>
+							<li>
+								<input type='radio' id='radio2'>
+								<label for='radio2'>Terza</label>
+							</li>
+							<li>
+								<input type='radio' id='radio3'>
+								<label for='radio3'>Quarta</label>
+							</li>
+							<li>
+								<input type='radio' id='radio4'>
+								<label for='radio4'>Quinta</label>
+							</li>
+							<li>
+								<input type='radio' id='radio5'>
+								<label for='radio5'>Sesta</label>
+							</li>
+						</ul>
+					</div>`,
+					right_answer: "",
+					answer_score: "",
+					answer_outcome: "goToQuest(1);",
+					ASK_EVAL: 0,
+					expected_time: 0
+				}
+			]
+		},
+		{
+			quest_title: "<div class='QuestTitle'>Seconda quest</div>",
+			activities: [
+				{
+					activity_text: 
+					`<div class='ActivityText' id='Q1A0_ActivityText'>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</div>`,
+					answer_field: 
+					`<div class='AnswerField'>
+						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
+						<input type='text'>
+					</div>`,
+					right_answer: "",
+					answer_score: "",
+					answer_outcome: "window.alert('fine del test');",
 					ASK_EVAL: 0,
 					expected_time: 0
 				}
 			]
 		}
+
 	],
 	stylesheet: "",
 	score: []
 };
 
-// bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
-var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
+
 
 
 var socket; // contains the socket for this specific player
 
 function validateInput(answer, current_quest, current_activity) {
-	/*send the input to be validated from the valuator
-	args: the current question being asked, the answer from the player, the ID of the player(socket)
-	*/
+	// send the input to be validated from the valuator
+	// args: the current question being asked, the answer from the player, the ID of the player(socket)
 	var tempactivity = story.quests[current_quest].activities[current_activity];
 	socket.emit('validate-input-player', tempactivity.question, answer, socket.id)
 }
 
-$(function () {
+
+
+ $(function () { 
+	
 	$.get("/player/stories/published/" + $('#story-name').html(), function (data) {
 		//removing the useless template
 		$('#story-name').remove();
@@ -83,100 +168,108 @@ $(function () {
 			//TODO right input handling
 		}
 	});
-
-	// indica il numero della quest attiva ed il numero dell'attività attiva
-	var CurrentStatus = {
-		QuestN: -1,
-		ActivityN: -1
-	};
-
-
-	/* ----------------- FUNZIONI DEL PLAYER --------------------------- */
-
-	/**
-	* funzione utilizzata per gestire le condizioni di errore all'interno del player
-	* in generale sarebbe meglio fermare l'applicazione e basta
-	*/
-	function handleError() {
-		window.alert( "!!! MAJOR ERROR !!!" );
-	};
-
-	
-	/**
-	 * Semplicemente avvia il gioco sostituendo alla schermata di benvenuto il container "Quest"
-	 */
-	function startGame() {
-		$( "#StartScreen" ).replaceWith( $( "template" ).content );
-
-		goToQuest( 0 );
-	};
-
-	
-	/**
-	 * @param name
-	 * Assegna un ID ad alcuni particolari eleenti, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
-	 */
-	function assignID( name ) {
-		if ( name == "Quest") {
-			return ( name + String( CurrentStatus.QuestN ) );
-		}
-		else if ( name == "Activity" ) {
-			return ( "Quest" + String( CurrentStatus.QuestN ) + name + String( CurrentStatus.ActivityN ) );
-		}
-		else {
-			return ( "Q" + String( CurrentStatus.QuestN ) + "A" + String( CurrentStatus.ActivityN ) + "_" + name );
-		}
-	};
-
-
-	/**
-	 * @param quest_n
-	 * Carica a schermo la quest specificata. Svuota il container della quest e ci aggiunge il titolo nuovo. Poi carica la quest numero zero.
-	 */
-	function goToQuest( quest_n ) {
-		CurrentStatus.QuestN = quest_n;
-
-		let NewQuest = $( ".Quest" );
-		NewQuest.empty();
-		NewQuest.attr( "id", assignID( "Quest" ) );
-
-		NewQuest.append( StoryObj.quests[quest_n].quest_title );
-
-		goToActivity( 0 );
-	};
-
-
-	/**
-	 * @param activity_n
-	 * Carica a schermo l'attività specificata, inserendo il suo nodo come figlio del nodo Quest attivo.
-	 * Inserisce anche un pulsante per andare all'attività successiva
-	 */
-	function goToActivity( activity_n ) {
-		CurrentStatus.ActivityN = activity_n;
-
-		let NewActivity = $( "<div/>",
-		{
-			"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
-			id: assignID( "Activity" )
-		});
-		console.log( NewActivity.attr("class")); // debugging
-
-		NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
-		NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
-		
-		let NewNextActivityBtn = $.parseHTML( NextActivityBtn );
-		NewNextActivityBtn.attr( "onclick", StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome ); // qua va controllata la faccenda di traduzione degli apici
-		NewActivity.append( NewNextActivityBtn );
-
-		$( ".Quest" ).append( NewActivity );
-	};
-
-	
-
 });
 
 
+	
+/* ------------------------------------------------------------------------------- */
 
 
 
+// indica il numero della quest attiva ed il numero dell'attività attiva
+var CurrentStatus = {
+	QuestN: -1,
+	ActivityN: -1
+};
 
+// bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
+var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
+
+
+/**
+* funzione utilizzata per gestire le condizioni di errore all'interno del player
+* in generale sarebbe meglio fermare l'applicazione e basta
+*/
+function handleError() {
+	window.alert( "!!! MAJOR ERROR !!!" );
+};
+
+	
+/**
+* Semplicemente avvia il gioco sostituendo alla schermata di benvenuto il container "Quest"
+ */
+function startGame() {
+	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
+	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
+
+    goToQuest( 0 );
+};
+
+	
+/**
+* @param name
+* Assegna un ID ad alcuni particolari eleenti, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
+*/
+function assignID( name ) {
+	if ( name == "Quest") {
+		return ( name + String( CurrentStatus.QuestN ) );
+	}
+	else if ( name == "Activity" ) {
+		return ( "Quest" + String( CurrentStatus.QuestN ) + name + String( CurrentStatus.ActivityN ) );
+	}
+	else return;
+};
+
+
+/**
+* @param quest_n
+* Carica a schermo la quest specificata. Svuota il container della quest e ci aggiunge il titolo nuovo. Poi carica la quest numero zero.
+*/
+function goToQuest( quest_n ) {
+	CurrentStatus.QuestN = quest_n;
+
+	let NewQuest = $( ".Quest" );
+	NewQuest.empty();
+	NewQuest.attr( "id", assignID( "Quest" ) );
+
+	NewQuest.append( StoryObj.quests[quest_n].quest_title );
+
+	goToActivity( 0 );
+};
+
+
+/**
+* @param activity_n
+* Carica a schermo l'attività specificata, inserendo il suo nodo come figlio del nodo Quest attivo.
+* Inserisce anche un pulsante per andare all'attività successiva
+*/
+function goToActivity( activity_n ) {
+	CurrentStatus.ActivityN = activity_n;
+
+    let NewActivity = $( "<div/>",
+    	{
+        	"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
+        	id: assignID( "Activity" )
+    	});
+
+    NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
+    if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
+        NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
+    }
+    
+	let NewNextActivityBtn = $.parseHTML( NextActivityBtn );
+    $( NewNextActivityBtn ).attr( "onclick", String( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome ) ); // qua va controllata la faccenda di traduzione degli apici
+    NewActivity.append( NewNextActivityBtn );
+
+	$( ".Activity" ).remove();
+    $( ".Quest" ).append( NewActivity );
+};
+
+
+/**
+* Funzione che incrementa il punteggio ottenuto rispondendo alle domande in modo giusto
+* La call viene inserita dall'editor all'interno della programmazione delle attività
+*/
+function updateScore() {
+	/* TODO */
+};

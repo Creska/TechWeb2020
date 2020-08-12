@@ -47,6 +47,8 @@ ROBA DA FARE IMPORTANTE:
 * AGGIUNGERE LA ROBA DI ACCESSIBILITA'
 * approfondire la differenza tra attr e prop
 
+Idee per l'editor:
+* Nella parte dell'editing della programmazione inserire un alert che avverta della mancanza di un campo risposta. Nel caso il campo risposta sia già stato costruito, indicare la risposta giusta, in modo che l'autore riesca bene a programmare la successione
 
 
 appunti:

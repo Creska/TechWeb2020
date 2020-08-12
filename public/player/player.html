@@ -28,16 +28,16 @@
 <body>
     <div id="StartScreen">
         <script type="text/javascript">
-            document.ready( $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) ) );
+            $(document).ready( $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) ) );
         </script>
         <div id="WelcomeText">
             Schermata iniziale del gioco. Per avviare una nuova partita, premere START
             <!-- TODO: Aggiungere il messaggio riguardante l'accessibilità -->
         </div>
-        <button onclick="startGame();">START</button>
+        <button id="StartButton" onclick="startGame();">START</button>
     </div>
 
-    <template>
+    <template id="MainContainer">
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
         <div id="Main">
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->

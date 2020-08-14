@@ -254,12 +254,17 @@
 
     <div>
       <div>Tipologia di input:</div>
-      <label for="QuestionType_Checklist">Checklist</label>
-      <input type="radio" name="QuestionType" id="QuestionType_Checklist" onclick="loadEditAnswerFieldSection(false);">
-      <label for="QuestionType_Text">Testo</label>
-      <input type="radio" name="QuestionType" id="QuestionType_Text" onclick="loadEditAnswerFieldSection(false);">
-      <label for="QuestionType_Number">Numero</label>
-      <input type="radio" name="QuestionType" id="QuestionType_Number" onclick="loadEditAnswerFieldSection(false);">
+      <div class="input-group">
+        <input type="radio" name="QuestionType" id="QuestionType_Checklist" onclick="loadEditAnswerFieldSection(false);">
+        <label for="QuestionType_Checklist">Checklist</label>
+        <input type="radio" name="QuestionType" id="QuestionType_Text" onclick="loadEditAnswerFieldSection(false);">
+        <label for="QuestionType_Text">Testo</label>
+        <input type="radio" name="QuestionType" id="QuestionType_Number" onclick="loadEditAnswerFieldSection(false);">
+        <label for="QuestionType_Number">Numero</label>
+      </div>
+      <div class="alert alert-secondary" role="alert">
+        In caso di spunta su un'altra opzione, i dati verranno resettati. Per non perdere il lavoro, ricarica la pagina.
+      </div>
     </div>
     <!-- Input della stringa di testo che poi diventerà la "AnswerFieldDescription" -->
     <div>

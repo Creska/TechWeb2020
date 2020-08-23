@@ -56,6 +56,10 @@ function handleError() {
 };
 
 
+/**
+ * @param EVENT
+ * Attiva il warning specifico per l'evento segnalato
+ */
 function displayWarning( EVENT ) {
 	switch ( EVENT ) {
 		case MISSING_RIGHT_ANSWER:
@@ -71,258 +75,12 @@ function displayWarning( EVENT ) {
 };
 
 
+/**
+ * @param EVENT
+ * Attiva la finestra di errore relativa all'evento segnalato
+ */
 function displayError( EVENT ) {
 	/* TODO */
-};
-
-
-/**
- * @param SectionId
- * Ricarica le sezioni dell'editor la cui interfaccia cambia a seconda del lavoro svolto dall'utente
- */
-function loadSection( SectionId ) {
-	/* TODO: mettere il comando di aggiornamento del nome della sezione */
-
-	switch ( SectionId ) {
-		case "EditStory":
-			$( "#QuestList ul" ).empty();
-
-			for ( i = 0; i < CurrentWork.quests.length; i++ ) {
-				let NewButton = $( "<button/>",
-				{
-					class: "btn btn-secondary btn-lg StageButton GoToStage",
-					onclick: "editQuest(" + String( i ) + ");",
-					text: "Quest" + String( i ),
-				}).wrap( "<li></li>" );
-
-				$( "#QuestList ul" ).append( NewButton );
-			}
-
-			let AddQuestButton = $( "<button/>",
-				{
-					class: "btn btn-secondary btn-lg StageButton AddStage",
-					onclick: "toggleIndexInput();",
-					text: "+"
-				}).wrap( "<li></li>" );
-
-			$( "#QuestList ul" ).append( AddQuestButton );
-			break;
-		case "EditQuest":
-			$( "#ActivityList ul" ).empty();
-
-			for ( i = 0; i < CurrentWork.quests[CurrentNavStatus.QuestN].activities.length; i++ ) {
-				let NewButton = $( "<button/>",
-				{
-					class: "btn btn-secondary btn-lg StageButton GoToStage",
-					onclick: "editActivity(" + String( i ) + ");",
-					text: "Activity" + String( i ),
-				}).wrap( "<li></li>" );
-
-				$( "#ActivityList ul" ).append( NewButton );
-			}
-
-			let AddActivityButton = $( "<button/>",
-				{
-					class: "btn btn-secondary btn-lg StageButton AddStage",
-					onclick: "toggleIndexInput();",
-					text: "+"
-				}).wrap( "<li></li>" );
-
-			$( "#ActivityList ul" ).append( AddActivityButton );
-			break;
-		case "EditActivity":
-			// TODO, modificare solo il nome della sezione
-			break;
-		default:
-			handleError();
-			break;
-	}
-};
-
-
-
-function loadEditAnswerFieldSection( RESET ) {
-	/* TODO - aggiungere aggiornamento del nome della sezione */
-
-	if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
-		let LoadAnswerField = $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field );
-		switch ( $( LoadAnswerField.eq( 1 ) ).prop( "tagName" ) ) {
-			case "ul":
-				$( "#QuestionType_Checklist" ).prop( "checked", true );
-				break;
-			case "input":
-				if ( $( "#QuestionType_Checklist" ).attr( "type" ) == "text" ) {
-					$( "#QuestionType_Text" ).prop( "checked", true );
-				}
-				else if ( $( "#QuestionType_Checklist" ).attr( "type" ) == "number" ) {
-					$( "#QuestionType_Number" ).prop( "checked", true );
-				}
-				else handleError();
-				break;
-			default:
-				handleError();
-				break;
-		}
-	}
-	else {
-		if ( RESET ) {
-			$( "#QuestionType_Checklist" ).prop( "checked", false );
-			$( "#QuestionType_Text" ).prop( "checked", false );
-			$( "#QuestionType_Number" ).prop( "checked", false );
-	
-			$( "#AnswerTimer" ).val( 0.5 );
-			$( "#AnswerScore" ).val( 0 );
-			$( "#NeedEvaluation" ).prop( "checked", false );
-			$( "#MissingRightAnswerWarning" ).remove();
-			$( "#AnswerFieldPreview" ).empty();
-		}
-		else {
-			buildAnswerFieldPreview();
-		}
-
-		$( "#InsertAnswerFieldDescription" ).val( "" );
-	}
-}; 
-
-
-function buildAnswerFieldPreview() {
-	$( "#AnswerFieldPreview" ).empty();
-
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<ul/>",
-		{
-			"class": "AnswerInput",
-			id: "AnswerInput"
-		}));
-
-		for ( i = 0; i < 2; i++ ) {
-			addRadio( "AnswerInput" );
-		}
-
-		$( "#AnswerFieldPreview" ).append( $( "<button/>",
-		{
-			"class": "btn btn-secondary AddRadio",
-			onclick: "addRadio('AnswerInput');",
-			text: "+"
-		}));
-	}
-	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
-		{
-			type: "text",
-			"class": "AnswerInput",
-			id: "AnswerInput",
-			placeholder: "Risposta"
-		}));
-	}
-	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
-		{
-			type: "number",
-			"class": "AnswerInput",
-			id: "AnswerInput",
-			val: "0"
-		}));
-	}
-};
-
-
-
-function addRadio( Container ) {
-	let newButton = $( "<input/>",
-	{
-		type: "radio"
-	});
-
-	let newli = $( "<li/>", {});
-
-	switch ( Container ) {
-		case "AnswerInput":
-			newButton.attr( "name", "AnswerInputGroup" );
-			newButton.attr( "id", "AnswerOption" + String( $( "#AnswerInput li" ).length ) );
-			newli.append( newButton );
-			newli.append( $( "<input/>",
-			{
-				type: "text",
-				placeholder: "Opzione" + String( $( "#AnswerInput li" ).length )
-			}));
-			$( "#AnswerInput" ).append( newli );
-			break;
-		default:
-			break;
-	}
-};
-
-
-
-function saveRightAnswer() {
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview [type='radio']" ).each( function( index ) {
-			if ( $( this ).prop( "checked" ) ) {
-				saveDataFragment( "right_answer", $( this ).next().val() );
-				return;
-			}
-		});
-	}
-	else {
-		saveDataFragment( "right_answer", $( "#AnswerFieldPreview input" ).val() );
-	}
-}
-
-function saveAnswerFieldSettings() {
-	/* Questa parte andrebbe corretta ma forse non vale comunque la pena di metterla
-
-	if ( $( "#NeedEvaluation" ).prop( "checked" ) == false ) {
-		if ( $( "#AnswerInput" ).prop( "tagName" ) == "input" ) {
-			if ( $( "#AnswerInput" ).val() == "" ) {
-				displayWarning( MISSING_RIGHT_ANSWER );
-			}
-		}
-		else if ( $( "#AnswerInput" ).prop( "tagName" ) == "ul" ) {
-			let Found = false;
-			$( "#AnswerInput radio" ).each( function( index ) {
-				if ( $( this ).prop( "checked" ) == true ) {
-					Found = true;
-				}
-			});
-
-			if ( !Found ) {
-				displayWarning( MISSING_RIGHT_ANSWER );
-			}
-		}
-	}
-
-	*/
-
-	saveRightAnswer();
-
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		let InputLabel;
-		$( "#AnswerFieldPreview [type='text']" ).each( function( index ) {
-			InputLabel = $( "<label/>",
-			{
-				for: "AnswerOption" + String( index )
-			});
-
-			if ( $( this ).val() == "" ) {
-				InputLabel.text( "[empty]" );
-			}
-			else {
-				InputLabel.text( $( this ).val() );
-			}
-
-			$( this ).replaceWith( InputLabel );
-		});
-
-		$( "#AnswerFieldPreview .AddRadio" ).remove();
-	}
-	
-	saveDataFragment( "answer_field", "none" );
-	saveDataFragment( "expected_time", $( "#AnswerTimer" ).val() * 60000 );
-	saveDataFragment( "answer_score", $( "#AnswerScore" ).val() );
-	saveDataFragment( "ASK_EVAL", $( "#NeedEvaluation" ).prop( "checked" ) );
-
-	goBack();
 };
 
 
@@ -346,7 +104,7 @@ function goToSection( newSectionId ) {
 			loadSection( "EditActivity" );
 			break;
 		case "EditAnswerField":
-			loadEditAnswerFieldSection( true );
+			loadSection( "EditAnswerField" );
 		default:
 			break;
 	}
@@ -356,7 +114,85 @@ function goToSection( newSectionId ) {
     }
     );
 
-    CurrentNavStatus.Section = newSectionId;
+	CurrentNavStatus.Section = newSectionId;
+};
+
+
+/**
+ * @param SectionId 
+ * @param parameters --> parametri aggiuntivi
+ * Funzione variadica che ricarica la sezione dell'editor specificata. Viene usata per le sezioni la cui interfaccia cambia a seconda di relativi parametri
+ */
+function loadSection( SectionId, ...parameters ) {
+	/* TODO: mettere il comando di aggiornamento del nome della sezione */
+
+	switch ( SectionId ) {
+		case "EditStory":
+			$( "#QuestList ul" ).empty();
+
+			for ( i = 0; i < CurrentWork.quests.length; i++ ) {
+				let NewButton = $( "<button/>",
+				{
+					"class": "btn btn-secondary btn-lg StageButton GoToStage",
+					onclick: "editQuest(" + String( i ) + ");",
+					text: "Quest" + String( i ),
+				}).wrap( "<li></li>" );
+
+				$( "#QuestList ul" ).append( NewButton );
+			}
+
+			let AddQuestButton = $( "<button/>",
+				{
+					"class": "btn btn-secondary btn-lg StageButton AddStage",
+					onclick: "toggleIndexInput();",
+					text: "+"
+				}).wrap( "<li></li>" );
+
+			$( "#QuestList ul" ).append( AddQuestButton );
+			break;
+		case "EditQuest":
+			$( "#ActivityList ul" ).empty();
+
+			for ( i = 0; i < CurrentWork.quests[CurrentNavStatus.QuestN].activities.length; i++ ) {
+				let NewButton = $( "<button/>",
+				{
+					"class": "btn btn-secondary btn-lg StageButton GoToStage",
+					onclick: "editActivity(" + String( i ) + ");",
+					text: "Activity" + String( i ),
+				}).wrap( "<li></li>" );
+
+				$( "#ActivityList ul" ).append( NewButton );
+			}
+
+			let AddActivityButton = $( "<button/>",
+				{
+					"class": "btn btn-secondary btn-lg StageButton AddStage",
+					onclick: "toggleIndexInput();",
+					text: "+"
+				}).wrap( "<li></li>" );
+
+			$( "#ActivityList ul" ).append( AddActivityButton );
+			break;
+		case "EditActivity":
+			// TODO modificare solo il nome della sezione
+			break;
+		case "EditAnswerField":
+			// TODO modificare nome della sezione
+			if ( CurrentNavStatus.Section == "EditActivity" ) {
+				if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
+					loadEditAnswerFieldSection( "LOAD" );
+				}
+				else {
+					loadEditAnswerFieldSection( "RESET" );
+				}
+			}
+			else
+				loadEditAnswerFieldSection( "CHG_TYPE" );
+			break;
+		default:
+			handleError();
+			break;
+	}
 };
 
 
@@ -425,6 +261,36 @@ function editQuest( quest_n ) {
 function editActivity( activity_n ) {
 	CurrentNavStatus.ActivityN = activity_n;
 	goToSection( "EditActivity" );
+};
+
+
+/**
+ * @param Container
+ * Aggiunge un elemento lista con un relativo radio input al Container specificato
+ */
+function addRadio( Container ) {
+	let newButton = $( "<input/>",
+	{
+		type: "radio"
+	});
+
+	let newli = $( "<li/>", {});
+
+	switch ( Container ) {
+		case "AnswerInput":
+			newButton.attr( "name", "AnswerInputGroup" );
+			newButton.attr( "id", "AnswerOption" + String( $( "#AnswerInput li" ).length ) );
+			newli.append( newButton );
+			newli.append( $( "<input/>",
+			{
+				type: "text",
+				val: "Opzione" + String( $( "#AnswerInput li" ).length )
+			}));
+			$( "#AnswerInput" ).append( newli );
+			break;
+		default:
+			break;
+	}
 };
 
 
@@ -544,6 +410,191 @@ function removeSelectedStage() {
 
 
 /**
+ * @param MODE --> indica la modalità di caricamento
+ * Prepara la sezione di editing del Campo Risposta. A seconda dei casi, carica la sezione come nuova oppure la compila con i dati salvati in CurrentWork
+ * La modalità di caricamento può essere quella di reset totale della finestra, quella di cambiamento di tipologia dell'input oppure quella di caricmento dell'Answer Field salvato
+ */
+function loadEditAnswerFieldSection( MODE ) {
+	switch ( MODE ) {
+		case "LOAD":
+			let LoadAnswerField = $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field );
+
+			switch ( $( $( LoadAnswerField ).children()[1] ).prop( "tagName" ) ) {
+				case "UL":
+					$( "#QuestionType_Checklist" ).prop( "checked", true );
+
+					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
+
+					let TextInput;
+					$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
+						if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
+							$( this ).prev().prop( "checked", true );
+
+						}
+
+						TextInput = $( "<input/>",
+							{
+								type: "text",
+								val: $( this ).text()
+							}
+						);
+
+						$( this ).replaceWith( TextInput );
+					});
+
+					$( "#AnswerFieldPreview" ).append( $( "<button/>",
+						{
+							"class": "btn btn-secondary AddRadio",
+							onclick: "addRadio('AnswerInput');",
+							text: "+"
+						}));
+
+					break;
+				case "INPUT":
+					if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "text" ) {
+						$( "#QuestionType_Text" ).prop( "checked", true );
+					}
+					else if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "number" ) {
+						$( "#QuestionType_Number" ).prop( "checked", true );
+					}
+
+					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
+				
+					$( "#AnswerFieldPreview" ).find( "input" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer );
+
+					break;
+				default:
+					handleError();
+					break;
+			}
+
+			$( "#InsertAnswerFieldDescription" ).val( $( $( LoadAnswerField ).children()[0] ).text() );
+			$( "#AnswerTimer" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time / 60000 );
+			$( "#AnswerScore" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score );
+			$( "#NeedEvaluation" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL );
+			break;
+		case "CHG_TYPE":
+			buildAnswerFieldPreview();
+			$( "#InsertAnswerFieldDescription" ).val( "" );
+			break;
+		case "RESET":
+			$( "#QuestionType_Checklist" ).prop( "checked", false );
+			$( "#QuestionType_Text" ).prop( "checked", false );
+			$( "#QuestionType_Number" ).prop( "checked", false );
+	
+			$( "#AnswerTimer" ).val( 0.5 );
+			$( "#AnswerScore" ).val( 0 );
+			$( "#NeedEvaluation" ).prop( "checked", false );
+			$( "#MissingRightAnswerWarning" ).remove();
+			$( "#AnswerFieldPreview" ).empty();
+			$( "#InsertAnswerFieldDescription" ).val( "" );
+			break;
+		default:
+			handleError();
+			break;
+	}
+};
+
+
+/**
+ * Costruisce il campo risposta in base alla tipologia scelta dall'utente.
+ * I campi testo/numero non hanno nessun valore di default, così come non viene spuntato nessun radio di default
+ */
+function buildAnswerFieldPreview() {
+	$( "#AnswerFieldPreview" ).empty();
+
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<ul/>",
+		{
+			"class": "AnswerInput",
+			id: "AnswerInput"
+		}));
+
+		for ( i = 0; i < 2; i++ ) {
+			addRadio( "AnswerInput" );
+		}
+
+		$( "#AnswerFieldPreview" ).append( $( "<button/>",
+		{
+			"class": "btn btn-secondary AddRadio",
+			onclick: "addRadio('AnswerInput');",
+			text: "+"
+		}));
+	}
+	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
+		{
+			type: "text",
+			"class": "AnswerInput",
+			id: "AnswerInput",
+			placeholder: "Risposta"
+		}));
+	}
+	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
+		{
+			type: "number",
+			"class": "AnswerInput",
+			id: "AnswerInput",
+			placeholder: "0"
+		}));
+	}
+};
+
+
+/**
+ * Salva il parametro Risposta Esatta specificato dall'utente, a seconda del tipo di campo risposta scelto
+ */
+function saveRightAnswer() {
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview [type='radio']" ).each( function( index ) {
+			if ( $( this ).prop( "checked" ) ) {
+				saveDataFragment( "right_answer", $( this ).next().val() );
+				return;
+			}
+		});
+	}
+	else {
+		saveDataFragment( "right_answer", $( "#AnswerFieldPreview input" ).val() );
+	}
+}
+
+
+/**
+ * Salva tutte le personalizzazioni che l'utente ha creato per il Campo risposta
+ */
+function saveAnswerFieldSettings() {
+	saveRightAnswer();
+
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		let InputLabel;
+		$( "#AnswerFieldPreview [type='text']" ).each( function( index ) {
+			InputLabel = $( "<label/>",
+			{
+				for: "AnswerOption" + String( index )
+			});
+
+			if ( $( this ).val() == "" ) {
+				InputLabel.text( "Opzione" + String( index ) );
+			}
+			else {
+				InputLabel.text( $( this ).val() );
+			}
+
+			$( this ).replaceWith( InputLabel );
+		});
+	}
+	
+	saveDataFragment( "answer_field", 0 );
+	saveDataFragment( "expected_time", $( "#AnswerTimer" ).val() * 60000 );
+	saveDataFragment( "answer_score", $( "#AnswerScore" ).val() );
+	saveDataFragment( "ASK_EVAL", $( "#NeedEvaluation" ).prop( "checked" ) );
+
+	goBack();
+};
+
+
+/**
  * @param field --> campo del JSON
  * @param value --> valore da assegnare al campo specificato
  * Aggiorna il campo del JSON con il suo valore - inserendolo eventualmente in un'apposita struttura HTML (ovvero tag + id e classe)
@@ -582,14 +633,20 @@ function saveDataFragment( field, value ) {
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = NewActivityText.prop( "outerHTML" );
 			break;
 		case "answer_field":
-			$( "#AnswerFieldPreview" ).prepend( $( "<div/>",
+			let AnswerField = $( "<div/>",
+			{
+				"class": "AnswerField",
+				id: "AnswerField"
+			});
+			AnswerField.prepend( $( "<div/>",
 				{
 					"class": "AnswerFieldDescription",
+					id: "AnswerFieldDescription",
 					text: $( "#InsertAnswerFieldDescription" ).val()
 				}));
-			$( "#AnswerFieldPreview" ).attr( "class", "AnswerField" );
+			AnswerField.append( $( "#AnswerInput" ));
 			
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = $( ".AnswerField" ).prop( "outerHTML" );
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = AnswerField.prop( "outerHTML" );
 			console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field); // debugging
 			break;
 		case "right_answer":
@@ -618,8 +675,3 @@ function saveDataFragment( field, value ) {
 			break;
 	}
 };
-
-
-/* ROBA DA FARE
-scomporre la loadSection in varie funzioni di load. sarà più semplice fare una gestione corretta
-*/

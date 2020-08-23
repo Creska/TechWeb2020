@@ -29,12 +29,12 @@ ____________________________________
 
 ROBA DA FARE IMPORTANTE:
 * EDITOR
-    * Rimettere Option come val standard nelle radio labels
-    * Sistemare la creazione dinamica degli elementi
     * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e ricordare dell'esistenza del selettore nth-child
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
     * Nella pubblicazione magari mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata NEEDEVAL, che non ci siano attività o quest vuote, e robe simili
+    * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
+    * Meglio mettere un input del nome della storia al momento della creazione, per gestire al meglio il collegamento col file css
 * EDITOR E PLAYER
     * Nell'answer outcome inserire la chiamata alla funzione per incrementare il punteggio, nel caso la risposta sia giusta
     * Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)

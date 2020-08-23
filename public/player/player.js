@@ -254,7 +254,8 @@ function goToActivity( activity_n ) {
 
     NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
     if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
-        NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
+		let ActivityAnswerField = $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
+        NewActivity.append( ActivityAnswerField );
     }
     
 	let NewNextActivityBtn = $.parseHTML( NextActivityBtn );

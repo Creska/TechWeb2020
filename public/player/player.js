@@ -23,8 +23,8 @@ var StoryObj = {
 						<input type='text'>
 					</div>`,
 					right_answer: "",
-					answer_score: "",
-					answer_outcome: "goToActivity(1);",
+					answer_score: 1,
+					answer_outcome: "updateScore(); goToActivity(1);",
 					ASK_EVAL: 0,
 					expected_time: 0
 				},
@@ -82,8 +82,8 @@ var StoryObj = {
 						</ul>
 					</div>`,
 					right_answer: "",
-					answer_score: "",
-					answer_outcome: "goToQuest(1);",
+					answer_score: 420,
+					answer_outcome: "updateScore(); goToQuest(1);",
 					ASK_EVAL: 0,
 					expected_time: 0
 				}
@@ -101,8 +101,8 @@ var StoryObj = {
 						<input type='text'>
 					</div>`,
 					right_answer: "",
-					answer_score: "",
-					answer_outcome: "window.alert('fine del test');",
+					answer_score: 69,
+					answer_outcome: "updateScore(); window.alert('fine del test'); for(var j = 0; j < StoryObj.score.length; j++) { console.log(StoryObj.score[j])}",
 					ASK_EVAL: 0,
 					expected_time: 0
 				}
@@ -202,13 +202,15 @@ function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
 	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
 
+	/* TODO: aggiungere l'alert riguardante l'accessibilità del gioco */
+
     goToQuest( 0 );
 };
 
 	
 /**
 * @param name
-* Assegna un ID ad alcuni particolari eleenti, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
+* Assegna un ID ad alcuni particolari elementi, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
 */
 function assignID( name ) {
 	if ( name == "Quest") {
@@ -234,6 +236,8 @@ function goToQuest( quest_n ) {
 
 	NewQuest.append( StoryObj.quests[quest_n].quest_title );
 
+	StoryObj.score.push( [] );
+
 	goToActivity( 0 );
 };
 
@@ -249,7 +253,8 @@ function goToActivity( activity_n ) {
     let NewActivity = $( "<div/>",
     	{
         	"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
-        	id: assignID( "Activity" )
+			id: assignID( "Activity" ),
+			"aria-live": "assertive"
     	});
 
     NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
@@ -272,5 +277,5 @@ function goToActivity( activity_n ) {
 * La call viene inserita dall'editor all'interno della programmazione delle attività
 */
 function updateScore() {
-	/* TODO */
+	StoryObj.score[CurrentStatus.QuestN].splice( CurrentStatus.ActivityN, 0, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].answer_score );
 };

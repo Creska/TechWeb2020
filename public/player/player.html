@@ -30,7 +30,7 @@
         <script type="text/javascript">
             $(document).ready( $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) ) );
         </script>
-        <div id="WelcomeText">
+        <div id="WelcomeText" role="main">
             Schermata iniziale del gioco. Per avviare una nuova partita, premere START
             <!-- TODO: Aggiungere il messaggio riguardante l'accessibilità -->
         </div>
@@ -39,13 +39,13 @@
 
     <template id="MainContainer">
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
-        <div id="Main">
+        <div id="Main" role="main" autofocus>
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-            <div class="Quest"></div>
+            <div class="Quest" aria-live="assertive"></div>
         </div>
     </template>
 
-    <div id='chat-room'>
+    <div id='chat-room' aria-live="assertive">
         <form action="">
             Text: <input id="message" type="text" autocomplete="off"><br>
             <button>Send</button>

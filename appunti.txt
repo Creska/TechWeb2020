@@ -57,3 +57,7 @@ appunti:
 * al caricamento della pagina del player viene aggiunto nell'head un template per il json
 * la sintassi $(function()) è uno shortcut per window.onload
 * per avviare un app in Node basta fare node app.js dal cmd
+* link utili per accessibilità:
+    * https://developer.paciellogroup.com/blog/2017/04/what-is-an-accessible-name/
+    * https://www.w3.org/1999/xhtml/vocab#XHTMLRoleVocabulary
+    * https://webaim.org/techniques/aria/#rules

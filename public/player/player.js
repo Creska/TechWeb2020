@@ -26,7 +26,8 @@ var StoryObj = {
 					answer_score: 1,
 					answer_outcome: "updateScore(); goToActivity(1);",
 					ASK_EVAL: 0,
-					expected_time: 0
+					GET_CHRONO: 0,
+					expected_time: 3000
 				},
 				{
 					activity_text:
@@ -85,7 +86,8 @@ var StoryObj = {
 					answer_score: 420,
 					answer_outcome: "updateScore(); goToQuest(1);",
 					ASK_EVAL: 0,
-					expected_time: 0
+					GET_CHRONO: 0,
+					expected_time: 5000
 				}
 			]
 		},
@@ -104,7 +106,8 @@ var StoryObj = {
 					answer_score: 69,
 					answer_outcome: "updateScore(); window.alert('fine del test'); for(var j = 0; j < StoryObj.score.length; j++) { console.log(StoryObj.score[j])}",
 					ASK_EVAL: 0,
-					expected_time: 0
+					GET_CHRONO: 1,
+					expected_time: 10000
 				}
 			]
 		}
@@ -179,11 +182,22 @@ function validateInput(answer, current_quest, current_activity) {
 // indica il numero della quest attiva ed il numero dell'attività attiva
 var CurrentStatus = {
 	QuestN: -1,
-	ActivityN: -1
+	ActivityN: -1,
+	TimeToAnswer: -1,
+	ChatMessages: 0
 };
+
+var countdown;
+var time_limit;
+var answer_chrono = `
+clearTimeout( 'time_limit');
+clearInterval( 'countdown' );
+CurrentStatus.TimeToAnswer = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time - ( parseInt($('#AnswerTimer')) * 1000 )
+console.log( CurrentStatus.TimeToAnswer ) // debugging`;
 
 // bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
 var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
+var AnswerTimer = "<div id='AnswerTimer' role='timer'>0</div>";
 
 
 /**
@@ -259,16 +273,43 @@ function goToActivity( activity_n ) {
 
     NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
     if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
-		let ActivityAnswerField = $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field );
-        NewActivity.append( ActivityAnswerField );
-    }
-    
-	let NewNextActivityBtn = $.parseHTML( NextActivityBtn );
-    $( NewNextActivityBtn ).attr( "onclick", String( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome ) ); // qua va controllata la faccenda di traduzione degli apici
-    NewActivity.append( NewNextActivityBtn );
+        NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
+	}
 
 	$( ".Activity" ).remove();
-    $( ".Quest" ).append( NewActivity );
+	$( ".Quest" ).append( NewActivity );
+
+	CurrentStatus.TimeToAnswer = -1;
+	CurrentStatus.ChatMessages = 0;
+
+	/* Se la domanda prevede un calcolo del cronometraggio, viene attivato il timer */
+	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
+		$( ".Activity" ).append( $.parseHTML( AnswerTimer ) );
+		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
+		$( ".NextActivity" ).attr( "onclick", answer_chrono + StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome );
+		toggleAnswerTimer();
+	}
+	else {
+		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
+		$( ".NextActivity" ).attr( "onclick", StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome );
+	}
+};
+
+
+/**
+ * Attiva il timer della domanda e il countdown dei secondi.
+ */
+function toggleAnswerTimer() {
+	$( "#AnswerTimer" ).text( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time / 1000 );
+
+	countdown = setInterval( function() {
+		$( "#AnswerTimer" ).text( $( "#AnswerTimer" ).text() - 1 );
+	}, 1000 );
+
+	time_limit = setTimeout( function() {
+		window.alert("tempo scaduto");
+		clearInterval( countdown );
+	}, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time );
 };
 
 

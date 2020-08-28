@@ -31,6 +31,7 @@ game_example = {
 					answer_score: "", // punteggio per la risposta giusta
 					answer_outcome: "", // miniscript che, a seconda della risposta data, dirige il player verso un'attività prestabilita appositamente
 					ASK_EVAL: 0, // flag che indica se c'è necessità di valutazione umana per la risposta
+					GET_CHRONO: 0, // flag che indica se bisogna calcolare il tempo di risposta alla domanda
 					expected_time: 0 // tempo in ms previsto per il completamento dell'attività
 				}
 			]

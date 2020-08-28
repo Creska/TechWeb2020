@@ -235,6 +235,7 @@ function initActivity() {
 		answer_score: "",
 		answer_outcome: "",
 		ASK_EVAL: 0,
+		GET_CHRONO: 0,
 		expected_time: 0
 	};
 
@@ -471,6 +472,11 @@ function loadEditAnswerFieldSection( MODE ) {
 			$( "#InsertAnswerFieldDescription" ).val( $( $( LoadAnswerField ).children()[0] ).text() );
 			$( "#AnswerTimer" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time / 60000 );
 			$( "#AnswerScore" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score );
+			$( "#InsertTimer" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO );
+			if ( $( "#InsertTimer" ).prop( "checked" ) )
+				$( "#AnswerTimer" ).prop( "disabled", false );
+			else
+				$( "#AnswerTimer" ).prop( "disabled", true );
 			$( "#NeedEvaluation" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL );
 			break;
 		case "CHG_TYPE":
@@ -483,6 +489,8 @@ function loadEditAnswerFieldSection( MODE ) {
 			$( "#QuestionType_Number" ).prop( "checked", false );
 	
 			$( "#AnswerTimer" ).val( 0.5 );
+			$( "#AnswerTimer" ).attr( "disabled", true );
+			$( "#InsertTimer" ).prop( "checked", false );
 			$( "#AnswerScore" ).val( 0 );
 			$( "#NeedEvaluation" ).prop( "checked", false );
 			$( "#MissingRightAnswerWarning" ).remove();
@@ -588,6 +596,7 @@ function saveAnswerFieldSettings() {
 	saveDataFragment( "answer_field", 0 );
 	saveDataFragment( "expected_time", $( "#AnswerTimer" ).val() * 60000 );
 	saveDataFragment( "answer_score", $( "#AnswerScore" ).val() );
+	saveDataFragment( "GET_CHRONO", $( "#InsertTimer" ).prop( "checked" ) );
 	saveDataFragment( "ASK_EVAL", $( "#NeedEvaluation" ).prop( "checked" ) );
 
 	goBack();
@@ -660,6 +669,9 @@ function saveDataFragment( field, value ) {
 			break;
 		case "ASK_EVAL":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL = value;
+			break;
+		case "GET_CHRONO":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO = value;
 			break;
 		case "expected_time":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = value;

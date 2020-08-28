@@ -29,6 +29,7 @@ ____________________________________
 
 ROBA DA FARE IMPORTANTE:
 * EDITOR
+    * Controllare la faccenda della traduzione di apici e quotes
     * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e ricordare dell'esistenza del selettore nth-child
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
@@ -36,19 +37,14 @@ ROBA DA FARE IMPORTANTE:
     * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
     * Meglio mettere un input del nome della storia al momento della creazione, per gestire al meglio il collegamento col file css
 * EDITOR E PLAYER
-    * Nell'answer outcome inserire la chiamata alla funzione per incrementare il punteggio, nel caso la risposta sia giusta
     * Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)
 * PLAYER
-    * Aggiungere la funzione di controllo sulla scadenza del tempo
-    * Creare un oggetto che contenga questi parametri:
-        * tempo passato da partenza attività a risposta inviata
-        * numero di volte per cui è usata la chat durante la medesima attività
-        * sezione in cui si trova
+    * Aggiungere la callback da fare alla scadenza del tempo
 * AGGIUNGERE LA ROBA DI ACCESSIBILITA'
 * approfondire la differenza tra attr e prop
 
 Idee per l'editor:
-* Nella parte dell'editing della programmazione inserire un alert che avverta della mancanza di un campo risposta. Nel caso il campo risposta sia già stato costruito, indicare la risposta giusta, in modo che l'autore riesca bene a programmare la successione
+* Nella parte dell'editing della programmazione inserire un riepilogo dei settaggi del campo risposta.
 
 
 appunti:

@@ -7,8 +7,7 @@ Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
 	MainMenu: "MainMenu",
-	ChooseGameMode: "MainMenu",
-    ChooseAccessibility: "ChooseGameMode",
+    ChooseAccessibility: "MainMenu",
     EditStory: "MainMenu",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
@@ -334,14 +333,7 @@ function toggleTextInput( WidgetId ) {
  * Il tipo di oggetto da indicizzare viene dedotto sulla base dei valori attuali nel CurrentNavStatus
  */
 function toggleIndexInput() {
-	let UseLastIndex = $( "#UseLastIndex" );
-	let SelectIndex = $( "#SelectIndex" );
 	let IndexInput = $( "#IndexInput" );
-
-	/* inizializzazione dei valori di default */
-	UseLastIndex.prop( "checked", true );
-	SelectIndex.prop( "checked", false );
-	IndexInput.attr( "disabled", true );
 
 	if ( CurrentNavStatus.QuestN < 0 ) {
 		IndexInput.val( CurrentWork.quests.length );
@@ -360,30 +352,12 @@ function toggleIndexInput() {
  * Inserisce una nuova quest/attività all'interno del JSON, sulla base dei dati inseriti dall'utente nel widget di inserimento indice
  */
 function insertNewStage() {
-	/* TODO: decidere cosa fare in seguito all'inserimento dello stage - mandare nella sua apposita sezione di editing? */
-	let UseLastIndex = $( "#UseLastIndex" );
-	let IndexInput = $( "#IndexInput" );
-
-	let ChosenIndex;
+	let ChosenIndex = $( "#IndexInput" ).val();
 
 	if ( CurrentNavStatus.QuestN < 0 ) {
-		if ( UseLastIndex.prop( "checked" ) ) {
-			ChosenIndex = CurrentWork.quests.length;
-		}
-		else {
-			ChosenIndex = IndexInput.val();
-		}
-
 		CurrentWork.quests.splice( ChosenIndex, 0, initQuest() );
 	}
 	else {
-		if ( UseLastIndex.prop( "checked" ) ) {
-			ChosenIndex = CurrentWork.quests[CurrentNavStatus.QuestN].activities.length;
-		}
-		else {
-			ChosenIndex = IndexInput.val();
-		}
-
 		CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice( ChosenIndex, 0, initActivity() );
 	}
 

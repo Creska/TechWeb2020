@@ -27,7 +27,22 @@ ____________________________________
 |___________________________________|
 
 
-ROBA DA FARE IMPORTANTE:
+RIASSUNTO DELLE COSE DA FARE:
+* EDITOR
+    * Sistemazione:
+        * Finire il cleanup
+        * Sistemare la navbar, aggiungendo un tasto per modificare il tipo di partita
+    * Editing del testo
+    * Editing dell'answer outcome
+    * Editor CSS
+    * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
+    * Grafica
+    * Accessibilità
+* PLAYER
+    * Grafica
+    * Interfacciamento col server
+
+DETTAGLI SULLE COSE DA FARE:
 * EDITOR
     * Controllare la faccenda della traduzione di apici e quotes
     * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
@@ -36,15 +51,11 @@ ROBA DA FARE IMPORTANTE:
     * Nella pubblicazione magari mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata NEEDEVAL, che non ci siano attività o quest vuote, e robe simili
     * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
     * Meglio mettere un input del nome della storia al momento della creazione, per gestire al meglio il collegamento col file css
-* EDITOR E PLAYER
-    * Creare una nuova funzione per fare un reloading dell'attività nel player (nel caso la risposta sbagliata causi la ripetizione della suddetta attività)
+    * Nella parte dell'editing della programmazione inserire un riepilogo dei settaggi del campo risposta.
 * PLAYER
     * Aggiungere la callback da fare alla scadenza del tempo
-* AGGIUNGERE LA ROBA DI ACCESSIBILITA'
 * approfondire la differenza tra attr e prop
 
-Idee per l'editor:
-* Nella parte dell'editing della programmazione inserire un riepilogo dei settaggi del campo risposta.
 
 
 appunti:

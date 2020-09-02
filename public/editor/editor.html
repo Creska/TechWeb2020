@@ -224,7 +224,7 @@
       Titolo sezione
     </div>
     <div>
-      <button>Modifica testo attività</button>
+      <button onclick="goToSection('EditActivityText');">Modifica testo attività</button>
       <button onclick="goToSection('EditAnswerField');">Modifica campo risposta</button>
       <button>Modifica programmazione dell'attività</button>
       <button>Modifica CSS</button>
@@ -286,18 +286,50 @@
     </div>
     <button onclick="saveAnswerFieldSettings();">Salva</button>
   </div>
-</body>
-</html>
 
 
-<!-- SCHERMATA DI EDITING DELLA STORIA -->
+<!--DA FINIRE-->
 <div class="EditorSection" id="EditActivityText">
   <div>
     Modifica il testo dell'attività
   </div>
-  <div class="StageList" id="ParagraphList">
-    <ul>
-      <li><button class="btn btn-secondary btn-lg StageButton AddStage" onclick="toggleIndexInput();">+</button></li>
-    </ul>
+
+  <div>
+    <button class="btn btn-primary btn-lg btn-block" onclick="toggleParagraphInput()">Aggiungi paragrafo</button>
+    <button class="btn btn-primary btn-lg btn-block" onclick="">Elimina paragrafo</button>
+  </div>
+
+  <div class="StageList" id="ParagraphList"><ul></ul></div>
+</div>
+
+
+<!--DA FINIRE-->
+<div class="modal fade" id="InsertParagraph" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Scegliere l'indice</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div>
+        <input type="radio" id="addTextPar" name="ChooseParagraphType">
+        <label for="addTextPar">Paragrafo di testo</label>
+        <input type="radio" id="addGallery" name="ChooseParagraphType">
+        <label for="addGallery">Galleria di una o più immagini</label>
+      </div>
+      <div class="modal-body">
+        <label for="ParagraphIndexInput">Utilizzare l'indice di ultima posizione o cambiarlo secondo le preferenze:</label>
+        <input type="number" id="ParagraphIndexInput" min="0">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-primary" onclick="insertNewParagraph();">Salva</button>
+      </div>
+    </div>
   </div>
 </div>
+
+</body>
+</html>

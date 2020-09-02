@@ -11,7 +11,8 @@ var Parent = {
     EditStory: "MainMenu",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
-	EditAnswerField: "EditActivity"
+	EditAnswerField: "EditActivity",
+	EditActivityText: "EditActivity"
 };
 
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
@@ -31,6 +32,8 @@ var CurrentWork = {
 	stylesheet: "",
 	score: []
 };
+
+var EditRemove = "<div class='EditRemove'><button type='button' class='btn btn-primary btn-sm' onclick=''>Modifica</button><button type='button' class='btn btn-danger btn-sm' onclick=''>Rimuovi</button></div>";
 
 
 /* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
@@ -188,10 +191,50 @@ function loadSection( SectionId, ...parameters ) {
 			else
 				loadEditAnswerFieldSection( "CHG_TYPE" );
 			break;
+		case "EditActivityText":
+			$( "#ParagraphList ul" ).empty();
+
+			let oldtext = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text ) );
+
+			for ( i = 0; i < oldtext.children().length; i++ ) {
+				let NewButton = $( "<button/>",
+				{
+					"class": "btn btn-secondary btn-lg ParagraphButton",
+					"data-toggle": "popover"
+				});
+
+				let twinbuttons = $( $.parseHTML( EditRemove ) );
+				$( twinbuttons.children()[0] ).attr( "onclick", "editParagraph(" + String( i ) + ");" );
+				$( twinbuttons.children()[1] ).attr( "onclick", "removeParagraph(" + String( i ) + ");" );
+
+				NewButton.popover({
+					placement: "bottom",
+					html: true,
+					content: twinbuttons,
+					trigger: "focus"
+				});
+
+				if ( oldtext.children()[i].tagName == "P" ) {
+					NewButton.addClass( "TextParBtn" );
+					if ( $( oldtext.children()[i] ).text().substr( 0, 10 ) != "" )
+						NewButton.html( $( oldtext.children()[i] ).text().substr( 0, 10 ) );
+					else
+						NewButton.html( "[empty]" );
+				}
+				else if ( oldtext.children()[i].tagName == "DIV" ) {
+					NewButton.addClass( "ImgGalleryBtn" );
+					NewButton.html( "IMG<br>Gallery" );
+				}
+
+				$( "#ParagraphList ul" ).append( NewButton.wrap( "<li></li>" ) );
+			}
+			break;
 		default:
 			handleError();
 			break;
 	}
+
+	$('[data-toggle="popover"]').popover();
 };
 
 
@@ -228,7 +271,7 @@ function initQuest() {
  */
 function initActivity() {
 	let EmptyActivity = {
-		activity_text: "",
+		activity_text: "<div class='ActivityText'></div>",
 		answer_field: "",
 		right_answer: "",
 		answer_score: "",
@@ -577,6 +620,43 @@ function saveAnswerFieldSettings() {
 };
 
 
+function toggleParagraphInput() {
+	$( "#addTextPar" ).prop( "checked", true );
+	$( "#addGallery" ).prop( "checked", false );
+	$( "#ParagraphIndexInput" ).val( $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text ) ).children().length );
+	$( "#ParagraphIndexInput" ).attr( "max", $( "#ParagraphIndexInput" ).val() );
+	$( "#InsertParagraph" ).modal( "toggle" );
+};
+
+
+function insertNewParagraph() {
+	let newpar;
+
+	if ( $( "#addTextPar" ).prop( "checked" ) ) {
+		newpar = "<p class='TextParagraph'></p>";
+	}
+	else {
+		newpar = `
+		<div id="Q0A1_Carousel" class="carousel slide ImgGallery" data-ride="carousel">
+		<div class="carousel-inner">
+		</div>
+		<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		  </a>
+		  <a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		  </a>
+		</div>`;
+	}
+	
+	saveDataFragment( "activity_text", newpar, "ADD", $( "#ParagraphIndexInput" ).val() );
+	$( "#InsertParagraph" ).modal( "hide" );
+	loadSection( CurrentNavStatus.Section );
+};
+
+
 /**
  * @param field --> campo del JSON
  * @param value --> valore da assegnare al campo specificato
@@ -608,12 +688,28 @@ function saveDataFragment( field, value ) {
 			CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
 			break;
 		case "activity_text":
-			let NewActivityText = $( "<div/>",{
-				"class": "ActivityText",
-				id: "ActivityText",
-				text: value
-			});
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = NewActivityText.prop( "outerHTML" );
+			let text = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text ) ); // testo da modificare
+			let i = saveDataFragment.arguments[3]; // indice dell'elemento da manipolare
+			switch ( saveDataFragment.arguments[2] ) {
+				case "ADD":
+					if ( i == 0 )
+						text.prepend( $.parseHTML( saveDataFragment.arguments[1] ) );
+					else {
+						$( $.parseHTML( saveDataFragment.arguments[1] )).insertAfter( text.children()[i-1] );
+					}
+					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = text.prop( "outerHTML" );
+					break;
+				case "UPDATE":
+					//
+					break;
+				case "DEL":
+					//
+					break;
+				default:
+					handleError();
+					break;
+			}
+			console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text = text.prop( "outerHTML" )); // debugging
 			break;
 		case "answer_field":
 			let AnswerField = $( "<div/>",
@@ -630,7 +726,6 @@ function saveDataFragment( field, value ) {
 			AnswerField.append( $( "#AnswerInput" ));
 			
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = AnswerField.prop( "outerHTML" );
-			console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field); // debugging
 			break;
 		case "right_answer":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = value;

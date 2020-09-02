@@ -1,0 +1,383 @@
+body {
+  overflow-x: hidden; /*assumendi che non vi sia overflow orizzontale*/
+}
+
+.EditorSection {
+  /*  border-color: black; /* debugging */
+  /*  border-style: solid; /* debugging */
+    display: none; /* con la proprietà di visibility le animazioni fade di jQuery non funzionano */
+  /*  margin: auto;
+    text-align: center;*/
+}
+
+#MainMenu {
+    display: block;
+}
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+  /*da qui in poi comincia st1*/
+  /*
+* Globals
+*/
+
+/* Links */
+a,
+a:focus,
+a:hover {
+color: #fff;
+}
+
+/* Custom default button */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+color: #333;
+text-shadow: none; /* Prevent inheritance from `body` */
+background-color: #fff;
+border: .05rem solid #fff;
+}
+
+
+/*
+* Base structure
+*/
+
+html,
+body {
+height: 100%;
+background-color: #333;
+}
+
+body {
+display: -ms-flexbox;
+display: flex;
+color: #fff;
+text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+}
+
+.cover-container {
+max-width: 42em;
+}
+
+
+/*
+* Header
+*/
+.masthead {
+margin-bottom: 2rem;
+}
+
+.masthead-brand {
+margin-bottom: 0;
+}
+
+.nav-masthead .nav-link {
+padding: .25rem 0;
+font-weight: 700;
+color: rgba(255, 255, 255, .5);
+background-color: transparent;
+border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+border-bottom-color: rgba(255, 255, 255, .25);
+}
+
+.nav-masthead .nav-link + .nav-link {
+margin-left: 1rem;
+}
+
+.nav-masthead .active {
+color: #fff;
+border-bottom-color: #fff;
+}
+
+@media (min-width: 48em) {
+.masthead-brand {
+float: left;
+}
+.nav-masthead {
+float: right;
+}
+}
+
+
+/*
+* Cover
+*/
+.cover {
+padding: 0 1.5rem;
+}
+.cover .btn-lg {
+padding: .75rem 1.25rem;
+font-weight: 700;
+}
+
+
+/*
+* Footer
+*/
+.mastfoot {
+color: rgba(255, 255, 255, .5);
+}
+.custom {
+width:20% !important;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.card:hover {
+   cursor: pointer;
+   transform: scale(1.1);
+}
+
+/*!
+ * Magic - https://www.minimamente.com
+ * Licensed under the MIT license - https://opensource.org/licenses/MIT
+ * Copyright (c) 2020 Christian Pucci
+ */
+@-webkit-keyframes puffOut {
+  0% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1);
+    -webkit-filter: blur(0px);
+            filter: blur(0px); }
+  100% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(2, 2);
+    -webkit-filter: blur(2px);
+            filter: blur(2px); } }
+
+@keyframes puffOut {
+  0% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1);
+    -webkit-filter: blur(0px);
+            filter: blur(0px); }
+  100% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(2, 2);
+    -webkit-filter: blur(2px);
+            filter: blur(2px); } }
+
+@-webkit-keyframes swashIn {
+  0% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(0, 0); }
+  90% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(0.9, 0.9); }
+  100% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1); } }
+
+@keyframes swashIn {
+  0% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(0, 0); }
+  90% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(0.9, 0.9); }
+  100% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1); } }
+
+@-webkit-keyframes swashOut {
+  0% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1); }
+  80% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(0.9, 0.9); }
+  100% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(0, 0); } }
+
+@keyframes swashOut {
+  0% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(1, 1); }
+  80% {
+    opacity: 1;
+    transform-origin: 50% 50%;
+    transform: scale(0.9, 0.9); }
+  100% {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    transform: scale(0, 0); } }
+
+
+    @-webkit-keyframes tinLeftIn {
+      0% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(-900%); }
+      50%,
+      70%,
+      90% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      60%,
+      80%,
+      100% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); } }
+
+    @keyframes tinLeftIn {
+      0% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(-900%); }
+      50%,
+      70%,
+      90% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      60%,
+      80%,
+      100% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); } }
+
+    @-webkit-keyframes tinLeftOut {
+      0%,
+      20%,
+      40%,
+      50% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); }
+      10%,
+      30% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      100% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(-900%); } }
+
+    @keyframes tinLeftOut {
+      0%,
+      20%,
+      40%,
+      50% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); }
+      10%,
+      30% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      100% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(-900%); } }
+
+    @-webkit-keyframes tinRightIn {
+      0% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(900%); }
+      50%,
+      70%,
+      90% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      60%,
+      80%,
+      100% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); } }
+
+    @keyframes tinRightIn {
+      0% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(900%); }
+      50%,
+      70%,
+      90% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      60%,
+      80%,
+      100% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); } }
+
+    @-webkit-keyframes tinRightOut {
+      0%,
+      20%,
+      40%,
+      50% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); }
+      10%,
+      30% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      100% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(900%); } }
+
+    @keyframes tinRightOut {
+      0%,
+      20%,
+      40%,
+      50% {
+        opacity: 1;
+        transform: scale(1, 1) translateX(0); }
+      10%,
+      30% {
+        opacity: 1;
+        transform: scale(1.1, 1.1) translateX(0); }
+      100% {
+        opacity: 0;
+        transform: scale(1, 1) translateX(900%); } }
+
+
+.magictime {
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+         }
+
+@media (print), (prefers-reduced-motion) {
+  .magictime {
+    -webkit-animation: unset !important;
+            animation: unset !important;
+    transition: none !important; } }
+/*# sourceMappingURL=magic.css.map */

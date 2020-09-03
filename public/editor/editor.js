@@ -28,6 +28,7 @@ var CurrentWork = {
 	story_title: "",
 	story_ID: -1,
 	game_mode: "",
+	single_device: 1,
 	quests: [],
 	stylesheet: "",
 	score: []
@@ -271,7 +272,7 @@ function initQuest() {
  */
 function initActivity() {
 	let EmptyActivity = {
-		activity_text: "<div class='ActivityText'></div>",
+		activity_text: [],
 		answer_field: "",
 		right_answer: "",
 		answer_score: "",

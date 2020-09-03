@@ -17,6 +17,7 @@ game_example = {
 	story_title: "", // probabilmente servirà un div per contenerlo
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)
+	single_device: 1, // indica se vi è un solo dispositivo per gruppo. di default è settato a true
 	quests: [
 		{	
 			quest_title: "", // probabilmente servirà un div per contenerlo
@@ -25,7 +26,7 @@ game_example = {
 			decisa dal codice JS "action_on_activity_answer". */
 			activities: [
 				{
-					activity_text: "", // testo HTML dell'attività
+					activity_text: [], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
 					answer_field: "", // HTML del campo risposta
 					right_answer: "", // contiene la risposta giusta
 					answer_score: "", // punteggio per la risposta giusta

@@ -16,7 +16,7 @@ var StoryObj = {
 			activities: [
 				{
 					activity_text: 
-					`<div class='ActivityText' id='Q0A0_ActivityText'>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</div>`,
+					[`<p>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
 					answer_field: 
 					`<div class='AnswerField'>
 						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
@@ -31,9 +31,8 @@ var StoryObj = {
 				},
 				{
 					activity_text:
-					`<div class='ActivityText' id='Q0A1_ActivityText'>
-						Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.
-						<div id="Q0A1_Carousel" class="carousel slide" data-ride="carousel">
+					[`<p>Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.</p>`,
+					`<div id="Q0A1_Carousel" class="carousel slide" data-ride="carousel">
 							<div class="carousel-inner">
 					 			<div class="carousel-item active">
 						  			<img src="../images/milan.jpg" class="d-block w-100" alt="...">
@@ -51,7 +50,7 @@ var StoryObj = {
     							<span class="sr-only">Next</span>
   							</a>
 						</div>
-					</div>`,
+					</div>`],
 					answer_field:
 					`<div class='AnswerField'>
 						<div class='AnswerFieldDescription'>Checklist a caso:</div>
@@ -96,7 +95,7 @@ var StoryObj = {
 			activities: [
 				{
 					activity_text: 
-					`<div class='ActivityText' id='Q1A0_ActivityText'>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</div>`,
+					[`<p>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
 					answer_field: 
 					`<div class='AnswerField'>
 						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
@@ -271,7 +270,17 @@ function goToActivity( activity_n ) {
 			"aria-live": "assertive"
     	});
 
-    NewActivity.append( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_text );
+	NewActivityText = $( "<div/>",
+	{
+		"class": "ActivityText"
+	});
+
+	for ( i = 0; i <= StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text.length; i++ ) {
+		NewActivityText.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text[i] ));
+	}
+
+	NewActivity.append( NewActivityText );
+
     if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
         NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
 	}

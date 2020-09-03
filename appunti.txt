@@ -31,7 +31,7 @@ RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
     * Sistemazione:
         * Finire il cleanup
-        * Sistemare la navbar, aggiungendo un tasto per modificare il tipo di partita
+        * Sistemare la navbar, che dovrebbe avere: save, back, close, change mode, graphic e preview
     * Editing del testo
     * Editing dell'answer outcome
     * Editor CSS

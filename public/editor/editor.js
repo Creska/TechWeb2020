@@ -7,8 +7,8 @@ Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
 	MainMenu: "MainMenu",
-    ChooseAccessibility: "MainMenu",
-    EditStory: "MainMenu",
+    ChooseGameMode: "MainMenu",
+    EditStory: "ChooseGameMode",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",

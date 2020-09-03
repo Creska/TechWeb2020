@@ -1,13 +1,16 @@
-  var b = [ false, false, false, false, false ];//true: i è selezionato
-  var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
-  var colors = [ "primary", "warning", "success", "danger", "dark", "info" ];
-  var n_quests = 0;//per capire l'indic di una quest al momento della sua creazione
-  var n_activities = [];//come per nquests ma per le activity di ogni quest
-  var mode = "default";
-  var first_selected_quest = "";//per lo swap
-  var first_selected_card_index = -1;
-  var selected_card = "";//indica l'ultima carta cliccata dall'utente
-  var quests_grids = [];//contiene le giglie delle quest
+var b = [ false, false, false, false, false ];//true: i è selezionato
+var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
+var colors = [ "primary", "warning", "success", "danger", "dark", "info" ];
+var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
+var n_activities = []; // numero di attività per ogni quest - equivalente a CurrentWork.quests[CurrentNavStatus.QuestN].activities.length
+var mode = "default";
+var first_selected_stage = "";//per lo swap
+var first_selected_card_index = -1;
+var selected_card = "";//indica l'ultima carta cliccata dall'utente
+var quests_grids = []; // contiene le griglie di attività per ogni quest
+
+
+/* -------------------------- ROBA DEL GAME MODE MENU ---------------- */
   function deselect_other_options(i) {
   switch (i) {
     case 3:
@@ -24,7 +27,7 @@
       }
   }
     if( b[x] ) {//se è selezionato
-      change_color_option("a"+x,"bg-primary",bgs[x]);
+      change_color_option("#a"+x,"bg-primary",bgs[x]);
       b[x] = false;
     }
 }
@@ -36,193 +39,237 @@
     $("#dis").addClass("disabled");
 }
 
-  function change_color_option(i,decolor,color) {//colora o decolora i
-    $("#"+i).removeClass(decolor);
-    $("#"+i).addClass(color);
-}
-
   function select(i) {
   b[i] = !b[i];
   if(b[i]) {
-    change_color_option("a"+i,bgs[i],"bg-primary");
+    change_color_option("#a"+i,bgs[i],"bg-primary");
     deselect_other_options(i);
   }
   else
-    change_color_option("a"+i,"bg-primary",bgs[i]);
+    change_color_option("#a"+i,"bg-primary",bgs[i]);
 
   check_select();
 }
 
-  function show_saved_button() {
-  //mostra bottone saved
-    $("#save").removeClass("bg-primary");
-    $("#save").addClass("bg-success");
-    $("#save").text("salvato!");
-    $("#cancelculture").attr("onclick",`
-    $('#StoryTitleInput').val('');
-    CurrentWork.story_title='';
-    $('#save').removeClass('bg-success');
-    $('#save').addClass('bg-primary');
-    $('#save').text('salva');
-    $("#cancelculture").attr("onclick","$('#StoryTitleInput').val('');");
-    `);//resetta json e riporta 'salva' e 'cancella' come erano prima
+/* ------------------------------- CREAZIONE QUEST E ATTIVITA' ---------------------------------- */
+
+  function change_savetitle_button( mode ) {
+    let btn;
+
+    if ( CurrentNavStatus.Section == "EditStory" ) {
+      btn = $( "#SaveStoryTitle" );
+    }
+    else {
+      btn = $( "#SaveQuestTitle" );
+    }
+
+    if ( mode == 'saved' ) {
+      btn.removeClass("bg-primary");
+      btn.addClass("bg-success");
+      btn.text("Salvato!");
+    }
+    else if ( mode == 'unsaved' ) {
+      btn.removeClass('bg-success');
+      btn.addClass('bg-primary');
+      btn.text('Salva');
+    }
   }
 
   function save_title( which ) {
-    switch (which) {
+    switch ( which ) {
       case "story":
-        if( $( '#StoryTitleInput' ).val() != ""){//// OPTIMIZE: fare in modo che controlli che la stringa non contenga solo spazi vuoti
-          let NewStoryTitle = $( "<div/>",
+        let NewStoryTitle = $( "<div/>",
           {
-            id: "StoryTitle",
-            text: $( '#StoryTitleInput' ).val()
+            id: "StoryTitle"
           });
-          CurrentWork.story_title = NewStoryTitle.prop( "outerHTML" );
-          show_saved_button();
+
+        if( $( '#StoryTitleInput' ).val() != "" ) {
+          //// OPTIMIZE: fare in modo che controlli che la stringa non contenga solo spazi vuoti
+          NewStoryTitle.text( $( '#StoryTitleInput' ).val() );
         }
+        else {
+          NewStoryTitle.text( "MyStory ");
+          $( '#StoryTitleInput' ).val( "MyStory" );
+        }
+
+        CurrentWork.story_title = NewStoryTitle.prop( "outerHTML" );
+        change_savetitle_button( "saved" );
         break;
       case "quest":
-        if( $("#invisible_input").val()=="" )
+        if (CurrentNavStatus.QuestN < 0) {
+        if( $("#NewQuestWidget input").val()=="" )
           value = "quest"+n_quests;
         else {
-          value = $("#invisible_input").val();
+          value = $("#NewQuestWidget input").val();
         }
         let NewQuestTitle = $( "<div/>",
         {
           class: "QuestTitle",
-          id: assignID( "QuestTitle" ),
           text: value
         });
         len = CurrentWork.quests.length;
         CurrentWork.quests[len-1].quest_title = NewQuestTitle.prop( "outerHTML" );
+      }
+      else {
+        let NewQuestTitle = $( "<div/>",
+          {
+            "class": "QuestTitle"
+          });
+
+        if( $( '#QuestTitleInput' ).val() != "" ) {
+          //// OPTIMIZE: fare in modo che controlli che la stringa non contenga solo spazi vuoti
+          NewQuestTitle.text( $( '#QuestTitleInput' ).val() );
+        }
+        else {
+          NewStoryTitle.text( "quest" + get_card_index());
+          $( '#QuestTitleInput' ).val( "quest" + get_card_index() );
+        }
+
+        // aggiungere aggiornamento del nome della card e della sezione
+        CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
+        change_savetitle_button( "saved" );
+      }
         break;
         default:
     }
   }
 
-  function set_stop_animation( setting, quest ) {//quest è un this dom, non jquery
-    switch( setting ) {
+  // crea una quest/attività vuota e la aggiunge all'array del json. se si tratta di una quest, crea un nuovo elemento nell'array delle griglie di attività
+  function create_stuff(what) {
+    if ( what=="quest") {
+      new_quest = initQuest();
+      CurrentWork.quests.push(new_quest);
+      quests_grids.push("");
+      n_activities.push(0);
+      save_title("quest");
+    }
+    else {
+      new_activity = initActivity();
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(new_activity);
+    }
+  }
+
+
+/* -------------------------------- GESTIONE INTERFACCIA ------------------------------- */
+
+// cambia il colore di target da decolor a color - funziona in base alle classi di bootstrap
+function change_color_option(target,decolor,color) {
+  $(target).removeClass(decolor);
+  $(target).addClass(color);
+}
+
+  function set_stop_animation( current, obj ) {
+    switch( current ) {
       case "shake":
-        quest.style.animationName = setting;
-        quest.style.animationIterationCount = "infinite";
-        quest.style.animationDuration = "0.5s";
+        obj.style.animationName = current;
+        obj.style.animationIterationCount = "infinite";
+        obj.style.animationDuration = "0.5s";
         break;
       case "stop":
-        quest.style.animationName = "initial";
+        obj.style.animationName = "initial";
         break;
       case "puffOut":
-        quest.style.animationName = setting;
-        quest.style.animationIterationCount = "initial";
-        quest.style.animationDuration = "1s";
+        obj.style.animationName = current;
+        obj.style.animationIterationCount = "initial";
+        obj.style.animationDuration = "1s";
         setTimeout(function () {
-                    quest.style.animationName = "initial";
+                    obj.style.animationName = "initial";
                   }, 1500);
         break;
       case "swashOut":
-        quest.style.animationName = setting;
-        quest.style.animationIterationCount = "initial";
-        quest.style.animationDuration = "1.5s";
+        obj.style.animationName = current;
+        obj.style.animationIterationCount = "initial";
+        obj.style.animationDuration = "1.5s";
         break;
       case "swashIn":
-        quest.style.animationName = setting;
-        quest.style.animationIterationCount = "initial";
-        quest.style.animationDuration = "0.75s";
+        obj.style.animationName = current;
+        obj.style.animationIterationCount = "initial";
+        obj.style.animationDuration = "0.75s";
         setTimeout(function () {
-                    quest.style.animationName = "initial";
+                    obj.style.animationName = "initial";
                   }, 1250);
         break;
       default:
-        quest.style.animationName = setting;
-        quest.style.animationIterationCount = "initial";
-        quest.style.animationDuration = "1s";
+        obj.style.animationName = current;
+        obj.style.animationIterationCount = "initial";
+        obj.style.animationDuration = "1s";
       /*  setTimeout(function () {
                     quest.style.animationName = "initial";
                   }, 1400);*/
     }
   }
+
+  //calcola l'indice della card selezionata, rispetto alla griglia corrente
 //la griglia è composta da deck di tre card l'uno
-  function get_card_index() {//calcola l'indice della card nella griglia corrente
-    sel = set_get_grid_prefix();//guarda se siamo nella griglia di una storia o di una quest
+  function get_card_index() {
+    let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
     parent_element = selected_card.parentNode;//recupera il card deck dove si trova la card
-    parent_index = Array.from(document.getElementById(sel+"grid_div").children).indexOf(parent_element);//calcola l'indice' del card deck rispetto alla griglia
+    parent_index = Array.from(document.getElementById(current_grid).children).indexOf(parent_element);//calcola l'indice' del card deck rispetto alla griglia
     card_index_inside_parent = Array.from(parent_element.children).indexOf(selected_card);//calcola l'indice della card rispetto al suo deck
     return ((parent_index)*3 )+card_index_inside_parent;
   }
 
-  function set_get_grid_prefix() {
-    if(CurrentNavStatus.Section =='EditQuest')
-      sel = "q_";
-    else
-      sel ="s_";
-    return sel;
-  }
-//i bottoni swap e cancel sono in comune tra EditStory ed EditQuest, e vnegono spostati a ogni cambio di section
-  function move_buttons(where) {
-    switch (where) {
-      case "EditStory":
-      $("#s_new_button").before( $("#swap") );
-      $("#s_new_button").after( $("#cancel") );
-        break;
-      case "EditQuest":
-      $("#q_new_button").before( $("#swap") );
-      $("#q_new_button").after( $("#cancel") );
-      break;
-    }
-  }
+
 //va da EditQuest a EditStory svuotando la griglia e caricandovi la nuova griglia opportuna
   function back() {
     stop_shaking();
-    first_selected_quest="";
-    quests_grids[CurrentNavStatus.QuestN] = $("#q_grid_div").html();
+    mode="default";
+    first_selected_stage="";
+    quests_grids[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
     CurrentNavStatus.QuestN = -1;
-    CurrentNavStatus.Section = "EditStory";
-    set_get_grid_prefix();
-    stop_ffs();
-    $("#q_grid_div").empty();
-    $("#EditQuest").fadeOut(
-      function() {
-        move_buttons("EditStory");
-        $("#EditStory").fadeIn();
-
-      }
-    );
+    $("#ActivitiesGrid").empty(); // inutile
+    new_go_to_section(Parent[CurrentNavStatus.Section]);
   }
+
+
 //sostituisce goToSection quando ci si sposta in EditStory o EditQuest
   function new_go_to_section(where) {
     $("#"+CurrentNavStatus.Section).fadeOut(
       function() {
-          move_buttons(where);
-          if( where == "EditQuest" ) {
+          switch (where) {
+            case "EditQuest":
               //// BUG: click multiplo fa partire più volte l'onclick e perciò
               //get_card_index, nelle istanze successive alla prima
-              //fa riferimento a q_grid_div invece che a s_grid_div
+              //fa riferimento a ActivitiesGrid invece che a QuestsGrid
               CurrentNavStatus.QuestN = get_card_index();
               node = $(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title);
               $("#EditQuest h1").text(node.text());//inserisci il titolo della quest in EditQuest
-              $("#q_grid_div").html(quests_grids[CurrentNavStatus.QuestN]);//carica la griglia della quest
+              $("#ActivitiesGrid").html(quests_grids[CurrentNavStatus.QuestN]);//carica la griglia della quest
+              break;
           }
+          stop_ffs();
+          change_color_option("#" + CurrentNavStatus.Section + " .SwapBtn", "primary", "secondary");
+          change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "primary", "secondary");
           CurrentNavStatus.Section = where;
-          set_get_grid_prefix();
           $("#"+where).fadeIn();
       }
     );
   }
+
+
 //le card non hanno id e sono associate alle rispettive griglie e quest/activity tramite il loro indice nella giglia in cui si trovano
-  function create_card(titolo) {//insertNewstage versione Mao
-    sel = set_get_grid_prefix();
-    if(sel =="q_") {
-      titolo = "Attività"+n_activities[CurrentNavStatus.QuestN];
-      value = n_activities[CurrentNavStatus.QuestN];
-      n_activities[CurrentNavStatus.QuestN] += 1;
+  function create_card(titolo) {
+    let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
+
+    switch ( current_grid ) {
+      case "QuestsGrid":
+        $("#NewQuestWidget").addClass("invisible");
+        $("#NewQuestWidget input").val("");
+        value = n_quests;
+        if(titolo =="")// TODO: AGGIUNGERE CONTROLLO SU TUTTE LE STRINGHE CON SOLO CARATTERI VUOTI
+          titolo ="quest"+(n_quests);
+        n_quests += 1;
+        break;
+      case "ActivitiesGrid":
+        titolo = "Attività"+n_activities[CurrentNavStatus.QuestN];
+        value = n_activities[CurrentNavStatus.QuestN];
+        n_activities[CurrentNavStatus.QuestN] += 1;
+        break;
+      default:
+        handleError();
+        break;
     }
-    else {
-      $("#invisible_div").addClass("invisible");
-      $("#invisible_input").val("");
-      value = n_quests;
-      n_quests += 1;
-      if(titolo =="")// TODO: AGGIUNGERE CONTROLLO SU TUTTE LE STRINGHE CON SOLO CARATTERI VUOTI
-        titolo ="quest"+(n_quests-1);
-    }
+
     card = `<div class=" card bg-`+colors[ (value%6) ]+`  " onclick='
     selected_card = this;
     switch(mode) {
@@ -248,26 +295,30 @@
       <div class="card-body text-center">
         <p class="card-text">`+titolo+`</p>
       </div></div>`;
-    if( $("#"+sel+"grid_div > div:last-child").children().length == 3 || $("#"+sel+"grid_div").children().length == 0 ){
-      $("#"+sel+"grid_div").append('<div class="card-deck mb-2" ></div>');//quando il deck attuale non esiste o è vuoto crea  un nuovo deck e mettilo come ultimo figlio della griglia
+
+      // se si tratta di una quest, va aggiunto l'onclick di inizializzazione del val del title input
+    
+    if( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 ){
+      $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');//quando il deck attuale non esiste o è vuoto crea  un nuovo deck e mettilo come ultimo figlio della griglia
 }
-    $("#"+sel+"grid_div"+" > div:last-child").append(card);//aggiungo la card al deck
-    set_stop_animation("swashIn",document.getElementById(sel+"grid_div").lastChild.lastChild);
+    $("#"+current_grid+" > div:last-child").append(card);//aggiungo la card al deck
+    set_stop_animation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
   }
 
-  function cancel_mode() {//c è this
-    //esci dalla cancel mode
+
+  // entra o esce dalla cancel mode
+  function cancel_mode() {
     if(mode == "cancel" ) {
-      change_color_option("cancel", "btn-primary", "btn-secondary");
+      change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
       mode = "default";
       stop_shaking();
     }
-    else {//entra in cancel mode
+    else {
       stop_shaking();
-      change_color_option("cancel","btn-secondary","btn-primary");
+      change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-secondary","btn-primary");
       if( mode == "swap" ) {//se swap è attivo disattivalo
-        change_color_option("swap","btn-primary","btn-secondary");
-        first_selected_quest="";
+        change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-primary","btn-secondary");
+        first_selected_stage="";
       }
       mode = "cancel";
     }
@@ -280,17 +331,21 @@
     if (CurrentNavStatus.Section =="EditStory") {
       quests_grids.splice(get_card_index(),1);//cancella la griglia associata a q
       CurrentWork.quests.splice( get_card_index(), 1 )//cancella la quest associata a q
+      n_quests -= 1;
+      n_activities.splice(CurrentNavStatus.QuestN, 1);
     }
-    else {
-      //CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
+    else if (CurrentNavStatus.Section =="EditQuest") {
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
+      n_activities[CurrentNavStatus.QuestN] -= 1;
       //analogo alle quest ma per le activity
     }
+    // sistemazione dei decks
       iter = q.parentElement;// iter deck padre di q
       if( iter.children.length == 1 )// se iter ha solo la card selezionata, elimina iter
         iter.remove();
       else {
         q.remove();
-        //il resto di questo else fa in modo che sopo la rimozione di q, il resto della griglia "slitti" in modo appropriato
+        //il resto di questo else fa in modo che dopo la rimozione di q, il resto della griglia "slitti" in modo appropriato
         while( !( iter == iter.parentElement.lastChild ) ) {
           set_stop_animation("stop",iter.nextElementSibling.firstChild);
           iter.appendChild( iter.nextElementSibling.firstChild );
@@ -305,90 +360,72 @@
   function swap_mode() {//s è il tasto swap
     //esci dalla swap mode
     if(mode == "swap" ) {
-      change_color_option("swap", "btn-primary", "btn-secondary");
+      change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
       mode = "default";
-      first_selected_quest ="";
+      first_selected_stage ="";
       stop_shaking();//dovrà prendere un parametro per capire su quale set agire
     }
     else {//entra in swap mode
       stop_shaking();
-      change_color_option("swap","btn-secondary", "btn-primary");
+      change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-secondary", "btn-primary");
       if( mode == "cancel" )
-        change_color_option("cancel","btn-primary","btn-secondary");
+        change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-primary","btn-secondary");
       mode = "swap";
     }
   }
 
   function swap_em(s) {//s this quest
-    if(first_selected_quest) {
-    //fai lo swap tra s e first_selected_quest, poi imposta first_selected_quest=""
-      set_stop_animation("tinLeftOut",first_selected_quest);
+    if(first_selected_stage) {
+    //fai lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
+      set_stop_animation("tinLeftOut",first_selected_stage);
       set_stop_animation("tinRightOut",s);
       setTimeout(function () {
-        set_stop_animation("tinRightIn",first_selected_quest);
+        set_stop_animation("tinRightIn",first_selected_stage);
         set_stop_animation("tinLeftIn",s);
         if (CurrentNavStatus.Section =="EditStory") {//swappa anche le quest e le griglie associate
           [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] =[CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
           [quests_grids[get_card_index()], quests_grids[first_selected_card_index]] =[quests_grids[first_selected_card_index],quests_grids[get_card_index()]];
+
+          let swtmp = n_activities[first_selected_card_index];
+          n_activities[first_selected_card_index] = n_activities[get_card_index()];
+          n_activities[get_card_index()] = swtmp;
         }
         else {
-          //[CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
-          ////analogo alle quest ma per le activity
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
+          //analogo alle quest ma per le activity
         }
         //scambia le card
         tmp = s;
-        s.outerHTML = first_selected_quest.outerHTML;
-        first_selected_quest.outerHTML = tmp.outerHTML;
-        first_selected_quest_index = -1;
-        first_selected_quest = "";
+        s.outerHTML = first_selected_stage.outerHTML;
+        first_selected_stage.outerHTML = tmp.outerHTML;
+        first_selected_stage_index = -1;
+        first_selected_stage = "";
 
       },1000);
     }
     else {//se la quest selezionata è la prima, impostala come tale e falla shakkerare
       set_stop_animation("shake",s);
-      first_selected_quest = s;
+      first_selected_stage = s;
       first_selected_card_index = get_card_index();
     }
   }
 
-  function stop_shaking() {//per tutte le card della section corrente
-    if(CurrentNavStatus.Section =="EditQuest")
-      sel = "q_";//sel serve per stabilire quale griglia targettare(tra storia e quest)
-    else
-      sel = "s_";
-    //alert(sel);
-    for (card of $("#"+sel+"grid_div .card")) {
+  // blocca lo shaking per tutte le card che lo stanno utilizzando
+  function stop_shaking() {
+    for (card of $("#" + CurrentNavStatus.Section + " .card")) {
       if( card.style.animationName == "shake" )
         set_stop_animation("stop",card);
     }
   }
-  function stop_ffs() {//blocca le animazioni di swap
-    if(CurrentNavStatus.Section =="EditQuest")
-      sel = "q_";
-    else
-      sel = "s_";
-    //alert(sel);
-    for (card of $("#"+sel+"grid_div .card")) {
+
+  // blocca le animazioni di swap
+  function stop_ffs() {
+    for (card of $("#"+CurrentNavStatus.Section +" .card")) {
       if( card.style.animationName == "tinLeftIn" || card.style.animationName == "tinRightIn" )
         set_stop_animation("stop",card);
     }
   }
-  function create_stuff(what) {
-    if ( what=="quest") {
-      //creo quest vuota,la aggiungo e vi inserisco il titolo
-      new_quest = initQuest();
-      CurrentWork.quests.push(new_quest);
-      //quests_grids contiene le griglie delle quest
-      quests_grids.push("");
-      n_activities.push(0);
-      save_title("quest");
-    } else {//caso Activity
-      //creo Activity vuota e la aggiungo
-      new_activity = initActivity();
-
-      CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(new_activity);
-    }
-  }
+  
 /*
 Ci sono alcuni cambiamenti strutturali:
   -le modalità ChooseAccessibility e ChooseGameMode sono unite in una sola e la prima è scomparsa

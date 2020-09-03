@@ -32,6 +32,10 @@ RIASSUNTO DELLE COSE DA FARE:
     * Sistemazione:
         * Finire il cleanup
         * Sistemare la navbar, che dovrebbe avere: save, back, close, change mode, graphic e preview
+    * Menu Game Mode:
+        * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
+        * indicare avvertimento di: non si torna più indietro
+    * Creare funzione che controlli se una stringa è vuota o composta solo da blanks
     * Editing del testo
     * Editing dell'answer outcome
     * Editor CSS
@@ -56,6 +60,12 @@ DETTAGLI SULLE COSE DA FARE:
     * Aggiungere la callback da fare alla scadenza del tempo
 * approfondire la differenza tra attr e prop
 
+ALTRE COSE CHE SI POTREBBERO FARE:
+* EDITOR
+    * Standardizzare le funzioni di select/deselect
+
+
+
 
 
 appunti:
@@ -68,3 +78,4 @@ appunti:
     * https://developer.paciellogroup.com/blog/2017/04/what-is-an-accessible-name/
     * https://www.w3.org/1999/xhtml/vocab#XHTMLRoleVocabulary
     * https://webaim.org/techniques/aria/#rules
+* margin per elementi div: https://stackoverflow.com/questions/35817096/css-margin-0-auto-not-centering

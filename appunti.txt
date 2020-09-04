@@ -36,6 +36,7 @@ RIASSUNTO DELLE COSE DA FARE:
         * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
         * indicare avvertimento di: non si torna più indietro
     * Creare funzione che controlli se una stringa è vuota o composta solo da blanks
+    * Fare in modo che per la storia e le quest siano già salvati i nomi standard nel json (con i relativi tasti che indicano il salvataggio)
     * Editing del testo
     * Editing dell'answer outcome
     * Editor CSS

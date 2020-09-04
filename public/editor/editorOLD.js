@@ -4,35 +4,7 @@ Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
 * apertura dell'explorer (per editare/pubblicare/ritirare una storia già esistente)
 */
 
-/* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
-var Parent = {
-	MainMenu: "MainMenu",
-    ChooseGameMode: "MainMenu",
-    EditStory: "ChooseGameMode",
-	EditQuest: "EditStory",
-	EditActivity: "EditQuest",
-	EditAnswerField: "EditActivity",
-	EditActivityText: "EditActivity"
-};
 
-/* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
-var CurrentNavStatus = {
-	Section: "MainMenu",
-	QuestN: -1,
-	ActivityN: -1
-};
-
-/* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
-var CurrentWork = {
-	ACCESSIBILITY: 0,
-	story_title: "",
-	story_ID: -1,
-	game_mode: "",
-	single_device: 1,
-	quests: [],
-	stylesheet: "",
-	score: []
-};
 
 var EditRemove = "<div class='EditRemove'><button type='button' class='btn btn-primary btn-sm' onclick=''>Modifica</button><button type='button' class='btn btn-danger btn-sm' onclick=''>Rimuovi</button></div>";
 
@@ -251,38 +223,6 @@ function goBack() {
     // promptSave();
 
     goToSection( Parent[CurrentNavStatus.Section] );
-};
-
-
-/**
- * Inizializza un oggetto quest vuoto per il JSON
- */
-function initQuest() {
-	let EmptyQuest = {	
-		quest_title: "",
-		activities: []
-	};
-
-	return EmptyQuest;
-};
-
-
-/**
- * Inizializza un oggetto attività vuoto per il JSON
- */
-function initActivity() {
-	let EmptyActivity = {
-		activity_text: [],
-		answer_field: "",
-		right_answer: "",
-		answer_score: "",
-		answer_outcome: "",
-		ASK_EVAL: 0,
-		GET_CHRONO: 0,
-		expected_time: 0
-	};
-
-	return EmptyActivity;
 };
 
 

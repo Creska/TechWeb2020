@@ -88,7 +88,7 @@
       </div>
       <input type="text" id="StoryTitleInput" class="form-control" val="MyStory" onclick="change_savetitle_button('unsaved');">
       <div class="input-group-append">
-         <button class="btn btn-primary" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salva</button>
+         <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
     </div>
     <div class=" alert alert-info text-justify rounded mb-1 p-0" role="alert">
@@ -159,7 +159,36 @@
 
   <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
   <div class="EditorSection" id="EditActivity">
-   <!-- TODO -->
+    <h1>TITOLO SEZIONE</h1>
+    <div class="btn-group-justified">
+      <a class="btn btn-secondary" onclick="new_go_to_section('EditAnswerField')">Modifica answer field</a>
+      <a class="btn btn-secondary" onclick="new_go_to_section('EditAnswerOutcome')">Modifica progressione attività</a>
+    </div>
+
+    <div id="q_buttons_div">
+      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="swap mode">
+        <i class="fas fa-people-carry"></i>
+      </button>
+      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Image");create_card("IMMAGINE");' data-toggle="tooltip" data-placement="top" title="Aggiungi immagine">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="cancel mode">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+
+    <div class="CardGrid" id="ParagraphsGrid">
+    </div>
+
+    <button type="button" class="btn btn-lg bg-dark mt-3 rounded" name="button" onclick="back()" data-toggle="tooltip" data-placement="right" title="torna alla storia">
+      <i class="fas fa-undo-alt"></i>
+    </button>
   </div>
 
 
@@ -211,52 +240,19 @@
         });
       </script>
     </div>
-    <button onclick="saveAnswerFieldSettings();">Salva</button>
+
+    <button onclick="saveAnswerFieldSettings();">Salva</button>;
   </div>
 
 
-<!--DA FINIRE-->
-<div class="EditorSection" id="EditActivityText">
-  <div>
-    Modifica il testo dell'attività
+  <div class="EditorSection" id="EditText">
+    <h1>TITOLO SEZIONE</h1>
+
+    <textarea id="ParTextInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
+
+    <button class="">Salva</button>
+    <button class="" onclick="back();">Annulla</button>
   </div>
-
-  <div>
-    <button class="btn btn-primary btn-lg btn-block" onclick="toggleParagraphInput()">Aggiungi paragrafo</button>
-    <button class="btn btn-primary btn-lg btn-block" onclick="">Elimina paragrafo</button>
-  </div>
-
-  <div class="StageList" id="ParagraphList"><ul></ul></div>
-</div>
-
-
-<!--DA FINIRE-->
-<div class="modal fade" id="InsertParagraph" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Scegliere l'indice</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div>
-        <input type="radio" id="addTextPar" name="ChooseParagraphType">
-        <label for="addTextPar">Paragrafo di testo</label>
-        <input type="radio" id="addGallery" name="ChooseParagraphType">
-        <label for="addGallery">Galleria di una o più immagini</label>
-      </div>
-      <div class="modal-body">
-        <label for="ParagraphIndexInput">Utilizzare l'indice di ultima posizione o cambiarlo secondo le preferenze:</label>
-        <input type="number" id="ParagraphIndexInput" min="0">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-        <button type="button" class="btn btn-primary" onclick="insertNewParagraph();">Salva</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <footer class="mastfoot mt-auto ">
   <div class="inner small">

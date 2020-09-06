@@ -1,6 +1,6 @@
 var b = [ false, false, false, false, false ];//true: i è selezionato
 var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
-var colors = [ "primary", "warning", "success", "danger", "dark", "info" ];
+var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
 var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
 var n_activities = []; // numero di attività per ogni quest - equivalente a CurrentWork.quests[CurrentNavStatus.QuestN].activities.length
 var mode = "default";
@@ -8,6 +8,7 @@ var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var quests_grids = []; // contiene le griglie di attività per ogni quest
+var paragraphs_grid = []; // contiene tutte le griglie di paragrafi
 
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
@@ -30,7 +31,7 @@ var CurrentNavStatus = {
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork = {
 	ACCESSIBILITY: 0,
-	story_title: "",
+	story_title: "<div id='StoryTitle'>NuovaStoria</div>",
 	story_ID: -1,
 	game_mode: "",
 	single_device: 1,
@@ -96,7 +97,7 @@ function save_title( which ) {
         NewStoryTitle.text( $( '#StoryTitleInput' ).val() );
       }
       else {
-        NewStoryTitle.text( "NuovaStoria ");
+        // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
         $( '#StoryTitleInput' ).val( "NuovaStoria" );
       }
 
@@ -105,46 +106,47 @@ function save_title( which ) {
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
-        if( $("#NewQuestWidget input").val()=="" )
-          value = "Quest" + n_quests;
-        else {
-          value = $("#NewQuestWidget input").val();
-        }
+        if( $("#NewQuestWidget input").val() != "" ) {
+          /* un titolo di default è già presente nel nuovo elemento quest */
+          /* quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
+          let NewQuestTitle = $( "<div/>",
+            {
+              "class": "QuestTitle",
+              text: $("#NewQuestWidget input").val()
+            });
 
-        let NewQuestTitle = $( "<div/>",
-        {
-          "class": "QuestTitle",
-          text: value
-        });
-        CurrentWork.quests[n_quests - 1].quest_title = NewQuestTitle.prop( "outerHTML" );
+          CurrentWork.quests[n_quests - 1].quest_title = NewQuestTitle.prop( "outerHTML" );
+        }
       }
       else {
-        let NewQuestTitle = $( "<div/>",
+        let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
+
+        if( $( '#QuestTitleInput' ).val() != "" ) {
+          let NewQuestTitle = $( "<div/>",
           {
             "class": "QuestTitle"
           });
 
-        if( $( '#QuestTitleInput' ).val() != "" ) {
           NewQuestTitle.text( $( '#QuestTitleInput' ).val() );
+
+          $("#QuestsGrid .card-text").each( function() {
+            if ( $(this).text() == old_title ) {
+              $(this).text( NewQuestTitle.text() ); // aggiorna il nome della card
+            }
+          });
+
+          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
         }
         else {
-          NewStoryTitle.text( "Quest" + get_card_index());
-          $( '#QuestTitleInput' ).val( "Quest" + get_card_index() );
+          // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
+          $( '#QuestTitleInput' ).val( old_title );
         }
 
-        let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
-        $("#QuestsGrid .card-text").each( function() {
-          if ( $(this).text() == old_title ) {
-            $(this).text( NewQuestTitle.text() ); // aggiorna il nome della card
-          }
-        });
-
-        CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
         change_savetitle_button( "saved" );
       }
       break;
     default:
-        handleError()
+        handleError();
   }
 };
 
@@ -152,14 +154,37 @@ function save_title( which ) {
 function create_stuff(what) {
   switch (what) {
     case "quest":
+      n_quests += 1;
       CurrentWork.quests.push(initQuest());
       quests_grids.push("");
       n_activities.push(0);
-      n_quests += 1;
       save_title("quest");
       break;
     case "activity":
+      n_activities[CurrentNavStatus.QuestN] += 1;
       CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
+      paragraphs_grid[CurrentNavStatus.QuestN].splice(n_activities[CurrentNavStatus.QuestN], 0, "");
+      break;
+    case "TextParagraph":
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<p class='TextParagraph'></p>");
+      break;
+    case "Image":
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<img class='Image'>");
+      break;
+    case "Gallery":
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push(`
+        <div class="carousel slide Gallery" data-ride="carousel">
+		      <div class="carousel-inner">
+		      </div>
+	      	<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
+			      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			      <span class="sr-only">Previous</span>
+		      </a>
+		      <a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
+			      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+			      <span class="sr-only">Next</span>
+		      </a>
+        </div>`);
       break;
     default:
       handleError();
@@ -173,7 +198,9 @@ function initQuest() {
 	let EmptyQuest = {	
 		quest_title: "",
 		activities: []
-	};
+  };
+  
+  EmptyQuest.quest_title = "<div class='QuestTitle'>" + "Quest" + String(n_quests-1) + "</div>";
 
 	return EmptyQuest;
 };
@@ -294,9 +321,8 @@ function back() {
   stop_shaking();
   mode="default";
   first_selected_stage="";
-  quests_grids[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
-  CurrentNavStatus.QuestN = -1;
-  $("#ActivitiesGrid").empty(); // inutile
+  if (Parent[CurrentNavStatus.Section] == "EditStory") CurrentNavStatus.QuestN = -1;
+  else if (Parent[CurrentNavStatus.Section] == "EditQuest") CurrentNavStatus.ActivityN = -1
   new_go_to_section(Parent[CurrentNavStatus.Section]);
 };
 
@@ -304,36 +330,44 @@ function back() {
 //sostituisce goToSection quando ci si sposta in EditStory o EditQuest
 function new_go_to_section(where) {
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
+    stop_ffs();
+    // i change color non funzionano sempre ma non capisco perché
+    change_color_option(".SwapBtn", "primary", "secondary");
+    change_color_option(".CancelBtn", "primary", "secondary");
+
     switch (where) {
       case "EditStory":
-        if (CurrentWork.story_title == "")
-          $("#StoryTitleInput").val("NuovaStoria");
-        else
-          $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
+        $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
         break;
       case "EditQuest":
         //// BUG: click multiplo fa partire più volte l'onclick e perciò
         //get_card_index, nelle istanze successive alla prima
         //fa riferimento a ActivitiesGrid invece che a QuestsGrid
-        CurrentNavStatus.QuestN = get_card_index();
+        if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
         if (CurrentWork.quests[CurrentNavStatus.QuestN] == "")
           $("#QuestTitleInput").val("Quest" + CurrentNavStatus.QuestN);
         else
           $("#QuestTitleInput").val( $( $.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+  
         node = $(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title);
         $("#EditQuest h1").text(node.text());//inserisci il titolo della quest in EditQuest
-        $("#ActivitiesGrid").html(quests_grids[CurrentNavStatus.QuestN]);//carica la griglia della quest
+        $("#ActivitiesGrid").html(quests_grids[CurrentNavStatus.QuestN]);//carica la griglia delle attività
+        break;
+      case "EditActivity":
+        // riparare lo stesso bug del caso sopra
+        CurrentNavStatus.ActivityN = get_card_index();
+        // aggiungere l'aggiornamento del titolo
+        $("#ParagraphsGrid").html(paragraphs_grid[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]);//carica la griglia dei paragrafi/immagini/gallerie
+        // BUG - sembra che usi sempre la stessa quest
         break;
       default:
         handleError();
         break;
     }
-
-    stop_ffs();
-    change_color_option("#" + CurrentNavStatus.Section + " .SwapBtn", "primary", "secondary");
-    change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "primary", "secondary");
+    
     CurrentNavStatus.Section = where;
+    if ( (where == "EditStory") || (where == "EditQuest") ) change_savetitle_button("saved");
     $("#"+where).fadeIn();
   });
 };
@@ -343,26 +377,30 @@ function new_go_to_section(where) {
 function create_card(titolo) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
 
-  let value;
+  let color;
+
   switch ( current_grid ) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
       $("#NewQuestWidget input").val("");
-      value = n_quests-1;
-      if (titolo =="")// TODO: AGGIUNGERE CONTROLLO SU TUTTE LE STRINGHE CON SOLO CARATTERI VUOTI
-        titolo ="Quest"+(n_quests-1);
+      if (titolo =="") // TODO: AGGIUNGERE CONTROLLO SU TUTTE LE STRINGHE CON SOLO CARATTERI VUOTI
+        titolo = "Quest" + ( n_quests - 1 );
+      color = colors[n_quests % 6];
       break;
     case "ActivitiesGrid":
-      titolo = "Attività"+n_activities[CurrentNavStatus.QuestN];
-      value = n_activities[CurrentNavStatus.QuestN];
-      n_activities[CurrentNavStatus.QuestN] += 1;
+      titolo = "Attività" + ( n_activities[CurrentNavStatus.QuestN] - 1 );
+      color = colors[n_activities[CurrentNavStatus.QuestN] % 6];
       break;
+    case "ParagraphsGrid":
+      if ( titolo == "IMMAGINE" ) color = colors[0];
+      else if ( titolo == "GALLERY" ) color = colors[5];
+      else color = colors[1];
     default:
       handleError();
       break;
   }
 
-  card = `<div class="card bg-` + colors[ (value%6) ] + ` "onclick='
+  card = `<div class="card bg-` + color + `" onclick='
     selected_card = this;
     switch(mode) {
       case "swap":
@@ -382,7 +420,17 @@ function create_card(titolo) {
           else if (CurrentNavStatus.Section == "EditQuest")
             new_go_to_section("EditActivity");
           else if (CurrentNavStatus.Section == "EditActivity") {
-            /* TODO */
+            switch( $( $(this).attr("id") + ":first-child:first-child" ).text() ) {
+              case "IMAGE":
+                /* TODO */
+                break;
+              case "GALLERY":
+                /* TODO */
+                break;
+              default:
+                new_go_to_section("EditText");
+                break;
+            }
           }
         }, 750);
         break;
@@ -399,6 +447,9 @@ function create_card(titolo) {
   
   $("#"+current_grid+" > div:last-child").append(card); //aggiungo la card al deck
   set_stop_animation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
+  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0) quests_grids[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+  else if (CurrentNavStatus.ActivityN >= 0)
+    paragraphs_grid[CurrentNavStatus.QuestN, CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
 };
 
 
@@ -431,6 +482,7 @@ function cancel_em(obj) {
         n_activities.splice(CurrentNavStatus.QuestN, 1);
         break;
       case "EditQuest":
+        paragraphs_grid[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
         CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
         n_activities[CurrentNavStatus.QuestN] -= 1;
         break;
@@ -494,6 +546,8 @@ function swap_em(s) {
       }
       else if (CurrentNavStatus.Section == "EditQuest") {
         [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
+
+        [paragraphs_grid[CurrentNavStatus.QuestN][get_card_index()], paragraphs_grid[CurrentNavStatus.QuestN][first_selected_card_index]] =[paragraphs_grid[CurrentNavStatus.QuestN][first_selected_card_index], paragraphs_grid[CurrentNavStatus.QuestN][get_card_index()]];
       }
       else if (CurrentNavStatus.Section == "EditActivity") {
         /* TODO */

@@ -36,7 +36,6 @@ RIASSUNTO DELLE COSE DA FARE:
         * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
         * indicare avvertimento di: non si torna più indietro
     * Creare funzione che controlli se una stringa è vuota o composta solo da blanks
-    * Fare in modo che per la storia e le quest siano già salvati i nomi standard nel json (con i relativi tasti che indicano il salvataggio)
     * Editing del testo
     * Editing dell'answer outcome
     * Editor CSS
@@ -50,12 +49,11 @@ RIASSUNTO DELLE COSE DA FARE:
 DETTAGLI SULLE COSE DA FARE:
 * EDITOR
     * Controllare la faccenda della traduzione di apici e quotes
-    * Usare cssstylesheet.insertrule() per aggiungere regole vuote al css - sempre che funzioni
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
     * Nella pubblicazione magari mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata NEEDEVAL, che non ci siano attività o quest vuote, e robe simili
     * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
-    * Meglio mettere un input del nome della storia al momento della creazione, per gestire al meglio il collegamento col file css
+    * Aggiungere la creazione dell'id e collegare ad esso il file css
     * Nella parte dell'editing della programmazione inserire un riepilogo dei settaggi del campo risposta.
 * PLAYER
     * Aggiungere la callback da fare alla scadenza del tempo

@@ -7,8 +7,8 @@ var mode = "default";
 var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
-var quests_grids = []; // contiene le griglie di attività per ogni quest
-var paragraphs_grid = []; // contiene tutte le griglie di paragrafi
+var GridsOfActivities = []; // contiene le griglie di attività per ogni quest
+var GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
 
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
@@ -18,7 +18,8 @@ var Parent = {
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",
-	EditActivityText: "EditActivity"
+  EditText: "EditActivity",
+  SetAnswerOutcome: "EditActivity"
 };
 
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
@@ -150,20 +151,22 @@ function save_title( which ) {
   }
 };
 
-  // crea una quest/attività vuota e la aggiunge all'array del json. se si tratta di una quest, crea un nuovo elemento nell'array delle griglie di attività
+
+// crea una quest/attività vuota e la aggiunge all'array del json. se si tratta di una quest, crea un nuovo elemento nell'array delle griglie di attività
 function create_stuff(what) {
   switch (what) {
     case "quest":
       n_quests += 1;
       CurrentWork.quests.push(initQuest());
-      quests_grids.push("");
       n_activities.push(0);
+      GridsOfActivities.push("");
+      GridsOfParagraphs.push([]);
       save_title("quest");
       break;
     case "activity":
       n_activities[CurrentNavStatus.QuestN] += 1;
       CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
-      paragraphs_grid[CurrentNavStatus.QuestN].splice(n_activities[CurrentNavStatus.QuestN], 0, "");
+      GridsOfParagraphs[CurrentNavStatus.QuestN].push("");
       break;
     case "TextParagraph":
       CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<p class='TextParagraph'></p>");
@@ -215,7 +218,7 @@ function initActivity() {
 		answer_field: "",
 		right_answer: "",
 		answer_score: "",
-		answer_outcome: "",
+		answer_outcome: {},
 		ASK_EVAL: 0,
 		GET_CHRONO: 0,
 		expected_time: 0
@@ -308,7 +311,21 @@ function set_stop_animation( current, obj ) {
 //calcola l'indice della card selezionata, rispetto alla griglia corrente
 //la griglia è composta da deck di tre card l'uno
 function get_card_index() {
-  let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
+  let current_grid;
+  
+  switch (CurrentNavStatus.Section) {
+    case "EditStory":
+    case "EditQuest":
+      current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
+      break;
+    case "EditActivity":
+    case "EditText":
+    case "EditImage":
+    case "EditGallery":
+    case "EditAnswerField":
+      current_grid = $( "#EditActivity .CardGrid" ).attr( "id" );
+  }
+  
   parent_element = selected_card.parentNode;//recupera il card deck dove si trova la card
   parent_index = Array.from(document.getElementById(current_grid).children).indexOf(parent_element);//calcola l'indice' del card deck rispetto alla griglia
   card_index_inside_parent = Array.from(parent_element.children).indexOf(selected_card);//calcola l'indice della card rispetto al suo deck
@@ -318,7 +335,12 @@ function get_card_index() {
 
 //va alla sezione precedente
 function back() {
-  stop_shaking();
+  switch (CurrentNavStatus.Section) {
+    case "EditStory":
+    case "EditQuest":
+    case "EditActivity":
+      stop_shaking();
+  }
   mode="default";
   first_selected_stage="";
   if (Parent[CurrentNavStatus.Section] == "EditStory") CurrentNavStatus.QuestN = -1;
@@ -352,14 +374,34 @@ function new_go_to_section(where) {
   
         node = $(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title);
         $("#EditQuest h1").text(node.text());//inserisci il titolo della quest in EditQuest
-        $("#ActivitiesGrid").html(quests_grids[CurrentNavStatus.QuestN]);//carica la griglia delle attività
+        $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]);//carica la griglia delle attività
         break;
       case "EditActivity":
         // riparare lo stesso bug del caso sopra
-        CurrentNavStatus.ActivityN = get_card_index();
+        if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
         // aggiungere l'aggiornamento del titolo
-        $("#ParagraphsGrid").html(paragraphs_grid[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]);//carica la griglia dei paragrafi/immagini/gallerie
-        // BUG - sembra che usi sempre la stessa quest
+        $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]);//carica la griglia dei paragrafi/immagini/gallerie
+        break;
+      case "EditText":
+        if (CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] === undefined )
+          $("#TextParInput").val("");
+        else
+          $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
+        break;
+      case "EditAnswerField":
+        if ( CurrentNavStatus.Section == "EditActivity" ) {
+          if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
+            loadEditAnswerFieldSection( "LOAD" );
+          }
+          else {
+            loadEditAnswerFieldSection( "RESET" );
+          }
+        }
+        else
+          loadEditAnswerFieldSection( "CHG_TYPE" );
+        break;
+      case "SetAnswerOutcome":
+        loadEditOutcomeSection();
         break;
       default:
         handleError();
@@ -395,6 +437,7 @@ function create_card(titolo) {
       if ( titolo == "IMMAGINE" ) color = colors[0];
       else if ( titolo == "GALLERY" ) color = colors[5];
       else color = colors[1];
+      break;
     default:
       handleError();
       break;
@@ -447,9 +490,9 @@ function create_card(titolo) {
   
   $("#"+current_grid+" > div:last-child").append(card); //aggiungo la card al deck
   set_stop_animation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
-  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0) quests_grids[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0) GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
   else if (CurrentNavStatus.ActivityN >= 0)
-    paragraphs_grid[CurrentNavStatus.QuestN, CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+    GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
 };
 
 
@@ -476,15 +519,19 @@ function cancel_em(obj) {
   setTimeout( function() {
     switch (CurrentNavStatus.Section) {
       case "EditStory":
-        quests_grids.splice(get_card_index(),1);//cancella la griglia associata a q
+        GridsOfActivities.splice(get_card_index(),1);//cancella la griglia associata a q
+        GridsOfParagraphs.splice(get_card_index(), 1);
         CurrentWork.quests.splice( get_card_index(), 1 )//cancella la quest associata a q
         n_quests -= 1;
         n_activities.splice(CurrentNavStatus.QuestN, 1);
         break;
       case "EditQuest":
-        paragraphs_grid[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
+        GridsOfParagraphs[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
         CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
         n_activities[CurrentNavStatus.QuestN] -= 1;
+        break;
+      case "EditActivity":
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()];
         break;
       default:
         handleError();
@@ -538,7 +585,8 @@ function swap_em(s) {
 
       if (CurrentNavStatus.Section =="EditStory") {//swappa anche le quest e le griglie associate
         [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] =[CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
-        [quests_grids[get_card_index()], quests_grids[first_selected_card_index]] =[quests_grids[first_selected_card_index],quests_grids[get_card_index()]];
+        [GridsOfActivities[get_card_index()], GridsOfActivities[first_selected_card_index]] =[GridsOfActivities[first_selected_card_index],GridsOfActivities[get_card_index()]];
+        [GridsOfParagraphs[get_card_index()], GridsOfParagraphs[first_selected_card_index]] = [GridsOfParagraphs[first_selected_card_index], GridsOfParagraphs[get_card_index()]];
 
         let swtmp = n_activities[first_selected_card_index];
         n_activities[first_selected_card_index] = n_activities[get_card_index()];
@@ -547,10 +595,10 @@ function swap_em(s) {
       else if (CurrentNavStatus.Section == "EditQuest") {
         [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
 
-        [paragraphs_grid[CurrentNavStatus.QuestN][get_card_index()], paragraphs_grid[CurrentNavStatus.QuestN][first_selected_card_index]] =[paragraphs_grid[CurrentNavStatus.QuestN][first_selected_card_index], paragraphs_grid[CurrentNavStatus.QuestN][get_card_index()]];
+        [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
       }
       else if (CurrentNavStatus.Section == "EditActivity") {
-        /* TODO */
+        [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()]];
       }
 
       //scambia le card
@@ -584,4 +632,295 @@ function stop_ffs() {
     if( card.style.animationName == "tinLeftIn" || card.style.animationName == "tinRightIn" )
       set_stop_animation("stop",card);
   }
+};
+
+
+
+/**
+ * @param MODE --> indica la modalità di caricamento
+ * Prepara la sezione di editing del Campo Risposta. A seconda dei casi, carica la sezione come nuova oppure la compila con i dati salvati in CurrentWork
+ * La modalità di caricamento può essere quella di reset totale della finestra, quella di cambiamento di tipologia dell'input oppure quella di caricmento dell'Answer Field salvato
+ */
+function loadEditAnswerFieldSection( MODE ) {
+	switch ( MODE ) {
+		case "LOAD":
+			let LoadAnswerField = $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field );
+
+			switch ( $( $( LoadAnswerField ).children()[1] ).prop( "tagName" ) ) {
+				case "UL":
+					$( "#QuestionType_Checklist" ).prop( "checked", true );
+
+					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
+
+					let TextInput;
+					$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
+						if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
+							$( this ).prev().prop( "checked", true );
+
+						}
+
+						TextInput = $( "<input/>",
+							{
+								type: "text",
+								val: $( this ).text()
+							}
+						);
+
+						$( this ).replaceWith( TextInput );
+					});
+
+					$( "#AnswerFieldPreview" ).append( $( "<button/>",
+						{
+							"class": "btn btn-secondary AddRadio",
+							onclick: "addRadio('AnswerInput');",
+							text: "+"
+						}));
+
+					break;
+				case "INPUT":
+					if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "text" ) {
+						$( "#QuestionType_Text" ).prop( "checked", true );
+					}
+					else if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "number" ) {
+						$( "#QuestionType_Number" ).prop( "checked", true );
+					}
+
+					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
+				
+					$( "#AnswerFieldPreview" ).find( "input" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer );
+
+					break;
+				default:
+					handleError();
+					break;
+			}
+
+			$( "#InsertAnswerFieldDescription" ).val( $( $( LoadAnswerField ).children()[0] ).text() );
+			$( "#AnswerTimer" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time / 60000 );
+			$( "#AnswerScore" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score );
+			$( "#InsertTimer" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO );
+			if ( $( "#InsertTimer" ).prop( "checked" ) )
+				$( "#AnswerTimer" ).prop( "disabled", false );
+			else
+				$( "#AnswerTimer" ).prop( "disabled", true );
+			$( "#NeedEvaluation" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL );
+			break;
+		case "CHG_TYPE":
+			buildAnswerFieldPreview();
+			$( "#InsertAnswerFieldDescription" ).val( "" );
+			break;
+		case "RESET":
+			$( "#QuestionType_Checklist" ).prop( "checked", false );
+			$( "#QuestionType_Text" ).prop( "checked", false );
+			$( "#QuestionType_Number" ).prop( "checked", false );
+	
+			$( "#AnswerTimer" ).val( 0.5 );
+			$( "#AnswerTimer" ).attr( "disabled", true );
+			$( "#InsertTimer" ).prop( "checked", false );
+			$( "#AnswerScore" ).val( 0 );
+			$( "#NeedEvaluation" ).prop( "checked", false );
+			$( "#MissingRightAnswerWarning" ).remove();
+			$( "#AnswerFieldPreview" ).empty();
+			$( "#InsertAnswerFieldDescription" ).val( "" );
+			break;
+		default:
+			handleError();
+			break;
+	}
+};
+
+
+/**
+ * Costruisce il campo risposta in base alla tipologia scelta dall'utente.
+ * I campi testo/numero non hanno nessun valore di default, così come non viene spuntato nessun radio di default
+ */
+function buildAnswerFieldPreview() {
+	$( "#AnswerFieldPreview" ).empty();
+
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<ul/>",
+		{
+			"class": "AnswerInput",
+			id: "AnswerInput"
+		}));
+
+		for ( i = 0; i < 2; i++ ) {
+			addRadio( "AnswerInput" );
+		}
+
+		$( "#AnswerFieldPreview" ).append( $( "<button/>",
+		{
+			"class": "btn btn-secondary AddRadio",
+			onclick: "addRadio('AnswerInput');",
+			text: "+"
+		}));
+	}
+	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
+		{
+			type: "text",
+			"class": "AnswerInput",
+			id: "AnswerInput",
+			placeholder: "Risposta"
+		}));
+	}
+	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
+		{
+			type: "number",
+			"class": "AnswerInput",
+			id: "AnswerInput",
+			placeholder: "0"
+		}));
+	}
+};
+
+
+/**
+ * Salva il parametro Risposta Esatta specificato dall'utente, a seconda del tipo di campo risposta scelto
+ */
+function saveRightAnswer() {
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		$( "#AnswerFieldPreview [type='radio']" ).each( function( index ) {
+			if ( $( this ).prop( "checked" ) ) {
+				saveDataFragment( "right_answer", $( this ).next().val() );
+				return;
+			}
+		});
+	}
+	else {
+		saveDataFragment( "right_answer", $( "#AnswerFieldPreview input" ).val() );
+	}
+}
+
+
+/**
+ * Salva tutte le personalizzazioni che l'utente ha creato per il Campo risposta
+ */
+function saveAnswerFieldSettings() {
+	saveRightAnswer();
+
+	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
+		let InputLabel;
+		$( "#AnswerFieldPreview [type='text']" ).each( function( index ) {
+			InputLabel = $( "<label/>",
+			{
+				for: "AnswerOption" + String( index )
+			});
+
+			if ( $( this ).val() == "" ) {
+				InputLabel.text( "Opzione" + String( index ) );
+			}
+			else {
+				InputLabel.text( $( this ).val() );
+			}
+
+			$( this ).replaceWith( InputLabel );
+		});
+	}
+	
+	saveDataFragment( "answer_field", 0 );
+	saveDataFragment( "expected_time", $( "#AnswerTimer" ).val() * 60000 );
+	saveDataFragment( "answer_score", $( "#AnswerScore" ).val() );
+	saveDataFragment( "GET_CHRONO", $( "#InsertTimer" ).prop( "checked" ) );
+	saveDataFragment( "ASK_EVAL", $( "#NeedEvaluation" ).prop( "checked" ) );
+
+	goBack();
+};
+
+
+function loadEditOutcomeSection() {
+  let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+  let OutcomeAlert = $( "<div/>",
+  {
+    "class": "alert alert-danger",
+    role: "alert"
+  });
+
+  // componiamo il recap
+  $( "#AnswerFieldRecap" ).empty();
+
+  if ( CurrentStage.ASK_EVAL ) {
+    OutcomeAlert.text( "Per questa attività è stata richiesta la valutazione in tempo reale." );
+    $( "#AnswerFieldRecap" ).append( OutcomeAlert );
+  }
+  else {
+    if ( CurrentStage.answer_field && CurrentStage.right_answer ) {
+      if ( CurrentStage.GET_CHRONO ) $( "#expired" ).attr( "disabled", false );
+      else $( "#expired" ).attr( "disabled", true );
+  
+      /*
+      caricare
+      * anteprima answer field
+      * risposta giusta
+      * tempo di risposta
+      */
+    }
+    else {
+      OutcomeAlert.text( "Campo risposta incompleto o risposta giusta mancante." );
+      $( "#AnswerFieldRecap" ).append( OutcomeAlert );
+    }
+  }
+
+  // caricamento della Tabella degli Outcomes
+  if ( ( Object.keys( CurrentStage.answer_outcome ).length === 0 ) && ( CurrentStage.answer_outcome.constructor === Object ) ) {
+    $( "#OutcomesTable" ).empty();
+    $( "#OutcomesTable" ).append( $.parseHTML(`
+      <tr>
+        <th>Risposta / Evento</th>
+        <th>Attività su cui spostarsi</th>
+      </tr>
+      <tr>
+        <td><em>Riposta corretta</em></td>
+        <td><input type="number" id="correct" placeholder="0" min="0"></td>
+      </tr>
+      <tr>
+        <td><em>Risposta errata</em></td>
+        <td><input type="number" id="wrong" placeholder="0" min="0"></td>
+      </tr>
+      <tr>
+        <td><em>Tempo scaduto</em></td>
+        <td><input type="number" id="expired" placeholder="0" min="0"></td>
+      </tr>`
+    ));
+  }
+  else {
+    for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
+      switch ( prop ) {
+        case "RightAnswer":
+          $( "#correct" ).val( val );
+          break;
+        case "WrongAnswer":
+          $( "#wrong" ).val( val );
+          break;
+        case "TimeExpired":
+          $( "#expired" ).val( val );
+          break;
+        default:
+          let newtr = $( "<tr/>" );
+          newtr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
+          newtr.append( ( $( "<input/>",
+          {
+            type: "number",
+            placeholder: 0,
+            min: 0
+          }))).wrap( "<td></td>" );
+          $( "#OutcomesTable" ).append( newtr );
+      }
+    }
+  }
+};
+
+
+function addOutcome() {
+  let newtr = $( "<tr/>" );
+  newtr.append( $.parseHTML( "<td>" + $("#AddOutcomeWidget input" ).val() + "</td>" ) );
+  newtr.append( ( $( "<input/>",
+  {
+    type: "number",
+    placeholder: 0,
+    min: 0
+  }))).wrap( "<td></td>" );
+  $( "#OutcomesTable" ).append( newtr );
 };

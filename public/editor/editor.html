@@ -162,7 +162,7 @@
     <h1>TITOLO SEZIONE</h1>
     <div class="btn-group-justified">
       <a class="btn btn-secondary" onclick="new_go_to_section('EditAnswerField')">Modifica answer field</a>
-      <a class="btn btn-secondary" onclick="new_go_to_section('EditAnswerOutcome')">Modifica progressione attività</a>
+      <a class="btn btn-secondary" onclick="new_go_to_section('SetAnswerOutcome')">Modifica progressione attività</a>
     </div>
 
     <div id="q_buttons_div">
@@ -241,16 +241,58 @@
       </script>
     </div>
 
-    <button onclick="saveAnswerFieldSettings();">Salva</button>;
+    <button onclick="saveAnswerFieldSettings();">Salva</button>
   </div>
 
 
   <div class="EditorSection" id="EditText">
     <h1>TITOLO SEZIONE</h1>
 
-    <textarea id="ParTextInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
+    <textarea id="TextParInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
 
-    <button class="">Salva</button>
+    <button class="" onclick="CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = '<p class=`TextParagraph`>' + $('#TextParInput').val() + '</p>'; back()">Salva</button>
+    <button class="" onclick="back();">Annulla</button>
+  </div>
+
+
+  <div class="EditorSection" id="SetAnswerOutcome">
+    <h1>TITOLO SEZIONE</h1>
+
+    <div id="AnswerFieldRecap"></div>
+
+    <table id="OutcomesTable">
+      <tr>
+        <th>Risposta / Evento</th>
+        <th>Attività su cui spostarsi</th>
+      </tr>
+      <tr>
+        <td><em>Riposta corretta</em></td>
+        <td><input type="number" id="correct" placeholder="0" min="0"></td>
+      </tr>
+      <tr>
+        <td><em>Risposta errata</em></td>
+        <td><input type="number" id="wrong" placeholder="0" min="0"></td>
+      </tr>
+      <tr>
+        <td><em>Tempo scaduto</em></td>
+        <td><input type="number" id="expired" placeholder="0" min="0"></td>
+      </tr>
+    </table>
+    
+
+    <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
+      </div>
+      <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+        <div class="input-group-append">
+          <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val() != '') addOutcome();">Aggiungi</button>
+          <button class="btn btn-sm btn-danger" type="button" onclick="$('#NewQuestWidget input').val('');">Annulla</button>
+        </div>
+    </div>
+
+
+    <button class="" onclick="">Salva</button>
     <button class="" onclick="back();">Annulla</button>
   </div>
 

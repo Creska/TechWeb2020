@@ -241,7 +241,8 @@
       </script>
     </div>
 
-    <button onclick="saveAnswerFieldSettings();">Salva</button>
+    <button onclick="if($('#AnswerFieldPreview').is(':empty')) back(); else saveAnswerFieldSettings();">Salva</button>
+    <button class="" onclick="back();">Annulla</button>
   </div>
 
 
@@ -260,39 +261,25 @@
 
     <div id="AnswerFieldRecap"></div>
 
-    <table id="OutcomesTable">
-      <tr>
-        <th>Risposta / Evento</th>
-        <th>Attività su cui spostarsi</th>
-      </tr>
-      <tr>
-        <td><em>Riposta corretta</em></td>
-        <td><input type="number" id="correct" placeholder="0" min="0"></td>
-      </tr>
-      <tr>
-        <td><em>Risposta errata</em></td>
-        <td><input type="number" id="wrong" placeholder="0" min="0"></td>
-      </tr>
-      <tr>
-        <td><em>Tempo scaduto</em></td>
-        <td><input type="number" id="expired" placeholder="0" min="0"></td>
-      </tr>
-    </table>
-    
+    <div>
+      <h2>Programmazione attività</h2>
 
-    <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
-      </div>
-      <input type="text" class="form-control col-sm-5" placeholder="Risposta">
-        <div class="input-group-append">
-          <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val() != '') addOutcome();">Aggiungi</button>
-          <button class="btn btn-sm btn-danger" type="button" onclick="$('#NewQuestWidget input').val('');">Annulla</button>
+      <table id="OutcomesTable">
+      </table>
+      
+      <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
         </div>
+        <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+          <div class="input-group-append">
+            <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val() != '') addOutcome();">Aggiungi</button>
+            <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
+          </div>
+      </div>
     </div>
 
-
-    <button class="" onclick="">Salva</button>
+    <button class="SaveBtn" onclick="saveOutcomes();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
   </div>
 

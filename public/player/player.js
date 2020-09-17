@@ -22,9 +22,13 @@ var StoryObj = {
 						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
 						<input type='text'>
 					</div>`,
-					right_answer: "",
+					right_answer: "Pippo",
 					answer_score: 1,
-					answer_outcome: "updateScore(); goToActivity(1);",
+					answer_outcome: {
+						RightAnswer: "nextquest",
+						TimeExpired: 0,
+						Giovanni: 1
+					},
 					ASK_EVAL: 0,
 					GET_CHRONO: 0,
 					expected_time: 3000
@@ -81,12 +85,16 @@ var StoryObj = {
 							</li>
 						</ul>
 					</div>`,
-					right_answer: "",
+					right_answer: "Quinta",
 					answer_score: 420,
-					answer_outcome: "updateScore(); goToQuest(1);",
+					answer_outcome: {
+						RightAnswer: 0,
+						WrongAnswer: 1,
+						TimeExpired: "nextquest"
+					},
 					ASK_EVAL: 0,
-					GET_CHRONO: 0,
-					expected_time: 5000
+					GET_CHRONO: 1,
+					expected_time: 15000
 				}
 			]
 		},
@@ -105,7 +113,7 @@ var StoryObj = {
 					answer_score: 69,
 					answer_outcome: "updateScore(); window.alert('fine del test'); for(var j = 0; j < StoryObj.score.length; j++) { console.log(StoryObj.score[j])}",
 					ASK_EVAL: 0,
-					GET_CHRONO: 1,
+					GET_CHRONO: 0,
 					expected_time: 10000
 				}
 			]
@@ -295,12 +303,12 @@ function goToActivity( activity_n ) {
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
 		$( ".Activity" ).append( $.parseHTML( AnswerTimer ) );
 		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
-		$( ".NextActivity" ).attr( "onclick", answer_chrono + StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome );
+		$( ".NextActivity" ).attr( "onclick", answer_chrono + "checkAnswer();" );
 		toggleAnswerTimer();
 	}
 	else {
 		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
-		$( ".NextActivity" ).attr( "onclick", StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_outcome );
+		$( ".NextActivity" ).attr( "onclick", "checkAnswer();" );
 	}
 };
 
@@ -316,16 +324,65 @@ function toggleAnswerTimer() {
 	}, 1000 );
 
 	time_limit = setTimeout( function() {
-		window.alert("tempo scaduto");
+		let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
+
+		updateScore( 0 );
+
+		if ( CurrentActivity.answer_outcome["TimeExpired"] == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1 );
+		else goToActivity( CurrentActivity.answer_outcome["TimeExpired"] );
+
 		clearInterval( countdown );
 	}, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time );
 };
 
 
 /**
+* @param score
 * Funzione che incrementa il punteggio ottenuto rispondendo alle domande in modo giusto
 * La call viene inserita dall'editor all'interno della programmazione delle attività
 */
-function updateScore() {
-	StoryObj.score[CurrentStatus.QuestN].splice( CurrentStatus.ActivityN, 0, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].answer_score );
+function updateScore( score ) {
+	StoryObj.score[CurrentStatus.QuestN].splice( CurrentStatus.ActivityN, 0, score );
+};
+
+
+/**
+ * Funzione che viene attivata cliccando il pulsante "Prosegui". In base alla risposta data, invia il giocatore all'attività rispettiva.
+ * Nel caso si necessiti valutazione umana, la procedura attiva una chiamata al server.
+ */
+function checkAnswer() {
+	clearInterval( countdown );
+
+	let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
+
+	if ( CurrentActivity.ASK_EVAL ) {
+		/* manda richiesta */
+	}
+	else {
+		let PlayerAnswer = "";
+
+		if ( $( ".AnswerField" ).find( "input" ).first().attr( "type" ) == "radio" ) {
+			$( ".AnswerField input" ).each( function() {
+				if ( $(this).prop( "checked" ) ) PlayerAnswer = $(this).next().text();
+			});
+		}
+		else
+			PlayerAnswer = $( ".AnswerField" ).find( "input" ).first().val();
+		
+		let goto;
+
+		if ( PlayerAnswer == CurrentActivity.right_answer )
+			{
+				updateScore( CurrentActivity.answer_score );
+				goto = CurrentActivity.answer_outcome["RightAnswer"];
+			}
+		else {
+			updateScore( 0 );
+			if ( CurrentActivity.answer_outcome[PlayerAnswer] != undefined ) goto = CurrentActivity.answer_outcome[PlayerAnswer];
+			else goto = CurrentActivity.answer_outcome["WrongAnswer"]
+		}
+
+		if ( goto == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1);
+		else goToActivity( goto );
+	}
 };

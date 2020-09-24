@@ -1,4 +1,4 @@
-var b = [ false, false, false, false, false ];//true: i è selezionato
+var b = [ false, false, false, false, false ]; // true: b[i] è selezionato
 var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
 var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
 var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
@@ -43,7 +43,12 @@ var CurrentWork = {
 
 
 /* -------------------------- ROBA DEL GAME MODE MENU ---------------- */
-  function deselect_other_options(i) {
+/**
+ * @param i --> indice del pulsante selezionato
+ * Deseleziona tutte le opzioni diverse dal pulsante di indice i
+ */
+function deselect_other_options( i ) {
+  let x;
   switch (i) {
     case 3:
       x = i+1;
@@ -52,91 +57,88 @@ var CurrentWork = {
       x = i-1;
       break;
     default:
-      x=-1;//-1 valore a caso purchè != 0..4
-      for(y=0;y<3;y++) {
-        if(b[y]==true && y!=i)
-          x=y;
+      x = -1;
+      for ( y = 0; y < 3; y++ ) {
+        if ( b[y] && (y != i) )
+          x = y;
       }
   }
-    if( b[x] ) {//se è selezionato
-      change_color_option("#a"+x,"bg-primary",bgs[x]);
-      b[x] = false;
-    }
+
+  if( b[x] ) {
+    change_color_option( "#a" + x, "bg-primary", bgs[x] );
+    b[x] = false;
+  }
 }
 
-  function check_select() {
-  if( (b[0] ^ b[1] ^ b[2])  & (b[3] ^ b[4]) )
-    $("#dis").removeClass("disabled");
+
+/**
+ * Controlla che siano selezionate le opzioni necessarie per far partire l'editing della storia
+ */
+function check_select() {
+  if( (b[0] ^ b[1] ^ b[2]) && (b[3] ^ b[4]) )
+    $( "#StartEditing" ).removeClass( "disabled" );
   else
-    $("#dis").addClass("disabled");
+    $( "#StartEditing" ).addClass( "disabled" );
 }
 
-  function select(i) {
+/**
+ * @param i --> numero del pulsante
+ * Seleziona il pulsante con indice i e deseleziona tutti gli altri
+ */
+function select( i ) {
   b[i] = !b[i];
-  if(b[i]) {
-    change_color_option("#a"+i,bgs[i],"bg-primary");
-    deselect_other_options(i);
+
+  if( b[i] ) {
+    change_color_option( "#a" + i, bgs[i], "bg-primary" );
+    deselect_other_options( i );
   }
   else
-    change_color_option("#a"+i,"bg-primary",bgs[i]);
+    change_color_option( "#a" + i, "bg-primary", bgs[i] );
 
   check_select();
 }
 
 /* ------------------------------- CREAZIONE QUEST E ATTIVITA' ---------------------------------- */
 
-
+/**
+ * @param which
+ * Salva il titolo della storia o della quest
+ */
 function save_title( which ) {
   switch ( which ) {
     case "story":
-      let NewStoryTitle = $( "<div/>",
-        {
-          id: "StoryTitle"
-        });
-
-      if( $( '#StoryTitleInput' ).val() != "" ) {
-        NewStoryTitle.text( $( '#StoryTitleInput' ).val() );
+      if( ($( '#StoryTitleInput' ).val()).trim() != "" ) {
+        CurrentWork.story_title = "<div id='StoryTitle'>" + $( '#StoryTitleInput' ).val() + "</div>";
       }
       else {
         // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
         $( '#StoryTitleInput' ).val( "NuovaStoria" );
       }
 
-      CurrentWork.story_title = NewStoryTitle.prop( "outerHTML" );
       change_savetitle_button( "saved" );
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
-        if( $("#NewQuestWidget input").val() != "" ) {
-          /* un titolo di default è già presente nel nuovo elemento quest */
-          /* quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-          let NewQuestTitle = $( "<div/>",
-            {
-              "class": "QuestTitle",
-              text: $("#NewQuestWidget input").val()
-            });
-
-          CurrentWork.quests[n_quests - 1].quest_title = NewQuestTitle.prop( "outerHTML" );
+        if( ($("#NewQuestWidget input").val()).trim() != "" ) {
+          /* un titolo di default è già presente nel nuovo elemento quest
+          quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
+          CurrentWork.quests[n_quests - 1].quest_title = "<div class='QuestTitle'>" + $("#NewQuestWidget input").val() + "</div>";
         }
       }
       else {
         let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
 
-        if( $( '#QuestTitleInput' ).val() != "" ) {
-          let NewQuestTitle = $( "<div/>",
-          {
-            "class": "QuestTitle"
-          });
+        if ( ($( '#QuestTitleInput' ).val()).trim() != "" ) {
+          let NewQuestTitle = ( $( '#QuestTitleInput' ).val() );
 
-          NewQuestTitle.text( $( '#QuestTitleInput' ).val() );
-
+          // aggiorna il nome della card
           $("#QuestsGrid .card-text").each( function() {
             if ( $(this).text() == old_title ) {
-              $(this).text( NewQuestTitle.text() ); // aggiorna il nome della card
+              $(this).text( NewQuestTitle );
             }
           });
 
-          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = NewQuestTitle.prop( "outerHTML" );
+          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<div class='QuestTitle'>" + NewQuestTitle + "</div>";
         }
         else {
           // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
@@ -152,7 +154,9 @@ function save_title( which ) {
 };
 
 
-// crea una quest/attività vuota e la aggiunge all'array del json. se si tratta di una quest, crea un nuovo elemento nell'array delle griglie di attività
+/**
+ * Crea una quest/attività/elemento vuoto e lo aggiunge al json, nonché agli array di supporto
+*/
 function create_stuff(what) {
   switch (what) {
     case "quest":
@@ -194,6 +198,7 @@ function create_stuff(what) {
   }
 };
 
+
 /**
  * Inizializza un oggetto quest vuoto per il JSON
  */
@@ -230,6 +235,10 @@ function initActivity() {
 
 /* -------------------------------- GESTIONE INTERFACCIA ------------------------------- */
 
+/**
+ * @param mode --> modalità in cui si trova la gestione delle card
+ * Gestisce il pulsante di salvataggio, segnalando quando il save è stato eseguito
+ */
 function change_savetitle_button( mode ) {
   let btn;
 
@@ -258,13 +267,23 @@ function change_savetitle_button( mode ) {
 };
 
 
-// cambia il colore di target da decolor a color - funziona in base alle classi di bootstrap
-function change_color_option(target,decolor,color) {
+/**
+ * @param target
+ * @param decolor --> colore iniziale
+ * @param color --> colore finale
+ * Cambia il colore dell'elemento target. Funziona in base alle classi di colori di bootstrap
+ */
+function change_color_option(target, decolor, color) {
   $(target).removeClass(decolor);
   $(target).addClass(color);
 };
 
 
+/**
+ * @param current --> animazione corrente di obj
+ * @param obj --> elemento oggetto della chiamata
+ * Cambia le animazioni dell'oggetto indicato
+ */
 function set_stop_animation( current, obj ) {
   switch( current ) {
     case "shake":
@@ -308,8 +327,11 @@ function set_stop_animation( current, obj ) {
   }
 };
 
-//calcola l'indice della card selezionata, rispetto alla griglia corrente
-//la griglia è composta da deck di tre card l'uno
+
+/** 
+ * Calcola l'indice dell'ultima card selezionata, rispetto alla griglia corrente
+ * La griglia è composta da deck di tre card l'uno
+*/
 function get_card_index() {
   let current_grid;
   
@@ -326,14 +348,16 @@ function get_card_index() {
       current_grid = $( "#EditActivity .CardGrid" ).attr( "id" );
   }
   
-  parent_element = selected_card.parentNode;//recupera il card deck dove si trova la card
-  parent_index = Array.from(document.getElementById(current_grid).children).indexOf(parent_element);//calcola l'indice' del card deck rispetto alla griglia
-  card_index_inside_parent = Array.from(parent_element.children).indexOf(selected_card);//calcola l'indice della card rispetto al suo deck
-  return ((parent_index)*3 )+card_index_inside_parent;
+  let deck = selected_card.parentNode; // recupera il deck dove si trova la card
+  let deck_index = Array.from( document.getElementById( current_grid ).children ).indexOf( deck ); // calcola l'indice del deck rispetto alla griglia
+  let card_index_inside_parent = Array.from( deck.children ).indexOf( selected_card ); // calcola l'indice della card rispetto al suo deck
+  return ( deck_index * 3 ) + card_index_inside_parent;
 };
 
 
-//va alla sezione precedente
+/**
+ * Torna alla sezione precedente
+*/
 function back() {
   switch (CurrentNavStatus.Section) {
     case "EditStory":
@@ -341,52 +365,48 @@ function back() {
     case "EditActivity":
       stop_shaking();
   }
-  mode="default";
   first_selected_stage="";
-  if (Parent[CurrentNavStatus.Section] == "EditStory") CurrentNavStatus.QuestN = -1;
-  else if (Parent[CurrentNavStatus.Section] == "EditQuest") CurrentNavStatus.ActivityN = -1
   new_go_to_section(Parent[CurrentNavStatus.Section]);
 };
 
 
-//sostituisce goToSection quando ci si sposta in EditStory o EditQuest
+/**
+ * @param where
+ * Porta alla sezione specificata, facendo tutti i caricamenti necessari
+ */
 function new_go_to_section(where) {
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
-    stop_ffs();
+    mode = "default";
+    stop_shaking();
     // i change color non funzionano sempre ma non capisco perché
     change_color_option(".SwapBtn", "primary", "secondary");
     change_color_option(".CancelBtn", "primary", "secondary");
 
-    switch (where) {
+    switch ( where ) {
       case "EditStory":
+        CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
         break;
       case "EditQuest":
+        CurrentNavStatus.ActivityN = -1;
         //// BUG: click multiplo fa partire più volte l'onclick e perciò
         //get_card_index, nelle istanze successive alla prima
         //fa riferimento a ActivitiesGrid invece che a QuestsGrid
         if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
-        if (CurrentWork.quests[CurrentNavStatus.QuestN] == "")
-          $("#QuestTitleInput").val("Quest" + CurrentNavStatus.QuestN);
-        else
-          $("#QuestTitleInput").val( $( $.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
-  
-        node = $(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title);
-        $("#EditQuest h1").text(node.text());//inserisci il titolo della quest in EditQuest
-        $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]);//carica la griglia delle attività
+        $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+        $("#EditQuest h1").text( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+
+        $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
         break;
       case "EditActivity":
         // riparare lo stesso bug del caso sopra
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
         // aggiungere l'aggiornamento del titolo
-        $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]);//carica la griglia dei paragrafi/immagini/gallerie
+        $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
         break;
       case "EditText":
-        if (CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] === undefined )
-          $("#TextParInput").val("");
-        else
-          $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
+        $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
         break;
       case "EditAnswerField":
         if ( CurrentNavStatus.Section == "EditActivity" ) {
@@ -415,7 +435,10 @@ function new_go_to_section(where) {
 };
 
 
-//le card non hanno id e sono associate alle rispettive griglie e quest/activity tramite il loro indice nella giglia in cui si trovano
+/**
+ * @param titolo
+ * Crea una card con tutti i parametri adeguati e la aggiunge al deck
+ */
 function create_card(titolo) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
 
@@ -425,7 +448,7 @@ function create_card(titolo) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
       $("#NewQuestWidget input").val("");
-      if (titolo =="") // TODO: AGGIUNGERE CONTROLLO SU TUTTE LE STRINGHE CON SOLO CARATTERI VUOTI
+      if ( titolo.trim() == "" )
         titolo = "Quest" + ( n_quests - 1 );
       color = colors[n_quests % 6];
       break;
@@ -465,10 +488,10 @@ function create_card(titolo) {
           else if (CurrentNavStatus.Section == "EditActivity") {
             switch( $( $(this).attr("id") + ":first-child:first-child" ).text() ) {
               case "IMAGE":
-                /* TODO */
+                // TODO
                 break;
               case "GALLERY":
-                /* TODO */
+                // TODO
                 break;
               default:
                 new_go_to_section("EditText");
@@ -479,24 +502,27 @@ function create_card(titolo) {
         break;
     }'>
       <div class="card-body text-center">
-        <p class="card-text">`+titolo+`</p>
+        <p class="card-text">` + titolo + `</p>
       </div>
-      </div>`;
+    </div>`;
 
-  // se si tratta di una quest, va aggiunto l'onclick di inizializzazione del val del title input
-  if( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 ) {
-    $("#"+current_grid).append('<div class="card-deck mb-2" ></div>'); //quando il deck attuale non esiste o è vuoto crea  un nuovo deck e mettilo come ultimo figlio della griglia
-  }
+  // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
+  if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
+    $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');
   
-  $("#"+current_grid+" > div:last-child").append(card); //aggiungo la card al deck
+  $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
   set_stop_animation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
-  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0) GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+
+  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0)
+    GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
   else if (CurrentNavStatus.ActivityN >= 0)
     GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
 };
 
 
-// entra o esce dalla cancel mode
+/**
+ * Entra o esce dalla cancel mode
+ */
 function cancel_mode() {
   if (mode == "cancel" ) {
     change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
@@ -506,7 +532,8 @@ function cancel_mode() {
   else {
     stop_shaking();
     change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-secondary","btn-primary");
-    if ( mode == "swap" ) {//se swap è attivo disattivalo
+    // eventualmente disattiva la modalità di swap
+    if ( mode == "swap" ) {
       change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-primary","btn-secondary");
       first_selected_stage="";
     }
@@ -514,14 +541,19 @@ function cancel_mode() {
   }
 };
 
+
+/**
+ * @param obj
+ * Cancella l'oggetto specificato
+ */
 function cancel_em(obj) {
   set_stop_animation("swashOut",obj);
   setTimeout( function() {
     switch (CurrentNavStatus.Section) {
       case "EditStory":
-        GridsOfActivities.splice(get_card_index(),1);//cancella la griglia associata a q
+        GridsOfActivities.splice(get_card_index(),1); //cancella la griglia associata a q
         GridsOfParagraphs.splice(get_card_index(), 1);
-        CurrentWork.quests.splice( get_card_index(), 1 )//cancella la quest associata a q
+        CurrentWork.quests.splice( get_card_index(), 1 ); //cancella la quest associata a q
         n_quests -= 1;
         n_activities.splice(CurrentNavStatus.QuestN, 1);
         break;
@@ -556,17 +588,21 @@ function cancel_em(obj) {
   }, 1500);
 };
 
+
+/**
+ * Entra o esce dalla swap mode
+ */
 function swap_mode() {
-  //esci dalla swap mode
   if(mode == "swap" ) {
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
     mode = "default";
     first_selected_stage ="";
-    stop_shaking();//dovrà prendere un parametro per capire su quale set agire
+    stop_shaking(); //dovrà prendere un parametro per capire su quale set agire --> ?????
   }
-  else {//entra in swap mode
+  else {
     stop_shaking();
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-secondary", "btn-primary");
+    // eventualmente disattiva la madalità di cancel
     if( mode == "cancel" )
       change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-primary","btn-secondary");
     mode = "swap";
@@ -574,7 +610,12 @@ function swap_mode() {
 };
 
 
+/**
+ * @param s --> card selezionata
+ * Scambia le due card selezionate
+ */
 function swap_em(s) {
+  // se c'è già una prima card selezionata, procede con lo scambio tra essa e quella associata ad "s" (che ha triggerato l'evento)
   if(first_selected_stage) {
     //fai lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
     set_stop_animation("tinLeftOut",first_selected_stage);
@@ -618,22 +659,16 @@ function swap_em(s) {
   }
 };
 
-// blocca lo shaking per tutte le card che lo stanno utilizzando
+
+/**
+ * Blocca l'animazione di shaking per tutte le card che la stanno utilizzando
+ */
 function stop_shaking() {
   for (card of $("#" + CurrentNavStatus.Section + " .card")) {
     if( card.style.animationName == "shake" )
       set_stop_animation("stop",card);
   }
 };
-
-// blocca le animazioni di swap
-function stop_ffs() {
-  for (card of $("#"+CurrentNavStatus.Section +" .card")) {
-    if( card.style.animationName == "tinLeftIn" || card.style.animationName == "tinRightIn" )
-      set_stop_animation("stop",card);
-  }
-};
-
 
 
 /**
@@ -652,21 +687,16 @@ function loadEditAnswerFieldSection( MODE ) {
 
 					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
 
-					let TextInput;
 					$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
 						if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
 							$( this ).prev().prop( "checked", true );
-
 						}
 
-						TextInput = $( "<input/>",
-							{
-								type: "text",
-								val: $( this ).text()
-							}
-						);
-
-						$( this ).replaceWith( TextInput );
+						$( this ).replaceWith( $( "<input/>",
+              {
+                type: "text",
+                val: $( this ).text()
+              }));
 					});
 
 					$( "#AnswerFieldPreview" ).append( $( "<button/>",
@@ -828,14 +858,10 @@ function saveAnswerFieldSettings() {
 	back();
 };
 
-function toggle_ActivityN_input(box) {
-  if ( box.prop("checked") )
-    $(box.parent().next().children().first()).attr("disabled", true);
-  else
-  $(box.parent().next().children().first()).attr("disabled", false);
-};
 
-
+/**
+ * Carica la sezione di editing dell'outcome dell'attività, in base ai parametri settati nella sezione dell'Answer Field e a ciò che è già stato salvato nel JSON
+ */
 function loadEditOutcomeSection() {
   let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
   $('#AddOutcomeWidget input').val('');
@@ -877,78 +903,68 @@ function loadEditOutcomeSection() {
       <th>Passa alla quest successiva</th>
       <th>Attività su cui spostarsi</th>
       <th>Rimuovi</th>
-    </tr>
-    <tr>
-      <td><em>Riposta corretta</em></td>
-      <td><input type="checkbox" onclick="toggle_ActivityN_input($(this))"></td>
-      <td><input type="number" id="correct" placeholder="0" min="0"></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td><em>Risposta errata</em></td>
-      <td><input type="checkbox" onclick="toggle_ActivityN_input($(this))"></td>
-      <td><input type="number" id="wrong" placeholder="0" min="0"></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td><em>Tempo scaduto</em></td>
-      <td><input type="checkbox" onclick="toggle_ActivityN_input($(this))"></td>
-      <td><input type="number" id="expired" placeholder="0" min="0"></td>
-      <td></td>
     </tr>`
   ));
+  addOutcome("<em>Riposta corretta</em>", "correct");
+  addOutcome("<em>Risposta errata</em>", "wrong");
+  addOutcome("<em>Tempo scaduto</em>", "expired");
 
-  // disabilitare/abilitare anche la checkbox
+  // disabilita/abilita gli input riguardanti il tempo scaduto, in base alla decisione di abilitare il timer
   if ( CurrentStage.GET_CHRONO ) $( "#OutcomesTable tr:nth-child(4) input" ).attr( "disabled", false );
   else $( "#OutcomesTable tr:nth-child(4) input" ).attr( "disabled", true );
 
   let tr;
 
-    for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
-      switch ( prop ) {
-        case "RightAnswer":
-          tr = $( "#OutcomesTable tr:nth-child(2)" );
-          break;
-        case "WrongAnswer":
-          tr = $( "#OutcomesTable tr:nth-child(3)" );
-          break;
-        case "TimeExpired":
-          tr = $( "#OutcomesTable tr:nth-child(4)" );
-          break;
-        default:
-          tr = $( "<tr/>" );
-          tr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
-          tr.append( $.parseHTML( '<td><input type="checkbox" onclick="toggle_ActivityN_input($(this))"></td>' ) );
-          tr.append( ( $( "<input/>",
-          {
-            id: String( prop ) + "Outcome",
-            type: "number",
-            placeholder: 0,
-            min: 0
-          })).wrap( "<td></td>" ).parent());
-          tr.append( $.parseHTML( "<td><button class='btn btn-danger' onclick='$(this).parent().parent().remove()'>Cancella</button></td>" ) );
-          $( "#OutcomesTable" ).append( tr );
-          tr = $( "#OutcomesTable tr:last-child" );
-      }
-
-      if ( val == "nextquest" ) {
-        tr.find( ":input[type='number']" ).val( "" );
-        tr.find( ":input[type='number']" ).attr( "disabled", true );
-        tr.find( ":input[type='checkbox']" ).prop( "checked", true );
-      }
-      else tr.find( "input[type=number]" ).val( val );
-
+  for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
+    switch ( prop ) {
+      case "RightAnswer":
+        tr = $( "#OutcomesTable tr:nth-child(2)" );
+        break;
+      case "WrongAnswer":
+        tr = $( "#OutcomesTable tr:nth-child(3)" );
+        break;
+      case "TimeExpired":
+        tr = $( "#OutcomesTable tr:nth-child(4)" );
+        break;
+      default:
+        tr = $( "<tr/>" );
+        tr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
+        tr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
+        tr.append( ( $( "<input/>",
+        {
+          type: "number",
+          placeholder: 0,
+          min: 0
+        })).wrap( "<td></td>" ).parent());
+        tr.append( $.parseHTML( "<td><button class='btn btn-danger' onclick='$(this).parent().parent().remove()'>Cancella</button></td>" ) );
+        $( "#OutcomesTable" ).append( tr );
+        tr = $( "#OutcomesTable tr:last-child" );
     }
+
+    if ( val == "nextquest" ) {
+      tr.find( ":input[type='number']" ).val( "" );
+      tr.find( ":input[type='number']" ).attr( "disabled", true );
+      tr.find( ":input[type='checkbox']" ).prop( "checked", true );
+    }
+    else tr.find( "input[type=number]" ).val( val );
+
+  }
 };
 
 
-function addOutcome() {
+/**
+ * @param label 
+ * @param id
+ * Aggiunge alla UI un nuovo outcome, aggiungengo la label e l'id specificati.
+ * L'id esiste solo per gli outcome predefiniti
+ */
+function addOutcome( label, id ) {
   let newtr = $( "<tr/>" );
-  newtr.append( $.parseHTML( "<td>" + $( "#AddOutcomeWidget input" ).val() + "</td>" ) );
-  newtr.append( $.parseHTML( '<td><input type="checkbox" onclick="toggle_ActivityN_input($(this))"></td>' ) );
+  newtr.append( $.parseHTML( "<td>" + label + "</td>" ) );
+  newtr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
   newtr.append( ( $( "<input/>",
   {
-    id: $( "#AddOutcomeWidget input" ).val() + "Outcome", // aggiunta "Outcome" per evitare in qualsiasi modo un ID doppio
+    id: id,
     type: "number",
     placeholder: 0,
     min: 0
@@ -958,11 +974,14 @@ function addOutcome() {
 };
 
 
+/**
+ * Salva nel JSON tutti gli outcomes settati dall'autore
+*/
 function saveOutcomes() {
   let newobj = {};
 
   let next;
-  let answer;
+  let label;
 
   $( "#OutcomesTable input[type=number]" ).each( function( index ) {
     if ( $(this).parent().prev().children().first().prop( "checked" ) )
@@ -970,10 +989,9 @@ function saveOutcomes() {
     else
       next = $(this).val();
 
-    answer= $(this).attr( "id" );
-    answer = answer.replace("Outcome", "");
+    label = $(this).attr("id");
   
-    switch ( answer ) {
+    switch ( label ) {
       case "correct":
         newobj["RightAnswer"] = next;
         break;
@@ -984,7 +1002,7 @@ function saveOutcomes() {
         newobj["TimeExpired"] = next;
         break;
       default:
-        newobj[answer] = next;
+        newobj[$(this).parent().parent().children().first().prop("innerHTML")] = next;
     }
   });
 

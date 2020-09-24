@@ -26,6 +26,7 @@ var StoryObj = {
 					answer_score: 1,
 					answer_outcome: {
 						RightAnswer: "nextquest",
+						WrongAnswer: 0,
 						TimeExpired: 0,
 						Giovanni: 1
 					},
@@ -194,13 +195,12 @@ var CurrentStatus = {
 	ChatMessages: 0
 };
 
-var countdown;
-var time_limit;
-var answer_chrono = `
-clearTimeout( 'time_limit');
-clearInterval( 'countdown' );
-CurrentStatus.TimeToAnswer = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time - ( parseInt($('#AnswerTimer')) * 1000 )
-console.log( CurrentStatus.TimeToAnswer ) // debugging`;
+var countdown; // fa il conto alla rovescia scalando ogni secondo
+var timer_calc; // timer
+var stop_timer = `
+clearTimeout( timer_calc );
+clearInterval( countdown );
+CurrentStatus.TimeToAnswer = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time - ( parseInt($('#AnswerTimer').text()) * 1000 );`;
 
 // bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
 var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
@@ -303,7 +303,7 @@ function goToActivity( activity_n ) {
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
 		$( ".Activity" ).append( $.parseHTML( AnswerTimer ) );
 		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
-		$( ".NextActivity" ).attr( "onclick", answer_chrono + "checkAnswer();" );
+		$( ".NextActivity" ).attr( "onclick", stop_timer + "checkAnswer();" );
 		toggleAnswerTimer();
 	}
 	else {
@@ -323,15 +323,13 @@ function toggleAnswerTimer() {
 		$( "#AnswerTimer" ).text( $( "#AnswerTimer" ).text() - 1 );
 	}, 1000 );
 
-	time_limit = setTimeout( function() {
-		let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
-
+	timer_calc = setTimeout( function() {
+		clearInterval( countdown );
 		updateScore( 0 );
 
+		let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 		if ( CurrentActivity.answer_outcome["TimeExpired"] == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1 );
 		else goToActivity( CurrentActivity.answer_outcome["TimeExpired"] );
-
-		clearInterval( countdown );
 	}, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time );
 };
 
@@ -351,14 +349,13 @@ function updateScore( score ) {
  * Nel caso si necessiti valutazione umana, la procedura attiva una chiamata al server.
  */
 function checkAnswer() {
-	clearInterval( countdown );
-
 	let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
 	if ( CurrentActivity.ASK_EVAL ) {
 		/* manda richiesta */
 	}
 	else {
+		/* ricava la risposta giusta */
 		let PlayerAnswer = "";
 
 		if ( $( ".AnswerField" ).find( "input" ).first().attr( "type" ) == "radio" ) {
@@ -369,18 +366,20 @@ function checkAnswer() {
 		else
 			PlayerAnswer = $( ".AnswerField" ).find( "input" ).first().val();
 		
+		/* controlla come proseguire la partita */
 		let goto;
 
-		if ( PlayerAnswer == CurrentActivity.right_answer )
-			{
+		if ( PlayerAnswer == CurrentActivity.right_answer ) {
 				updateScore( CurrentActivity.answer_score );
 				goto = CurrentActivity.answer_outcome["RightAnswer"];
 			}
-		else {
+		else if ( (PlayerAnswer != CurrentActivity.right_answer) && (PlayerAnswer != "") ){
 			updateScore( 0 );
 			if ( CurrentActivity.answer_outcome[PlayerAnswer] != undefined ) goto = CurrentActivity.answer_outcome[PlayerAnswer];
-			else goto = CurrentActivity.answer_outcome["WrongAnswer"]
+			else goto = CurrentActivity.answer_outcome["WrongAnswer"];
 		}
+		else
+			goto = CurrentActivity.answer_outcome["WrongAnswer"];
 
 		if ( goto == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1);
 		else goToActivity( goto );

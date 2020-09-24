@@ -27,23 +27,24 @@ ____________________________________
 |___________________________________|
 
 
+BUG DA CORREGGERE
+* EDITOR
+    * Doppio click sulle card
+    * La decolorazione dei pulsanti di swap e cancel non funziona per bene
+
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
     * Sistemazione:
-        * Finire il cleanup
         * Sistemare la navbar, che dovrebbe avere: save, back, close, change mode, graphic e preview
     * Menu Game Mode:
         * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
         * indicare avvertimento di: non si torna più indietro
-    * Creare funzione che controlli se una stringa è vuota o composta solo da blanks
     * Editing per immagini e gallery
-    * Editing dell'answer outcome
     * Editor CSS
     * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
     * Grafica
     * Accessibilità
 * PLAYER
-    * Cambiare la creazione degli outcomes
     * Grafica
     * Interfacciamento col server
 
@@ -55,9 +56,6 @@ DETTAGLI SULLE COSE DA FARE:
     * Nella pubblicazione magari mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti
     * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
     * Aggiungere la creazione dell'id e collegare ad esso il file css
-    * Nella parte dell'editing della programmazione inserire un riepilogo dei settaggi del campo risposta.
-* PLAYER
-    * Aggiungere la callback da fare alla scadenza del tempo
 * approfondire la differenza tra attr e prop
 
 ALTRE COSE CHE SI POTREBBERO FARE:

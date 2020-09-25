@@ -19,6 +19,7 @@ var Parent = {
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",
   EditText: "EditActivity",
+  EditGallery: "EditActivity",
   SetAnswerOutcome: "EditActivity"
 };
 
@@ -175,23 +176,8 @@ function create_stuff(what) {
     case "TextParagraph":
       CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<p class='TextParagraph'></p>");
       break;
-    case "Image":
-      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<img class='Image'>");
-      break;
     case "Gallery":
-      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push(`
-        <div class="carousel slide Gallery" data-ride="carousel">
-		      <div class="carousel-inner">
-		      </div>
-	      	<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
-			      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			      <span class="sr-only">Previous</span>
-		      </a>
-		      <a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
-			      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			      <span class="sr-only">Next</span>
-		      </a>
-        </div>`);
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("");
       break;
     default:
       handleError();
@@ -408,6 +394,9 @@ function new_go_to_section(where) {
       case "EditText":
         $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
         break;
+      case "EditGallery":
+        loadEditGallerySection();
+        break;
       case "EditAnswerField":
         if ( CurrentNavStatus.Section == "EditActivity" ) {
           if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
@@ -457,8 +446,7 @@ function create_card(titolo) {
       color = colors[n_activities[CurrentNavStatus.QuestN] % 6];
       break;
     case "ParagraphsGrid":
-      if ( titolo == "IMMAGINE" ) color = colors[0];
-      else if ( titolo == "GALLERY" ) color = colors[5];
+      if ( titolo == "GALLERY" ) color = colors[0];
       else color = colors[1];
       break;
     default:
@@ -486,12 +474,9 @@ function create_card(titolo) {
           else if (CurrentNavStatus.Section == "EditQuest")
             new_go_to_section("EditActivity");
           else if (CurrentNavStatus.Section == "EditActivity") {
-            switch( $( $(this).attr("id") + ":first-child:first-child" ).text() ) {
-              case "IMAGE":
-                // TODO
-                break;
+            switch( $(selected_card).find(".card-text").prop("innerHTML") ) {
               case "GALLERY":
-                // TODO
+                new_go_to_section("EditGallery");
                 break;
               default:
                 new_go_to_section("EditText");
@@ -1011,3 +996,109 @@ function saveOutcomes() {
   back();
 };
 
+
+function addImage( imglist, newload ) {
+  for (i = 0; i < imglist.length; i++) {
+
+    if ( imglist[i] ) {
+      let newrow = $( "<div class='row'></div>" );
+
+      let newpreview;
+
+      if (newload) {
+        newpreview = $( "<img class='ImgPreview'>" );
+
+        const reader = new FileReader();
+        reader.readAsDataURL(imglist[i]);
+      
+        reader.addEventListener("load", function() {
+          newpreview.attr( "src", this.result );
+        });
+      }
+      else {
+        newpreview = $(imglist[i]);
+        newpreview.attr("class", "ImgPreview");
+      }
+      
+      console.log(newpreview.attr( "alt ")); // debugging
+      newrow.append( newpreview );
+      newrow.append( $( "<input/>",
+        {
+          type: "text",
+          placeholder: "Descrizione",
+          value: newpreview.attr( "alt ")
+        }));
+      newrow.append( $( '<button class="btn btn-danger" onclick="$(this).parent().parent().remove()">Cancella</button>' ));
+
+      newrow.children().wrap("<div class='col-sm'></div>");
+
+      $("#GalleryPreview").append(newrow);
+    }
+  }
+};
+
+
+function loadEditGallerySection() {
+  /*
+  if (CurrentWork.ACCESSIBILITY)
+    $("#UploadImg").attr("multiple", false);
+  else
+    $("#UploadImg").attr("multiple", true);
+  */
+
+  $("#GalleryPreview").empty();
+
+  let gallery = $($.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] ));
+  /*
+  gallery.find("img").each( function() {
+    addImage( $(this), false );
+  });*/
+  addImage(gallery.find("img"));
+};
+
+
+function saveImageGallery() {
+  if ( $("#GalleryPreview .row").length == 1 ) {
+    $("#GalleryPreview .row img")[0].attr( "alt", $("#GalleryPreview .row input")[0].val() );
+
+    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img")[0].prop("outerHTML");
+  }
+  else {
+    let newgallery = $(`
+    <div id="ActiveGallery" class="carousel slide ImageGallery" data-ride="carousel">
+      <div class="carousel-inner">
+      </div>
+      <a class="carousel-control-prev" href="#ActiveGallery" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#ActiveGallery" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>`);
+
+    $("#GalleryPreview .row").each( function(index) {
+      let newpic = $("<div class='carousel-item'></div>");
+      if (index == 0) newpic.addClass("active");
+
+      newpic.append( $("<img/>",
+      {
+        "class": "d-block w-100",
+        src: $(this).find("img").first().attr("src"),
+        alt: $(this).find("input").first().val()
+      }));
+
+      newgallery.children().first().append(newpic);
+    });
+
+    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = newgallery.prop("outerHTML");
+  }
+
+  back();
+
+    /* // debugging
+    new_go_to_section("TestSection");
+    $("#TestSection").append($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()]));
+    */
+};

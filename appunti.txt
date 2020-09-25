@@ -29,8 +29,10 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
-    * Doppio click sulle card
+    * Migliorare la creazione delle card e controllare il selettore this
+    * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * La decolorazione dei pulsanti di swap e cancel non funziona per bene
+    * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
@@ -77,3 +79,6 @@ appunti:
     * https://www.w3.org/1999/xhtml/vocab#XHTMLRoleVocabulary
     * https://webaim.org/techniques/aria/#rules
 * margin per elementi div: https://stackoverflow.com/questions/35817096/css-margin-0-auto-not-centering
+* leggere files con javascript:
+    * https://web.dev/read-files/#select-input
+    * https://www.youtube.com/watch?v=VElnT8EoEEM

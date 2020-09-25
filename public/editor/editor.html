@@ -170,13 +170,10 @@
       <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
-      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
+      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
         <i class="fas fa-plus"></i>
       </button>
-      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Image");create_card("IMMAGINE");' data-toggle="tooltip" data-placement="top" title="Aggiungi immagine">
-        <i class="fas fa-plus"></i>
-      </button>
-      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
+      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="cancel mode">
@@ -298,11 +295,34 @@
   </div>
 
 
-<footer class="mastfoot mt-auto ">
-  <div class="inner small">
-    <p> a cura di <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
+  <!-- SCHERMATA DI MODIFICA GALLERY -->
+  <div class="EditorSection" id="EditGallery">
+    <h1>TITOLO SEZIONE</h1>
+
+    <div class="container" id="GalleryPreview"></div>
+
+    <input type="file" id="UploadImg" placeholder="Aggiungi immagine" multiple>
+
+    <button class="SaveBtn" onclick="saveImageGallery();">Salva</button>
+    <button class="" onclick="back();">Annulla</button>
+
+    <script>
+      const fileSelector = document.getElementById("UploadImg");
+      fileSelector.addEventListener("change", function(event) {
+        addImage( event.target.files, true );
+      });
+    </script>
   </div>
-</footer>
-</div>
+
+  <!-- SEZIONE USATA PER DEBUGGING -->
+  <div class="EditorSection" id="TestSection">
+
+  </div>
+
+  <footer class="mastfoot mt-auto ">
+    <div class="inner small">
+      <p> a cura di <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
+    </div>
+  </footer>
 </body>
 </html>

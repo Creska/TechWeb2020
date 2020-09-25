@@ -157,6 +157,15 @@ width:20% !important;
    transform: scale(1.1);
 }
 
+/* 
+* Preview Immagini
+*/
+#GalleryPreview img {
+  width: 10vw;
+  height: auto;
+}
+
+
 /*!
  * Magic - https://www.minimamente.com
  * Licensed under the MIT license - https://opensource.org/licenses/MIT

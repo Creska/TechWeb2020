@@ -992,76 +992,95 @@ function saveOutcomes() {
   });
 
   CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = newobj;
-  console.log(newobj); // debugging
+  // console.log(newobj); // debugging
   back();
 };
 
 
-function addImage( imglist, newload ) {
-  for (i = 0; i < imglist.length; i++) {
+/**
+ * Salva il paragrafo di testo inserito ed inserisce, nella rispettiva card, una sottostringa come anteprima
+ */
+function saveTextParagraph() {
+  let text = $('#TextParInput').val().trim();
 
-    if ( imglist[i] ) {
-      let newrow = $( "<div class='row'></div>" );
+  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = "<p class='TextParagraph'>" + text + "</p>";
+  if (text)
+    $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( text.substring(0, 25) + "..." );
+  else
+    $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
+  GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
 
-      let newpreview;
+  back()
+}
 
-      if (newload) {
-        newpreview = $( "<img class='ImgPreview'>" );
 
-        const reader = new FileReader();
-        reader.readAsDataURL(imglist[i]);
+/**
+ * @param image
+ * @param newload --> segnala se l'oggetto è al suo primo caricamento o se era già presente nel json
+ * Carica una nuova immagine nella gallery di anteprima
+ */
+function addImage( image, newload ) {
+  let newrow = $( "<div class='row'></div>" );
+
+  let newpreview;
+
+  if (newload) {
+    newpreview = $( "<img class='ImgPreview'>" );
+
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
       
-        reader.addEventListener("load", function() {
-          newpreview.attr( "src", this.result );
-        });
-      }
-      else {
-        newpreview = $(imglist[i]);
-        newpreview.attr("class", "ImgPreview");
-      }
+    reader.addEventListener("load", function() {
+      newpreview.attr( "src", this.result );
+    });
+  }
+  else {
+    newpreview = $(image).clone(); // usata clone() perché senza sarebbe stato modificato direttamente l'oggetto passato come parametro ad addImage()
+    newpreview.attr("class", "ImgPreview");
+  }
       
-      console.log(newpreview.attr( "alt ")); // debugging
-      newrow.append( newpreview );
-      newrow.append( $( "<input/>",
-        {
-          type: "text",
-          placeholder: "Descrizione",
-          value: newpreview.attr( "alt ")
-        }));
-      newrow.append( $( '<button class="btn btn-danger" onclick="$(this).parent().parent().remove()">Cancella</button>' ));
+  newrow.append( newpreview );
+  newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
+  newrow.append( $( '<button class="btn btn-danger" onclick="$(this).parent().parent().remove()">Cancella</button>' ));
 
-      newrow.children().wrap("<div class='col-sm'></div>");
+  newrow.children().wrap("<div class='col-sm'></div>");
+  $("#GalleryPreview").append(newrow);
+};
 
-      $("#GalleryPreview").append(newrow);
-    }
+
+/**
+ * Carica la galleria di anteprima
+ */
+function loadEditGallerySection() {
+  $("#GalleryPreview").empty();
+
+  gallery = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] ));
+
+  if ( gallery.prop("tagName") == "IMG" ) {
+    addImage(gallery, false);
+    $( "#GalleryPreview input" ).first().val( gallery.attr("alt") );
+  }
+  else {
+    gallery.find("img").each( function() {
+      addImage(this, false);
+    });
+    /* inserisce in ogni input la descrizione abbinata a ciascuna immagine */
+    $("#GalleryPreview").find("input").each( function(index) {
+      $(this).val( gallery.find("img").eq(index).attr("alt") );
+    });
   }
 };
 
 
-function loadEditGallerySection() {
-  /*
-  if (CurrentWork.ACCESSIBILITY)
-    $("#UploadImg").attr("multiple", false);
-  else
-    $("#UploadImg").attr("multiple", true);
-  */
-
-  $("#GalleryPreview").empty();
-
-  let gallery = $($.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] ));
-  /*
-  gallery.find("img").each( function() {
-    addImage( $(this), false );
-  });*/
-  addImage(gallery.find("img"));
-};
-
-
+/**
+ * Salva la galleria di immagini nel json.
+ * A seconda del numero di immagini, crea una img singola o un carousel di Bootstrap
+ */
 function saveImageGallery() {
   if ( $("#GalleryPreview .row").length == 1 ) {
-    $("#GalleryPreview .row img")[0].attr( "alt", $("#GalleryPreview .row input")[0].val() );
+    $("#GalleryPreview .row img").first().attr( "alt", $("#GalleryPreview .row input").first().val() );
 
-    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img")[0].prop("outerHTML");
+    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img").first().prop("outerHTML");
   }
   else {
     let newgallery = $(`
@@ -1079,14 +1098,16 @@ function saveImageGallery() {
     </div>`);
 
     $("#GalleryPreview .row").each( function(index) {
+      let row = $(this);
       let newpic = $("<div class='carousel-item'></div>");
+
       if (index == 0) newpic.addClass("active");
 
       newpic.append( $("<img/>",
       {
         "class": "d-block w-100",
-        src: $(this).find("img").first().attr("src"),
-        alt: $(this).find("input").first().val()
+        src: row.find("img").eq(0).attr("src"),
+        alt: row.find("input").eq(0).val()
       }));
 
       newgallery.children().first().append(newpic);
@@ -1096,9 +1117,17 @@ function saveImageGallery() {
   }
 
   back();
+};
 
-    /* // debugging
-    new_go_to_section("TestSection");
-    $("#TestSection").append($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()]));
-    */
+
+/**
+ * @param name
+ * Restituisce l'estensione del file specificato
+ */
+function getFileExtension( name ) {
+  let i = name.lastIndexOf(".");
+  if (i > -1)
+    return name.slice((i - 1 >>> 0) + 2);
+  else
+    return "null";
 };

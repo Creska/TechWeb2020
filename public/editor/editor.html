@@ -250,21 +250,20 @@
 
     <textarea id="TextParInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
 
-    <button class="" onclick="CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = '<p class=`TextParagraph`>' + $('#TextParInput').val() + '</p>'; back()">Salva</button>
+    <button class="" onclick="saveTextParagraph();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
   </div>
 
 
-  <!-- SCHERMATA DI PROGRESSIONE DELLA QUEST -->
+  <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
   <div class="EditorSection" id="SetAnswerOutcome">
     <script>
       // attiva/disattiva i number input in base alla spunta sulla checkbox di passaggio alla quest successiva
       $(document).on( "click", "#OutcomesTable input[type='checkbox']", function() {
-        
-      if ( $(this).prop("checked") )
-        $($(this).parent().next().children().first()).attr("disabled", true);
-      else
-        $($(this).parent().next().children().first()).attr("disabled", false);
+        if ( $(this).prop("checked") )
+          $($(this).parent().next().children().first()).attr("disabled", true);
+        else
+          $($(this).parent().next().children().first()).attr("disabled", false);
       });
     </script>
     
@@ -299,6 +298,10 @@
   <div class="EditorSection" id="EditGallery">
     <h1>TITOLO SEZIONE</h1>
 
+    <div class="alert alert-warning" role="alert">
+      Formati accettati: JPG, PNG.<br>Files di tipo differente non saranno caricati.
+    </div>
+
     <div class="container" id="GalleryPreview"></div>
 
     <input type="file" id="UploadImg" placeholder="Aggiungi immagine" multiple>
@@ -309,16 +312,27 @@
     <script>
       const fileSelector = document.getElementById("UploadImg");
       fileSelector.addEventListener("change", function(event) {
-        addImage( event.target.files, true );
+        for ( pic of event.target.files ) {
+          switch ( getFileExtension(pic.name) ) {
+            case "jpg":
+            case "JPG":
+            case "jpeg":
+            case "JPEG":
+            case "png":
+            case "PNG":
+              if (pic) addImage(pic, true);
+          }
+        }
       });
     </script>
   </div>
 
-  <!-- SEZIONE USATA PER DEBUGGING -->
+  <!--
   <div class="EditorSection" id="TestSection">
-
+    SEZIONE USATA PER DEBUGGING
   </div>
-
+  -->
+  
   <footer class="mastfoot mt-auto ">
     <div class="inner small">
       <p> a cura di <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>

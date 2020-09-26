@@ -29,6 +29,8 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
+    * Trimmare tutti i testi di input
+    * Fixare le operazioni di swap e cancel
     * Migliorare la creazione delle card e controllare il selettore this
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * La decolorazione dei pulsanti di swap e cancel non funziona per bene
@@ -36,14 +38,13 @@ BUG DA CORREGGERE
 
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
-    * Sistemazione:
-        * Sistemare la navbar, che dovrebbe avere: save, back, close, change mode, graphic e preview
-    * Menu Game Mode:
+    * Menu Game Mode e altre opzioni globali:
+        * Si potrebbe creare una navbar, che dovrebbe avere: save, close, change mode, graphic e preview
         * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
         * indicare avvertimento di: non si torna più indietro
-    * Editing per immagini e gallery
     * Editor CSS
     * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
+        * Nella pubblicazione mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti, che siano prsenti tutte le "alt" nel caso di una partita accessibile
     * Grafica
     * Accessibilità
 * PLAYER
@@ -55,7 +56,6 @@ DETTAGLI SULLE COSE DA FARE:
     * Controllare la faccenda della traduzione di apici e quotes
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
-    * Nella pubblicazione magari mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti
     * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
     * Aggiungere la creazione dell'id e collegare ad esso il file css
 * approfondire la differenza tra attr e prop

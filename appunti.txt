@@ -29,11 +29,11 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
-    * Trimmare tutti i testi di input
     * Fixare le operazioni di swap e cancel
+    * Sistemare tutte le animazioni
+    * Sistemare la scomparsa dei tooltip
     * Migliorare la creazione delle card e controllare il selettore this
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
-    * La decolorazione dei pulsanti di swap e cancel non funziona per bene
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 
 RIASSUNTO DELLE COSE DA FARE:

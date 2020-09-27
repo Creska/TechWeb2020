@@ -74,7 +74,7 @@
     <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
     <button id="a3" class="btn btn-lg btn-secondary mb-3 mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(3);"><i class="fab fa-accessible-icon"></i></button>
     <button id="a4" class="btn btn-lg btn-secondary mb-3 rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(4);"><i class="fas fa-times"></i></button>
-    <p><a id="StartEditing" class="btn btn-lg btn-primary rounded disabled" onclick="new_go_to_section('EditStory');">Avanti</a></p>
+    <p><a id="StartEditing" class="btn btn-lg btn-primary rounded disabled" onclick="goToSection('EditStory');">Avanti</a></p>
   </main>
 
 
@@ -162,8 +162,8 @@
   <div class="EditorSection" id="EditActivity">
     <h1>TITOLO SEZIONE</h1>
     <div class="btn-group-justified">
-      <a class="btn btn-secondary" onclick="new_go_to_section('EditAnswerField')">Modifica answer field</a>
-      <a class="btn btn-secondary" onclick="new_go_to_section('SetAnswerOutcome')">Modifica progressione attività</a>
+      <a class="btn btn-secondary" onclick="goToSection('EditAnswerField')">Modifica answer field</a>
+      <a class="btn btn-secondary" onclick="goToSection('SetAnswerOutcome')">Modifica progressione attività</a>
     </div>
 
     <div id="q_buttons_div">
@@ -199,13 +199,18 @@
     <div>
       <div>Tipologia di input:</div>
       <div class="input-group">
-        <input type="radio" name="QuestionType" id="QuestionType_Checklist" onclick="loadSection('EditAnswerField');">
+        <input type="radio" name="QuestionType" id="QuestionType_Checklist">
         <label for="QuestionType_Checklist">Checklist</label>
-        <input type="radio" name="QuestionType" id="QuestionType_Text" onclick="loadSection('EditAnswerField');">
+        <input type="radio" name="QuestionType" id="QuestionType_Text">
         <label for="QuestionType_Text">Testo</label>
-        <input type="radio" name="QuestionType" id="QuestionType_Number" onclick="loadSection('EditAnswerField');">
+        <input type="radio" name="QuestionType" id="QuestionType_Number">
         <label for="QuestionType_Number">Numero</label>
       </div>
+      <script>
+        $("#EditAnswerField input[name='QuestionType']").on("change", function () {
+          loadEditAnswerFieldSection('CHG_TYPE');
+        });
+      </script>
       <div class="alert alert-secondary" role="alert">
         In caso di spunta su un'altra opzione, i dati verranno resettati. Per non perdere il lavoro, ricarica la pagina.
       </div>
@@ -283,7 +288,7 @@
         </div>
         <input type="text" class="form-control col-sm-5" placeholder="Risposta">
         <div class="input-group-append">
-          <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val().trim() != '') addOutcome($('#AddOutcomeWidget input').val(), ''); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
+          <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val().trim() != '') addOutcome($('#AddOutcomeWidget input').val().trim(), ''); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
           <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
         </div>
       </div>

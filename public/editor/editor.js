@@ -106,10 +106,12 @@ function select( i ) {
  * Salva il titolo della storia o della quest
  */
 function save_title( which ) {
+  let title;
   switch ( which ) {
     case "story":
-      if( ($( '#StoryTitleInput' ).val()).trim() != "" ) {
-        CurrentWork.story_title = "<div id='StoryTitle'>" + $( '#StoryTitleInput' ).val() + "</div>";
+      title = $( '#StoryTitleInput' ).val().trim();
+      if( title != "" ) {
+        CurrentWork.story_title = "<div id='StoryTitle'>" + title + "</div>";
       }
       else {
         // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
@@ -120,26 +122,22 @@ function save_title( which ) {
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
-        if( ($("#NewQuestWidget input").val()).trim() != "" ) {
+        title = $("#NewQuestWidget input").val().trim();
+        if( title != "" ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-          CurrentWork.quests[n_quests - 1].quest_title = "<div class='QuestTitle'>" + $("#NewQuestWidget input").val() + "</div>";
+          CurrentWork.quests[n_quests - 1].quest_title = "<div class='QuestTitle'>" + title + "</div>";
         }
       }
       else {
+        title = $( '#QuestTitleInput' ).val().trim();
         let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
 
-        if ( ($( '#QuestTitleInput' ).val()).trim() != "" ) {
-          let NewQuestTitle = ( $( '#QuestTitleInput' ).val() );
-
+        if ( title != "" ) {
           // aggiorna il nome della card
-          $("#QuestsGrid .card-text").each( function() {
-            if ( $(this).text() == old_title ) {
-              $(this).text( NewQuestTitle );
-            }
-          });
+          $("#QuestsGrid .card-text").eq( CurrentNavStatus.QuestN ).html( title );
 
-          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<div class='QuestTitle'>" + NewQuestTitle + "</div>";
+          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<div class='QuestTitle'>" + title + "</div>";
         }
         else {
           // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
@@ -345,14 +343,8 @@ function get_card_index() {
  * Torna alla sezione precedente
 */
 function back() {
-  switch (CurrentNavStatus.Section) {
-    case "EditStory":
-    case "EditQuest":
-    case "EditActivity":
-      stop_shaking();
-  }
   first_selected_stage="";
-  new_go_to_section(Parent[CurrentNavStatus.Section]);
+  goToSection(Parent[CurrentNavStatus.Section]);
 };
 
 
@@ -360,15 +352,16 @@ function back() {
  * @param where
  * Porta alla sezione specificata, facendo tutti i caricamenti necessari
  */
-function new_go_to_section(where) {
+function goToSection(where) {
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
     mode = "default";
     stop_shaking();
-    // i change color non funzionano sempre ma non capisco perché
-    change_color_option(".SwapBtn", "primary", "secondary");
-    change_color_option(".CancelBtn", "primary", "secondary");
+    change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
+    change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
 
     switch ( where ) {
+      case "ChooseGameMode":
+        break;
       case "EditStory":
         CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
@@ -398,23 +391,16 @@ function new_go_to_section(where) {
         loadEditGallerySection();
         break;
       case "EditAnswerField":
-        if ( CurrentNavStatus.Section == "EditActivity" ) {
-          if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" ) {
-            loadEditAnswerFieldSection( "LOAD" );
-          }
-          else {
-            loadEditAnswerFieldSection( "RESET" );
-          }
-        }
+        if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" )
+          loadEditAnswerFieldSection( "LOAD" );
         else
-          loadEditAnswerFieldSection( "CHG_TYPE" );
+          loadEditAnswerFieldSection( "RESET" );
         break;
       case "SetAnswerOutcome":
         loadEditOutcomeSection();
         break;
       default:
         handleError();
-        break;
     }
     
     CurrentNavStatus.Section = where;
@@ -470,16 +456,16 @@ function create_card(titolo) {
         set_stop_animation("puffOut", this);
         setTimeout(function () {
           if (CurrentNavStatus.Section == "EditStory")
-            new_go_to_section("EditQuest");
+            goToSection("EditQuest");
           else if (CurrentNavStatus.Section == "EditQuest")
-            new_go_to_section("EditActivity");
+            goToSection("EditActivity");
           else if (CurrentNavStatus.Section == "EditActivity") {
             switch( $(selected_card).find(".card-text").prop("innerHTML") ) {
               case "GALLERY":
-                new_go_to_section("EditGallery");
+                goToSection("EditGallery");
                 break;
               default:
-                new_go_to_section("EditText");
+                goToSection("EditText");
                 break;
             }
           }
@@ -534,11 +520,12 @@ function cancel_mode() {
 function cancel_em(obj) {
   set_stop_animation("swashOut",obj);
   setTimeout( function() {
+    /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
     switch (CurrentNavStatus.Section) {
       case "EditStory":
-        GridsOfActivities.splice(get_card_index(),1); //cancella la griglia associata a q
-        GridsOfParagraphs.splice(get_card_index(), 1);
-        CurrentWork.quests.splice( get_card_index(), 1 ); //cancella la quest associata a q
+        GridsOfActivities.splice( get_card_index(), 1 );
+        GridsOfParagraphs.splice( get_card_index(), 1 );
+        CurrentWork.quests.splice( get_card_index(), 1 );
         n_quests -= 1;
         n_activities.splice(CurrentNavStatus.QuestN, 1);
         break;
@@ -548,20 +535,20 @@ function cancel_em(obj) {
         n_activities[CurrentNavStatus.QuestN] -= 1;
         break;
       case "EditActivity":
-        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()];
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.splice( get_card_index(), 1 );
         break;
       default:
         handleError();
         break;
     }
 
-    // sistemazione dei decks
-    iter = obj.parentElement;// iter deck padre di q
+    /* cancellazione di obj e sistemazione dei decks */
+    iter = obj.parentElement;// iter deck padre della quest
     if( iter.children.length == 1 )// se iter ha solo la card selezionata, elimina iter
       iter.remove();
     else {
       obj.remove();
-      //il resto di questo else fa in modo che dopo la rimozione di q, il resto della griglia "slitti" in modo appropriato
+      //il resto di questo else fa in modo che, dopo la rimozione della quest, il resto della griglia "slitti" in modo appropriato
       while( !( iter == iter.parentElement.lastChild ) ) {
         set_stop_animation("stop",iter.nextElementSibling.firstChild);
         iter.appendChild( iter.nextElementSibling.firstChild );
@@ -571,6 +558,15 @@ function cancel_em(obj) {
         iter.remove();
     }
   }, 1500);
+
+  /* la griglia appena aggiornata viene salvata nell'apposito array globale */
+  switch( CurrentNavStatus.Section ) {
+    case "EditQuest":
+      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+      break;
+    case "EditActivity":
+      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  }
 };
 
 
@@ -582,7 +578,7 @@ function swap_mode() {
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
     mode = "default";
     first_selected_stage ="";
-    stop_shaking(); //dovrà prendere un parametro per capire su quale set agire --> ?????
+    stop_shaking();
   }
   else {
     stop_shaking();
@@ -601,30 +597,33 @@ function swap_mode() {
  */
 function swap_em(s) {
   // se c'è già una prima card selezionata, procede con lo scambio tra essa e quella associata ad "s" (che ha triggerato l'evento)
-  if(first_selected_stage) {
-    //fai lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
+  // fa lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
+  if (first_selected_stage) {
     set_stop_animation("tinLeftOut",first_selected_stage);
     set_stop_animation("tinRightOut",s);
+
     setTimeout(function () {
       set_stop_animation("tinRightIn",first_selected_stage);
       set_stop_animation("tinLeftIn",s);
 
-      if (CurrentNavStatus.Section =="EditStory") {//swappa anche le quest e le griglie associate
-        [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] =[CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
-        [GridsOfActivities[get_card_index()], GridsOfActivities[first_selected_card_index]] =[GridsOfActivities[first_selected_card_index],GridsOfActivities[get_card_index()]];
-        [GridsOfParagraphs[get_card_index()], GridsOfParagraphs[first_selected_card_index]] = [GridsOfParagraphs[first_selected_card_index], GridsOfParagraphs[get_card_index()]];
+      /* swappa i due elementi specificati e tutti i dati o griglie di card associati ad essi */
+      switch ( CurrentNavStatus.Section ) {
+        case "EditStory":
+          [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] = [CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
 
-        let swtmp = n_activities[first_selected_card_index];
-        n_activities[first_selected_card_index] = n_activities[get_card_index()];
-        n_activities[get_card_index()] = swtmp;
-      }
-      else if (CurrentNavStatus.Section == "EditQuest") {
-        [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
+          [n_activities[first_selected_card_index], n_activities[get_card_index()]] = [n_activities[get_card_index()], n_activities[first_selected_card_index]];
+        
+          [GridsOfActivities[get_card_index()], GridsOfActivities[first_selected_card_index]] = [GridsOfActivities[first_selected_card_index],GridsOfActivities[get_card_index()]];
 
-        [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
-      }
-      else if (CurrentNavStatus.Section == "EditActivity") {
-        [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()]];
+          [GridsOfParagraphs[get_card_index()], GridsOfParagraphs[first_selected_card_index]] = [GridsOfParagraphs[first_selected_card_index], GridsOfParagraphs[get_card_index()]];
+          break;
+        case "EditQuest":
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
+
+          [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
+          break;
+        case "EditActivity":
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()]];
       }
 
       //scambia le card
@@ -641,6 +640,15 @@ function swap_em(s) {
     set_stop_animation("shake",s);
     first_selected_stage = s;
     first_selected_card_index = get_card_index();
+  }
+
+  /* la griglia appena aggiornata viene salvata nell'apposito array globale */
+  switch( CurrentNavStatus.Section ) {
+    case "EditQuest":
+      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+      break;
+    case "EditActivity":
+      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
   }
 };
 
@@ -707,7 +715,6 @@ function loadEditAnswerFieldSection( MODE ) {
 					break;
 				default:
 					handleError();
-					break;
 			}
 
 			$( "#InsertAnswerFieldDescription" ).val( $( $( LoadAnswerField ).children()[0] ).text() );
@@ -750,8 +757,8 @@ function loadEditAnswerFieldSection( MODE ) {
  * I campi testo/numero non hanno nessun valore di default, così come non viene spuntato nessun radio di default
  */
 function buildAnswerFieldPreview() {
-	$( "#AnswerFieldPreview" ).empty();
-
+  $( "#AnswerFieldPreview" ).empty();
+  
 	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
 		$( "#AnswerFieldPreview" ).prepend( $( "<ul/>",
 		{
@@ -796,15 +803,15 @@ function buildAnswerFieldPreview() {
  */
 function saveRightAnswer() {
 	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview [type='radio']" ).each( function( index ) {
-			if ( $( this ).prop( "checked" ) ) {
-				saveDataFragment( "right_answer", $( this ).next().val() );
+		$( "#AnswerFieldPreview input[type='radio']" ).each( function( index ) {
+			if ( $( this ).prop( "checked" ) && $( this ).next().val().trim() ) {
+				saveDataFragment( "right_answer", $( this ).next().val().trim() );
 				return;
 			}
-		});
+    });
 	}
 	else {
-		saveDataFragment( "right_answer", $( "#AnswerFieldPreview input" ).val() );
+		saveDataFragment( "right_answer", $( "#AnswerFieldPreview input" ).val().trim() );
 	}
 }
 
@@ -817,17 +824,17 @@ function saveAnswerFieldSettings() {
 
 	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
 		let InputLabel;
-		$( "#AnswerFieldPreview [type='text']" ).each( function( index ) {
+		$( "#AnswerFieldPreview input[type='text']" ).each( function( index ) {
 			InputLabel = $( "<label/>",
 			{
 				for: "AnswerOption" + String( index )
 			});
 
-			if ( $( this ).val() == "" ) {
+			if ( $( this ).val().trim() == "" ) {
 				InputLabel.text( "Opzione" + String( index ) );
 			}
 			else {
-				InputLabel.text( $( this ).val() );
+				InputLabel.text( $( this ).val().trim() );
 			}
 
 			$( this ).replaceWith( InputLabel );

@@ -29,10 +29,7 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
-    * Fixare le operazioni di swap e cancel
-    * Sistemare tutte le animazioni
-    * Sistemare la scomparsa dei tooltip
-    * Migliorare la creazione delle card e controllare il selettore this
+    * Rendere più veloci le animazioni
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 

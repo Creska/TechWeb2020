@@ -268,7 +268,7 @@ function change_color_option(target, decolor, color) {
  * @param obj --> elemento oggetto della chiamata
  * Cambia le animazioni dell'oggetto indicato
  */
-function set_stop_animation( current, obj ) {
+function setAnimation( current, obj ) {
   switch( current ) {
     case "shake":
       obj.style.animationName = current;
@@ -353,9 +353,20 @@ function back() {
  * Porta alla sezione specificata, facendo tutti i caricamenti necessari
  */
 function goToSection(where) {
+  mode = "default";
+  stopAnimation();
+
+  /* la griglia di card corrente viene salvata nell'apposito array globale */
+  switch( CurrentNavStatus.Section ) {
+    case "EditQuest":
+      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+      break;
+    case "EditActivity":
+      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  }
+
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
-    mode = "default";
-    stop_shaking();
+    
     change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
     change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
 
@@ -411,6 +422,46 @@ function goToSection(where) {
 
 
 /**
+ * @param card
+ * A seconda della modalità corrente, apre la sezione puntata dalla card, oppure attiva la cancel o swap mode
+ */
+function openCard( card ) {
+  selected_card = card;
+
+  switch(mode) {
+    case "swap":
+      swap_em(card);
+      break;
+    case "cancel":
+      if ( card.style.animationName == "shake" )
+        cancel_em(card);
+      else
+        setAnimation("shake", card);
+      break;
+    default:
+      setAnimation("puffOut", card);
+      setTimeout( function () {
+          if (CurrentNavStatus.Section == "EditStory")
+            goToSection("EditQuest");
+          else if (CurrentNavStatus.Section == "EditQuest")
+            goToSection("EditActivity");
+          else if (CurrentNavStatus.Section == "EditActivity") {
+            switch( $(card).find(".card-text").first().prop("innerHTML") ) {
+              case "GALLERY":
+                goToSection("EditGallery");
+                break;
+              default:
+                goToSection("EditText");
+                break;
+            }
+          }
+      }, 750);
+      break;
+  }
+};
+
+
+/**
  * @param titolo
  * Crea una card con tutti i parametri adeguati e la aggiunge al deck
  */
@@ -440,49 +491,20 @@ function create_card(titolo) {
       break;
   }
 
-  card = `<div class="card bg-` + color + `" onclick='
-    selected_card = this;
-    switch(mode) {
-      case "swap":
-        swap_em(this);
-        break;
-      case "cancel":
-        if( this.style.animationName == "shake" )
-          cancel_em(this);
-        else
-          set_stop_animation("shake", this);
-        break;
-      default:
-        set_stop_animation("puffOut", this);
-        setTimeout(function () {
-          if (CurrentNavStatus.Section == "EditStory")
-            goToSection("EditQuest");
-          else if (CurrentNavStatus.Section == "EditQuest")
-            goToSection("EditActivity");
-          else if (CurrentNavStatus.Section == "EditActivity") {
-            switch( $(selected_card).find(".card-text").prop("innerHTML") ) {
-              case "GALLERY":
-                goToSection("EditGallery");
-                break;
-              default:
-                goToSection("EditText");
-                break;
-            }
-          }
-        }, 750);
-        break;
-    }'>
-      <div class="card-body text-center">
-        <p class="card-text">` + titolo + `</p>
-      </div>
-    </div>`;
+  let card = $("<div/>",
+    {
+      "class": "card bg-" + color,
+      onclick: "openCard( this )"
+    });
+  card.append( $("<div class='card-body text-center'></div>") );
+  card.children().append( $("<p class='card-text'>" + titolo + "</p>") );
 
   // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
   if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
     $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');
   
   $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
-  set_stop_animation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
+  setAnimation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
 
   if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0)
     GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
@@ -495,13 +517,13 @@ function create_card(titolo) {
  * Entra o esce dalla cancel mode
  */
 function cancel_mode() {
+  stopAnimation();
+
   if (mode == "cancel" ) {
     change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
     mode = "default";
-    stop_shaking();
   }
   else {
-    stop_shaking();
     change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-secondary","btn-primary");
     // eventualmente disattiva la modalità di swap
     if ( mode == "swap" ) {
@@ -518,7 +540,7 @@ function cancel_mode() {
  * Cancella l'oggetto specificato
  */
 function cancel_em(obj) {
-  set_stop_animation("swashOut",obj);
+  setAnimation("swashOut",obj);
   setTimeout( function() {
     /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
     switch (CurrentNavStatus.Section) {
@@ -550,7 +572,7 @@ function cancel_em(obj) {
       obj.remove();
       //il resto di questo else fa in modo che, dopo la rimozione della quest, il resto della griglia "slitti" in modo appropriato
       while( !( iter == iter.parentElement.lastChild ) ) {
-        set_stop_animation("stop",iter.nextElementSibling.firstChild);
+        setAnimation("stop",iter.nextElementSibling.firstChild);
         iter.appendChild( iter.nextElementSibling.firstChild );
         iter = iter.nextElementSibling;
       }
@@ -558,15 +580,6 @@ function cancel_em(obj) {
         iter.remove();
     }
   }, 1500);
-
-  /* la griglia appena aggiornata viene salvata nell'apposito array globale */
-  switch( CurrentNavStatus.Section ) {
-    case "EditQuest":
-      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
-      break;
-    case "EditActivity":
-      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
-  }
 };
 
 
@@ -574,14 +587,14 @@ function cancel_em(obj) {
  * Entra o esce dalla swap mode
  */
 function swap_mode() {
+  stopAnimation();
+
   if(mode == "swap" ) {
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
     mode = "default";
     first_selected_stage ="";
-    stop_shaking();
   }
   else {
-    stop_shaking();
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-secondary", "btn-primary");
     // eventualmente disattiva la madalità di cancel
     if( mode == "cancel" )
@@ -599,12 +612,12 @@ function swap_em(s) {
   // se c'è già una prima card selezionata, procede con lo scambio tra essa e quella associata ad "s" (che ha triggerato l'evento)
   // fa lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
   if (first_selected_stage) {
-    set_stop_animation("tinLeftOut",first_selected_stage);
-    set_stop_animation("tinRightOut",s);
+    setAnimation("tinLeftOut",first_selected_stage);
+    setAnimation("tinRightOut",s);
 
     setTimeout(function () {
-      set_stop_animation("tinRightIn",first_selected_stage);
-      set_stop_animation("tinLeftIn",s);
+      setAnimation("tinRightIn",first_selected_stage);
+      setAnimation("tinLeftIn",s);
 
       /* swappa i due elementi specificati e tutti i dati o griglie di card associati ad essi */
       switch ( CurrentNavStatus.Section ) {
@@ -623,43 +636,34 @@ function swap_em(s) {
           [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
           break;
         case "EditActivity":
-          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.QuestN].activity_text[get_card_index()]];
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()]];
       }
 
       //scambia le card
       let tmp = s;
       s.outerHTML = first_selected_stage.outerHTML;
       first_selected_stage.outerHTML = tmp.outerHTML;
+
       first_selected_stage_index = -1;
       first_selected_stage = "";
-
     },1000);
   }
   else {
     //se la card selezionata è la prima, impostala come tale e falla shakerare
-    set_stop_animation("shake",s);
+    setAnimation("shake",s);
     first_selected_stage = s;
     first_selected_card_index = get_card_index();
-  }
-
-  /* la griglia appena aggiornata viene salvata nell'apposito array globale */
-  switch( CurrentNavStatus.Section ) {
-    case "EditQuest":
-      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
-      break;
-    case "EditActivity":
-      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
   }
 };
 
 
 /**
- * Blocca l'animazione di shaking per tutte le card che la stanno utilizzando
+ * Blocca l'animazione di shaking per tutte le card (nella sezione corrente) che la stanno utilizzando
  */
-function stop_shaking() {
+function stopAnimation() {
   for (card of $("#" + CurrentNavStatus.Section + " .card")) {
-    if( card.style.animationName == "shake" )
-      set_stop_animation("stop",card);
+    if ( card.style.animationName != "initial" )
+      setAnimation("stop", card);
   }
 };
 

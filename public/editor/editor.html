@@ -71,9 +71,17 @@
         </div>
       </div>
     </div>
+
+    <div class="invisible" id="NumberOfDevices">
+      <p>Scegli se attribuire il controllo della storia ad un membro per gruppo, o ad ogni giocatore:</p>
+
+      <button id="a3" class="btn btn-lg bg-secondary" onclick="CurrentWork.single_device = 1; select(3);">SINGOLO</button>
+      <button id="a4" class="btn btn-lg bg-secondary" onclick="CurrentWork.single_device = 0; select(4);">MULTIPLO</button>
+    </div>
+    
     <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
-    <button id="a3" class="btn btn-lg btn-secondary mb-3 mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(3);"><i class="fab fa-accessible-icon"></i></button>
-    <button id="a4" class="btn btn-lg btn-secondary mb-3 rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(4);"><i class="fas fa-times"></i></button>
+    <button id="a5" class="btn btn-lg btn-secondary mb-3 mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(5);"><i class="fab fa-accessible-icon"></i></button>
+    <button id="a6" class="btn btn-lg btn-secondary mb-3 rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(6);"><i class="fas fa-times"></i></button>
     <p><a id="StartEditing" class="btn btn-lg btn-primary rounded disabled" onclick="goToSection('EditStory');">Avanti</a></p>
   </main>
 
@@ -192,9 +200,7 @@
 
   <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
   <div class="EditorSection" id="EditAnswerField">
-    <div>
-      Titolo sezione
-    </div>
+    <h1>TITOLO SEZIONE</h1>
 
     <div>
       <div>Tipologia di input:</div>
@@ -331,6 +337,7 @@
       });
     </script>
   </div>
+
 
   <!--
   <div class="EditorSection" id="TestSection">

@@ -37,10 +37,17 @@ RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
     * Menu Game Mode e altre opzioni globali:
         * Si potrebbe creare una navbar, che dovrebbe avere: save, close, change mode, graphic e preview
-        * se si sceglie gruppo o classe bisogna che salti fuori la scelta di avere un cellulare per ogni persona o no
         * indicare avvertimento di: non si torna più indietro
     * Editor CSS
+        * Idealmente servirebbe un salvataggio subito prima dell'apertura dell'editor (per fare un binding tra file json e css)
     * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
+        * Idealmente dovrebbero esistere tre identificatori per ogni storia:
+            * Nome del file json - utilizzato dall'utente per distinguere ogni documento
+            * ID numerico - legato al nome del file, ma l'utente non vi interagisce
+            * Titolo della storia - parametro del json, indipendente dal resto
+        * Nella parte di EDIT devono esserci due opzioni:
+            * Modifica storia
+            * Crea copia - serve per la faccenda delle squadre parallele
         * Nella pubblicazione mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti, che siano prsenti tutte le "alt" nel caso di una partita accessibile
     * Grafica
     * Accessibilità

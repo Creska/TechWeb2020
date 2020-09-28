@@ -1,5 +1,5 @@
-var b = [ false, false, false, false, false ]; // true: b[i] è selezionato
-var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
+var b = [ false, false, false, false, false, false, false ]; // true: b[i] è selezionato
+var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
 var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
 var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
 var n_activities = []; // numero di attività per ogni quest - equivalente a CurrentWork.quests[CurrentNavStatus.QuestN].activities.length
@@ -57,6 +57,12 @@ function deselect_other_options( i ) {
     case 4:
       x = i-1;
       break;
+    case 5:
+      x = i+1;
+      break;
+    case 6:
+      x = i-1;
+      break;
     default:
       x = -1;
       for ( y = 0; y < 3; y++ ) {
@@ -76,8 +82,19 @@ function deselect_other_options( i ) {
  * Controlla che siano selezionate le opzioni necessarie per far partire l'editing della storia
  */
 function check_select() {
-  if( (b[0] ^ b[1] ^ b[2]) && (b[3] ^ b[4]) )
+  if( (b[0] ^ b[1] ^ b[2]) && (b[5] ^ b[6]) ) {
+    if ( b[1] ^ b[2] ) {
+      if ( b[3] ^ b[4] )
+        $( "#StartEditing" ).removeClass( "disabled" );
+      else
+        $( "#StartEditing" ).addClass( "disabled" );
+
+      return;
+    }
+
     $( "#StartEditing" ).removeClass( "disabled" );
+  }
+    
   else
     $( "#StartEditing" ).addClass( "disabled" );
 }
@@ -92,6 +109,15 @@ function select( i ) {
   if( b[i] ) {
     change_color_option( "#a" + i, bgs[i], "bg-primary" );
     deselect_other_options( i );
+
+    switch (i) {
+      case 0:
+        $( "#NumberOfDevices" ).addClass( "invisible" );
+        break;
+      case 1:
+      case 2:
+        $( "#NumberOfDevices" ).removeClass( "invisible" );
+    }
   }
   else
     change_color_option( "#a" + i, "bg-primary", bgs[i] );

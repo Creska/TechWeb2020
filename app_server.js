@@ -55,6 +55,7 @@ function removePlayer(id) {
                 //if there's no players for this story, delete it
                 stories_map.delete(k);
                 console.log("The story with ID " + k + " has no more players, deleting the record.");
+                //TODO signal the valuator that a story has been deleted due to players leaving
             }
         }
     })
@@ -224,7 +225,7 @@ app.post('/player/activityUpdate', function (req, res) {
     }
 })
 
-app.post('/player/playerWarnings', function (req, res) {
+app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
@@ -237,14 +238,19 @@ app.post('/player/playerWarnings', function (req, res) {
         if (time_elapsed > maximum_time) {
             var socketID = req.body.socket_id;
             let tempsocket = io.sockets.connected[socketID];
-            valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
-            console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+            // valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
+            // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+            // why the fuck did I do it this way?
             res.status(200).end();
         }
     } else {
         console.log("/player/playerWarnings BAD REQUEST, a parameter was not provided.")
         res.status(400).send({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." }).end();
     }
+})
+
+app.get('/player/playersActivities', function (req, res) {
+
 })
 
 app.get('/editor', function (req, res) {
@@ -345,6 +351,7 @@ app.get('/editor/getStory', function (req, res) {
     })
 })
 
+//object received: array [{data: value, type: string}], parameter name: story
 app.post('/editor/saveStory', function (req, res) {
     //TODO this needs to be tested...
     var story_data = req.body.story;
@@ -411,6 +418,7 @@ app.get('/valuator', function (req, res) {
 })
 
 app.get('/valuator/history', function (req, res) {
+    //DINT I probably don't even need this in the end
     var data = { messages: undefined, joins: undefined };
     if (storedMessages.length) {
         data.messages = storedMessages;
@@ -432,6 +440,15 @@ app.post('/valuator/return', function (req, res) {
     //TODO ending summary, I have to decide what to do with player_data
     //game ends, so I unset the story
     stories_played = undefined;
+})
+
+app.get('/valuator/activeStories', function (req, res) {
+    //sending all current active games to the valuator
+    var activeStories = [];
+    stories_map.forEach((v, _k) => {
+        activeStories.push({ story_name: v.story_name, story_ID: v.story_ID });
+    })
+    res.status(200).send(activeStories).end();
 })
 
 http.listen(3000, () => {

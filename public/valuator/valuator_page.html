@@ -58,6 +58,24 @@
         background-color: #D3D3D3;
         color: black;
     }
+
+    .dropdown-menu {
+        background-color: #545c64;
+    }
+
+    .dropdown-menu a {
+        color: white;
+        background-color: #545c64;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #696969;
+    }
+
+    .dropdown-menu a:active {
+        background-color: black;
+        color: #C0C0C0;
+    }
 </style>
 <script>
     $(function () {
@@ -67,27 +85,162 @@
             color: '#C0C0C0'
         });
     })
+    var storyNameTimer; //global timer to retrieve active stories
+    var storyDataTimer; //global timer tor retrieve information for the stories
+    var activeStories; //known active stories
+    var defaultPageTitle = 'Ambiente Valutatore';
+    var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
+    var pageLocation = 0;
+    //pagelocations: Home(0) | Support(1) | Editor(2) 
+    function renderEditor() {
+        pageLocation = 2;
+        $('#bottoneditor').fadeOut();
+        $('#bottonesupport').fadeOut();
+        $('#editor').fadeIn();
+        $('#home').removeClass('active');
+        $('#defaulth1').html(defaultPageTitle + ": Editor")
+        $('#defaultdescription').html("Qui è presente un editor potenziato, rispetto all'ambiente editore, con cui potrai gestire le storie e crearne di nuove.");
+        //rendering the editor
+    }
+    function renderSupport() {
+        pageLocation = 1;
+        $('#bottoneditor').fadeOut();
+        $('#bottonesupport').fadeOut();
+        //rendering the dropdown stories menu
+        $.ajax({
+            url: 'localhost:3000/valuator/activeStoriesNames',
+            method: 'GET',
+            success: function (data) {
+                activeStories = data;
+                $('#support').fadeIn();
+                $('#home').removeClass('active');
+                $('#defaulth1').html(defaultPageTitle + ": Supporto")
+                if (data.length) {
+                    makeDropdown(data);
+                }
+                else {
+                    $('#defaultdescription').html('Al momento non sono attive storie. Puoi restare su questa schermata, in attesa che inizino.');
+                }
+                $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
+                startNameTimer();
+            },
+            error: function (error) {
+                //TODO error handling
+                $('#defaulth1').html(defaultPageTitle + ": Supporto")
+                $('#defaultdescription').html('Errore durante il caricamento delle storie, si prega di ritornare nel menù principale e di riprovare.');
+            }
+        })
+
+    }
+    function toHome() {
+        if (pageLocation != 0) {
+            switch (pageLocation) {
+                //things to fade out
+                case 1:
+                    $('#support').fadeOut();
+                    stopNameTimer();
+                    stopDataTimer();
+                    break;
+
+                case 2:
+                    $('#editor').fadeOut();
+                    break;
+            }
+            $('#bottoneditor').fadeIn();
+            $('#bottonesupport').fadeIn();
+            $('#home').addClass('active');
+            $('#defaulth1').html(defaultPageTitle);
+            $('#defaultdescription').html(defaultDescription);
+        }
+    }
+    function makeDropdown(data) {
+        var stories_dropdowns = "";
+        data.forEach((item) => {
+            stories_dropdowns += "<a class='dropdown-item' id='" + item.story_ID + " onclick='updateDropdown(this.id,'" + item.story_name + "')'>" + item.story_name + "</a>"
+        })
+        $('#dropdownstories').html(stories_dropdowns);
+    }
+    function updateDropdown(id, story_name) {
+        $('#dropdownbutton').html("Storie:" + story_name);
+        //TODO I have to decide how to show the information for the story.
+        //activate the story timer only for this specific story, disable the precedent one
+    }
+
+    function startNameTimer() {
+        storyNameTimer = setInterval(() => {
+            $.ajax({
+                url: 'localhost:3000/valuator/activeStoriesNames',
+                method: 'GET',
+                success: function (data) {
+                    if (data.length) {
+                        if (activeStories.length) {
+                            makeDropdown(data);
+                        }
+                        else {
+                            //it's 0, so there were no active stories before, different message
+                            $('#defaultdescription').html('Delle storie stanno ora venendo giocate. Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
+                            activeStories = data;
+                            makeDropdown(data);
+                        }
+                    }
+                },
+                error: function (error) {
+                    //TODO error handling
+                }
+            })
+        }, 5000);
+    }
+
+    function startDataTimer() {
+        storyDataTimer = setInterval(() => {
+            //TODO data handling
+        }, 5000)
+    }
+    function stopNameTimer() {
+        clearInterval(storyNameTimer)
+    }
+    function stopDataTimer() {
+        clearInterval(storyDataTimer)
+    }
+
+
 </script>
 
 <body>
     <div class="container-fluid">
         <div class="topnav">
-            <a class="active" href="#home">Home</a>
-            <a href="#news">Avanti</a>
-            <a href="#contact">Indietro</a>
+            <a id="home" class="active" onclick="toHome()">Home</a>
         </div>
         <br>
-        <h1 style="color: white">Ambiente Valutatore</h1>
-        <p style="color: white">Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione
-            per il supporto dei giocatori.</p>
+        <h1 id="defaulth1" style="color: white">Ambiente Valutatore</h1>
+        <p id="defaultdescription" style="color: white">Benvenuto. Qui avrai ha disposizione l'editor potenziato per le
+            storie e l'applicazione per il supporto dei giocatori.</p>
         <div class="row" style="color: white">
-            <div class="col-sm-6" style="text-align: center"><button type="button" class="btn btn-dark">Bottone per
+            <div id="bottoneditor" class="col-sm-6" style="text-align: center"><button type="button"
+                    class="btn btn-dark" onclick="renderEditor()">Bottone per
                     l'editor
                     potenziato. Sotto ci sarà una preview dell'editor.</button>
             </div>
-            <div class="col-sm-6" style="text-align: center"><button type="button" class="btn btn-dark">Bottone per il
+            <div id="bottonesupport" class="col-sm-6" style="text-align: center"><button type="button"
+                    class="btn btn-dark" onclick="renderSupport()">Bottone per il
                     supporto dei
-                    giocatori. Sotto ci sarà una preview del supporto</button></div>'
+                    giocatori. Sotto ci sarà una preview del supporto</button></div>
+            <div id="editor" class="col-sm-12" style="display: none">
+            </div>
+            <div id="support" class="col-sm-12" style="display: none">
+                <div class="dropdown">
+                    <button id="dropdownbutton" class="btn btn-secondary dropdown-toggle" type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Storie
+                    </button>
+                    <div id="dropdownstories" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Storia1</a>
+                        <a class="dropdown-item" href="#">Storia2</a>
+                        <a class="dropdown-item" href="#">Storia3</a>
+                    </div>
+                </div>
+                <div id="notifiche" class="col-sm-12">Notifiche</div>
+            </div>
         </div>
     </div>
     <!-- <div id="chat-room"></div>

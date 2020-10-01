@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+      <!--Luca: lasciate la versione uncompressed di jquery. La slim manca di tutte le operazioni AJAX-->
+      <script src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+          integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+          crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+          integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+          crossorigin="anonymous"></script>
+      <script type="text/javascript" src="player.js"></script>
+
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <link rel="stylesheet" href="player.css">
+
+      <script src="/socket.io/socket.io.js"></script>
+
+
+      <title>Player</title>
+
+      <style>
+        .jumbotron{
+          margin: 20px;
+        }
+        .mr-3{
+          width: 100px;
+          height: 100px;
+        }
+        .media{
+          margin: 20px;
+          background-color: whitesmoke;
+          padding: 10px;
+        }
+      </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Nome_app</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="../player/player.html">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="features.html">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="team.html">Chi siamo?</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <h1 class="display-4">Ciao!</h1>
+      <p class="lead">Siamo un gruppo di informatici, chi di informatica e chi di informatica per il management. </p>
+      <hr class="my-4">
+      <p>Stiamo svolgendo il progetto di tecnologie web, insegnamento diretto dal professore Fabio Vitali.</p>
+      <p>Questo progetto consiste nello sviluppare un sito web di un museo, in cui singoli individui o gruppi di individui possono svolgere attività, da casa o dal museo. </p>
+    </div>
+
+    <div class="media">
+      <img src="https://www.teamworld.it/wp-content/uploads/2019/07/foto-azzurra-instagram.jpg" class="mr-3" alt="...">
+      <div class="media-body">
+        <h5 class="mt-0">Luca Paparo</h5>
+        Studente di informatica, da 9 CFU, parte fondamentale di questo progetto in quanto ha sviluppato interamente da solo l'ambiente valutatore.
+      </div>
+    </div>
+    <div class="media">
+      <img src="https://www.lostudiodelcolore.com/immagini-prodotti/135201766327070.jpg" class="mr-3" alt="...">
+      <div class="media-body">
+        <h5 class="mt-0">Cristiano Guidotti</h5>
+        Studente di informatica, da 6 CFUold, occupatosi della parte di editor.
+      </div>
+    </div>
+    <div class="media">
+      <img src="https://adamap.it/wp-content/uploads/2019/12/lenzuolo_sotto_fiesta_pantone_1_3.jpg" class="mr-3" alt="...">
+      <div class="media-body">
+        <h5 class="mt-0">Lil Maometto</h5>
+        Studente di informatica, da 6 CFUold.
+      </div>
+    </div>
+    <div class="media">
+      <img src="https://i.pinimg.com/originals/f2/a5/7f/f2a57fff4da25d13efa238cad8600bfc.png" class="mr-3" alt="...">
+      <div class="media-body">
+        <h5 class="mt-0">Caterina Capucci</h5>
+        Studente di informatica per il management, da 6 CFU, occupatosi della parte grafica.
+      </div>
+    </div>
+
+  </body>
+</html>

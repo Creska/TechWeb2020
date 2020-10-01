@@ -22,20 +22,33 @@
 
     <script src="/socket.io/socket.io.js"></script>
 
-
     <title>Player</title>
 </head>
 
 <body>
-    <div id="welcome">
-        Schermata iniziale del gioco. Per avviare una nuova partita, premere START<br>
-        <button onclick="startGame();">START</button>
+    <div id="StartScreen">
+        <script type="text/javascript">
+            $(document).ready( $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) ) );
+        </script>
+        <div id="WelcomeText" role="main">
+            Schermata iniziale del gioco. Per avviare una nuova partita, premere START
+            <!-- TODO: Aggiungere il messaggio riguardante l'accessibilità -->
+        </div>
+        <button id="StartButton" onclick="startGame();">START</button>
     </div>
 
-    <div id='chat-room'>
+    <template id="MainContainer">
+        <!-- Main = Container di tutto ciò che fa parte del gioco -->
+        <div id="Main" role="main" autofocus>
+            <!-- Quest = contiene il titolo della quest e il container dell'attività -->
+            <div class="Quest" aria-live="assertive"></div>
+        </div>
+    </template>
+
+    <div id='chat-room' aria-live="assertive">
         <form action="">
             Text: <input id="message" type="text" autocomplete="off"><br>
-            <button>Send</button>
+            <button onclick="CurrentStatus.ChatMessages += 1;">Send</button>
         </form>
     </div>
 

@@ -1,272 +1,634 @@
-/* NOTA
-Le uniche volte in cui dovrebbero avvenire comunicazioni col server sono:
-* salvataggio
-* apertura dell'explorer (per editare/pubblicare/ritirare una storia già esistente)
-*/
+var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
+var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
+var n_activities = []; // numero di attività per ogni quest - equivalente a CurrentWork.quests[CurrentNavStatus.QuestN].activities.length
+var mode = "default";
+var first_selected_stage = "";//per lo swap
+var first_selected_card_index = -1;
+var selected_card = "";//indica l'ultima carta cliccata dall'utente
+var GridsOfActivities = []; // contiene le griglie di attività per ogni quest
+var GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
 
-/* questa sezione indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
+/* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
-    MainMenu: "MainMenu",
-    ChooseAccessibility: "MainMenu",
-    EditStory: "MainMenu",
-    EditQuest: "EditStory"
+	MainMenu: "MainMenu",
+  ChooseGameMode: "MainMenu",
+  EditStory: "ChooseGameMode",
+	EditQuest: "EditStory",
+	EditActivity: "EditQuest",
+	EditAnswerField: "EditActivity",
+  EditText: "EditActivity",
+  EditGallery: "EditActivity",
+  SetAnswerOutcome: "EditActivity"
 };
 
-/* indica le sezioni dell'editor dove l'utente sta attualmente lavorando */
+/* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
 	QuestN: -1,
 	ActivityN: -1
 };
 
-/* variabile usata per i salvataggi temporanei del JSON e degli oggetti su cui l'utente sta lavorando:
-* Story --> contiene l'astrazione del JSON su cui si sta lavorando. ad ogni attivazione di "Save" viene fatto il salvataggio su server
-*/
+/* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork = {
 	ACCESSIBILITY: 0,
-	story_title: "",
+	story_title: "<div id='StoryTitle'>NuovaStoria</div>",
 	story_ID: -1,
-	settings: {},
-	settings_form: "",
+	game_mode: "",
+	single_device: 1,
 	quests: [],
 	stylesheet: "",
 	score: []
 };
 
 
+/* ------------------------------- PROCEDURE ---------------------------------- */
 
+/**
+ * @param which
+ * Salva il titolo della storia o della quest
+ */
+function save_title( which ) {
+  let title;
+  switch ( which ) {
+    case "story":
+      title = $( '#StoryTitleInput' ).val().trim();
+      if( title != "" ) {
+        CurrentWork.story_title = "<div id='StoryTitle'>" + title + "</div>";
+      }
+      else {
+        // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
+        $( '#StoryTitleInput' ).val( "NuovaStoria" );
+      }
 
-/* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
+      change_savetitle_button( "saved" );
+      break;
+    case "quest":
+      if (CurrentNavStatus.QuestN < 0) {
+        title = $("#NewQuestWidget input").val().trim();
+        if( title != "" ) {
+          /* un titolo di default è già presente nel nuovo elemento quest
+          quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
+          CurrentWork.quests[n_quests - 1].quest_title = "<div class='QuestTitle'>" + title + "</div>";
+        }
+      }
+      else {
+        title = $( '#QuestTitleInput' ).val().trim();
+        let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
 
-function sayHello() {
-	window.alert('hello');
-};
+        if ( title != "" ) {
+          // aggiorna il nome della card
+          $("#QuestsGrid .card-text").eq( CurrentNavStatus.QuestN ).html( title );
 
-function printCurrentJson() {
-	console.log( JSON.stringify(CurrentWork ));
-}
+          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<div class='QuestTitle'>" + title + "</div>";
+        }
+        else {
+          // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
+          $( '#QuestTitleInput' ).val( old_title );
+        }
 
-
-
-/* --------------------------------------------------------------------------------------------- */
-
-
-function printError() {
-	window.alert( "!!! MAJOR ERROR !!!");
+        change_savetitle_button( "saved" );
+      }
+      break;
+    default:
+        handleError();
+  }
 };
 
 
 /**
-* @param newSectionId
-* fa scomparire la sezione corrente e, appena l'animazione è finita, fa comparire quella nuova indicata
+ * Crea una quest/attività/elemento vuoto e lo aggiunge al json, nonché agli array di supporto
 */
-function goToSection( newSectionId ) {
-    $( "#" + CurrentNavStatus.Section ).fadeOut( function(){
-        $( "#" + newSectionId ).fadeIn(); 
-    }
-    );
-
-    CurrentNavStatus.Section = newSectionId;
+function create_stuff(what) {
+  switch (what) {
+    case "quest":
+      n_quests += 1;
+      CurrentWork.quests.push(initQuest());
+      n_activities.push(0);
+      GridsOfActivities.push("");
+      GridsOfParagraphs.push([]);
+      save_title("quest");
+      break;
+    case "activity":
+      n_activities[CurrentNavStatus.QuestN] += 1;
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
+      GridsOfParagraphs[CurrentNavStatus.QuestN].push("");
+      break;
+    case "TextParagraph":
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<p class='TextParagraph'></p>");
+      break;
+    case "Gallery":
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("");
+      break;
+    default:
+      handleError();
+  }
 };
 
 
-function promptSave() {
-    /* TODO */
-};
-
-function goBack() {
-    // promptSave();
-
-    goToSection( Parent[CurrentNavStatus.Section] );
-};
-
+/**
+ * Inizializza un oggetto quest vuoto per il JSON
+ */
 function initQuest() {
-	var EmptyQuest = {	
+	let EmptyQuest = {	
 		quest_title: "",
 		activities: []
-	};
+  };
+  
+  EmptyQuest.quest_title = "<div class='QuestTitle'>" + "Quest" + String(n_quests-1) + "</div>";
 
 	return EmptyQuest;
 };
 
+
+/**
+ * Inizializza un oggetto attività vuoto per il JSON
+ */
 function initActivity() {
-	var EmptyActivity = {
-		activity_html: "",
+	let EmptyActivity = {
+		activity_text: [],
+		answer_field: "",
 		right_answer: "",
 		answer_score: "",
+		answer_outcome: {},
 		ASK_EVAL: 0,
+		GET_CHRONO: 0,
 		expected_time: 0
 	};
 
 	return EmptyActivity;
 };
 
-/* APPUNTO: fare una funzione di reload che prende come argomento un valore che indica qual è la sezione da reloadare. usarlo in goToSection */
 
 /**
- * @param WidgetId
- * attiva il widget specificato, apposito per l'input di un testo
- * viene inizializzato il testo di default, sulla base di ciò che era presente nel relativo campo del JSON
+ * @param mode --> modalità in cui si trova la gestione delle card
+ * Gestisce il pulsante di salvataggio, segnalando quando il save è stato eseguito
  */
-function toggleTextInput( WidgetId ) {
-	switch ( WidgetId ) {
-		case 'EditStoryTitle':
-			if ( CurrentWork.story_title == '' ) {
-				$( '#' + 'StoryTitleInput' ).val( 'MyStory' );
-			}
-			else {
-				$( '#' + 'StoryTitleInput' ).val( CurrentWork.story_title );
-			}
-		
-			$( "#EditStoryTitle" ).modal( "toggle" );
-			break;
-		case 'EditQuestTitle':
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title == '' ) {
-				$( '#' + 'QuestTitleInput' ).val( 'NewQuest' );
-			}
-			else {
-				$( '#' + 'QuestTitleInput' ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
-			}
-		
-			$( "#EditQuestTitle" ).modal( "toggle" );
-			break;
-		default:
-			printError();
-			break;
-	}
+function change_savetitle_button( mode ) {
+  let btn;
+
+  switch ( CurrentNavStatus.Section ) {
+    case "EditStory":
+      btn = $( "#SaveStoryTitle" );
+      break;
+    case "EditQuest":
+      btn = $( "#SaveQuestTitle" );
+      break;
+    default:
+      handleError();
+      break;
+  }
+
+  if ( mode == 'saved' ) {
+    btn.removeClass("bg-primary");
+    btn.addClass("bg-success");
+    btn.text("Salvato!");
+  }
+  else if ( mode == 'unsaved' ) {
+    btn.removeClass('bg-success');
+    btn.addClass('bg-primary');
+    btn.text('Salva');
+  }
 };
 
-function toggleIndexInput() {
-	let UseLastIndex = $( "#UseLastIndex" );
-	let SelectIndex = $( "#SelectIndex" );
-	let IndexInput = $( "#IndexInput" );
 
-	/* inizializzazione dei valori di default */
-	UseLastIndex.prop("checked", true);
-	SelectIndex.prop("checked", false);
-	IndexInput.attr("disabled", true);
-
-	if ( CurrentNavStatus.QuestN < 0 ) {
-		IndexInput.val( CurrentWork.quests.length );
-		IndexInput.attr('max', IndexInput.val() );
-	}
-	else {
-		IndexInput.val( CurrentWork.quests[QuestN].activities.length );
-		IndexInput.attr('max', IndexInput.val() );
-	}
-
-	$( "#InsertStageIndex" ).modal( "toggle" );
+/**
+ * @param target
+ * @param decolor --> colore iniziale
+ * @param color --> colore finale
+ * Cambia il colore dell'elemento target. Funziona in base alle classi di colori di bootstrap
+ */
+function change_color_option(target, decolor, color) {
+  $(target).removeClass(decolor);
+  $(target).addClass(color);
 };
 
-function insertNewStage() {
-	let UseLastIndex = $( "#UseLastIndex" );
-	let SelectIndex = $( "#SelectIndex" );
-	let IndexInput = $( "#IndexInput" );
 
-	let ChosenIndex;
+/**
+ * @param current --> animazione corrente di obj
+ * @param obj --> elemento oggetto della chiamata
+ * Cambia le animazioni dell'oggetto indicato
+ */
+function setAnimation( current, obj ) {
+  switch( current ) {
+    case "shake":
+      obj.style.animationName = current;
+      obj.style.animationIterationCount = "infinite";
+      obj.style.animationDuration = "0.5s";
+      break;
+    case "stop":
+      obj.style.animationName = "initial";
+      break;
+    case "puffOut":
+      obj.style.animationName = current;
+      obj.style.animationIterationCount = "initial";
+      obj.style.animationDuration = "1s";
+      setTimeout(function () {
+        obj.style.animationName = "initial";
+      }, 1500);
+      break;
+    case "swashOut":
+      obj.style.animationName = current;
+      obj.style.animationIterationCount = "initial";
+      obj.style.animationDuration = "1.5s";
+      break;
+    case "swashIn":
+      obj.style.animationName = current;
+      obj.style.animationIterationCount = "initial";
+      obj.style.animationDuration = "0.75s";
+      setTimeout(function () {
+        obj.style.animationName = "initial";
+      }, 1250);
+      break;
+    default:
+      obj.style.animationName = current;
+      obj.style.animationIterationCount = "initial";
+      obj.style.animationDuration = "1s";
+      /*
+      setTimeout(function () {
+        quest.style.animationName = "initial";
+      }, 1400); */
+      break;
+  }
+};
 
-	if ( CurrentNavStatus.QuestN < 0 ) {
-		if ( UseLastIndex.prop( "checked" ) ) {
-			ChosenIndex = CurrentWork.quests.length;
-		}
-		else {
-			ChosenIndex = IndexInput.val();
-		}
 
-		CurrentWork.quests.splice( ChosenIndex, 0, initQuest() );
+/** 
+ * Calcola l'indice dell'ultima card selezionata, rispetto alla griglia corrente
+ * La griglia è composta da deck di tre card l'uno
+*/
+function get_card_index() {
+  let current_grid;
+  
+  switch (CurrentNavStatus.Section) {
+    case "EditStory":
+    case "EditQuest":
+      current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
+      break;
+    case "EditActivity":
+    case "EditText":
+    case "EditImage":
+    case "EditGallery":
+    case "EditAnswerField":
+      current_grid = $( "#EditActivity .CardGrid" ).attr( "id" );
+  }
+  
+  let deck = selected_card.parentNode; // recupera il deck dove si trova la card
+  let deck_index = Array.from( document.getElementById( current_grid ).children ).indexOf( deck ); // calcola l'indice del deck rispetto alla griglia
+  let card_index_inside_parent = Array.from( deck.children ).indexOf( selected_card ); // calcola l'indice della card rispetto al suo deck
+  return ( deck_index * 3 ) + card_index_inside_parent;
+};
 
-		/* decidere cosa fare */
-	}
-	else {
-		if ( UseLastIndex.prop( "checked" ) ) {
-			ChosenIndex = CurrentWork.quests[CurrentNavStatus.QuestN].activities.length;
-		}
-		else {
-			ChosenIndex = IndexInput.val();
-		}
 
-		CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice( ChosenIndex, 0, initActivity() );
-
-		/* decidere cosa fare */
-	}
-
-	$('#InsertStageIndex').modal('hide');
-}
+/**
+ * Torna alla sezione precedente
+*/
+function back() {
+  first_selected_stage="";
+  goToSection(Parent[CurrentNavStatus.Section]);
+};
 
 
-function saveDataFragment( field, value, quest_n, activity_n ) {
-	switch ( field ) {
-		case 'story_title':
-			CurrentWork.story_title = value;
-			break;
-		case 'settings':
-			/* TODO */
-			break;
-		case 'settings_form':
-			/* TODO */
-			break;
-		case 'quest_title':
-			if ( quest_n < 0 || quest_n > CurrentWork.quests.length ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].quest_title = value;
-			}
-			break;
-		case 'activity_html':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].activity_html = value;
-			}
-			break;
-		case 'right_answer':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].right_answer = value;
-			}
-			break;
-		case 'answer_score':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].answer_score = value;
-			}
-			break;
-		case 'ASK_EVAL':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].ASK_EVAL = value;
-			}
-			break;
-		case 'expected_time':
-			if ( ( quest_n < 0 || quest_n > CurrentWork.quests.length ) || ( activity_n < 0 || activity_n > CurrentWork.quests[quest_n].activities.length ) ) {
-				printError();
-			}
-			else {
-				CurrentWork.quests[quest_n].activities[activity_n].expected_time = value;
-			}
-			break;
-		case 'stylesheet':
-			/* TODO */
-			break;
-		case 'score':
-			/* TODO */
-			break;
-		case 'ACCESSIBILITY':
-		case 'story_ID':
-			window.alert( "non è possibile effettuare questa modifica" ); // migliorare l'alert
-			break;
-		default:
-			printError();
-			break;
-	}
+/**
+ * @param where
+ * Porta alla sezione specificata, facendo tutti i caricamenti necessari
+ */
+function goToSection(where) {
+  mode = "default";
+  stopAnimation();
 
-	printCurrentJson(); // debugging
+  /* la griglia di card corrente viene salvata nell'apposito array globale */
+  switch( CurrentNavStatus.Section ) {
+    case "EditQuest":
+      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+      break;
+    case "EditActivity":
+      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  }
+
+  $("#"+CurrentNavStatus.Section).fadeOut( function() {
+    
+    change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
+    change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
+
+    switch ( where ) {
+      case "ChooseGameMode":
+        break;
+      case "EditStory":
+        CurrentNavStatus.QuestN = -1;
+        $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
+        break;
+      case "EditQuest":
+        CurrentNavStatus.ActivityN = -1;
+        //// BUG: click multiplo fa partire più volte l'onclick e perciò
+        //get_card_index, nelle istanze successive alla prima
+        //fa riferimento a ActivitiesGrid invece che a QuestsGrid
+        if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
+
+        $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+        $("#EditQuest h1").text( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+
+        $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
+        break;
+      case "EditActivity":
+        // riparare lo stesso bug del caso sopra
+        if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
+        // aggiungere l'aggiornamento del titolo
+        $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
+        break;
+      case "EditText":
+        $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
+        break;
+      case "EditGallery":
+        loadEditGallerySection();
+        break;
+      case "EditAnswerField":
+        if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" )
+          loadEditAnswerFieldSection( "LOAD" );
+        else
+          loadEditAnswerFieldSection( "RESET" );
+        break;
+      case "SetAnswerOutcome":
+        loadEditOutcomeSection();
+        break;
+      default:
+        handleError();
+    }
+    
+    CurrentNavStatus.Section = where;
+    if ( (where == "EditStory") || (where == "EditQuest") ) change_savetitle_button("saved");
+    $("#"+where).fadeIn();
+  });
+};
+
+
+/**
+ * @param card
+ * A seconda della modalità corrente, apre la sezione puntata dalla card, oppure attiva la cancel o swap mode
+ */
+function openCard( card ) {
+  selected_card = card;
+
+  switch(mode) {
+    case "swap":
+      swap_em(card);
+      break;
+    case "cancel":
+      if ( card.style.animationName == "shake" )
+        cancel_em(card);
+      else
+        setAnimation("shake", card);
+      break;
+    default:
+      setAnimation("puffOut", card);
+      setTimeout( function () {
+          if (CurrentNavStatus.Section == "EditStory")
+            goToSection("EditQuest");
+          else if (CurrentNavStatus.Section == "EditQuest")
+            goToSection("EditActivity");
+          else if (CurrentNavStatus.Section == "EditActivity") {
+            switch( $(card).find(".card-text").first().prop("innerHTML") ) {
+              case "GALLERY":
+                goToSection("EditGallery");
+                break;
+              default:
+                goToSection("EditText");
+                break;
+            }
+          }
+      }, 750);
+      break;
+  }
+};
+
+
+/**
+ * @param titolo
+ * Crea una card con tutti i parametri adeguati e la aggiunge al deck
+ */
+function create_card(titolo) {
+  let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
+
+  let color;
+
+  switch ( current_grid ) {
+    case "QuestsGrid":
+      $("#NewQuestWidget").addClass("invisible");
+      $("#NewQuestWidget input").val("");
+      if ( titolo.trim() == "" )
+        titolo = "Quest" + ( n_quests - 1 );
+      color = colors[n_quests % 6];
+      break;
+    case "ActivitiesGrid":
+      titolo = "Attività" + ( n_activities[CurrentNavStatus.QuestN] - 1 );
+      color = colors[n_activities[CurrentNavStatus.QuestN] % 6];
+      break;
+    case "ParagraphsGrid":
+      if ( titolo == "GALLERY" ) color = colors[0];
+      else color = colors[1];
+      break;
+    default:
+      handleError();
+      break;
+  }
+
+  let card = $("<div/>",
+    {
+      "class": "card bg-" + color,
+      onclick: "openCard( this )"
+    });
+  card.append( $("<div class='card-body text-center'></div>") );
+  card.children().append( $("<p class='card-text'>" + titolo + "</p>") );
+
+  // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
+  if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
+    $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');
+  
+  $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
+  setAnimation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
+
+  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0)
+    GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
+  else if (CurrentNavStatus.ActivityN >= 0)
+    GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+};
+
+
+/**
+ * Entra o esce dalla cancel mode
+ */
+function cancel_mode() {
+  stopAnimation();
+
+  if (mode == "cancel" ) {
+    change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
+    mode = "default";
+  }
+  else {
+    change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-secondary","btn-primary");
+    // eventualmente disattiva la modalità di swap
+    if ( mode == "swap" ) {
+      change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-primary","btn-secondary");
+      first_selected_stage="";
+    }
+    mode = "cancel";
+  }
+};
+
+
+/**
+ * @param obj
+ * Cancella l'oggetto specificato
+ */
+function cancel_em(obj) {
+  setAnimation("swashOut",obj);
+  setTimeout( function() {
+    /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
+    switch (CurrentNavStatus.Section) {
+      case "EditStory":
+        GridsOfActivities.splice( get_card_index(), 1 );
+        GridsOfParagraphs.splice( get_card_index(), 1 );
+        CurrentWork.quests.splice( get_card_index(), 1 );
+        n_quests -= 1;
+        n_activities.splice(CurrentNavStatus.QuestN, 1);
+        break;
+      case "EditQuest":
+        GridsOfParagraphs[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
+        n_activities[CurrentNavStatus.QuestN] -= 1;
+        break;
+      case "EditActivity":
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.splice( get_card_index(), 1 );
+        break;
+      default:
+        handleError();
+        break;
+    }
+
+    /* cancellazione di obj e sistemazione dei decks */
+    iter = obj.parentElement;// iter deck padre della quest
+    if( iter.children.length == 1 )// se iter ha solo la card selezionata, elimina iter
+      iter.remove();
+    else {
+      obj.remove();
+      //il resto di questo else fa in modo che, dopo la rimozione della quest, il resto della griglia "slitti" in modo appropriato
+      while( !( iter == iter.parentElement.lastChild ) ) {
+        setAnimation("stop",iter.nextElementSibling.firstChild);
+        iter.appendChild( iter.nextElementSibling.firstChild );
+        iter = iter.nextElementSibling;
+      }
+      if( iter.children.length == 0 )
+        iter.remove();
+    }
+  }, 1500);
+};
+
+
+/**
+ * Entra o esce dalla swap mode
+ */
+function swap_mode() {
+  stopAnimation();
+
+  if(mode == "swap" ) {
+    change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
+    mode = "default";
+    first_selected_stage ="";
+  }
+  else {
+    change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn","btn-secondary", "btn-primary");
+    // eventualmente disattiva la madalità di cancel
+    if( mode == "cancel" )
+      change_color_option("#" +CurrentNavStatus.Section + " .CancelBtn","btn-primary","btn-secondary");
+    mode = "swap";
+  }
+};
+
+
+/**
+ * @param s --> card selezionata
+ * Scambia le due card selezionate
+ */
+function swap_em(s) {
+  // se c'è già una prima card selezionata, procede con lo scambio tra essa e quella associata ad "s" (che ha triggerato l'evento)
+  // fa lo swap tra s e first_selected_stage, poi imposta first_selected_stage=""
+  if (first_selected_stage) {
+    setAnimation("tinLeftOut",first_selected_stage);
+    setAnimation("tinRightOut",s);
+
+    setTimeout(function () {
+      setAnimation("tinRightIn",first_selected_stage);
+      setAnimation("tinLeftIn",s);
+
+      /* swappa i due elementi specificati e tutti i dati o griglie di card associati ad essi */
+      switch ( CurrentNavStatus.Section ) {
+        case "EditStory":
+          [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] = [CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
+
+          [n_activities[first_selected_card_index], n_activities[get_card_index()]] = [n_activities[get_card_index()], n_activities[first_selected_card_index]];
+        
+          [GridsOfActivities[get_card_index()], GridsOfActivities[first_selected_card_index]] = [GridsOfActivities[first_selected_card_index],GridsOfActivities[get_card_index()]];
+
+          [GridsOfParagraphs[get_card_index()], GridsOfParagraphs[first_selected_card_index]] = [GridsOfParagraphs[first_selected_card_index], GridsOfParagraphs[get_card_index()]];
+          break;
+        case "EditQuest":
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
+
+          [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
+          break;
+        case "EditActivity":
+          [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()]];
+      }
+
+      //scambia le card
+      let tmp = s;
+      s.outerHTML = first_selected_stage.outerHTML;
+      first_selected_stage.outerHTML = tmp.outerHTML;
+
+      first_selected_stage_index = -1;
+      first_selected_stage = "";
+    },1000);
+  }
+  else {
+    //se la card selezionata è la prima, impostala come tale e falla shakerare
+    setAnimation("shake",s);
+    first_selected_stage = s;
+    first_selected_card_index = get_card_index();
+  }
+};
+
+
+/**
+ * Blocca l'animazione di shaking per tutte le card (nella sezione corrente) che la stanno utilizzando
+ */
+function stopAnimation() {
+  for (card of $("#" + CurrentNavStatus.Section + " .card")) {
+    if ( card.style.animationName != "initial" )
+      setAnimation("stop", card);
+  }
+};
+
+
+/**
+ * @param name
+ * Restituisce l'estensione del file specificato
+ */
+function getFileExtension( name ) {
+  let i = name.lastIndexOf(".");
+  if (i > -1)
+    return name.slice((i - 1 >>> 0) + 2);
+  else
+    return "null";
+};
+
+
+/**
+ * Funzione da evolvere poi in una procedura di errore - che magari resetta l'applicazione
+ */
+function handleError() {
+	window.alert( "!!! MAJOR ERROR !!!" );
+};
+
+
+function promptSave() {
+    /* TODO */
 };

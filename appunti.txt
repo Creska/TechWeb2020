@@ -6,20 +6,67 @@ CONCEPT PLAYER-EDITOR:
             * ActivityParagraph
             * AnswerField
         * Activity ...
+    
+* COSA DOVREBBE VEDERE IL GIOCATORE:
+
+____________________________________
+|                                   |
+|            NOME STORIA            |
+|___________________________________|
+|                                   |
+|            NOME QUEST             |
+|___________________________________|
+|                                   |
+|        testo, immagini, ecc.      |
+|                                   |
+.                                   .
+.                                   .
+.                                   .
+|                                   |
+| CAMPO RISPOSTA DI FINE ATTIVITA'  |
+|___________________________________|
 
 
+BUG DA CORREGGERE
+* EDITOR
+    * Rendere più veloci le animazioni
+    * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
+    * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 
+RIASSUNTO DELLE COSE DA FARE:
+* EDITOR
+    * Menu Game Mode e altre opzioni globali:
+        * Si potrebbe creare una navbar, che dovrebbe avere: save, close, change mode, graphic e preview
+        * indicare avvertimento di: non si torna più indietro
+    * Editor CSS
+        * Idealmente servirebbe un salvataggio subito prima dell'apertura dell'editor (per fare un binding tra file json e css)
+    * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
+        * Idealmente dovrebbero esistere tre identificatori per ogni storia:
+            * Nome del file json - utilizzato dall'utente per distinguere ogni documento
+            * ID numerico - legato al nome del file, ma l'utente non vi interagisce
+            * Titolo della storia - parametro del json, indipendente dal resto
+        * Nella parte di EDIT devono esserci due opzioni:
+            * Modifica storia
+            * Crea copia - serve per la faccenda delle squadre parallele
+        * Nella pubblicazione mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti, che siano prsenti tutte le "alt" nel caso di una partita accessibile
+    * Grafica
+    * Accessibilità
+* PLAYER
+    * Grafica
+    * Interfacciamento col server
 
-ROBA DA FARE:
-* Aggiornare il pdf
-* Approfondire la faccenda del metodo click() in aggiunta al metodo onclick
-* Capire la differenza tra attr() e prop()
-* Aggiungere la parte dei settings. Specifiche:
-    * Vi sono due tipi di input:
-        * Checkbox
-        * Numero (l'autore specifica un range)
-* Ad ogni salvataggio della storia, aggiornare il subDOM della parte UI di editazione. Il salvataggio su server avviene solo alla chiusura dell'applicazione
-* Aggiungere la parte di incremento punteggio nel player (usare callback per valutazione umana)
+DETTAGLI SULLE COSE DA FARE:
+* EDITOR
+    * Controllare la faccenda della traduzione di apici e quotes
+    * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
+    * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
+    * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
+    * Aggiungere la creazione dell'id e collegare ad esso il file css
+* approfondire la differenza tra attr e prop
+
+ALTRE COSE CHE SI POTREBBERO FARE:
+* EDITOR
+    * Standardizzare le funzioni di select/deselect
 
 
 
@@ -31,3 +78,11 @@ appunti:
 * al caricamento della pagina del player viene aggiunto nell'head un template per il json
 * la sintassi $(function()) è uno shortcut per window.onload
 * per avviare un app in Node basta fare node app.js dal cmd
+* link utili per accessibilità:
+    * https://developer.paciellogroup.com/blog/2017/04/what-is-an-accessible-name/
+    * https://www.w3.org/1999/xhtml/vocab#XHTMLRoleVocabulary
+    * https://webaim.org/techniques/aria/#rules
+* margin per elementi div: https://stackoverflow.com/questions/35817096/css-margin-0-auto-not-centering
+* leggere files con javascript:
+    * https://web.dev/read-files/#select-input
+    * https://www.youtube.com/watch?v=VElnT8EoEEM

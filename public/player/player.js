@@ -7,54 +7,52 @@ NOTE:
 
 var StoryObj = {
 	ACCESSIBILITY: 0,
-	story_title: "<div id='StoryTitle'>Storia di prova</div>",
+	story_title: "<h1 id='StoryTitle'>Storia di prova</h1>",
 	story_ID: -1,
 	game_mode: "",
 	quests: [
 		{	
-			quest_title: "<div class='QuestTitle'>Prima quest</div>",
+			quest_title: "<h2 class='QuestTitle'>Prima quest</h2>",
 			activities: [
 				{
 					activity_text: 
-					[`<p>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
+					[`<p class='TextParagraph'>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
 					answer_field: 
 					`<div class='AnswerField'>
 						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
-						<input type='text'>
+						<input class='AnswerInput? type='text'>
 					</div>`,
 					right_answer: "Pippo",
 					answer_score: 1,
 					answer_outcome: {
 						RightAnswer: "nextquest",
 						WrongAnswer: 0,
-						TimeExpired: 0,
 						Giovanni: 1
 					},
 					ASK_EVAL: 0,
-					GET_CHRONO: 0,
+					GET_CHRONO: 1,
 					expected_time: 3000
 				},
 				{
 					activity_text:
-					[`<p>Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.</p>`,
-					`<div id="Q0A1_Carousel" class="carousel slide" data-ride="carousel">
-							<div class="carousel-inner">
-					 			<div class="carousel-item active">
-						  			<img src="../images/milan.jpg" class="d-block w-100" alt="...">
-					  			</div>
-					  			<div class="carousel-item">
-									<img src="../images/turin.jpg" class="d-block w-100" alt="...">
-					  			</div>
-							</div>
-							<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
-    							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    							<span class="sr-only">Previous</span>
-  							</a>
-  							<a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
-    							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-    							<span class="sr-only">Next</span>
-  							</a>
+					[`<p class='TextParagraph'>Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.</p>`,
+					`<div id="Q0A1_Carousel" class="carousel slide ImageGallery" data-ride="carousel">
+						<div class="carousel-inner">
+					 		<div class="carousel-item active">
+						  		<img src="../images/milan.jpg" class="d-block w-100" alt="...">
+					  		</div>
+					  		<div class="carousel-item">
+								<img src="../images/turin.jpg" class="d-block w-100" alt="...">
+					  		</div>
 						</div>
+						<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
+    						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    						<span class="sr-only">Previous</span>
+  						</a>
+  						<a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
+    						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+    						<span class="sr-only">Next</span>
+  						</a>
 					</div>`],
 					answer_field:
 					`<div class='AnswerField'>
@@ -89,9 +87,8 @@ var StoryObj = {
 					right_answer: "Quinta",
 					answer_score: 420,
 					answer_outcome: {
-						RightAnswer: 0,
-						WrongAnswer: 1,
-						TimeExpired: "nextquest"
+						RightAnswer: "nextquest",
+						WrongAnswer: 0
 					},
 					ASK_EVAL: 0,
 					GET_CHRONO: 1,
@@ -100,21 +97,21 @@ var StoryObj = {
 			]
 		},
 		{
-			quest_title: "<div class='QuestTitle'>Seconda quest</div>",
+			quest_title: "<h2 class='QuestTitle'>Seconda quest</h2>",
 			activities: [
 				{
 					activity_text: 
-					[`<p>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
+					[`<p class='TextParagraph'>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
 					answer_field: 
 					`<div class='AnswerField'>
 						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
-						<input type='text'>
+						<input class='AnswerInput' type='text'>
 					</div>`,
 					right_answer: "",
 					answer_score: 69,
-					answer_outcome: "updateScore(); window.alert('fine del test'); for(var j = 0; j < StoryObj.score.length; j++) { console.log(StoryObj.score[j])}",
+					answer_outcome: {},
 					ASK_EVAL: 0,
-					GET_CHRONO: 0,
+					GET_CHRONO: 1,
 					expected_time: 10000
 				}
 			]
@@ -191,20 +188,14 @@ function validateInput(answer, current_quest, current_activity) {
 var CurrentStatus = {
 	QuestN: -1,
 	ActivityN: -1,
-	TimeToAnswer: -1,
+	TimeToAnswer: 0,
 	ChatMessages: 0
 };
 
-var countdown; // fa il conto alla rovescia scalando ogni secondo
-var timer_calc; // timer
-var stop_timer = `
-clearTimeout( timer_calc );
-clearInterval( countdown );
-CurrentStatus.TimeToAnswer = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time - ( parseInt($('#AnswerTimer').text()) * 1000 );`;
+var interval; // funzione che incrementa ogni 10s il TimeToAnswer
 
 // bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
 var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
-var AnswerTimer = "<div id='AnswerTimer' role='timer'>0</div>";
 
 
 /**
@@ -293,44 +284,33 @@ function goToActivity( activity_n ) {
         NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
 	}
 
+	NewActivity.append( $.parseHTML( NextActivityBtn ) );
+
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );
 
-	CurrentStatus.TimeToAnswer = -1;
+	CurrentStatus.TimeToAnswer = 0;
 	CurrentStatus.ChatMessages = 0;
 
-	/* Se la domanda prevede un calcolo del cronometraggio, viene attivato il timer */
+	/* Se l'autore ha settato l'expected_time, viene attivato l'apposito cronometro */
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
-		$( ".Activity" ).append( $.parseHTML( AnswerTimer ) );
-		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
-		$( ".NextActivity" ).attr( "onclick", stop_timer + "checkAnswer();" );
-		toggleAnswerTimer();
+		$( ".NextActivity" ).attr( "onclick", "clearInterval( interval ); checkAnswer();" );
+		toggleIntervalTimer();
 	}
 	else {
-		$( ".Activity" ).append( $.parseHTML( NextActivityBtn ) );
 		$( ".NextActivity" ).attr( "onclick", "checkAnswer();" );
 	}
 };
 
 
 /**
- * Attiva il timer della domanda e il countdown dei secondi.
+ * Attiva l'interval timer che aumenta ogni 10s il TimeToAnswer.
  */
-function toggleAnswerTimer() {
-	$( "#AnswerTimer" ).text( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time / 1000 );
-
-	countdown = setInterval( function() {
-		$( "#AnswerTimer" ).text( $( "#AnswerTimer" ).text() - 1 );
-	}, 1000 );
-
-	timer_calc = setTimeout( function() {
-		clearInterval( countdown );
-		updateScore( 0 );
-
-		let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
-		if ( CurrentActivity.answer_outcome["TimeExpired"] == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1 );
-		else goToActivity( CurrentActivity.answer_outcome["TimeExpired"] );
-	}, StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time );
+function toggleIntervalTimer() {
+	interval = setInterval( function() {
+		CurrentStatus.TimeToAnswer += 10000;
+		console.log(CurrentStatus.TimeToAnswer); // debugging
+	}, 10000 );
 };
 
 
@@ -352,7 +332,7 @@ function checkAnswer() {
 	let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
 	if ( CurrentActivity.ASK_EVAL ) {
-		/* manda richiesta */
+		/* TODO - manda richiesta */
 	}
 	else {
 		/* ricava la risposta giusta */

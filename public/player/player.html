@@ -27,8 +27,10 @@
 
 <body>
     <div id="StartScreen">
-        <script type="text/javascript">
-            $(document).ready( $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) ) );
+        <script>
+            window.onload = function() {
+                $( "#StartScreen" ).prepend( $.parseHTML( StoryObj.story_title ) );
+            };
         </script>
         <div id="WelcomeText" role="main">
             Schermata iniziale del gioco. Per avviare una nuova partita, premere START
@@ -55,3 +57,22 @@
 </body>
 
 </html>
+
+<!-- gruppi di elementi da stilizzare:
+Id:
+* StoryTitle
+
+Classi:
+* Quest ( container del titolo della quest e del container Activity )
+* Activity ( container di tutti gli elementi dell'attività )
+* QuestTitle
+* ActivityText ( container di paragrafi e immagini/gallery )
+* AnswerField ( container del campo risposta e della domanda )
+* AnswerFieldDescription ( domanda a cui rispondere )
+* AnswerInput ( campo di risposta )
+* ImageGallery
+* SingleImage
+* TextParagraph
+* NextActivity ( pulsante da cliccare per proseguire all'attività successiva )
+
+-->

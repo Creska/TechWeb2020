@@ -29,6 +29,7 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
+    * Aggiungere il modo per creare l'outcome delle attività solo testuali - fixare anche il checkanswer nel player
     * Rendere più veloci le animazioni
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene

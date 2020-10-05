@@ -1,0 +1,43 @@
+body {
+    background-color: #333;
+    color: #fff;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.css-validation {
+    font-family: Arial;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+#editorUI {
+    display: grid;
+    grid-template-columns: 65vw 1fr;
+}
+
+#console div {
+    display: block;
+}
+
+/*
+.column {
+    float: left;
+    margin: 0;
+    overflow: scroll;
+    padding: 0;
+}
+
+.left {
+    width: 65%;
+}
+
+.right {
+    width: 35%;
+}
+*/

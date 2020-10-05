@@ -40,6 +40,13 @@ var CurrentWork = {
 	score: []
 };
 
+const channel = new BroadcastChannel( "css_channel" );
+channel.addEventListener( "message", e => {
+  CSSdata = e.data;
+});
+
+var CSSdata; // va trovato un modo migliore
+
 
 /* ------------------------------- PROCEDURE ---------------------------------- */
 

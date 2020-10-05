@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+    <script src="codemirror.js"></script>
+    <script src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
+    <script src="lint.js"></script>
+    <script src="css-lint.js"></script>
+    <script src="css.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="css_editor.js"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="codemirror.css">
+    <link rel="stylesheet" href="monokai.css">
+    <link rel="stylesheet" href="lint.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="css_editor.css">
+ 
+    <script>
+        $( function () {
+            css_editor = CodeMirror( document.querySelector('#css-editor'), {
+                lineNumbers: true,
+                tabSize: 50,
+                value: test_stylesheet,
+                theme: 'monokai',
+                mode: 'css',
+                gutters: ["CodeMirror-lint-markers"],
+                lint: true
+            });
+            // width and height manip
+            // css_editor.setSize(width, height);
+        });
+
+        /* sembrerebbe funzionare, ma con un testo di default - sistemare se c'è tempo
+        window.onbeforeunload = function() {
+            return "Chiudere l'editor CSS?\nI dati non salvati andranno persi.";
+        };
+        */
+    </script>
+
+    <title>CSS editor</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
+        <a class="navbar-brand mr-auto p-2" href="#">CSS editor</a>
+
+        <div>
+            <div class="btn-toolbar p-2" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button class="btn btn-success" onclick="channel.postMessage( css_editor.getValue() );">Salva</button>
+                </div>
+                
+                <div class="btn-group mr-2" role="group" aria-label="Second group">
+                    <button class="btn btn-light">
+                        <i class="fas fa-question"></i>
+                    </button>
+                </div>
+                
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button class="btn btn-danger" onclick="if (confirm(`Chiudere l'editor CSS?\nI dati non salvati andranno persi.`)) window.close();">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>   
+            </div>
+        </div>
+    </nav>
+
+    <div class="row" id="editorUI">
+        <div class="column left" id="css-editor"></div>
+        <div class="column right" id="console">
+            <div class="row" id="button-loading"><button id="cssvaluator" onclick="validate_css()">Validate CSS</button></div>
+            <div class="row" id="csserror"></div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -40,6 +40,13 @@ var CurrentWork = {
 	score: []
 };
 
+const channel = new BroadcastChannel( "css_channel" );
+channel.addEventListener( "message", e => {
+  CSSdata = e.data;
+});
+
+var CSSdata; // va trovato un modo migliore
+
 
 /* ------------------------------- PROCEDURE ---------------------------------- */
 
@@ -53,7 +60,7 @@ function save_title( which ) {
     case "story":
       title = $( '#StoryTitleInput' ).val().trim();
       if( title != "" ) {
-        CurrentWork.story_title = "<div id='StoryTitle'>" + title + "</div>";
+        CurrentWork.story_title = "<h1 id='StoryTitle'>" + title + "</h1>";
       }
       else {
         // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
@@ -68,7 +75,7 @@ function save_title( which ) {
         if( title != "" ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-          CurrentWork.quests[n_quests - 1].quest_title = "<div class='QuestTitle'>" + title + "</div>";
+          CurrentWork.quests[n_quests - 1].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
         }
       }
       else {
@@ -79,7 +86,7 @@ function save_title( which ) {
           // aggiorna il nome della card
           $("#QuestsGrid .card-text").eq( CurrentNavStatus.QuestN ).html( title );
 
-          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<div class='QuestTitle'>" + title + "</div>";
+          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
         }
         else {
           // se l'input è lasciato vuoto, viene reinserito il titolo vecchio

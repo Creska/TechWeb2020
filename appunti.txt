@@ -29,6 +29,7 @@ ____________________________________
 
 BUG DA CORREGGERE
 * EDITOR
+    * Aggiungere il modo per creare l'outcome delle attività solo testuali - fixare anche il checkanswer nel player
     * Rendere più veloci le animazioni
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
@@ -60,7 +61,6 @@ DETTAGLI SULLE COSE DA FARE:
     * Controllare la faccenda della traduzione di apici e quotes
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
-    * Per comodità dell'utente, aprire l'editor CSS in una nuova scheda
     * Aggiungere la creazione dell'id e collegare ad esso il file css
 * approfondire la differenza tra attr e prop
 

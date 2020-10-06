@@ -477,7 +477,7 @@ function addImage( image, newload ) {
   let newpreview;
 
   if (newload) {
-    newpreview = $( "<img class='ImgPreview'>" );
+    newpreview = $( "<img class='SingleImage'>" );
 
     const reader = new FileReader();
     reader.readAsDataURL(image);
@@ -488,7 +488,7 @@ function addImage( image, newload ) {
   }
   else {
     newpreview = $(image).clone(); // usata clone() perché senza sarebbe stato modificato direttamente l'oggetto passato come parametro ad addImage()
-    newpreview.attr("class", "ImgPreview");
+    newpreview.attr("class", "SingleImage");
   }
       
   newrow.append( newpreview );
@@ -530,11 +530,13 @@ function loadEditGallerySection() {
  */
 function saveImageGallery() {
   if ( $("#GalleryPreview .row").length == 1 ) {
-    $("#GalleryPreview .row img").first().attr( "alt", $("#GalleryPreview .row input").first().val() );
+	$("#GalleryPreview .row img").first().attr( "alt", $("#GalleryPreview .row input").first().val() );
+	$("#GalleryPreview .row img").first().attr( "class", "SingleImage" );
 
     CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img").first().prop("outerHTML");
   }
   else {
+	  /* l'id "ActiveGallery" serve a far funzionare le frecce per scorrere le immagini */
     let newgallery = $(`
     <div id="ActiveGallery" class="carousel slide ImageGallery" data-ride="carousel">
       <div class="carousel-inner">

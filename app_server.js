@@ -13,6 +13,9 @@ var player_data = new Map(); //stores some player data, need this to be able to 
 var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
 var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
 var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}
+var path = require('path');
+var pubpath = 'public/player/stories/published/';
+var unpubpath = 'public/player/stories/unpublished/';
 
 /*
     TEAMS
@@ -277,48 +280,39 @@ app.get('/editor', function (req, res) {
 
 app.get('/editor/getStories', function (req, res) {
     console.log("getStories request received.")
-    var unpublished_stories = [];
-    var published_stories = [];
+    var stories = {};
     var read1 = new Promise((resolve, _reject) => {
-        fs.readdir('public/player/stories/unpublished', (err, files) => {
+        fs.readdir(unpubpath, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(err);
                 resolve(false);
             }
             else {
-                files.forEach(file => {
-                    if (file.substring(file.length - 5, file.length) == '.json') {
-                        unpublished_stories.push(file);
-                    }
-                })
+                stories.unpublished = files;
                 resolve(true);
             }
         })
     })
     var read2 = new Promise((resolve, _reject) => {
-        fs.readdir('public/player/stories/published', (err, files) => {
+        fs.readdir(pubpath, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the published stories: " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(err);
                 resolve(false);
             } else {
-                files.forEach((file) => {
-                    if (file.substring(file.length - 5, file.length) == '.json') {
-                        published_stories.push(file);
-                    }
-                })
+                stories.published = files;
                 resolve(true);
             }
         })
     })
     Promise.all([read1, read2]).then(values => {
         if (values[0] && values[1]) {
-            if (!(unpublished_stories.length || published_stories.length)) {
+            if (!(stories.unpublished || stories.published)) {
                 res.status(404).send({ code: "ENOENT", message: "No stories were found." }).end();
             }
             else {
-                res.status(200).send({ unpublished_stories: unpublished_stories, published_stories: published_stories });
+                res.status(200).send(stories).end();
             }
         }
     });
@@ -327,66 +321,109 @@ app.get('/editor/getStories', function (req, res) {
 
 app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
-    var story = req.query.story;
+    var story_name = req.query.story_name;
     var published = req.query.published || false;
-    if (published) {
-        fs.readFile('public/player/stories/published/' + story, function (err, data) {
+    var story_path;
+    if (story_name && path.extname(story_name) == undefined) {
+        if (published) {
+            story_path = pubpath;
+        }
+        else {
+            story_path = unpubpath;
+        }
+        fs.readdir(story_path + story_name, function (err, files) {
             if (err) {
-                console.log("An error accourred inside /editor/getStory, while retrieving a published story: " + err);
-                res.status(404).send(err).end();
+                console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
+                res.status(500).send(err).end();
             }
             else {
-                res.status(200).send(JSON.stringify(JSON.parse(data))).end();
+                var story_elements = [];
+                files.forEach(element => {
+                    fs.readFile(story_path + story_name + element, function (err, data) {
+                        story_elements.push({ name: element, data: data, extension: path.extname(element) });
+                    })
+                })
+                res.status(200).send(story_elements).end();
             }
         })
     }
-    fs.readFile('public/player/stories/unpublished/' + story, function (err, data) {
-        if (err) {
-            console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
-            res.status(404).send(err).end();
-        }
-        else {
-            res.status(200).send(JSON.stringify(JSON.parse(data))).end();
-        }
-    })
+    else {
+        console.log("/editor/getStory BAD REQUEST: Trying to get a story without providing the story name or a name with an extension.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to get a story without providing the story name or a name with an extension." })
+    }
+
 })
 
-//object received: array [{data: value, type: string}], parameter name: story
+
 app.post('/editor/saveStory', function (req, res) {
     //TODO this needs to be tested...
-    var story_data = req.body.story;
-    var story_name = req.body.story_name;
+    var story_data = req.body.story; //object received: array [{name: string, data: value}]
+    var story_name = req.body.story_name; //the name of the story(directory)
     var published = req.body.published || false;
+    var story_path;
     console.log("saveStory request received for: " + story_name)
-    if (story_name) {
+    if (story_name && path.extname(story_name) == undefined) {
         if (published) {
-            fs.writeFile('public/player/stories/published/' + story_name, JSON.stringify(story_data), (err) => {
-                if (err) {
-                    console.log("An error accourred inside /editor/saveStory, while saving a published story: " + err);
-                    res.status(404).send(err).end();
-                } else {
-                    console.log("Published story saved successfully.")
-                    res.status(200).end();
-                }
-            })
+            story_path = pubpath;
         }
         else {
-            fs.writeFile('public/player/stories/unpublished/' + story_name, JSON.stringify(story_data), (err) => {
+            story_path = unpubpath;
+        }
+        for (let index = 0; index < story_data.length; index++) {
+            fs.writeFile(story_path + story_name + '/' + story_data[index].name, story_data[index].data, (err) => {
                 if (err) {
-                    console.log("An error accourred inside /editor/getStory, while saving an unpublished story: " + err);
-                    res.status(404).send(err).end();
+                    console.log("An error occurred inside /editor/getStory while saving " + story_data[index].name + "of " + story_name + ": " + err);
+                    res.status(500).send(err).end();
+                    return;
                 } else {
-                    console.log("Story saved successfully.")
-                    res.status(200).end();
+                    if (index + 1 > story_data.length) {
+                        console.log("Story " + story_name + "saved successfully.")
+                        res.status(200).end();
+                        return;
+                    }
+                    console.log("Element " + story_data[index].name + " of " + story_name + " saved successfully.")
                 }
             })
         }
     } else {
-        console.log("/editor/saveStory BAD REQUEST: Trying to save a story without providing the story name.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name." })
+        console.log("/editor/saveStory BAD REQUEST: Trying to save a story without providing the story name or a name with an extension.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name or a name with an extension." })
     }
 
 })
+
+app.post('/editor/publisher', function (req, res) {
+    var story_name = req.body.story_name;
+    //beware that this function will overwrite an existing story with the same name in case it exist in both published and unpublished
+    if (fs.existsSync(pubpath + story_name)) {
+        fs.rename(pubpath + story_name, unpubpath + story_name, (err) => {
+            if (err) {
+                console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
+                res.status(500).send(err);
+            }
+            console.log('The story ' + story_name + 'was unpublished.');
+            res.status(200).end();
+            return;
+        });
+    }
+    else if (fs.existsSync(unpubpath + story_name)) {
+        fs.rename(unpubpath + story_name, pubpath + story_name, (err) => {
+            if (err) {
+                console.log("An error occurred inside /editor/publisher while unpublishing " + story_name + ": " + err)
+                res.status(500).send(err);
+            }
+            console.log('The story ' + story_name + 'was published.');
+            res.status(200).end();
+            return;
+        });
+    }
+    else {
+        console.log("/editor/publisher BAD REQUEST: Trying to use the publisher on a story that doesnt exist.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to use the publisher on a story that doesnt exist." })
+    }
+})
+
+
 
 app.get('/valuator', function (req, res) {
     //reading valuator page

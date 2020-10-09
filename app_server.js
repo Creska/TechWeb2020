@@ -252,9 +252,6 @@ app.post('/player/playersActivities', function (req, res) {
     }
 })
 
-app.get('/player/playersActivities', function (req, res) {
-
-})
 
 app.get('/editor', function (req, res) {
     fs.readFile('public/editor/editor.html', function (err, editor_data) {
@@ -390,6 +387,35 @@ app.post('/editor/saveStory', function (req, res) {
         res.status(400).send({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name or a name with an extension." })
     }
 
+})
+
+app.post('/editor/deleteStory', function (req, res) {
+    var story_name = req.body.story_name;
+    var published = req.body.published || false;
+    var story_path;
+    if (story_name && path.extname(story_name) == undefined) {
+        if (published) {
+            story_path = pubpath;
+        }
+        else {
+            story_path = unpubpath;
+        }
+        fs.rmdir(story_path + story_name, { recursive: true }, (err) => {
+            if (err) {
+                console.log("An error occurred inside /editor/deleteStory while removing " + story_name + ": " + err);
+                res.status(500).send(err).end();
+                return;
+            }
+            else {
+                console.log("Story " + story_name + "deleted successfully.")
+                return;
+            }
+        })
+    }
+    else {
+        console.log("/editor/deleteStory BAD REQUEST: Trying to delete a story without providing the story name or a name with an extension.")
+        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to delete a story without providing the story name or a name with an extension." })
+    }
 })
 
 app.post('/editor/publisher', function (req, res) {

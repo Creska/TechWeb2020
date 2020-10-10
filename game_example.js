@@ -33,7 +33,8 @@ game_example = {
 					answer_outcome: {}, // oggetto nel quale ad ogni entry corrisponde uno dei possibilit outcomes, ed il valore equivale all'attività a cui spostarsi
 					ASK_EVAL: 0, // flag che indica se c'è necessità di valutazione umana per la risposta
 					GET_CHRONO: 0, // flag che indica se bisogna calcolare il tempo di risposta alla domanda
-					expected_time: 0 // tempo in ms previsto per il completamento dell'attività
+					expected_time: 0, // tempo in ms previsto per il completamento dell'attività
+					FINAL: 0 // indica se l'attività è quella finale. In tal caso non vi sarà alcun campo risposta
 				}
 			]
 		}

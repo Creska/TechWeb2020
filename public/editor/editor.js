@@ -156,10 +156,11 @@ function initActivity() {
 		answer_field: "",
 		right_answer: "",
 		answer_score: "",
-		answer_outcome: {},
+		answer_outcome: "",
 		ASK_EVAL: 0,
 		GET_CHRONO: 0,
-		expected_time: 0
+    expected_time: 0,
+    FINAL: 0
 	};
 
 	return EmptyActivity;
@@ -340,6 +341,18 @@ function goToSection(where) {
         // riparare lo stesso bug del caso sopra
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
         // aggiungere l'aggiornamento del titolo
+
+        if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL ) {
+          change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
+          $("#FinalStageBtn").next().attr( "disabled", true );
+          $("#FinalStageBtn").next().next().attr( "disabled", true );
+        }
+        else {
+          change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
+          $("#FinalStageBtn").next().attr( "disabled", false );
+          $("#FinalStageBtn").next().next().attr( "disabled", false );
+        }
+    
         $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
         break;
       case "EditText":
@@ -638,4 +651,33 @@ function handleError() {
 
 function promptSave() {
     /* TODO */
+};
+
+
+/**
+ * Marca l'attività corrente come "finale" o viceversa, a seconda dello stato attuale.
+ */
+function setFinalActivity() {
+  let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+  if ( CurrentStage.FINAL == 0 ) {
+    change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
+    $("#FinalStageBtn").next().attr( "disabled", true );
+    $("#FinalStageBtn").next().next().attr( "disabled", true );
+
+    // segna tutte le altre attività come non finali
+    CurrentWork.quests.forEach( function( q, i ) {
+      q.activities.forEach( function( a, j ) {
+        a.FINAL = 0;
+      });
+    });
+
+    CurrentStage.FINAL = 1;
+  }
+  else {
+    change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
+    $("#FinalStageBtn").next().attr( "disabled", false );
+    $("#FinalStageBtn").next().next().attr( "disabled", false );
+    CurrentStage.FINAL = 0;
+  }
 };

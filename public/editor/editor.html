@@ -175,8 +175,11 @@
   <div class="EditorSection" id="EditActivity">
     <h1>TITOLO SEZIONE</h1>
     <div class="btn-group-justified">
-      <a class="btn btn-secondary" onclick="goToSection('EditAnswerField')">Modifica answer field</a>
-      <a class="btn btn-secondary" onclick="goToSection('SetAnswerOutcome')">Modifica progressione attività</a>
+      <button id="FinalStageBtn" class="btn btn-lg btn-secondary" onclick="setFinalActivity();">
+        Marca come finale
+      </button>
+      <button class="btn btn-secondary" onclick="goToSection('EditAnswerField')">Modifica answer field</button>
+      <button class="btn btn-secondary" onclick="goToSection('SetAnswerOutcome')">Modifica progressione attività</button>
     </div>
 
     <div id="q_buttons_div">
@@ -274,6 +277,13 @@
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
   <div class="EditorSection" id="SetAnswerOutcome">
     <script>
+      $(document).on( "change", "#OutcomeSwitch", function() {
+        if ( $(this).prop( "checked" ) )
+          loadEditOutcomeSection( "ANSWER" );
+        else
+        loadEditOutcomeSection( "ONLYREADING" );
+      });
+
       // attiva/disattiva i number input in base alla spunta sulla checkbox di passaggio alla quest successiva
       $(document).on( "click", "#OutcomesTable input[type='checkbox']", function() {
         if ( $(this).prop("checked") )
@@ -285,23 +295,26 @@
     
     <h1>TITOLO SEZIONE</h1>
 
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="OutcomeSwitch">
+      <label class="custom-control-label" for="OutcomeSwitch">Programma in base al campo di risposta</label>
+    </div>
+
     <div id="AnswerFieldRecap"></div>
 
-    <div>
-      <h2>Programmazione attività</h2>
+    <h3>Programmazione attività</h3>
 
-      <table id="OutcomesTable">
-      </table>
+    <table id="OutcomesTable">
+    </table>
       
-      <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
-        <div class="input-group-prepend">
-          <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
-        </div>
-        <input type="text" class="form-control col-sm-5" placeholder="Risposta">
-        <div class="input-group-append">
-          <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val().trim() != '') addOutcome($('#AddOutcomeWidget input').val().trim(), ''); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
-          <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
-        </div>
+    <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
+      </div>
+      <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+      <div class="input-group-append">
+        <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val().trim() != '') addOutcome($('#AddOutcomeWidget input').val().trim(), ''); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
+        <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
       </div>
     </div>
 

@@ -31,7 +31,8 @@ var StoryObj = {
 					},
 					ASK_EVAL: 0,
 					GET_CHRONO: 1,
-					expected_time: 3000
+					expected_time: 3000,
+					FINAL: 0
 				},
 				{
 					activity_text:
@@ -92,7 +93,8 @@ var StoryObj = {
 					},
 					ASK_EVAL: 0,
 					GET_CHRONO: 1,
-					expected_time: 15000
+					expected_time: 15000,
+					FINAL: 0
 				}
 			]
 		},
@@ -102,17 +104,26 @@ var StoryObj = {
 				{
 					activity_text: 
 					[`<p class='TextParagraph'>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
-					answer_field: 
-					`<div class='AnswerField'>
-						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
-						<input class='AnswerInput' type='text'>
-					</div>`,
+					answer_field: ``,
+					right_answer: "",
+					answer_score: 69,
+					answer_outcome: 1,
+					ASK_EVAL: 0,
+					GET_CHRONO: 1,
+					expected_time: 10000,
+					FINAL: 0,
+				},
+				{
+					activity_text: 
+					[`<p class='TextParagraph'>Test concluso</p>`],
+					answer_field: ``,
 					right_answer: "",
 					answer_score: 69,
 					answer_outcome: {},
 					ASK_EVAL: 0,
-					GET_CHRONO: 1,
-					expected_time: 10000
+					GET_CHRONO: 0,
+					expected_time: 10000,
+					FINAL: 1,
 				}
 			]
 		}
@@ -193,9 +204,6 @@ var CurrentStatus = {
 };
 
 var interval; // funzione che incrementa ogni 10s il TimeToAnswer
-
-// bottone standard per passare alla prossima attività - da completare. scopo: durante la fase di costruzione del gioco, il player lo inserisce alla fine di ogni attività
-var NextActivityBtn = "<button class='NextActivity'>PROSEGUI</button>";
 
 
 /**
@@ -284,7 +292,10 @@ function goToActivity( activity_n ) {
         NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
 	}
 
-	NewActivity.append( $.parseHTML( NextActivityBtn ) );
+	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
+		NewActivity.append( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" );
+	else
+		NewActivity.append( "<button class='NextActivity'>PROSEGUI</button>" );
 
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );
@@ -294,11 +305,11 @@ function goToActivity( activity_n ) {
 
 	/* Se l'autore ha settato l'expected_time, viene attivato l'apposito cronometro */
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
-		$( ".NextActivity" ).attr( "onclick", "clearInterval( interval ); checkAnswer();" );
+		$( ".NextActivity" ).attr( "onclick", "clearInterval( interval ); nextStage();" );
 		toggleIntervalTimer();
 	}
 	else {
-		$( ".NextActivity" ).attr( "onclick", "checkAnswer();" );
+		$( ".NextActivity" ).attr( "onclick", "nextStage();" );
 	}
 };
 
@@ -325,7 +336,24 @@ function updateScore( score ) {
 
 
 /**
- * Funzione che viene attivata cliccando il pulsante "Prosegui". In base alla risposta data, invia il giocatore all'attività rispettiva.
+ * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato
+ */
+function nextStage() {
+	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
+
+	if ( CurrentStage.answer_field )
+		checkAnswer();
+	else {
+		if ( CurrentStage.answer_outcome == "nextquest" )
+			goToQuest( CurrentNavStatus.QuestN + 1 );
+		else
+			goToActivity( CurrentStage.answer_outcome );
+	}
+};
+
+
+/**
+ * In base alla risposta data, invia il giocatore all'attività rispettiva.
  * Nel caso si necessiti valutazione umana, la procedura attiva una chiamata al server.
  */
 function checkAnswer() {

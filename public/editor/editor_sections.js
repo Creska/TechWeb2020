@@ -297,19 +297,41 @@ function saveAnswerFieldSettings() {
 
 
 /**
- * Carica la sezione di editing dell'outcome dell'attività, in base ai parametri settati nella sezione dell'Answer Field e a ciò che è già stato salvato nel JSON
+ * @param MODE --> indica se il sistema di progressione si basa su un'attività di sola lettura o provvista di un campo risposta
+ * Carica la sezione per la gestione della progressione (outcome) dell'attività.
+ * Se chiamata senza parametri, prepara tutto l'html necessario, altrimenti modifica la modalità scelta dall'utente
  */
-function loadEditOutcomeSection() {
+function loadEditOutcomeSection( MODE ) {
+	switch ( MODE ) {
+		case "ONLYREADING":
+			$( "#AnswerFieldRecap" ).addClass( "invisible" );
+			$( "#SetAnswerOutcome table tr" ).each( function(index) {
+				if (index <= 1) $(this).removeClass( "invisible" );
+				else $(this).addClass( "invisible" );
+			});
+			$( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", false );
+			return;
+		case "ANSWER":
+			$( "#AddOutcomeWidget input" ).val("");
+			$( "#AnswerFieldRecap" ).removeClass( "invisible" );
+			$( "#SetAnswerOutcome table tr" ).each( function(index) {
+				if (index === 1) $(this).addClass( "invisible" );
+				else $(this).removeClass( "invisible" );
+			});
+			if ( $( "#AnswerFieldRecap .alert" ).length ) $( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", true );
+			else $( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", false );
+			return;
+	}
+	
 	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
-  	$('#AddOutcomeWidget input').val('');
 
   	let OutcomeAlert = $( "<div/>",
   	{
     	"class": "alert alert-danger",
     	role: "alert"
-  	});
+	});
 
-  	// componiamo il recap
+  	/* costruzione del recap dell'Answer Field */
   	$( "#AnswerFieldRecap" ).empty();
 
   	if ( CurrentStage.ASK_EVAL ) {
@@ -332,60 +354,70 @@ function loadEditOutcomeSection() {
     	}
   	}
 
-  	// caricamento della Tabella degli Outcomes
+  	/* costruzione della tabella */
   	$( "#OutcomesTable" ).empty();
   	$( "#OutcomesTable" ).append( $.parseHTML(`
     	<tr>
-      		<th>Risposta / Evento</th>
+      		<th>Risposta</th>
       		<th>Passa alla quest successiva</th>
       		<th>Attività su cui spostarsi</th>
       		<th>Rimuovi</th>
     	</tr>`
-  	));
+	  ));
+	addOutcome("<em>Solo lettura</em>", "OnlyReading");
   	addOutcome("<em>Riposta corretta</em>", "correct");
   	addOutcome("<em>Risposta errata</em>", "wrong");
-  	addOutcome("<em>Tempo scaduto</em>", "expired");
 
-  	// disabilita/abilita gli input riguardanti il tempo scaduto, in base alla decisione di abilitare il timer
-  	if ( CurrentStage.GET_CHRONO ) $( "#OutcomesTable tr:nth-child(4) input" ).attr( "disabled", false );
-  	else $( "#OutcomesTable tr:nth-child(4) input" ).attr( "disabled", true );
+	/* caricamento dei dati presenti nel JSON */
+	if ( typeof CurrentStage.answer_outcome === 'object' && CurrentStage.answer_outcome !== null ) {
+		let tr;
 
-  	let tr;
+  		for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
+    		switch ( prop ) {
+      			case "RightAnswer":
+        			tr = $( "#OutcomesTable tr:nth-child(3)" );
+       				break;
+      			case "WrongAnswer":
+        			tr = $( "#OutcomesTable tr:nth-child(4)" );
+        			break;
+      			default:
+        			tr = $( "<tr/>" );
+        			tr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
+        			tr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
+        			tr.append( ( $( "<input/>",
+        				{
+          					type: "number",
+          					placeholder: 0,
+          					min: 0
+        				})).wrap( "<td></td>" ).parent());
+        			tr.append( $.parseHTML( "<td><button class='btn btn-danger' onclick='$(this).parent().parent().remove()'>Cancella</button></td>" ) );
+        			$( "#OutcomesTable" ).append( tr );
+        			tr = $( "#OutcomesTable tr:last-child" );
+    		}
 
-  	for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
-    	switch ( prop ) {
-      		case "RightAnswer":
-        		tr = $( "#OutcomesTable tr:nth-child(2)" );
-       			break;
-      		case "WrongAnswer":
-        		tr = $( "#OutcomesTable tr:nth-child(3)" );
-        		break;
-      		case "TimeExpired":
-       	 		tr = $( "#OutcomesTable tr:nth-child(4)" );
-        		break;
-      		default:
-        		tr = $( "<tr/>" );
-        		tr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
-        		tr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
-        		tr.append( ( $( "<input/>",
-        			{
-          				type: "number",
-          				placeholder: 0,
-          				min: 0
-        			})).wrap( "<td></td>" ).parent());
-        		tr.append( $.parseHTML( "<td><button class='btn btn-danger' onclick='$(this).parent().parent().remove()'>Cancella</button></td>" ) );
-        		$( "#OutcomesTable" ).append( tr );
-        		tr = $( "#OutcomesTable tr:last-child" );
-    	}
+    		if ( val == "nextquest" ) {
+      			tr.find( ":input[type='number']" ).val( "" );
+      			tr.find( ":input[type='number']" ).attr( "disabled", true );
+      			tr.find( ":input[type='checkbox']" ).prop( "checked", true );
+    		}
+    		else tr.find( "input[type=number]" ).val( val );
 
-    	if ( val == "nextquest" ) {
-      		tr.find( ":input[type='number']" ).val( "" );
-      		tr.find( ":input[type='number']" ).attr( "disabled", true );
-      		tr.find( ":input[type='checkbox']" ).prop( "checked", true );
-    	}
-    	else tr.find( "input[type=number]" ).val( val );
+		  }
+		  
+		  $( "#OutcomeSwitch" ).prop( "checked", true );
+		  loadEditOutcomeSection( "ANSWER" );
+	}
+	else {
+		if ( CurrentStage.answer_outcome == "nextquest" ) {
+			$( "#OutcomesTable tr:nth-child(2) :input[type='number']" ).val( "" );
+			$( "#OutcomesTable tr:nth-child(2) :input[type='number']" ).attr( "disabled", true );
+			$( "#OutcomesTable tr:nth-child(2) :input[type='checkbox']" ).prop( "checked", true );
+		}
+		else $( "#OutcomesTable tr:nth-child(2) input" ).val( CurrentStage.answer_outcome );
 
-  	}
+		$( "#OutcomeSwitch" ).prop( "checked", false );
+		loadEditOutcomeSection( "ONLYREADING" );
+	}
 };
 
 
@@ -415,37 +447,46 @@ function addOutcome( label, id ) {
  * Salva nel JSON tutti gli outcomes settati dall'autore
 */
 function saveOutcomes() {
-  let newobj = {};
+	if ( $("#OutcomeSwitch").prop( "checked" ) ) {
+		let newobj = {};
 
-  let next;
-  let label;
+  		let next;
+  		let label;
 
-  $( "#OutcomesTable input[type=number]" ).each( function( index ) {
-    if ( $(this).parent().prev().children().first().prop( "checked" ) )
-      next = "nextquest";
-    else
-      next = $(this).val();
+  		$( "#OutcomesTable tr:not(:first-child):not(.invisible)" ).each( function( index ) {
+    		if ( $(this).find("input[type=checkbox]").first().prop( "checked" ) )
+      			next = "nextquest";
+    		else
+      			next = $(this).find("input[type=number]").first().val();
 
-    label = $(this).attr("id");
+    		label = $(this).find("input[type=number]").first().attr("id");
   
-    switch ( label ) {
-      case "correct":
-        newobj["RightAnswer"] = next;
-        break;
-      case "wrong":
-        newobj["WrongAnswer"] = next;
-        break;
-      case "expired":
-        newobj["TimeExpired"] = next;
-        break;
-      default:
-        newobj[$(this).parent().parent().children().first().prop("innerHTML")] = next;
-    }
-  });
+    		switch ( label ) {
+      			case "correct":
+        			newobj["RightAnswer"] = next;
+       				 break;
+      			case "wrong":
+        			newobj["WrongAnswer"] = next;
+        			break;
+      			case "expired":
+        			newobj["TimeExpired"] = next;
+        			break;
+      			default:
+        			newobj[$(this).children().first().prop("innerHTML")] = next;
+    		}
+  		});
 
-  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = newobj;
-  // console.log(newobj); // debugging
-  back();
+  		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = newobj;
+	}
+	else {
+		if ( $( "#OutcomesTable tr:nth-child(2) :input[type=checkbox]" ).first().prop( "checked" ) )
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = "nextquest";
+		else
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = $( "#OutcomesTable tr:nth-child(2) :input[type=number]" ).first().val();
+	}
+  
+  	// console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome); // debugging
+  	back();
 };
 
 

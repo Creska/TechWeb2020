@@ -160,7 +160,7 @@ io.on('connection', (socket) => {
 })
 app.get('/player', function (req, res) {
     //handling GET request to /player
-    var story = req.query.story;
+    var story = JSON.parse(req.query.story);
     console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
     //TODO I have to read published stories
@@ -218,9 +218,9 @@ app.post('/player/activityUpdate', function (req, res) {
     I know that [0] cointains the game name, and every push is an activity(so I know the flow of the game)
     This is needed for the summary, NOT for the warnings
     */
-    var time = req.query.time || undefined;
-    var help = req.query.help || undefined;
-    var socketID = req.query.socket || undefined;
+    var time = JSON.parse(req.query.time) || undefined;
+    var help = JSON.parse(req.query.help) || undefined;
+    var socketID = JSON.parse(req.query.socket) || undefined;
     if (time && help && socketID) {
         player_data.get(socketID).push({ time: time, help: help });
         console.log("Sending an activityUpdate for: " + socketID)
@@ -237,14 +237,14 @@ app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
-    var story_ID = req.body.story_ID || undefined
-    var quest_index = req.body.quest || undefined
-    var activity_index = req.body.activity || undefined
-    var time_elapsed = req.body.time || undefined
+    var story_ID = JSON.parse(req.body.story_ID) || undefined
+    var quest_index = JSON.parse(req.body.quest) || undefined
+    var activity_index = JSON.parse(req.body.activity) || undefined
+    var time_elapsed = JSON.parse(req.body.time) || undefined
     if (story_ID && activity_index && time_elapsed) {
         var maximum_time = stories_map.get(story_ID).game.quests[quest_index].activities[activity_index].expected_time;
         if (time_elapsed > maximum_time) {
-            var socketID = req.body.socket_id;
+            var socketID = JSON.parse(req.body.socket_id);
             let tempsocket = io.sockets.connected[socketID];
             // valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
             // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
@@ -328,8 +328,8 @@ app.get('/editor/getStories', function (req, res) {
 
 app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
-    var story_name = req.query.story_name;
-    var published = req.query.published || false;
+    var story_name = JSON.parse(req.query.story_name);
+    var published = JSON.parse(req.query.published) || false;
     var story_path;
     if (story_name && path.extname(story_name) == undefined) {
         if (published) {
@@ -367,9 +367,9 @@ app.get('/editor/getStory', function (req, res) {
 
 app.post('/editor/saveStory', function (req, res) {
     //TODO this needs to be tested...
-    var story_data = req.body.story; //object received: array [{name: string, data: value}]
-    var story_name = req.body.story_name; //the name of the story(directory)
-    var published = req.body.published || false;
+    var story_data = JSON.parse(req.body.story); //object received: array [{name: string, data: value}]
+    var story_name = JSON.parse(req.body.story_name); //the name of the story(directory)
+    var published = JSON.parse(req.body.published) || false;
     var story_path;
     console.log("saveStory request received for: " + story_name)
     if (story_name && path.extname(story_name) == undefined) {
@@ -404,8 +404,8 @@ app.post('/editor/saveStory', function (req, res) {
 })
 
 app.post('/editor/deleteStory', function (req, res) {
-    var story_name = req.body.story_name;
-    var published = req.body.published || false;
+    var story_name = JSON.parse(req.body.story_name);
+    var published = JSON.parse(req.body.published) || false;
     var story_path;
     if (story_name && path.extname(story_name) == undefined) {
         if (published) {
@@ -433,7 +433,7 @@ app.post('/editor/deleteStory', function (req, res) {
 })
 
 app.post('/editor/publisher', function (req, res) {
-    var story_name = req.body.story_name;
+    var story_name = JSON.parse(req.body.story_name);
     //beware that this function will overwrite an existing story with the same name in case it exist in both published and unpublished
     if (fs.existsSync(pubpath + story_name)) {
         fs.rename(pubpath + story_name, unpubpath + story_name, (err) => {

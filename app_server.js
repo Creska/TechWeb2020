@@ -160,7 +160,7 @@ io.on('connection', (socket) => {
 })
 app.get('/player', function (req, res) {
     //handling GET request to /player
-    var story = JSON.parse(req.query.story);
+    var story = req.query.story;
     console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
     //TODO I have to read published stories
@@ -218,9 +218,10 @@ app.post('/player/activityUpdate', function (req, res) {
     I know that [0] cointains the game name, and every push is an activity(so I know the flow of the game)
     This is needed for the summary, NOT for the warnings
     */
-    var time = JSON.parse(req.query.time) || undefined;
-    var help = JSON.parse(req.query.help) || undefined;
-    var socketID = JSON.parse(req.query.socket) || undefined;
+    var activity = JSON.parse(req.body.activity);
+    var time = activity.time || undefined;
+    var help = activity.help || undefined;
+    var socketID = activity.socket || undefined;
     if (time && help && socketID) {
         player_data.get(socketID).push({ time: time, help: help });
         console.log("Sending an activityUpdate for: " + socketID)
@@ -237,15 +238,16 @@ app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
-    var story_ID = JSON.parse(req.body.story_ID) || undefined
-    var quest_index = JSON.parse(req.body.quest) || undefined
-    var activity_index = JSON.parse(req.body.activity) || undefined
-    var time_elapsed = JSON.parse(req.body.time) || undefined
+    var activity = JSON.parse(req.body.activity);
+    var story_ID = activity.story_ID;
+    var quest_index = activity.quest_index;
+    var activity_index = activity.activity_index;
+    var time_elapsed = activity.time_elapsed;
     if (story_ID && activity_index && time_elapsed) {
         var maximum_time = stories_map.get(story_ID).game.quests[quest_index].activities[activity_index].expected_time;
         if (time_elapsed > maximum_time) {
-            var socketID = JSON.parse(req.body.socket_id);
-            let tempsocket = io.sockets.connected[socketID];
+            var socket_ID = activity.socket_ID
+            let tempsocket = io.sockets.connected[socket_ID];
             // valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
             // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             // why the fuck did I do it this way?
@@ -328,8 +330,8 @@ app.get('/editor/getStories', function (req, res) {
 
 app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
-    var story_name = JSON.parse(req.query.story_name);
-    var published = JSON.parse(req.query.published) || false;
+    var story_name = req.query.story_name;
+    var published = req.query.published || false;
     var story_path;
     if (story_name && path.extname(story_name) == undefined) {
         if (published) {
@@ -367,9 +369,10 @@ app.get('/editor/getStory', function (req, res) {
 
 app.post('/editor/saveStory', function (req, res) {
     //TODO this needs to be tested...
-    var story_data = JSON.parse(req.body.story); //object received: array [{name: string, data: value}]
-    var story_name = JSON.parse(req.body.story_name); //the name of the story(directory)
-    var published = JSON.parse(req.body.published) || false;
+    var story = JSON.parse(req.body.story);
+    var story_data = story.story_data //array [{name: string, data: value}]
+    var story_name = story.story_name; //the name of the story(directory)
+    var published = story.published || false;
     var story_path;
     console.log("saveStory request received for: " + story_name)
     if (story_name && path.extname(story_name) == undefined) {
@@ -404,8 +407,9 @@ app.post('/editor/saveStory', function (req, res) {
 })
 
 app.post('/editor/deleteStory', function (req, res) {
-    var story_name = JSON.parse(req.body.story_name);
-    var published = JSON.parse(req.body.published) || false;
+    var story = JSON.parse(req.body.story);
+    var story_name = story.story_name;
+    var published = story.published || false;
     var story_path;
     if (story_name && path.extname(story_name) == undefined) {
         if (published) {

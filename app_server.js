@@ -168,13 +168,15 @@ app.get('/player', function (req, res) {
         //trying to read the story file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
-                res.status(404).send({ code: "ENOENT", message: "Story not found." }).end();
+                res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Story not found." })).end();
                 //the story wasn't found, so I answer with a 404 status response
                 console.log("An error accourred inside /player, story not found.")
+                return;
             }
             else {
                 console.log("An error accourred inside /player, while retrieving the story: " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(JSON.stringify(err)).end();
+                return;
             }
         }
         else {
@@ -188,12 +190,14 @@ app.get('/player', function (req, res) {
             fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {
-                        res.status(404).send({ code: "ENOENT", message: "Player not found." }).end();
+                        res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Player not found." })).end();
                         console.log("An error accourred inside /player, player not found. " + err);
+                        return;
                     }
                     else {
                         console.log("An error accourred inside /player, while retrieving the player: " + err);
-                        res.status(500).send(err).end();
+                        res.status(500).send(JSON.stringify(err)).end();
+                        return;
                     }
                 }
                 else {
@@ -224,7 +228,8 @@ app.post('/player/activityUpdate', function (req, res) {
     }
     else {
         console.log("/player/activityUpdate BAD REQUEST, a parameter was not provided.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID) was not provided." }).end();
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID) was not provided." })).end();
+        return;
     }
 })
 
@@ -245,10 +250,12 @@ app.post('/player/playersActivities', function (req, res) {
             // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             // why the fuck did I do it this way?
             res.status(200).end();
+            return;
         }
     } else {
         console.log("/player/playerWarnings BAD REQUEST, a parameter was not provided.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." }).end();
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." })).end();
+        return;
     }
 })
 
@@ -257,19 +264,22 @@ app.get('/editor', function (req, res) {
     fs.readFile('public/editor/editor.html', function (err, editor_data) {
         if (err) {
             if (err.code == "ENOENT") {
-                res.status(404).send({ code: "ENOENT", message: "Editor page not found." }).end();
+                res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Editor page not found." })).end();
                 console.log("An error accourred inside /editor, editor page not found.");
                 //the story wasn't found, so I answer with a 404 status response
+                return;
             }
             else {
                 console.log("An error accourred inside /editor, while retrieving the editor: " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(JSON.stringify(err)).end();
+                return;
             }
         }
         else {
             console.log("Request for the editor page received successfully. Returning the page.");
             const $ = cheerio.load(editor_data);
             res.status(200).send($.html()).end();
+            return;
         }
     })
 
@@ -282,7 +292,7 @@ app.get('/editor/getStories', function (req, res) {
         fs.readdir(unpubpath, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
-                res.status(500).send(err);
+                res.status(500).send(JSON.stringify(err)).end();
                 resolve(false);
             }
             else {
@@ -295,7 +305,7 @@ app.get('/editor/getStories', function (req, res) {
         fs.readdir(pubpath, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the published stories: " + err);
-                res.status(500).send(err);
+                res.status(500).send(JSON.stringify(err)).end();
                 resolve(false);
             } else {
                 stories.published = files;
@@ -306,10 +316,10 @@ app.get('/editor/getStories', function (req, res) {
     Promise.all([read1, read2]).then(values => {
         if (values[0] && values[1]) {
             if (!(stories.unpublished || stories.published)) {
-                res.status(404).send({ code: "ENOENT", message: "No stories were found." }).end();
+                res.status(404).send(JSON.stringify({ code: "ENOENT", message: "No stories were found." })).end();
             }
             else {
-                res.status(200).send(stories).end();
+                res.status(200).send(JSON.stringify(stories)).end();
             }
         }
     });
@@ -331,7 +341,8 @@ app.get('/editor/getStory', function (req, res) {
         fs.readdir(story_path + story_name, function (err, files) {
             if (err) {
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(JSON.stringify(err)).end();
+                return;
             }
             else {
                 var story_elements = [];
@@ -340,13 +351,15 @@ app.get('/editor/getStory', function (req, res) {
                         story_elements.push({ name: element, data: data, extension: path.extname(element) });
                     })
                 })
-                res.status(200).send(story_elements).end();
+                res.status(200).send(JSON.stringify(story_elements)).end();
+                return;
             }
         })
     }
     else {
         console.log("/editor/getStory BAD REQUEST: Trying to get a story without providing the story name or a name with an extension.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to get a story without providing the story name or a name with an extension." })
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "Trying to get a story without providing the story name or a name with an extension." })).end();
+        return;
     }
 
 })
@@ -370,7 +383,7 @@ app.post('/editor/saveStory', function (req, res) {
             fs.writeFile(story_path + story_name + '/' + story_data[index].name, story_data[index].data, (err) => {
                 if (err) {
                     console.log("An error occurred inside /editor/getStory while saving " + story_data[index].name + "of " + story_name + ": " + err);
-                    res.status(500).send(err).end();
+                    res.status(500).send(JSON.stringify(err)).end();
                     return;
                 } else {
                     if (index + 1 > story_data.length) {
@@ -384,7 +397,8 @@ app.post('/editor/saveStory', function (req, res) {
         }
     } else {
         console.log("/editor/saveStory BAD REQUEST: Trying to save a story without providing the story name or a name with an extension.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name or a name with an extension." })
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name or a name with an extension." })).end()
+        return;
     }
 
 })
@@ -403,7 +417,7 @@ app.post('/editor/deleteStory', function (req, res) {
         fs.rmdir(story_path + story_name, { recursive: true }, (err) => {
             if (err) {
                 console.log("An error occurred inside /editor/deleteStory while removing " + story_name + ": " + err);
-                res.status(500).send(err).end();
+                res.status(500).send(JSON.stringify(err)).end();
                 return;
             }
             else {
@@ -414,7 +428,7 @@ app.post('/editor/deleteStory', function (req, res) {
     }
     else {
         console.log("/editor/deleteStory BAD REQUEST: Trying to delete a story without providing the story name or a name with an extension.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to delete a story without providing the story name or a name with an extension." })
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "Trying to delete a story without providing the story name or a name with an extension." })).end();
     }
 })
 
@@ -425,7 +439,8 @@ app.post('/editor/publisher', function (req, res) {
         fs.rename(pubpath + story_name, unpubpath + story_name, (err) => {
             if (err) {
                 console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
-                res.status(500).send(err);
+                res.status(500).send(JSON.stringify(err)).end();
+                return;
             }
             console.log('The story ' + story_name + 'was unpublished.');
             res.status(200).end();
@@ -436,7 +451,8 @@ app.post('/editor/publisher', function (req, res) {
         fs.rename(unpubpath + story_name, pubpath + story_name, (err) => {
             if (err) {
                 console.log("An error occurred inside /editor/publisher while unpublishing " + story_name + ": " + err)
-                res.status(500).send(err);
+                res.status(500).send(JSON.stringify(err)).end();
+                return;
             }
             console.log('The story ' + story_name + 'was published.');
             res.status(200).end();
@@ -445,7 +461,8 @@ app.post('/editor/publisher', function (req, res) {
     }
     else {
         console.log("/editor/publisher BAD REQUEST: Trying to use the publisher on a story that doesnt exist.")
-        res.status(400).send({ code: "BAD_REQUEST", message: "Trying to use the publisher on a story that doesnt exist." })
+        res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "Trying to use the publisher on a story that doesnt exist." })).end();
+        return;
     }
 })
 
@@ -455,19 +472,22 @@ app.get('/valuator', function (req, res) {
     //reading valuator page
     if (valuatorID) {
         console.log("/valuator CONFLICT: A valuator is already in use");
-        res.status(409).send("409 CONFLICT - A valuator is already in use.").end();
+        res.status(409).send(JSON.stringify({ code: "CONFLICT", message: "A valuator is already in use" })).end();
+        return;
     }
     else {
         fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
             if (err) {
                 if (err.code == "ENOENT") {
-                    res.status(404).send({ code: "ENOENT", message: "Valuator page not found." }).end();
+                    res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
                     console.log("An error accourred inside /valuator, valuator page not found.");
+                    return;
                     //the story wasn't found, so I answer with a 404 status response
                 }
                 else {
                     console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
-                    res.status(500).send(err).end();
+                    res.status(500).send(JSON.stringify(err)).end();
+                    return;
                 }
             }
             else {
@@ -475,6 +495,7 @@ app.get('/valuator', function (req, res) {
                 //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
                 const $ = cheerio.load(data);
                 res.status(200).send($.html()).end();
+                return;
             }
         })
     }
@@ -491,7 +512,8 @@ app.get('/valuator/history', function (req, res) {
     }
     //check if the number of properties is at least 1, otherwise there's no data
     if (Object.keys(data).length > 0) {
-        res.status(200).send(data).end();
+        res.status(200).send(JSON.stringify(data)).end();
+        return;
     }
     else {
         //retrieve nothing in case no history was found
@@ -511,7 +533,8 @@ app.get('/valuator/activeStories', function (req, res) {
     stories_map.forEach((v, _k) => {
         activeStories.push({ story_name: v.story_name, story_ID: v.story_ID });
     })
-    res.status(200).send(activeStories).end();
+    res.status(200).send(JSON.stringify(activeStories)).end();
+    return;
 })
 
 http.listen(3000, () => {

@@ -278,12 +278,16 @@ function saveAnswerFieldSettings() {
 			"class": "AnswerField",
 			id: "AnswerField"
 		});
-	AnswerField.prepend( $( "<div/>",
+
+	if ( $( "#InsertAnswerFieldDescription" ).val().trim() != "" ) {
+		AnswerField.prepend( $( "<div/>",
 		{
 			"class": "AnswerFieldDescription",
 			id: "AnswerFieldDescription",
 			text: $( "#InsertAnswerFieldDescription" ).val().trim()
 		}));
+	}
+	
 	AnswerField.append( $( "#AnswerInput" ));
 			
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = AnswerField.prop( "outerHTML" );
@@ -579,14 +583,14 @@ function saveImageGallery() {
   else {
 	  /* l'id "ActiveGallery" serve a far funzionare le frecce per scorrere le immagini */
     let newgallery = $(`
-    <div id="ActiveGallery" class="carousel slide ImageGallery" data-ride="carousel">
+    <div class="carousel slide ImageGallery" data-ride="carousel" data-interval="false">
       <div class="carousel-inner">
       </div>
-      <a class="carousel-control-prev" href="#ActiveGallery" role="button" data-slide="prev">
+      <a class="carousel-control-prev" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
       </a>
-      <a class="carousel-control-next" href="#ActiveGallery" role="button" data-slide="next">
+      <a class="carousel-control-next" role="button" data-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
@@ -606,7 +610,10 @@ function saveImageGallery() {
       }));
 
       newgallery.children().first().append(newpic);
-    });
+	});
+	
+	newgallery.attr( "id", "gallery-index" + CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.length );
+	newgallery.find( "a" ).attr( "href", "#" + newgallery.attr("id") );
 
     CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = newgallery.prop("outerHTML");
   }

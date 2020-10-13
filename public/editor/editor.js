@@ -60,7 +60,7 @@ function save_title( which ) {
     case "story":
       title = $( '#StoryTitleInput' ).val().trim();
       if( title != "" ) {
-        CurrentWork.story_title = "<h1 id='StoryTitle'>" + title + "</h1>";
+        CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
       }
       else {
         // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria

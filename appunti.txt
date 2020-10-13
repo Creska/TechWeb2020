@@ -30,9 +30,6 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * sistemare le frecce delle gallery
-    * fare in modo che si possa non inserire la descrizione dell'answer field
-    * aggiungere al titolo della storia la classe StoryTitle
     * Rendere più veloci le animazioni
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene

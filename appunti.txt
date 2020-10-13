@@ -26,21 +26,22 @@ ____________________________________
 | CAMPO RISPOSTA DI FINE ATTIVITA'  |
 |___________________________________|
 
+APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome
 
-BUG DA CORREGGERE
+BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Aggiungere il modo per creare l'outcome delle attività solo testuali - fixare anche il checkanswer nel player
+    * sistemare le frecce delle gallery
+    * fare in modo che si possa non inserire la descrizione dell'answer field
+    * aggiungere al titolo della storia la classe StoryTitle
     * Rendere più veloci le animazioni
     * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
+* TUTTO
+    * controllare compatibilità con schermi piccoli
 
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
-    * Menu Game Mode e altre opzioni globali:
-        * Si potrebbe creare una navbar, che dovrebbe avere: save, close, change mode, graphic e preview
-        * indicare avvertimento di: non si torna più indietro
-    * Editor CSS
-        * Idealmente servirebbe un salvataggio subito prima dell'apertura dell'editor (per fare un binding tra file json e css)
+    * Navbar: save, close, change mode, graphic e preview
     * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
         * Idealmente dovrebbero esistere tre identificatori per ogni storia:
             * Nome del file json - utilizzato dall'utente per distinguere ogni documento
@@ -61,12 +62,7 @@ DETTAGLI SULLE COSE DA FARE:
     * Controllare la faccenda della traduzione di apici e quotes
     * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
-    * Aggiungere la creazione dell'id e collegare ad esso il file css
 * approfondire la differenza tra attr e prop
-
-ALTRE COSE CHE SI POTREBBERO FARE:
-* EDITOR
-    * Standardizzare le funzioni di select/deselect
 
 
 

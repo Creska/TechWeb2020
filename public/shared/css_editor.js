@@ -10,7 +10,7 @@ function errorsToString(errors) {
     var error_string = "<div class='css-validation'>";
     for (let i = 0; i < errors.length; i++) {
         let tr_error = errors[i];
-        error_string += error_img + tr_error.children[0].innerHTML + " " + tr_error.children[2].children[0].innerHTML
+        error_string += error_img + " " + tr_error.children[0].innerHTML + " " + tr_error.children[2].children[0].innerHTML
         error_string += "<br>"
     }
     return error_string + " </div>";
@@ -26,7 +26,7 @@ function warningsToString(warnings) {
     var warning_string = "<div class='css-validation'>";
     for (let i = 0; i < warnings.length; i++) {
         let tr_warnings = warnings[i];
-        warning_string += warning_img + tr_warnings.children[0].innerHTML + " " + tr_warnings.children[2].innerHTML;
+        warning_string += warning_img + " " + tr_warnings.children[0].innerHTML + " " + tr_warnings.children[2].innerHTML;
         warning_string += "<br>"
     }
     return warning_string + "</div>";
@@ -34,10 +34,26 @@ function warningsToString(warnings) {
 
 
 /**
- * 
+ * Mostra/nasconde la guida dell'editor
+ */
+function showGuide() {
+    if ( $("#guide").css("display") == "none" ) {
+        $("#editorUI").fadeOut();
+        $("#guide").fadeIn();
+    }
+    else {
+        $("#guide").fadeOut();
+        $("#editorUI").fadeIn();
+    }
+};
+
+
+/**
+ * Controlla il CSS collegandosi agli appositi validatori e fa il display di eventuali errori o warnings.
  */
 function validate_css() {
-    $("#button-loading").html('<div class="spinner-border text-light" role="status"></div>');
+    $("#cssvaluator").toggle(false);
+    $("#loading").toggle(true);
 
     $.ajax({
         url: 'http://jigsaw.w3.org/css-validator/validator',
@@ -45,7 +61,8 @@ function validate_css() {
         data: { profile: 'css3', warning: 0, output: 'html', text: css_editor.getValue() },
         success: function (data) {
             //TODO handling how to show errors
-            $('#button-loading').html("<button id='cssvaluator' onclick='validate_css()'>Validate CSS</button>");
+            $("#loading").toggle(false);
+            $("#cssvaluator").toggle(true);
             var parser = new DOMParser();
             let parsed_css_validator = parser.parseFromString(data, 'text/html');
             //first, checking for warnings, since a css document can be valid or not with or without them
@@ -68,7 +85,8 @@ function validate_css() {
             }
         },
         error: function (errorMessage) {
-            $('#button-loading').html("<button id='cssvaluator' onclick='validate_css()'>Validate CSS</button>")
+            $("#loading").toggle(false);
+            $("#cssvaluator").toggle(true);
             console.log(errorMessage);
             $('#csserror').html("Si è verificato un errore, si prega di riprovare più tardi.")
         }

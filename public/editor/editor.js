@@ -370,6 +370,9 @@ function goToSection(where) {
       case "SetAnswerOutcome":
         loadEditOutcomeSection();
         break;
+      case "ChooseStoryToEdit":
+        getStories(); 
+        break;
       default:
         handleError();
     }
@@ -681,3 +684,31 @@ function setFinalActivity() {
     CurrentStage.FINAL = 0;
   }
 };
+
+  /*
+  AJAX CALLS(tutte le seguenti seguono /editor/):
+    getStory
+    saveStory
+    publisher
+    getStories
+    deleteStory
+  
+  */
+ function getStories() {
+  $.get("/editor/getStories", function(data, status){
+    alert("Data: " + data + "\nStatus: " + status);
+  });
+}
+function saveStory(nome) { 
+  story= {//storia ipotetica
+    story_data: [{
+      name: nome+".json",
+      data: CurrentWork
+    }],
+    story_name: nome,
+    published: true
+  };
+  $.post("/editor/saveStory",story, function(data,status){
+    alert("Status: " + status);
+  });
+}

@@ -8,7 +8,8 @@
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <title>Ambiente valutatore</title>
 </head>
-<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -17,66 +18,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
     crossorigin="anonymous"></script>
-<!-- <script src="valuator.js"></script> -->
-<style>
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .background {
-        position: absolute;
-        display: block;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        background-color: black;
-    }
-
-    .topnav {
-        overflow: hidden;
-        background-color: black;
-    }
-
-    .topnav a {
-        float: left;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-    }
-
-    .topnav a:hover {
-        background-color: #ddd;
-        color: black;
-    }
-
-    .topnav a.active {
-        background-color: #D3D3D3;
-        color: black;
-    }
-
-    .dropdown-menu {
-        background-color: #545c64;
-    }
-
-    .dropdown-menu a {
-        color: white;
-        background-color: #545c64;
-    }
-
-    .dropdown-menu a:hover {
-        background-color: #696969;
-    }
-
-    .dropdown-menu a:active {
-        background-color: black;
-        color: #C0C0C0;
-    }
-</style>
+<script src="valuator.js"></script>
+<link rel="stylesheet" href="valuator.css">
 <script>
     $(function () {
         Particles.init({
@@ -85,127 +28,7 @@
             color: '#C0C0C0'
         });
     })
-    var storyNameTimer; //global timer to retrieve active stories
-    var storyDataTimer; //global timer tor retrieve information for the stories
-    var activeStories; //known active stories
-    var defaultPageTitle = 'Ambiente Valutatore';
-    var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
-    var pageLocation = 0;
-    //pagelocations: Home(0) | Support(1) | Editor(2) 
-    function renderEditor() {
-        pageLocation = 2;
-        $('#bottoneditor').fadeOut();
-        $('#bottonesupport').fadeOut();
-        $('#editor').fadeIn();
-        $('#home').removeClass('active');
-        $('#defaulth1').html(defaultPageTitle + ": Editor")
-        $('#defaultdescription').html("Qui è presente un editor potenziato, rispetto all'ambiente editore, con cui potrai gestire le storie e crearne di nuove.");
-        //rendering the editor
-    }
-    function renderSupport() {
-        pageLocation = 1;
-        $('#bottoneditor').fadeOut();
-        $('#bottonesupport').fadeOut();
-        //rendering the dropdown stories menu
-        $.ajax({
-            url: 'localhost:3000/valuator/activeStoriesNames',
-            method: 'GET',
-            success: function (data) {
-                activeStories = data;
-                $('#support').fadeIn();
-                $('#home').removeClass('active');
-                $('#defaulth1').html(defaultPageTitle + ": Supporto")
-                if (data.length) {
-                    makeDropdown(data);
-                }
-                else {
-                    $('#defaultdescription').html('Al momento non sono attive storie. Puoi restare su questa schermata, in attesa che inizino.');
-                }
-                $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
-                startNameTimer();
-            },
-            error: function (error) {
-                //TODO error handling
-                $('#defaulth1').html(defaultPageTitle + ": Supporto")
-                $('#defaultdescription').html('Errore durante il caricamento delle storie, si prega di ritornare nel menù principale e di riprovare.');
-            }
-        })
-
-    }
-    function toHome() {
-        if (pageLocation != 0) {
-            switch (pageLocation) {
-                //things to fade out
-                case 1:
-                    $('#support').fadeOut();
-                    stopNameTimer();
-                    stopDataTimer();
-                    break;
-
-                case 2:
-                    $('#editor').fadeOut();
-                    break;
-            }
-            $('#bottoneditor').fadeIn();
-            $('#bottonesupport').fadeIn();
-            $('#home').addClass('active');
-            $('#defaulth1').html(defaultPageTitle);
-            $('#defaultdescription').html(defaultDescription);
-        }
-    }
-    function makeDropdown(data) {
-        var stories_dropdowns = "";
-        data.forEach((item) => {
-            stories_dropdowns += "<a class='dropdown-item' id='" + item.story_ID + " onclick='updateDropdown(this.id,'" + item.story_name + "')'>" + item.story_name + "</a>"
-        })
-        $('#dropdownstories').html(stories_dropdowns);
-    }
-    function updateDropdown(id, story_name) {
-        $('#dropdownbutton').html("Storie:" + story_name);
-        //TODO I have to decide how to show the information for the story.
-        //activate the story timer only for this specific story, disable the precedent one
-    }
-
-    function startNameTimer() {
-        storyNameTimer = setInterval(() => {
-            $.ajax({
-                url: 'localhost:3000/valuator/activeStoriesNames',
-                method: 'GET',
-                success: function (data) {
-                    if (data.length) {
-                        if (activeStories.length) {
-                            makeDropdown(data);
-                        }
-                        else {
-                            //it's 0, so there were no active stories before, different message
-                            $('#defaultdescription').html('Delle storie stanno ora venendo giocate. Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
-                            activeStories = data;
-                            makeDropdown(data);
-                        }
-                    }
-                },
-                error: function (error) {
-                    //TODO error handling
-                }
-            })
-        }, 5000);
-    }
-
-    function startDataTimer() {
-        storyDataTimer = setInterval(() => {
-            //TODO data handling
-        }, 5000)
-    }
-    function stopNameTimer() {
-        clearInterval(storyNameTimer)
-    }
-    function stopDataTimer() {
-        clearInterval(storyDataTimer)
-    }
-
-
 </script>
-
 <body>
     <div class="container-fluid">
         <div class="topnav">
@@ -249,7 +72,6 @@
         <button>Send</button>
     </form> -->
     <canvas class="background"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
     <!-- <footer id="bottom" class="row text-center fixed-bottom">
         <div class="col-sm-12" style="color: white">
             2020 Made by: Ricordatemi di mettere i nomi qua che mi scordo 100%

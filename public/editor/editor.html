@@ -4,14 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   <script src="animations.js"></script>
   <script src="editor_sections.js"></script>
+<<<<<<< HEAD
   <script src="editor.js"></script>
+=======
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+>>>>>>> origin
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://getbootstrap.com/docs/4.0/examples/cover/cover.css"> <!--sistemare css poi togliere-->
   <link rel="stylesheet" href="editor.css">
 
   <title>Editor</title>
@@ -32,26 +38,66 @@
 <body class="text-center">
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
-  <div>
-    <!--navbar-->
+  <header class="masthead mb-auto">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">STORY EDITOR</a>
+  
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <!-- le icone non si devono vedere in home - o devono essere disattivate -->
+      <div class="collapse navbar-collapse nav-masthead justify-content-center" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
+              <i class="far fa-save fa-2x"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Imposta la modalità di gioco">
+              <i class="fas fa-cog fa-2x"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
+              <i class="fab fa-css3 fa-2x"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
+              <i class="far fa-eye fa-2x"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+              <i class="fas fa-home fa-2x"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  
+
+  <div style="display:none;">
     <a href="../shared/css_editor.html" target="_blank">Editor CSS</a>
   </div>
 
   <!-- MENU PRINCIPALE -->
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
-    <p class="typewrite" data-period="2000" data-type='[ "Benvenuto nell&apos;ambiente autore.", "qui potrai creare storie o editarle.", "inoltre potrai interagire con il server e le storie ivi presenti.", "porcodio!!!" ]'> <!-- sistemare -->
-      <span class="wrap"></span>
-    </p>
+    <h1 class="cover-heading SectionTitle">Benvenuto nello Story Editor!</h1>
+    <p class="lead SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical mt-5">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseGameMode');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('EditStory');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Collegati al server"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 
 
   <!-- SCELTA DI MODALITA' DI GIOCO -->
-  <main class="inner mx-auto EditorSection" id="ChooseGameMode">
+  <main class="inner cover mx-auto EditorSection" id="ChooseGameMode">
     <p>Per cominciare, seleziona la modalità di gioco:</p>
     <div class="card-deck">
       <!-- cambiare le immagini -->
@@ -92,10 +138,12 @@
 
 
   <!-- GESTIONE DEL TITOLO DELLA STORIA E DELL'INSIEME DI QUEST -->
-  <div class="EditorSection" id="EditStory">
-    <div>
-      Bene, adesso è il momento di dare forma alla tua storia.
-    </div>
+  <main role="main" class="inner cover EditorSection" id="EditStory">
+    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <p class="lead SectionHeader">
+      Cambia il nome della storia e la lista delle quest.
+    </p>
+
     <div class="input-group mb-3 mt-5 font-weight-bold">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
@@ -105,9 +153,10 @@
          <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
     </div>
-    <div class=" alert alert-info text-justify rounded mb-1 p-0" role="alert">
-       <strong>Info point:</strong> Di default cliccare su una quest ti permette di impostarne i parametri, tuttavia vi sono le modalità swap e cancel, rispettivamente per scambiare di posizione le quest ed  eliminarle.
-       Per uscire da una mode basta cliccare nuovamente il relativo pulsante o selezionare un'altra mode. Infine onde prevenire spiacevoli incidenti, dovrai cliccare su una quest due volte per eliminarla.
+    <div class="alert alert-info text-justify" role="alert">
+      <h4 class="alert-heading"><i class="fas fa-info"></i></h4>
+      <p>Di default cliccare su una quest ti permette di impostarne i parametri, tuttavia vi sono le modalità swap e cancel, rispettivamente per scambiare di posizione le quest ed  eliminarle.
+        Per uscire da una mode basta cliccare nuovamente il relativo pulsante o selezionare un'altra mode. Infine onde prevenire spiacevoli incidenti, dovrai cliccare su una quest due volte per eliminarla.</p>
     </div>
 
     <div id="s_buttons_div" class=" p-3">
@@ -133,11 +182,11 @@
 
     <div class="CardGrid" id="QuestsGrid" >
     </div>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA DI EDITING DELLA QUEST -->
-  <div id="EditQuest" class="EditorSection">
+  <main id="inner cover EditQuest" class="EditorSection">
     <h1>TITOLO QUEST</h1>
 
     <div class="input-group mb-3 mt-5 font-weight-bold">
@@ -168,11 +217,11 @@
     <button type="button" class="btn btn-lg bg-dark mt-3 rounded" name="button" onclick="back()" data-toggle="tooltip" data-placement="right" title="torna alla storia">
       <i class="fas fa-undo-alt"></i>
     </button>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
-  <div class="EditorSection" id="EditActivity">
+  <main class="inner cover EditorSection" id="EditActivity">
     <h1>TITOLO SEZIONE</h1>
     <div class="btn-group-justified">
       <button id="FinalStageBtn" class="btn btn-lg btn-secondary" onclick="setFinalActivity();">
@@ -203,11 +252,11 @@
     <button type="button" class="btn btn-lg bg-dark mt-3 rounded" name="button" onclick="back()" data-toggle="tooltip" data-placement="right" title="torna alla storia">
       <i class="fas fa-undo-alt"></i>
     </button>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
-  <div class="EditorSection" id="EditAnswerField">
+  <main class="inner cover EditorSection" id="EditAnswerField">
     <h1>TITOLO SEZIONE</h1>
 
     <div>
@@ -260,22 +309,22 @@
 
     <button onclick="if($('#AnswerFieldPreview').is(':empty')) back(); else saveAnswerFieldSettings();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA DI MODIFICA TESTO -->
-  <div class="EditorSection" id="EditText">
+  <main class="inner cover EditorSection" id="EditText">
     <h1>TITOLO SEZIONE</h1>
 
     <textarea id="TextParInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
 
     <button class="" onclick="saveTextParagraph();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
-  <div class="EditorSection" id="SetAnswerOutcome">
+  <main class="inner cover EditorSection" id="SetAnswerOutcome">
     <script>
       $(document).on( "change", "#OutcomeSwitch", function() {
         if ( $(this).prop( "checked" ) )
@@ -320,11 +369,11 @@
 
     <button class="SaveBtn" onclick="saveOutcomes();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
-  </div>
+  </main>
 
 
   <!-- SCHERMATA DI MODIFICA GALLERY -->
-  <div class="EditorSection" id="EditGallery">
+  <main class="inner cover EditorSection" id="EditGallery">
     <h1>TITOLO SEZIONE</h1>
 
     <div class="alert alert-warning" role="alert">
@@ -354,21 +403,34 @@
         }
       });
     </script>
+<<<<<<< HEAD
   </div>
   <div  class='EditorSection' id="ChooseStoryToEdit">
     DAI MA DIOCANE
   </div>
+=======
+  </main>
+
+
+>>>>>>> origin
   <!--
   <div class="EditorSection" id="TestSection">
     SEZIONE USATA PER DEBUGGING
   </div>
   -->
   
+<<<<<<< HEAD
   <footer class="mastfoot mt-auto ">
     <button onclick="saveStory(prompt('inserisci nome storia:'))">salva storia</button>
+=======
+  <footer class="mastfoot mt-auto">
+>>>>>>> origin
     <div class="inner small">
-      <p> a cura di <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
+      <p> a cura di <a href="../about/team.html">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
     </div>
   </footer>
+
+</div>
 </body>
+
 </html>

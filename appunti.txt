@@ -30,8 +30,6 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Rendere più veloci le animazioni
-    * Doppio click sulle card - si potrebbe inserire un breve periodo di prevenzione click
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 * TUTTO
     * controllare compatibilità con schermi piccoli
@@ -79,3 +77,6 @@ appunti:
 * leggere files con javascript:
     * https://web.dev/read-files/#select-input
     * https://www.youtube.com/watch?v=VElnT8EoEEM
+* footer:
+    * https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
+    * https://stackoverflow.com/questions/29069498/how-to-make-a-sticky-footer-using-css

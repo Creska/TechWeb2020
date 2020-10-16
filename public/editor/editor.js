@@ -702,21 +702,47 @@ function setFinalActivity() {
     deleteStory
   
   */
- function getStories() {
+ function getStories() {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
   $.get("/editor/getStories", function(data, status){
     alert("Data: " + data + "\nStatus: " + status);
   });
 }
 function saveStory(nome) { 
+  value = prompt('bool published: ');
   story= {//storia ipotetica
     story_data: [{
       name: nome+".json",
       data: CurrentWork
     }],
     story_name: nome,
-    published: true
+    published: value,
+    checked: false
   };
   $.post("/editor/saveStory",story, function(data,status){
+    alert("Status: " + status);
+  });
+} 
+function getStory(nome) {//fa crashare l'app anche con published
+  value = prompt('bool published: ');
+  $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
+    alert("Data: " + data + "\nStatus: " + status);
+  });
+}
+function deleteStory(nome) {
+  value = prompt('bool published: ');
+  story = {
+    story_name: nome,
+    published: value
+  };
+  $.post("/editor/deleteStory",story, function(data,status){
+    alert("Status: " + status);
+  });
+}
+function publisher(name) {//problema con unpublished, funziona se unpub c'è
+  story = {
+    story_name: name
+  };
+  $.post("/editor/publisher",story, function(data, status){
     alert("Status: " + status);
   });
 }

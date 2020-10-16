@@ -325,6 +325,7 @@ app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
     var story_name = req.query.story_name;
     var published = req.query.published || false;
+    console.log("story_name: "+story_name+" published: "+published);
     var story_path;
     if (story_name && story_name.indexOf(".") == -1) {
         if (published) {

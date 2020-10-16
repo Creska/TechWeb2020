@@ -324,8 +324,7 @@ app.get('/editor/getStories', function (req, res) {
 app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
     var story_name = req.query.story_name;
-    var published = req.query.published || false;
-    console.log("story_name: "+story_name+" published: "+published);
+    var published = stringToBool(req.query.published) || false;
     var story_path;
     if (story_name && story_name.indexOf(".") == -1) {
         if (published) {
@@ -337,15 +336,21 @@ app.get('/editor/getStory', function (req, res) {
         fs.readdir(story_path + story_name, function (err, files) {
             if (err) {
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
-                return es.status(500).send(JSON.stringify(err)).end();
+                return res.status(500).send(JSON.stringify(err)).end();
             }
             else {
                 var story_elements = [];
                 files.forEach(element => {
-                    fs.readFile(story_path + story_name + element, function (err, data) {
-                        story_elements.push({ name: element, data: data, extension: element.substring(str.indexOf('.'), element.length) });
-                    })
+                    let data = fs.readFileSync(story_path + story_name + "/" + element);
+                    if (data) {
+                        story_elements.push({ name: element, data: data, extension: element.substring(element.indexOf('.'), element.length) });
+                    }
+                    else {
+                        console.log("An error accourred inside /editor/getStory, while creating the array to be returned: " + err);
+                        return res.status(500).send(JSON.stringify(err)).end();
+                    }
                 })
+                console.log("Story get successfully.")
                 return res.status(200).send(JSON.stringify(story_elements)).end();
             }
         })
@@ -424,7 +429,7 @@ app.post('/editor/saveStory', function (req, res) {
 app.post('/editor/deleteStory', function (req, res) {
     var story = req.body;
     var story_name = story.story_name;
-    var published = story.published || false;
+    var published = stringToBool(story.published) || false;
     var story_path;
     if (story_name && story_name.indexOf(".") == -1) {
         if (published) {
@@ -433,13 +438,14 @@ app.post('/editor/deleteStory', function (req, res) {
         else {
             story_path = unpubpath;
         }
+        //TODO check if the path exists?
         fs.rmdir(story_path + story_name, { recursive: true }, (err) => {
             if (err) {
                 console.log("An error occurred inside /editor/deleteStory while removing " + story_name + ": " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
             else {
-                console.log("Story " + story_name + "deleted successfully.")
+                console.log("Story " + story_path + story_name + " deleted successfully.")
                 return;
             }
         })

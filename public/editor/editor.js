@@ -7,6 +7,7 @@ var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var GridsOfActivities = []; // contiene le griglie di attività per ogni quest
 var GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
+var CardClickDisabled = false;
 
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
@@ -60,7 +61,7 @@ function save_title( which ) {
     case "story":
       title = $( '#StoryTitleInput' ).val().trim();
       if( title != "" ) {
-        CurrentWork.story_title = "<h1 id='StoryTitle'>" + title + "</h1>";
+        CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
       }
       else {
         // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
@@ -327,9 +328,7 @@ function goToSection(where) {
         break;
       case "EditQuest":
         CurrentNavStatus.ActivityN = -1;
-        //// BUG: click multiplo fa partire più volte l'onclick e perciò
-        //get_card_index, nelle istanze successive alla prima
-        //fa riferimento a ActivitiesGrid invece che a QuestsGrid
+
         if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
         $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
@@ -338,7 +337,6 @@ function goToSection(where) {
         $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
         break;
       case "EditActivity":
-        // riparare lo stesso bug del caso sopra
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
         // aggiungere l'aggiornamento del titolo
 
@@ -383,9 +381,15 @@ function goToSection(where) {
 
 /**
  * @param card
- * A seconda della modalità corrente, apre la sezione puntata dalla card, oppure attiva la cancel o swap mode
+ * A seconda della modalità corrente, apre la sezione puntata dalla card, oppure attiva la cancel o swap mode.
+ * Al momento del click, disabilita per mezzo secondo la possibilità di cliccarci sopra. Questo viene fatto per evitare problemi causati da un doppio click effettuato per sbaglio
  */
 function openCard( card ) {
+  if ( CardClickDisabled )
+    return;
+
+  CardClickDisabled = true;
+
   selected_card = card;
 
   switch(mode) {
@@ -401,23 +405,27 @@ function openCard( card ) {
     default:
       setAnimation("puffOut", card);
       setTimeout( function () {
-          if (CurrentNavStatus.Section == "EditStory")
-            goToSection("EditQuest");
-          else if (CurrentNavStatus.Section == "EditQuest")
-            goToSection("EditActivity");
-          else if (CurrentNavStatus.Section == "EditActivity") {
-            switch( $(card).find(".card-text").first().prop("innerHTML") ) {
-              case "GALLERY":
-                goToSection("EditGallery");
-                break;
-              default:
-                goToSection("EditText");
-                break;
-            }
+        if (CurrentNavStatus.Section == "EditStory")
+          goToSection("EditQuest");
+        else if (CurrentNavStatus.Section == "EditQuest")
+          goToSection("EditActivity");
+        else if (CurrentNavStatus.Section == "EditActivity") {
+          switch( $(card).find(".card-text").first().prop("innerHTML") ) {
+            case "GALLERY":
+              goToSection("EditGallery");
+              break;
+            default:
+              goToSection("EditText");
+              break;
           }
-      }, 750);
-      break;
+        }
+    }, 750);
+    break;
   }
+
+  setTimeout( function() {
+    CardClickDisabled = false;
+  }, 500);
 };
 
 

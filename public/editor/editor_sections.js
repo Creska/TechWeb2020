@@ -104,52 +104,55 @@ function select( i ) {
 function loadEditAnswerFieldSection( MODE ) {
 	switch ( MODE ) {
 		case "LOAD":
-			let LoadAnswerField = $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field );
+			let AFinput = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field ) ).find(".AnswerInput").first();
+			let AFdes = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field ) ).find(".AnswerFieldDescription").first();
 
-			switch ( $( $( LoadAnswerField ).children()[1] ).prop( "tagName" ) ) {
-				case "UL":
-					$( "#QuestionType_Checklist" ).prop( "checked", true );
-
-					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
-
-					$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
-						if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
-							$( this ).prev().prop( "checked", true );
-						}
-
-						$( this ).replaceWith( $( "<input/>",
-              {
-                type: "text",
-                val: $( this ).text()
-              }));
-					});
-
-					$( "#AnswerFieldPreview" ).append( $( "<button/>",
-						{
-							"class": "btn btn-secondary AddRadio",
-							onclick: "addRadio('AnswerInput');",
-							text: "+"
+			if ( AFinput ) {
+				switch ( AFinput.prop( "tagName" ) ) {
+					case "UL":
+						$( "#QuestionType_Checklist" ).prop( "checked", true );
+	
+						$( "#AnswerFieldPreview" ).append( AFinput );
+	
+						$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
+							if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
+								$( this ).prev().prop( "checked", true );
+							}
+	
+							$( this ).replaceWith( $( "<input/>",
+								  {
+									type: "text",
+									val: $( this ).text()
+								  }));
+						});
+	
+						$( "#AnswerFieldPreview" ).append( $( "<button/>",
+							{
+								"class": "btn btn-secondary AddRadio",
+								onclick: "addRadio('AnswerInput');",
+								text: "+"
 						}));
-
-					break;
-				case "INPUT":
-					if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "text" ) {
-						$( "#QuestionType_Text" ).prop( "checked", true );
-					}
-					else if ( $( $( LoadAnswerField ).children()[1] ).attr( "type" ) == "number" ) {
-						$( "#QuestionType_Number" ).prop( "checked", true );
-					}
-
-					$( "#AnswerFieldPreview" ).prop( "innerHTML", $( $( LoadAnswerField ).children()[1] ).prop( "outerHTML" ) );
-				
-					$( "#AnswerFieldPreview" ).find( "input" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer );
-
-					break;
-				default:
-					handleError();
+						break;
+					case "INPUT":
+						if ( AFinput.attr( "type" ) == "text" ) {
+							$( "#QuestionType_Text" ).prop( "checked", true );
+						}
+						else if ( AFinput.attr( "type" ) == "number" ) {
+							$( "#QuestionType_Number" ).prop( "checked", true );
+						}
+	
+						$( "#AnswerFieldPreview" ).append( AFinput );
+					
+						$( "#AnswerFieldPreview" ).find( "input" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer );
+	
+						break;
+					default:
+						handleError();
+				}
 			}
 
-			$( "#InsertAnswerFieldDescription" ).val( $( $( LoadAnswerField ).children()[0] ).text() );
+			if ( AFdes )
+				$( "#InsertAnswerFieldDescription" ).val( AFdes.text() );
 			$( "#AnswerTimer" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time / 60000 );
 			$( "#AnswerScore" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score );
 			$( "#InsertTimer" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO );
@@ -538,7 +541,7 @@ function addImage( image, newload ) {
       
   newrow.append( newpreview );
   newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
-  newrow.append( $( '<button class="btn btn-danger" onclick="$(this).parent().parent().remove()">Cancella</button>' ));
+  newrow.append( $( '<button class="btn btn-danger" onclick="$(this).parent().parent().remove()"><i class="fas fa-minus"></i></button>' ));
 
   newrow.children().wrap("<div class='col-sm'></div>");
   $("#GalleryPreview").append(newrow);

@@ -12,8 +12,7 @@ var CardClickDisabled = false;
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
 	MainMenu: "MainMenu",
-  ChooseGameMode: "MainMenu",
-  EditStory: "ChooseGameMode",
+  EditStory: "EditStory",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",
@@ -32,7 +31,7 @@ var CurrentNavStatus = {
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork = {
 	ACCESSIBILITY: 0,
-	story_title: "<div id='StoryTitle'>NuovaStoria</div>",
+	story_title: "<div id='StoryTitle' class='StoryTitle'></div>",
 	story_ID: -1,
 	game_mode: "",
 	single_device: 1,
@@ -59,21 +58,20 @@ function save_title( which ) {
   let title;
   switch ( which ) {
     case "story":
-      title = $( '#StoryTitleInput' ).val().trim();
-      if( title != "" ) {
-        CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
-      }
-      else {
-        // se l'input è lasciato vuoto, viene reinserito il titolo NuovaStoria
-        $( '#StoryTitleInput' ).val( "NuovaStoria" );
-      }
+      title = $( '#StoryTitleInput' ).val().trim()
+      CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
+
+      if ( title )
+        $( "#EditStory .SectionTitle" ).html( title );
+      else
+        $( "#EditStory .SectionTitle" ).html( "<i>StoriaSenzaNome</i>" );
 
       change_savetitle_button( "saved" );
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
         title = $("#NewQuestWidget input").val().trim();
-        if( title != "" ) {
+        if ( title ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
           CurrentWork.quests[n_quests - 1].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
@@ -81,18 +79,19 @@ function save_title( which ) {
       }
       else {
         title = $( '#QuestTitleInput' ).val().trim();
-        let old_title = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title ) ).text();
 
-        if ( title != "" ) {
+        if ( title ) {
           // aggiorna il nome della card
           $("#QuestsGrid .card-text").eq( CurrentNavStatus.QuestN ).html( title );
 
-          CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
+          
         }
         else {
           // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
           $( '#QuestTitleInput' ).val( old_title );
         }
+
+        CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
 
         change_savetitle_button( "saved" );
       }
@@ -138,11 +137,9 @@ function create_stuff(what) {
  */
 function initQuest() {
 	let EmptyQuest = {	
-		quest_title: "",
+		quest_title: "<h2 class='QuestTitle'></h2>",
 		activities: []
   };
-  
-  EmptyQuest.quest_title = "<div class='QuestTitle'>" + "Quest" + String(n_quests-1) + "</div>";
 
 	return EmptyQuest;
 };
@@ -332,13 +329,14 @@ function goToSection(where) {
         if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
         $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
-        $("#EditQuest h1").text( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+        $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
 
         $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
         break;
       case "EditActivity":
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
-        // aggiungere l'aggiornamento del titolo
+        
+        $("#EditActivity h1").html( $( "#EditStory .card-text").eq(CurrentNavStatus.QuestN).html() + " - Activity" + CurrentNavStatus.ActivityN );
 
         if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL ) {
           change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
@@ -354,18 +352,30 @@ function goToSection(where) {
         $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
         break;
       case "EditText":
+        // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
+        $("#EditText h1").html( $("#EditActivity h1").html() );
+
         $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
         break;
       case "EditGallery":
+        $("#EditGallery h1").html( $("#EditActivity h1").html() );
+
         loadEditGallerySection();
         break;
       case "EditAnswerField":
-        if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field != "" )
+        $("#EditAnswerField h1").html( $("#EditActivity h1").html() );
+
+        // SISTEMAREEEEEE
+        let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+        if ( activity.answer_field || activity.right_answer || activity.expected_time || activity.answer_score || activity.ASK_EVAL || activity.GET_CHRONO )
           loadEditAnswerFieldSection( "LOAD" );
         else
           loadEditAnswerFieldSection( "RESET" );
         break;
       case "SetAnswerOutcome":
+        $("#SetAnswerOutcome h1").html( $("#EditActivity h1").html() );
+
         loadEditOutcomeSection();
         break;
       case "ChooseStoryToEdit":
@@ -446,7 +456,7 @@ function create_card(titolo) {
       $("#NewQuestWidget").addClass("invisible");
       $("#NewQuestWidget input").val("");
       if ( titolo.trim() == "" )
-        titolo = "Quest" + ( n_quests - 1 );
+        titolo = "<i>QuestSenzaNome" + ( n_quests - 1 ) + "</i>";
       color = colors[n_quests % 6];
       break;
     case "ActivitiesGrid":

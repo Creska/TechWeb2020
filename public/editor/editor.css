@@ -9,6 +9,7 @@ body {
 }
 
 body, .cover-container {
+  margin-top: 0;
   min-height: 100%;
 }
 
@@ -29,26 +30,56 @@ main {
   display: none;
 }
 
+.SectionHeader {
+  margin-bottom: 10vh;
+}
+
 #MainMenu {
   display: block;
 }
 
 .alert {
   line-height: 15pt;
-  margin-top: 5vh;
   text-shadow: none;
 }
 
+.alert i, .alert p {
+  display: table-cell;
+  padding: 15px;
+}
 
+.alert i {
+  text-align: center;
+}
+
+.BackBtn {
+  margin-top: 25vh;
+}
 
 .card:hover {
    cursor: pointer;
    transform: scale(1.1);
 }
 
-/* 
-* Preview Immagini
-*/
+.Save-Cancel {
+  margin-top: 5vh;
+}
+
+#EditText textarea {
+  width: 100%; /* sovrascrive il numero di colonne */
+}
+
+#GalleryPreview {
+  margin: 10vh 0 10vh 0;
+  padding: 0;
+  width: 100%;
+}
+
+#GalleryPreview .row {
+  margin-top: 2.5vh;
+  width: 100%;
+}
+
 #GalleryPreview img {
   width: 10vw;
   height: auto;

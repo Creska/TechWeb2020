@@ -138,30 +138,30 @@
   <main role="main" class="inner cover EditorSection" id="EditStory">
     <h1 class="cover-heading SectionTitle">TITOLO</h1>
     <p class="lead SectionHeader">
-      Cambia il nome della storia e la lista delle quest.
+      Cambia il nome della storia e gestisci la lista delle quest.
     </p>
 
     <div class="input-group mb-3 mt-5 font-weight-bold">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="StoryTitleInput" class="form-control" val="MyStory" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="StoryTitleInput" class="form-control" placeholder="NuovaStoria" onclick="change_savetitle_button('unsaved');">
       <div class="input-group-append">
          <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
     </div>
-    <div class="alert alert-info text-justify" role="alert">
-      <h4 class="alert-heading"><i class="fas fa-info"></i></h4>
+    <div class="col-xs-12 alert alert-info text-justify" role="alert">
+      <i class="fas fa-info"></i>
       <p>Di default cliccare su una quest ti permette di impostarne i parametri, tuttavia vi sono le modalità swap e cancel, rispettivamente per scambiare di posizione le quest ed  eliminarle.
-        Per uscire da una mode basta cliccare nuovamente il relativo pulsante o selezionare un'altra mode. Infine onde prevenire spiacevoli incidenti, dovrai cliccare su una quest due volte per eliminarla.</p>
+      Per uscire da una mode basta cliccare nuovamente il relativo pulsante o selezionare un'altra mode. Infine onde prevenire spiacevoli incidenti, dovrai cliccare su una quest due volte per eliminarla.</p>
     </div>
 
     <div id="s_buttons_div" class=" p-3">
-      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="swap mode">
+      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
-      <button id="s_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='$("#NewQuestWidget").removeClass("invisible");' data-toggle="tooltip" data-placement="top" title="crea una nuova quest" ><i class="fas fa-plus"></i> </button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="cancel mode">
+      <button id="s_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='$("#NewQuestWidget").removeClass("invisible");' data-toggle="tooltip" data-placement="top" title="Crea una nuova quest" ><i class="fas fa-plus"></i> </button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -183,27 +183,30 @@
 
 
   <!-- SCHERMATA DI EDITING DELLA QUEST -->
-  <main id="inner cover EditQuest" class="EditorSection">
-    <h1>TITOLO QUEST</h1>
+  <main class="inner cover EditorSection" id="EditQuest">
+    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <p class="lead SectionHeader">
+      Cambia il nome della quest e gestisci la lista delle attività.
+    </p>
 
     <div class="input-group mb-3 mt-5 font-weight-bold">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="QuestTitleInput" class="form-control" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="QuestTitleInput" class="form-control" placeholder="NuovaQuest" onclick="change_savetitle_button('unsaved');">
       <div class="input-group-append">
          <button class="btn btn-primary" id="SaveQuestTitle" type="button" onclick="save_title('quest')">Salva</button>
       </div>
     </div>
 
     <div id="q_buttons_div" class="p-3">
-      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="swap mode">
+      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
-      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("activity");create_card("");' data-toggle="tooltip" data-placement="top" title="crea una nuova attività">
+      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("activity");create_card("");' data-toggle="tooltip" data-placement="top" title="Crea una nuova attività">
         <i class="fas fa-plus"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="cancel mode">
+      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -211,34 +214,47 @@
     <div class="CardGrid" id="ActivitiesGrid">
     </div>
 
-    <button type="button" class="btn btn-lg bg-dark mt-3 rounded" name="button" onclick="back()" data-toggle="tooltip" data-placement="right" title="torna alla storia">
-      <i class="fas fa-undo-alt"></i>
+    <button type="button" class="btn bg-secondary rounded BackBtn" onclick="back()">
+      <i class="fas fa-long-arrow-alt-left fa-2x"></i>
     </button>
   </main>
 
 
   <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
   <main class="inner cover EditorSection" id="EditActivity">
-    <h1>TITOLO SEZIONE</h1>
-    <div class="btn-group-justified">
-      <button id="FinalStageBtn" class="btn btn-lg btn-secondary" onclick="setFinalActivity();">
-        Marca come finale
+    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <p class="lead SectionHeader">
+      In questa sezione potrai creare e modificare il testo e la programmazione dell'attività.
+    </p>
+
+    <div class="p-3">
+      <button id="FinalStageBtn" class="btn btn-lg btn-secondary mb-3 rounded" onclick="setFinalActivity();" data-toggle="tooltip" data-placement="left" title="Marca attività come finale">
+        <i class="fas fa-flag-checkered"></i>
       </button>
-      <button class="btn btn-secondary" onclick="goToSection('EditAnswerField')">Modifica answer field</button>
-      <button class="btn btn-secondary" onclick="goToSection('SetAnswerOutcome')">Modifica progressione attività</button>
+      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
+        <i class="fas fa-tasks"></i>
+      </button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('SetAnswerOutcome')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
+        <i class="fas fa-route"></i>      
+      </button>
+    </div>
+    <div class="col-xs-12 alert alert-info text-justify" role="alert">
+      <i class="fas fa-info"></i>
+      <p>Se marchi questa attività come finale, segnalerai che essa verrà setttata il punto d'arrivo del gioco. Di conseguenza non vi sarà alcuna tappa successiva.Attenzione però! Spetta all'autore fare in modo che tutti i possibili percorsi di gioco convergano ad essa.<br>
+      Cliccando sulla seconda icona potrai modificare il campo risposta, mentre sulla terza andrai a gestire il sistema che attribuirà, ad ogni possibile risposta, la tappa a cui il giocatore verrà condotto.</p>
     </div>
 
-    <div id="q_buttons_div">
-      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="swap mode">
+    <div id="q_buttons_div" class="p-3">
+      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
-        <i class="fas fa-plus"></i>
+        <i class="fas fa-paragraph"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
-        <i class="fas fa-plus"></i>
+        <i class="far fa-images"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="cancel mode">
+      <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -246,43 +262,51 @@
     <div class="CardGrid" id="ParagraphsGrid">
     </div>
 
-    <button type="button" class="btn btn-lg bg-dark mt-3 rounded" name="button" onclick="back()" data-toggle="tooltip" data-placement="right" title="torna alla storia">
-      <i class="fas fa-undo-alt"></i>
+    <button type="button" class="btn bg-secondary rounded BackBtn" onclick="back()">
+      <i class="fas fa-long-arrow-alt-left fa-2x"></i>
     </button>
   </main>
 
 
   <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
+  <!-- TUTTA QUESTA PARTE E' DA SISTEMAREEEEEE -->
   <main class="inner cover EditorSection" id="EditAnswerField">
     <h1>TITOLO SEZIONE</h1>
 
     <div>
-      <div>Tipologia di input:</div>
-      <div class="input-group">
-        <input type="radio" name="QuestionType" id="QuestionType_Checklist">
-        <label for="QuestionType_Checklist">Checklist</label>
-        <input type="radio" name="QuestionType" id="QuestionType_Text">
-        <label for="QuestionType_Text">Testo</label>
-        <input type="radio" name="QuestionType" id="QuestionType_Number">
-        <label for="QuestionType_Number">Numero</label>
+      <h3>Tipologia di input:</h3>
+      <div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Checklist">
+          <label class="form-check-label" for="QuestionType_Checklist">Checklist</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Text">
+          <label class="form-check-label" for="QuestionType_Text">Testo</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Number">
+          <label class="form-check-label" for="QuestionType_Number">Numero</label>
+        </div>
+
+        <script>
+          $("#EditAnswerField input[name='QuestionType']").on("change", function () {
+            loadEditAnswerFieldSection('CHG_TYPE');
+          });
+        </script>
       </div>
-      <script>
-        $("#EditAnswerField input[name='QuestionType']").on("change", function () {
-          loadEditAnswerFieldSection('CHG_TYPE');
-        });
-      </script>
-      <div class="alert alert-secondary" role="alert">
-        In caso di spunta su un'altra opzione, i dati verranno resettati. Per non perdere il lavoro, ricarica la pagina.
+    </div>
+
+    <div id="AFui">
+      <!-- Input della stringa di testo che poi diventerà la "AnswerFieldDescription" -->
+      <div class="form-group">
+        <label for="InsertAnswerFieldDescription">Indicazione per il giocatore:</label>
+        <input type=text id="InsertAnswerFieldDescription">
       </div>
+      <!-- Container dell'anteprima dell'Answer Field -->
+      <div class="form-group" id="AnswerFieldPreview"></div>
     </div>
-    <!-- Input della stringa di testo che poi diventerà la "AnswerFieldDescription" -->
-    <div>
-      <label for="InsertAnswerFieldDescription">Indicazione per il giocatore:</label>
-      <input type=text id="InsertAnswerFieldDescription">
-    </div>
-    <!-- Container dell'anteprima dell'Answer Field -->
-    <div class="input-group" id="AnswerFieldPreview">
-    </div>
+    
     <!-- Sezione per il settaggio dell'AnswerField - non è soggetto a reload in caso il creator cambi opzione di input -->
     <div class="input-group" id="AnswerFieldSettings">
       <label for="AnswerScore">Punteggio per il corretto completamento dell'obiettivo</label>
@@ -292,7 +316,7 @@
       <input type="checkbox" id="InsertTimer">
       <label for="InsertTimer">Aggiungi il timer per la domanda</label>
       <label for="AnswerTimer">Limite di tempo (minuti) per il completamento dell'obiettivo</label>
-      <input type="number" id="AnswerTimer" min="0.5" step="0.5">
+      <input type="number" id="AnswerTimer" placeholder="1" min="1">
 
       <script>
         $( "#InsertTimer" ).click( function() {
@@ -305,17 +329,6 @@
     </div>
 
     <button onclick="if($('#AnswerFieldPreview').is(':empty')) back(); else saveAnswerFieldSettings();">Salva</button>
-    <button class="" onclick="back();">Annulla</button>
-  </main>
-
-
-  <!-- SCHERMATA DI MODIFICA TESTO -->
-  <main class="inner cover EditorSection" id="EditText">
-    <h1>TITOLO SEZIONE</h1>
-
-    <textarea id="TextParInput" rows="25" cols="50" placeholder="Inserisci un testo..."></textarea>
-
-    <button class="" onclick="saveTextParagraph();">Salva</button>
     <button class="" onclick="back();">Annulla</button>
   </main>
 
@@ -369,20 +382,45 @@
   </main>
 
 
+  <!-- SCHERMATA DI MODIFICA TESTO -->
+  <main class="inner cover EditorSection" id="EditText">
+    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <p class="lead SectionHeader">
+      Aggiungi un nuovo paragrafo al testo dell'attività.
+    </p>
+
+    <textarea id="TextParInput" rows="15" cols="50" placeholder="Inserisci un testo..."></textarea>
+
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveTextParagraph();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
+    </div>
+  </main>
+
+
   <!-- SCHERMATA DI MODIFICA GALLERY -->
   <main class="inner cover EditorSection" id="EditGallery">
-    <h1>TITOLO SEZIONE</h1>
+    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <p class="lead SectionHeader">
+      Aggiungi una sezione contenente una o più immagini.<br>
+      Nel caso sia stata scelta l'opzione di accessibilità, è obbligatorio inserire una descrizione per ogni immagine. Anche in caso contrario, tuttavia, inserire una didascalia è <em>caldamente consigliato</em>.
+    </p>
 
-    <div class="alert alert-warning" role="alert">
-      Formati accettati: JPG, PNG.<br>Files di tipo differente non saranno caricati.
+    <div class="col-xs-12 alert alert-warning text-justify" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>Formati accettati: JPG, PNG.<br>Files di tipo differente non saranno caricati.</p>
     </div>
 
     <div class="container" id="GalleryPreview"></div>
 
-    <input type="file" id="UploadImg" placeholder="Aggiungi immagine" multiple>
-
-    <button class="SaveBtn" onclick="saveImageGallery();">Salva</button>
-    <button class="" onclick="back();">Annulla</button>
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="$('#UploadImg').trigger('click');" data-toggle="tooltip" data-placement="left" title="Aggiungi immagini">
+        <i class="fas fa-plus"></i>
+      </button>
+      <input type="file" id="UploadImg" style="display:none;" multiple>
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveImageGallery();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
+    </div>
 
     <script>
       const fileSelector = document.getElementById("UploadImg");
@@ -411,7 +449,7 @@
   
   <footer class="mastfoot mt-auto">
     <div class="inner small">
-      <p> a cura di <a href="../about/team.html">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
+      <p> a cura di <a href="../about/team.html" target="_blank">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>
     </div>
   </footer>
 

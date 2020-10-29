@@ -32,6 +32,7 @@ main {
 
 .SectionHeader {
   margin-bottom: 10vh;
+  text-align: justify;
 }
 
 #MainMenu {
@@ -63,6 +64,43 @@ main {
 
 .Save-Cancel {
   margin-top: 5vh;
+}
+
+.locked {
+  opacity: 0.3;
+}
+
+#EditAnswerField > div {
+  margin-top: 5vh;
+}
+
+#AFui, #AnswerFieldRecap {
+  background-color: #555;
+}
+
+#AnswerFieldPreview {
+  text-align: center;
+  margin: 0;
+  width: 100%;
+}
+
+#AFui .form-group {
+  width: 100%;
+  padding: 10px;
+}
+
+#AnswerFieldPreview ul {
+  list-style-type: none;
+  margin: 15px 0 15px 0;
+  padding: 0;
+}
+
+#AnswerFieldPreview li {
+  padding: 0;
+}
+
+#ReadingActivity, #AnswerActivity {
+  display: none;
 }
 
 #EditText textarea {

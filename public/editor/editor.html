@@ -222,7 +222,11 @@
 
   <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
   <main class="inner cover EditorSection" id="EditActivity">
-    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <header>
+      <small>QUEST</small>
+      <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    </header>
+    
     <p class="lead SectionHeader">
       In questa sezione potrai creare e modificare il testo e la programmazione dell'attività.
     </p>
@@ -269,12 +273,18 @@
 
 
   <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
-  <!-- TUTTA QUESTA PARTE E' DA SISTEMAREEEEEE -->
   <main class="inner cover EditorSection" id="EditAnswerField">
-    <h1>TITOLO SEZIONE</h1>
+    <header>
+      <small>QUEST</small>
+      <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    </header>
+    <p class="lead SectionHeader">
+      In questa sezione potrai creare e modificare il campo risposta dell'attività.<br>
+      Puoi scegliere tra tre diversi tipi di input e una piccola serie di opzioni per regolamentarne il funzionamento.
+    </p>
 
-    <div>
-      <h3>Tipologia di input:</h3>
+    <div id="AFtype">
+      <h4>Tipologia di input</h4>
       <div>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Checklist">
@@ -289,34 +299,114 @@
           <label class="form-check-label" for="QuestionType_Number">Numero</label>
         </div>
 
+        <div id="ChecklistPreview">
+          <ul></ul>
+
+          <div id="AddAnswerOption" class="input-group input-group-sm mb-3 font-weight-bold">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-light">Aggiungi opzione:</span>
+            </div>
+            <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-primary" type="button" onclick="addAnswerOption( $('#AddAnswerOption input').val().trim() );">Aggiungi</button>
+              <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddAnswerOption input').val('');">Annulla</button>
+            </div>
+          </div>
+        </div>
+
         <script>
-          $("#EditAnswerField input[name='QuestionType']").on("change", function () {
-            loadEditAnswerFieldSection('CHG_TYPE');
+          $("#EditAnswerField input[name='QuestionType']").on("change", function() {
+            if ( $("#QuestionType_Checklist").prop("checked") )
+		          $( "#ChecklistPreview" ).toggle(true);
+	          else
+		          $( "#ChecklistPreview" ).toggle(false);
           });
         </script>
       </div>
     </div>
-
-    <div id="AFui">
-      <!-- Input della stringa di testo che poi diventerà la "AnswerFieldDescription" -->
-      <div class="form-group">
-        <label for="InsertAnswerFieldDescription">Indicazione per il giocatore:</label>
-        <input type=text id="InsertAnswerFieldDescription">
-      </div>
-      <!-- Container dell'anteprima dell'Answer Field -->
-      <div class="form-group" id="AnswerFieldPreview"></div>
-    </div>
     
     <!-- Sezione per il settaggio dell'AnswerField - non è soggetto a reload in caso il creator cambi opzione di input -->
-    <div class="input-group" id="AnswerFieldSettings">
-      <label for="AnswerScore">Punteggio per il corretto completamento dell'obiettivo</label>
-      <input type="number" id="AnswerScore" min="0">
-      <input type="checkbox" id="NeedEvaluation">
-      <label for="NeedEvaluation">Richiesta valutazione</label>
-      <input type="checkbox" id="InsertTimer">
-      <label for="InsertTimer">Aggiungi il timer per la domanda</label>
-      <label for="AnswerTimer">Limite di tempo (minuti) per il completamento dell'obiettivo</label>
-      <input type="number" id="AnswerTimer" placeholder="1" min="1">
+    <div class="w-100" id="AnswerFieldSettings">
+      <h4>Settaggi del campo risposta</h4>
+      <div class="row w-100">
+        <div class="col-11">
+          <div class="input-group m-1 w-50">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Tip</div>
+            </div>
+            <input type="text" class="form-control" id="InsertAnswerFieldDescription" id="AnswerScore" placeholder="Indicazione">
+          </div>
+        </div>
+
+        <div class="col-1">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Eventuale indicazione utile per il giocatore">
+            <i class="fas fa-info"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="row w-100">
+        <div class="col-11">
+          <div class="input-group m-1 w-50">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Valutazione live</span>
+            </div>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" id="NeedEvaluation">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-1">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Indica se la valutazione è da richiedere sul momento al valutatore">
+            <i class="fas fa-info"></i>
+          </span>
+        </div>
+      </div>
+      
+      <div class="row w-100">
+        <div class="col-11">
+          <div class="input-group m-1 w-50">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Attivazione timer</span>
+            </div>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" id="InsertTimer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-1">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Attiva il timer alla cui scadenza viene segnalato al valutatore un momento di difficoltà">
+            <i class="fas fa-info"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="row w-100">
+        <div class="col-11">
+          <div class="input-group m-1 w-50">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Tempo</span>
+            </div>
+            <input type="number" class="form-control" id="AnswerTimer" placeholder="1" min="1">
+            <div class="input-group-append">
+              <span class="input-group-text">min</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="col-1">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Valore del timer">
+            <i class="fas fa-info"></i>
+          </span>
+        </div>
+      </div>
+          
 
       <script>
         $( "#InsertTimer" ).click( function() {
@@ -327,24 +417,19 @@
         });
       </script>
     </div>
-
-    <button onclick="if($('#AnswerFieldPreview').is(':empty')) back(); else saveAnswerFieldSettings();">Salva</button>
-    <button class="" onclick="back();">Annulla</button>
+  
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveAnswerFieldSettings();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
+    </div>
   </main>
 
 
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
   <main class="inner cover EditorSection" id="SetAnswerOutcome">
     <script>
-      $(document).on( "change", "#OutcomeSwitch", function() {
-        if ( $(this).prop( "checked" ) )
-          loadEditOutcomeSection( "ANSWER" );
-        else
-        loadEditOutcomeSection( "ONLYREADING" );
-      });
-
       // attiva/disattiva i number input in base alla spunta sulla checkbox di passaggio alla quest successiva
-      $(document).on( "click", "#OutcomesTable input[type='checkbox']", function() {
+      $(document).on( "click", ".OutcomesTable input[type='checkbox']", function() {
         if ( $(this).prop("checked") )
           $($(this).parent().next().children().first()).attr("disabled", true);
         else
@@ -352,39 +437,102 @@
       });
     </script>
     
-    <h1>TITOLO SEZIONE</h1>
+    <header>
+      <small>QUEST</small>
+      <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    </header>
+    <p class="lead SectionHeader">
+      In questa sezione potrai stabilire le conseguenze per ogni tipo di risposta che il giocatore darà, che sia giusta, sbagliata o corrispondente ad un dato specifico.<br>
+      <small>Si tenga presente che la verifica della risposta effettuata dall'applicazione di gioco è case-sensitive.</small>
+    </p>
 
-    <div class="custom-control custom-switch">
-      <input type="checkbox" class="custom-control-input" id="OutcomeSwitch">
-      <label class="custom-control-label" for="OutcomeSwitch">Programma in base al campo di risposta</label>
+    <div id="ChooseActivityType" class="p-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType_Reading">
+        <label class="form-check-label" for="ActivityType_Reading">Sola lettura</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType_Answer">
+        <label class="form-check-label" for="ActivityType_Answer">Interattiva</label>
+      </div>
     </div>
 
-    <div id="AnswerFieldRecap"></div>
+    <div id="ReadingActivity">
+      <h4>Programmazione attività</h4>
+      <table class="OutcomesTable">
+        <tr>
+      		<th>Risposta</th>
+      		<th>Passa alla quest successiva</th>
+      		<th>Attività su cui spostarsi</th>
+        </tr>
+        <tr>
+          <td><em>Sola lettura</em></td>
+          <td><input type="checkbox"></td>
+          <td><input type="number" placeholder="0" min="0"></td>
+        </tr>
+      </table>
+    </div>
 
-    <h3>Programmazione attività</h3>
+    <div id="AnswerActivity">
+      <div id="AnswerFieldRecap"></div>
 
-    <table id="OutcomesTable">
-    </table>
+      <h4>Programmazione attività</h4>
+
+      <table class="OutcomesTable">
+        <tr>
+      		<th>Risposta</th>
+      		<th>Passa alla quest successiva</th>
+          <th>Attività su cui spostarsi</th>
+          <th>Rimuovi</th>
+        </tr>
+        <tr>
+          <td><em>default</em></td>
+          <td><input type="checkbox"></td>
+          <td><input type="number" placeholder="0" min="0"></td>
+          <td></td>
+        </tr>
+      </table>
       
-    <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
-      </div>
-      <input type="text" class="form-control col-sm-5" placeholder="Risposta">
-      <div class="input-group-append">
-        <button class="btn btn-sm btn-primary" type="button" onclick="if ($('#AddOutcomeWidget input').val().trim() != '') addOutcome($('#AddOutcomeWidget input').val().trim(), ''); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
-        <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
+      <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
+        </div>
+        <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+        <div class="input-group-append">
+          <button class="btn btn-sm btn-primary" type="button" onclick="addOutcome($('#AddOutcomeWidget input').val().trim()); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
+          <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
+        </div>
       </div>
     </div>
 
-    <button class="SaveBtn" onclick="saveOutcomes();">Salva</button>
-    <button class="" onclick="back();">Annulla</button>
+    <script>
+      $("#ChooseActivityType input[name='ActivityType']").on("change", function() {
+        if ( $("#ActivityType_Reading").prop("checked") ) {
+          $( "#ReadingActivity" ).toggle(true);
+          $( "#AnswerActivity" ).toggle(false);
+          $( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", false );
+        }
+        else if ( $("#ActivityType_Answer").prop("checked") ) {
+          $( "#AnswerActivity" ).toggle(true);
+          $( "#ReadingActivity" ).toggle(false);
+          $( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", $( "#AnswerFieldRecap .alert-danger" ).length );
+        }
+      });
+    </script>
+
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveOutcomes();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
+    </div>
   </main>
 
 
   <!-- SCHERMATA DI MODIFICA TESTO -->
   <main class="inner cover EditorSection" id="EditText">
-    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <header>
+      <small>QUEST</small>
+      <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    </header>
     <p class="lead SectionHeader">
       Aggiungi un nuovo paragrafo al testo dell'attività.
     </p>
@@ -400,7 +548,10 @@
 
   <!-- SCHERMATA DI MODIFICA GALLERY -->
   <main class="inner cover EditorSection" id="EditGallery">
-    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <header>
+      <small>QUEST</small>
+      <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    </header>
     <p class="lead SectionHeader">
       Aggiungi una sezione contenente una o più immagini.<br>
       Nel caso sia stata scelta l'opzione di accessibilità, è obbligatorio inserire una descrizione per ogni immagine. Anche in caso contrario, tuttavia, inserire una didascalia è <em>caldamente consigliato</em>.

@@ -310,16 +310,22 @@ function goToSection(where) {
     case "EditActivity":
       GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
   }
-
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
-    
     change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
     change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
 
     switch ( where ) {
+      case "MainMenu":
+        $('header').css('display','none');
+        //chiedi roba all'utente e resetta il json e la la EditStory Section
+        reset_EditStory();
+        
+        break;
       case "ChooseGameMode":
         break;
       case "EditStory":
+        $('header').css('display','block');
+        
         CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
         break;
@@ -330,7 +336,7 @@ function goToSection(where) {
 
         $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
         $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
-
+      //console.log(GridsOfActivities[CurrentNavStatus.QuestN]);
         $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
         break;
       case "EditActivity":
@@ -388,6 +394,7 @@ function goToSection(where) {
     CurrentNavStatus.Section = where;
     if ( (where == "EditStory") || (where == "EditQuest") ) change_savetitle_button("saved");
     $("#"+where).fadeIn();
+    
   });
 };
 
@@ -755,4 +762,21 @@ function publisher(name) {//problema con unpublished, funziona se unpub c'è
   $.post("/editor/publisher",story, function(data, status){
     alert("Status: " + status);
   });
+}
+function reset_EditStory(){
+ /*n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
+ GridsOfActivities
+ mode = "default";
+ first_selected_stage = "";//per lo swap
+ first_selected_card_index = -1;
+ selected_card = "";//indica l'ultima carta cliccata dall'utente
+ 
+ n_activities = [];
+ GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
+ CardClickDisabled = false;
+  //$("#EditStory h1").text("TITOLO");
+  //$("#StoryTitleInput").val("");//TODO:far funzionare questa riga
+  //n_quests = 0;
+  //$("#QuestsGrid").empty();
+  */
 }

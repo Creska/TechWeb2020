@@ -33,9 +33,32 @@
 
 
 <body class="text-center">
+  
+  <!-- Button trigger modal 
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  connect to server
+</button>-->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      
+        <img style="width: 100%;" src="https://media.tenor.com/images/f6d1602a1c9e507b2cfe8e7c98faadd9/tenor.gif" />
+                
+      <div style='color:black' class="modal-body" >
+        Attenzione! se torni nella home perderai tutto quello che non hai salvato, vuoi procedere lo stesso?
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="goToSection('MainMenu');" class="btn btn-primary" data-dismiss="modal">ok nigger</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
-  <header class="masthead mb-auto">
+  <header style="display:none;" class="masthead mb-auto">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="#">STORY EDITOR</a>
   
@@ -47,7 +70,7 @@
       <div class="collapse navbar-collapse nav-masthead justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:saveStory(prompt('nome storia: '))" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
+            <a id="savelink" class="nav-link" href="javascript:saveStory(prompt('nome storia: '))" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
               <i class="far fa-save fa-2x"></i>
             </a>
           </li>
@@ -66,8 +89,8 @@
               <i class="far fa-eye fa-2x"></i>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+          <li class="nav-item" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+            <a id="homelink" class="nav-link" href="javascript:"  data-toggle="modal" data-target="#exampleModal">
               <i class="fas fa-home fa-2x"></i>
             </a>
           </li>

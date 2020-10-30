@@ -32,6 +32,9 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * I tooltip dopo i click non scompaiono
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
+* PLAYER
+    * Aggiungere cronometro
+    * Aggiornare in base alle ultime modifiche dell'editor
 * TUTTO
     * controllare compatibilità con schermi piccoli
 

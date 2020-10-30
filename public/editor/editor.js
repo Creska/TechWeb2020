@@ -150,14 +150,14 @@ function initQuest() {
  */
 function initActivity() {
 	let EmptyActivity = {
-		activity_text: [],
-		answer_field: "",
+    activity_text: [],
+    activity_type: "",
+		answer_field: {},
 		right_answer: "",
-		answer_score: "",
-		answer_outcome: "",
+		answer_outcome: [],
 		ASK_EVAL: 0,
 		GET_CHRONO: 0,
-    expected_time: 0,
+    expected_time: "",
     FINAL: 0
 	};
 
@@ -342,7 +342,8 @@ function goToSection(where) {
       case "EditActivity":
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
         
-        $("#EditActivity h1").html( $( "#EditStory .card-text").eq(CurrentNavStatus.QuestN).html() + " - Activity" + CurrentNavStatus.ActivityN );
+        $("#EditActivity header small").html( $( "#EditStory .card-text").eq(CurrentNavStatus.QuestN).html() );
+        $("#EditActivity header h1").html( "Activity" + CurrentNavStatus.ActivityN );
 
         if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL ) {
           change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
@@ -359,28 +360,26 @@ function goToSection(where) {
         break;
       case "EditText":
         // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
-        $("#EditText h1").html( $("#EditActivity h1").html() );
+        $("#EditText header small").html( $("#EditActivity header small").html() );
+        $("#EditText header h1").html( $("#EditActivity header h1").html() );
 
         $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
         break;
       case "EditGallery":
-        $("#EditGallery h1").html( $("#EditActivity h1").html() );
+        $("#EditGallery header small").html( $("#EditActivity header small").html() );
+        $("#EditGallery header h1").html( $("#EditActivity header h1").html() );
 
         loadEditGallerySection();
         break;
       case "EditAnswerField":
-        $("#EditAnswerField h1").html( $("#EditActivity h1").html() );
+        $("#EditAnswerField header small").html( $("#EditActivity header small").html() );
+        $("#EditAnswerField header h1").html( $("#EditActivity header h1").html() );
 
-        // SISTEMAREEEEEE
-        let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
-
-        if ( activity.answer_field || activity.right_answer || activity.expected_time || activity.answer_score || activity.ASK_EVAL || activity.GET_CHRONO )
-          loadEditAnswerFieldSection( "LOAD" );
-        else
-          loadEditAnswerFieldSection( "RESET" );
+        loadEditAnswerFieldSection();
         break;
       case "SetAnswerOutcome":
-        $("#SetAnswerOutcome h1").html( $("#EditActivity h1").html() );
+        $("#SetAnswerOutcome header small").html( $("#EditActivity header small").html() );
+        $("#SetAnswerOutcome header h1").html( $("#EditActivity header h1").html() );
 
         loadEditOutcomeSection();
         break;

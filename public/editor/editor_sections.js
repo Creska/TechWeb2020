@@ -97,157 +97,58 @@ function select( i ) {
 
 
 /**
- * @param MODE --> indica la modalità di caricamento
- * Prepara la sezione di editing del Campo Risposta. A seconda dei casi, carica la sezione come nuova oppure la compila con i dati salvati in CurrentWork
- * La modalità di caricamento può essere quella di reset totale della finestra, quella di cambiamento di tipologia dell'input oppure quella di caricmento dell'Answer Field salvato
+ * Carica la sezione e i parametri in base ai dati salvati nel json
  */
-function loadEditAnswerFieldSection( MODE ) {
-	switch ( MODE ) {
-		case "LOAD":
-			let AFinput = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field ) ).find(".AnswerInput").first();
-			let AFdes = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field ) ).find(".AnswerFieldDescription").first();
+function loadEditAnswerFieldSection() {
+	let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
-			if ( AFinput ) {
-				switch ( AFinput.prop( "tagName" ) ) {
-					case "UL":
-						$( "#QuestionType_Checklist" ).prop( "checked", true );
-	
-						$( "#AnswerFieldPreview" ).append( AFinput );
-	
-						$( $( "#AnswerFieldPreview" ).find( "label" ) ).each( function( index ) {
-							if ( $( this ).text() == CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer ) {
-								$( this ).prev().prop( "checked", true );
-							}
-	
-							$( this ).replaceWith( $( "<input/>",
-								  {
-									type: "text",
-									val: $( this ).text()
-								  }));
-						});
-	
-						$( "#AnswerFieldPreview" ).append( $( "<button/>",
-							{
-								"class": "btn btn-secondary AddRadio",
-								onclick: "addRadio('AnswerInput');",
-								text: "+"
-						}));
-						break;
-					case "INPUT":
-						if ( AFinput.attr( "type" ) == "text" ) {
-							$( "#QuestionType_Text" ).prop( "checked", true );
-						}
-						else if ( AFinput.attr( "type" ) == "number" ) {
-							$( "#QuestionType_Number" ).prop( "checked", true );
-						}
-	
-						$( "#AnswerFieldPreview" ).append( AFinput );
-					
-						$( "#AnswerFieldPreview" ).find( "input" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer );
-	
-						break;
-					default:
-						handleError();
-				}
-			}
+	$( "#ChecklistPreview ul" ).empty();
 
-			if ( AFdes )
-				$( "#InsertAnswerFieldDescription" ).val( AFdes.text() );
-			$( "#AnswerTimer" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time / 60000 );
-			$( "#AnswerScore" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score );
-			$( "#InsertTimer" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO );
-			if ( $( "#InsertTimer" ).prop( "checked" ) )
-				$( "#AnswerTimer" ).prop( "disabled", false );
-			else
-				$( "#AnswerTimer" ).prop( "disabled", true );
-			$( "#NeedEvaluation" ).prop( "checked", CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL );
-			break;
-		case "CHG_TYPE":
-			buildAnswerFieldPreview();
-			$( "#InsertAnswerFieldDescription" ).val( "" );
-			break;
-		case "RESET":
-			$( "#QuestionType_Checklist" ).prop( "checked", false );
-			$( "#QuestionType_Text" ).prop( "checked", false );
-			$( "#QuestionType_Number" ).prop( "checked", false );
+	switch ( activity.answer_field.type ) {
+		case "checklist":
+			$( "#QuestionType_Checklist" ).prop("checked", true);
+
+			$.each( activity.answer_field.options, function( index, value ) {
+				addAnswerOption( value );
+			});
 	
-			$( "#AnswerTimer" ).val( 0.5 );
-			$( "#AnswerTimer" ).attr( "disabled", true );
-			$( "#InsertTimer" ).prop( "checked", false );
-			$( "#AnswerScore" ).val( 0 );
-			$( "#NeedEvaluation" ).prop( "checked", false );
-			$( "#MissingRightAnswerWarning" ).remove();
-			$( "#AnswerFieldPreview" ).empty();
-			$( "#InsertAnswerFieldDescription" ).val( "" );
+			$( "#ChecklistPreview" ).toggle(true);
+			break;
+		case "text":
+			$( "#QuestionType_Text" ).prop("checked", true);
+			$( "#ChecklistPreview" ).toggle(false);
+			break;
+		case "number":
+			$( "#QuestionType_Number" ).prop("checked", true);
+			$( "#ChecklistPreview" ).toggle(false);
 			break;
 		default:
-			handleError();
-			break;
+			$( "#AFtype input[name=QuestionType" ).prop("checked", false);
+			$( "#ChecklistPreview" ).toggle(false);
 	}
+
+	$("InsertAnswerFieldDescription").val( activity.answer_field.description );
+
+	$( "#AnswerTimer" ).val( activity.expected_time / 60000 );
+	$( "#AnswerScore" ).val( activity.answer_score );
+	$( "#InsertTimer" ).prop( "checked", activity.GET_CHRONO );
+	if ( $( "#InsertTimer" ).prop( "checked" ) )
+		$( "#AnswerTimer" ).prop( "disabled", false );
+	else
+		$( "#AnswerTimer" ).prop( "disabled", true );
+	$( "#NeedEvaluation" ).prop( "checked", activity.ASK_EVAL );
 };
 
 
 /**
- * Costruisce il campo risposta in base alla tipologia scelta dall'utente.
- * I campi testo/numero non hanno nessun valore di default, così come non viene spuntato nessun radio di default
+ * @param option
+ * Aggiunge option all'elenco delle risposte della checklist
  */
-function buildAnswerFieldPreview() {
-  $( "#AnswerFieldPreview" ).empty();
-  
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<ul/>",
-		{
-			"class": "AnswerInput",
-			id: "AnswerInput"
-		}));
+function addAnswerOption( option ) {
+	if ( option && option != "default" )
+		$("#ChecklistPreview ul").append( $( "<li>" + "<span>" + option + "</span><button class='btn btn-danger btn-sm' onclick='$(this).parent().remove()'><i class='fas fa-minus'></i></button></li>" ) );
 
-		for ( i = 0; i < 2; i++ ) {
-			addRadio( "AnswerInput" );
-		}
-
-		$( "#AnswerFieldPreview" ).append( $( "<button/>",
-		{
-			"class": "btn btn-secondary AddRadio",
-			onclick: "addRadio('AnswerInput');",
-			text: "+"
-		}));
-	}
-	else if ( $( "#QuestionType_Text" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
-		{
-			type: "text",
-			"class": "AnswerInput",
-			id: "AnswerInput",
-			placeholder: "Risposta"
-		}));
-	}
-	else if ( $( "#QuestionType_Number" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview" ).prepend( $( "<input/>",
-		{
-			type: "number",
-			"class": "AnswerInput",
-			id: "AnswerInput",
-			placeholder: "0"
-		}));
-	}
-};
-
-
-/**
- * Salva il parametro Risposta Esatta specificato dall'utente, a seconda del tipo di campo risposta scelto
- */
-function saveRightAnswer() {
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		$( "#AnswerFieldPreview input[type='radio']" ).each( function( index ) {
-			if ( $( this ).prop( "checked" ) && $( this ).next().val().trim() ) {
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = $( this ).next().val().trim();
-				return;
-			}
-    });
-	}
-	else {
-		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].right_answer = $( "#AnswerFieldPreview input" ).val().trim();
-	}
+	$("#AddAnswerOption input").val("");
 };
 
 
@@ -255,47 +156,32 @@ function saveRightAnswer() {
  * Salva tutte le personalizzazioni che l'utente ha creato per il Campo risposta
  */
 function saveAnswerFieldSettings() {
-	saveRightAnswer();
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.description = $( "#InsertAnswerFieldDescription" ).val().trim();
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options = [];
 
-	if ( $( "#QuestionType_Checklist" ).prop( "checked" ) ) {
-		let InputLabel;
-		$( "#AnswerFieldPreview input[type='text']" ).each( function( index ) {
-			InputLabel = $( "<label/>",
-			{
-				for: "AnswerOption" + String( index )
-			});
-
-			if ( $( this ).val().trim() == "" ) {
-				InputLabel.text( "Opzione" + String( index ) );
+	$( "#AFtype input[name=QuestionType]" ).each( function() {
+		if ( $(this).prop("checked") ) {
+			switch ( $(this).attr("id") ) {
+				case "QuestionType_Checklist":
+					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "checklist";
+					break;
+				case "QuestionType_Text":
+					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "text";
+					break;
+				case "QuestionType_Number":
+					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "number";
+					break;
 			}
-			else {
-				InputLabel.text( $( this ).val().trim() );
-			}
+		}
+	});
 
-			$( this ).replaceWith( InputLabel );
+	if ( $("#QuestionType_Checklist").prop("checked") ) {
+		$("#ChecklistPreview ul li").each( function() {
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options.push( $(this).find("span").first().text() );
 		});
 	}
-	
-	let AnswerField = $( "<div/>",
-		{
-			"class": "AnswerField",
-			id: "AnswerField"
-		});
 
-	if ( $( "#InsertAnswerFieldDescription" ).val().trim() != "" ) {
-		AnswerField.prepend( $( "<div/>",
-		{
-			"class": "AnswerFieldDescription",
-			id: "AnswerFieldDescription",
-			text: $( "#InsertAnswerFieldDescription" ).val().trim()
-		}));
-	}
-	
-	AnswerField.append( $( "#AnswerInput" ));
-			
-	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field = AnswerField.prop( "outerHTML" );
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = $( "#AnswerTimer" ).val() * 60000;
-	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_score = $( "#AnswerScore" ).val();
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO = $( "#InsertTimer" ).prop( "checked" );
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL = $( "#NeedEvaluation" ).prop( "checked" );
 
@@ -304,193 +190,129 @@ function saveAnswerFieldSettings() {
 
 
 /**
- * @param MODE --> indica se il sistema di progressione si basa su un'attività di sola lettura o provvista di un campo risposta
- * Carica la sezione per la gestione della progressione (outcome) dell'attività.
- * Se chiamata senza parametri, prepara tutto l'html necessario, altrimenti modifica la modalità scelta dall'utente
+ * Carica la sezione ed i parametri in base ai dati salvati nel json. Aggiunge eventuali alert nel caso sia scelta l'opzione di attività interattiva ma mancano i requisiti per farlo funzionare (ovvero: spuntata l'opzione di richeista valutazione, oppure answer field incompleto)
  */
-function loadEditOutcomeSection( MODE ) {
-	switch ( MODE ) {
-		case "ONLYREADING":
-			$( "#AnswerFieldRecap" ).addClass( "invisible" );
-			$( "#SetAnswerOutcome table tr" ).each( function(index) {
-				if (index <= 1) $(this).removeClass( "invisible" );
-				else $(this).addClass( "invisible" );
-			});
-			$( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", false );
-			return;
-		case "ANSWER":
-			$( "#AddOutcomeWidget input" ).val("");
-			$( "#AnswerFieldRecap" ).removeClass( "invisible" );
-			$( "#SetAnswerOutcome table tr" ).each( function(index) {
-				if (index === 1) $(this).addClass( "invisible" );
-				else $(this).removeClass( "invisible" );
-			});
-			if ( $( "#AnswerFieldRecap .alert" ).length ) $( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", true );
-			else $( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", false );
-			return;
-	}
-	
+function loadEditOutcomeSection() {
 	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
-
-  	let OutcomeAlert = $( "<div/>",
-  	{
-    	"class": "alert alert-danger",
-    	role: "alert"
-	});
 
   	/* costruzione del recap dell'Answer Field */
   	$( "#AnswerFieldRecap" ).empty();
 
+	let OutcomeAlert = $( `<div class="col-xs-12 alert alert-danger text-justify" role="alert"><i class="fas fa-exclamation-circle"></i></div>` );
+
   	if ( CurrentStage.ASK_EVAL ) {
-    	OutcomeAlert.text( "Per questa attività è stata richiesta la valutazione in tempo reale." );
+    	OutcomeAlert.append( $("<p>Per questa attività è stata richiesta la valutazione in tempo reale.</p>") );
     	$( "#AnswerFieldRecap" ).append( OutcomeAlert );
-    	$( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", true );
   	}
   	else {
-    	$( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", false );
-
-    	if ( CurrentStage.answer_field && CurrentStage.right_answer ) {
-      		$( "#AnswerFieldRecap" ).append( $.parseHTML( "<h2>Anteprima del campo risposta</h2>" ) );
-      		$( "#AnswerFieldRecap" ).append( $.parseHTML( CurrentStage.answer_field ));
-     		$( "#AnswerFieldRecap" ).append( $.parseHTML( "<strong>Risposta corretta: <cite>" + CurrentStage.right_answer + "</cite>" ));
+    	if ( $.isEmptyObject( CurrentStage.answer_field ) || CurrentStage.answer_field.type == "" || ( CurrentStage.answer_field.type == "checklist" && CurrentStage.answer_field.options.length < 2 ) ) {
+			OutcomeAlert.append( $("<p>Campo risposta incompleto.</p>") );
+			$( "#AnswerFieldRecap" ).append( OutcomeAlert );
     	}
     	else {
-      		OutcomeAlert.text( "Campo risposta incompleto o risposta giusta mancante." );
-      		$( "#AnswerFieldRecap" ).append( OutcomeAlert );
-      		$( "#SetAnswerOutcome .SaveBtn" ).attr( "disabled", true );
+      		$( "#AnswerFieldRecap" ).append( $( "<h4>Anteprima del campo risposta</h4>" ) );
     	}
   	}
 
-  	/* costruzione della tabella */
-  	$( "#OutcomesTable" ).empty();
-  	$( "#OutcomesTable" ).append( $.parseHTML(`
-    	<tr>
-      		<th>Risposta</th>
-      		<th>Passa alla quest successiva</th>
-      		<th>Attività su cui spostarsi</th>
-      		<th>Rimuovi</th>
-    	</tr>`
-	  ));
-	addOutcome("<em>Solo lettura</em>", "OnlyReading");
-  	addOutcome("<em>Riposta corretta</em>", "correct");
-  	addOutcome("<em>Risposta errata</em>", "wrong");
+	/* reset delle tabelle degli outcomes */
+	$( "#AnswerActivity .OutcomesTable tr:nth-child(n+3)" ).remove();
+	$( ".OutcomesTable input[type=checkbox]" ).prop( "checked", false );
+	$( ".OutcomesTable input[type=number]" ).attr( "disabled", false );
+	$( ".OutcomesTable input[type=number]" ).val( "" );
 
 	/* caricamento dei dati presenti nel JSON */
-	if ( typeof CurrentStage.answer_outcome === 'object' && CurrentStage.answer_outcome !== null ) {
+	if ( CurrentStage.activity_type == 'ANSWER' ) {
+		$( "#ActivityType_Answer" ).prop( "checked", true );
+		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", $( "#AnswerFieldRecap .alert-danger" ).length );
+
 		let tr;
 
-  		for ( const[prop,val] of Object.entries( CurrentStage.answer_outcome ) ) {
-    		switch ( prop ) {
-      			case "RightAnswer":
-        			tr = $( "#OutcomesTable tr:nth-child(3)" );
-       				break;
-      			case "WrongAnswer":
-        			tr = $( "#OutcomesTable tr:nth-child(4)" );
-        			break;
-      			default:
-        			tr = $( "<tr/>" );
-        			tr.append( $.parseHTML( "<td>" + String( prop ) + "</td>" ) );
-        			tr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
-        			tr.append( ( $( "<input/>",
-        				{
-          					type: "number",
-          					placeholder: 0,
-          					min: 0
-        				})).wrap( "<td></td>" ).parent());
-        			tr.append( $.parseHTML( "<td><button class='btn btn-danger' onclick='$(this).parent().parent().remove()'>Cancella</button></td>" ) );
-        			$( "#OutcomesTable" ).append( tr );
-        			tr = $( "#OutcomesTable tr:last-child" );
-    		}
+		$.each( CurrentStage.answer_outcome, function(index, value) {
+			if ( value.response == "default" ) {
+				tr = $( "#AnswerActivity .OutcomesTable tr:nth-child(2)" )
+			}
+			else {
+				addOutcome( value.response );
+				tr = $( "#AnswerActivity .OutcomesTable tr:last-child" );
+			}
 
-    		if ( val == "nextquest" ) {
-      			tr.find( ":input[type='number']" ).val( "" );
-      			tr.find( ":input[type='number']" ).attr( "disabled", true );
-      			tr.find( ":input[type='checkbox']" ).prop( "checked", true );
-    		}
-    		else tr.find( "input[type=number]" ).val( val );
-
-		  }
-		  
-		  $( "#OutcomeSwitch" ).prop( "checked", true );
-		  loadEditOutcomeSection( "ANSWER" );
+			tr.find("input[type=checkbox]").prop( "checked", value.nextquest );
+			tr.find("input[type=number]").attr( "disabled", value.nextquest );
+			tr.find("input[type=number]").val( value.nextactivity );
+		}); 
+	}
+	else if ( CurrentStage.activity_type == 'READING' ) {
+		$( "#ActivityType_Reading" ).prop( "checked", true );
+		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", false );
+		
+		$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='checkbox']" ).prop( "checked", CurrentStage.answer_outcome[0].nextquest );
+		$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='number']" ).attr( "disabled", CurrentStage.answer_outcome[0].nextquest );
+		$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='number']" ).val( CurrentStage.answer_outcome[0].nextactivity );
 	}
 	else {
-		if ( CurrentStage.answer_outcome == "nextquest" ) {
-			$( "#OutcomesTable tr:nth-child(2) :input[type='number']" ).val( "" );
-			$( "#OutcomesTable tr:nth-child(2) :input[type='number']" ).attr( "disabled", true );
-			$( "#OutcomesTable tr:nth-child(2) :input[type='checkbox']" ).prop( "checked", true );
-		}
-		else $( "#OutcomesTable tr:nth-child(2) input" ).val( CurrentStage.answer_outcome );
+		$( "#ChooseActivityType input[type=radio]" ).prop( "checked", false );
+		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", false );
 
-		$( "#OutcomeSwitch" ).prop( "checked", false );
-		loadEditOutcomeSection( "ONLYREADING" );
+		$( "#AnswerActivity" ).toggle(false);
+		$( "#ReadingActivity" ).toggle(false);
 	}
 };
 
 
 /**
- * @param label 
- * @param id
- * Aggiunge alla UI un nuovo outcome, aggiungengo la label e l'id specificati.
- * L'id esiste solo per gli outcome predefiniti
+ * @param label
+ * Aggiunge alla tabella un nuovo outcome con la label specificata
  */
-function addOutcome( label, id ) {
-  let newtr = $( "<tr/>" );
-  newtr.append( $.parseHTML( "<td>" + label + "</td>" ) );
-  newtr.append( $.parseHTML( '<td><input type="checkbox" ></td>' ) );
-  newtr.append( ( $( "<input/>",
-  {
-    id: id,
-    type: "number",
-    placeholder: 0,
-    min: 0
-  })).wrap( "<td></td>" ).parent());
-  newtr.append( $.parseHTML( `<td><button class="btn btn-danger" onclick="$(this).parent().parent().remove()">Cancella</button></td>` ) );
-  $( "#OutcomesTable" ).append( newtr );
+function addOutcome( label ) {
+	if ( label && label != "default" ) {
+		let newtr = $( "<tr/>" );
+  		newtr.append( $.parseHTML( "<td>" + label + "</td>" ) );
+  		newtr.append( $.parseHTML( '<td><input type="checkbox"></td>' ) );
+  		newtr.append( ( $( "<input/>",
+  		{
+    		type: "number",
+    		placeholder: 0,
+    		min: 0
+  		})).wrap( "<td></td>" ).parent());
+  		newtr.append( $.parseHTML( `<td><button class="btn btn-danger" onclick="$(this).parent().parent().remove()"><i class='fas fa-minus'></i></button></td>` ) );
+  		$( "#AnswerActivity .OutcomesTable" ).append( newtr );
+	}
 };
 
 
 /**
- * Salva nel JSON tutti gli outcomes settati dall'autore
+ * Salva nel JSON tutti gli outcomes settati dall'autore e la tipologia di attività
 */
 function saveOutcomes() {
-	if ( $("#OutcomeSwitch").prop( "checked" ) ) {
-		let newobj = {};
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
 
-  		let next;
-  		let label;
+	if ( $( "#ActivityType_Reading" ).prop("checked") ) {
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = 'READING';
 
-  		$( "#OutcomesTable tr:not(:first-child):not(.invisible)" ).each( function( index ) {
-    		if ( $(this).find("input[type=checkbox]").first().prop( "checked" ) )
-      			next = "nextquest";
-    		else
-      			next = $(this).find("input[type=number]").first().val();
-
-    		label = $(this).find("input[type=number]").first().attr("id");
-  
-    		switch ( label ) {
-      			case "correct":
-        			newobj["RightAnswer"] = next;
-       				 break;
-      			case "wrong":
-        			newobj["WrongAnswer"] = next;
-        			break;
-      			case "expired":
-        			newobj["TimeExpired"] = next;
-        			break;
-      			default:
-        			newobj[$(this).children().first().prop("innerHTML")] = next;
-    		}
-  		});
-
-  		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = newobj;
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome.push({
+			response: "default",
+			nextquest: $("#ReadingActivity .OutcomesTable input[type=checkbox]").eq(0).prop( "checked" ),
+			nextactivity: $("#ReadingActivity .OutcomesTable input[type=number]").eq(0).val()
+		})
 	}
-	else {
-		if ( $( "#OutcomesTable tr:nth-child(2) :input[type=checkbox]" ).first().prop( "checked" ) )
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = "nextquest";
-		else
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = $( "#OutcomesTable tr:nth-child(2) :input[type=number]" ).first().val();
-	}
+	else if ( $( "#ActivityType_Answer" ).prop("checked") ) {
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = 'ANSWER';
+
+		let response_name;
+
+		$( "#AnswerActivity .OutcomesTable tr:nth-child(n+2)" ).each( function() {
+			if ( $(this).children().first().attr("id") )
+				response_name = "default";
+			else
+				response_name = $(this).children().first().text();
+
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome.push({
+				response: response_name,
+				nextquest: $(this).find("input[type=checkbox]").first().prop( "checked" ),
+				nextactivity: $(this).find("input[type=number]").first().val()
+			})
+		})
+	}	
   
   	// console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome); // debugging
   	back();

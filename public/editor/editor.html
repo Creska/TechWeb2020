@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   
-  <link rel="stylesheet" href="https://getbootstrap.com/docs/4.0/examples/cover/cover.css"> <!--sistemare css poi togliere-->
+  <link rel="stylesheet" href="cover.css">
   <link rel="stylesheet" href="editor.css">
 
   <title>Editor</title>
@@ -22,11 +22,15 @@
   <script>
     /* abilita tutti i tooltips */
     $(document).ready( function() {
-      $('[data-toggle="tooltip"]').tooltip();
+      $('[data-toggle="tooltip"]').tooltip({
+        trigger : 'hover'
+      });
     });
 
     $('[data-toggle="tooltip"]').mouseout( function() {
-      $('[data-toggle="tooltip"]').tooltip();
+      $('[data-toggle="tooltip"]').tooltip({
+        trigger : 'hover'
+      });
     });
   </script>
 </head>
@@ -36,46 +40,27 @@
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
   <header class="masthead mb-auto">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">STORY EDITOR</a>
-  
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <!-- le icone non si devono vedere in home - o devono essere disattivate -->
-      <div class="collapse navbar-collapse nav-masthead justify-content-center" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
-              <i class="far fa-save fa-2x"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Imposta la modalità di gioco">
-              <i class="fas fa-cog fa-2x"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
-              <i class="fab fa-css3 fa-2x"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
-              <i class="far fa-eye fa-2x"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
-              <i class="fas fa-home fa-2x"></i>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <div class="inner">
+      <h3 class="masthead-brand">STORY EDITOR</h3>
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
+          <i class="far fa-save fa-2x"></i>
+        </a>
+        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Imposta la modalità di gioco">
+          <i class="fas fa-cog fa-2x"></i>
+        </a>
+        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
+          <i class="fab fa-css3 fa-2x"></i>
+        </a>
+        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
+          <i class="far fa-eye fa-2x"></i>
+        </a>
+        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+          <i class="fas fa-home fa-2x"></i>
+        </a>
+      </nav>
+    </div>
   </header>
-  
 
   <div style="display:none;">
     <a href="../shared/css_editor.html" target="_blank">Editor CSS</a>
@@ -85,8 +70,8 @@
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
     <h1 class="cover-heading SectionTitle">Benvenuto nello Story Editor!</h1>
     <p class="lead SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
-    <div class="btn-group-vertical mt-5">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('EditStory');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
+    <div class="btn-group-vertical">
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('.masthead .nav-link').toggle(true); goToSection('EditStory');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
@@ -95,61 +80,77 @@
 
   <!-- SCELTA DI MODALITA' DI GIOCO -->
   <main class="inner cover mx-auto EditorSection" id="ChooseGameMode">
-    <p>Per cominciare, seleziona la modalità di gioco:</p>
-    <div class="card-deck">
-      <!-- cambiare le immagini -->
-      <div class="card rounded bg-secondary" id="a0" onclick="CurrentWork.game_mode='SINGLE'; select(0);">
-        <img src="alone.jpg" class="card-img-top" alt="..." >
-        <div class="card-body">
-          <h5 class="card-title">Single Player</h5>
+    <h1 class="cover-heading SectionTitle"><em>Storia senza nome</em></h1>
+    <p class="lead SectionHeader">
+      In questa sezione potrai compilare tutte le opzioni riguardo alla modalità di gioco.<br>
+      Il numero di giocatori e quello dei dispositivi sono informazioni che serviranno all'applicazione server per gestire correttamente tutte le funzionalità.<br>
+      Spuntando l'opzione di accessibilità, in fase di pubblicazione saranno effettuati controlli specifici per accertare che il gioco sia 100% accessibile.
+    </p>
+
+    <div>
+      <p>Numero di giocatori:</p>
+      <div class="card-deck">
+        <!-- cambiare le immagini -->
+        <div class="card rounded bg-secondary" id="a0" onclick="CurrentWork.game_mode='SINGLE'; select(0);">
+          <img src="../images/single.jpg" class="card-img-top" alt="..." >
+          <div class="card-body">
+            <h5 class="card-title">Single Player</h5>
+          </div>
         </div>
-      </div>
-      <div class="card rounded bg-secondary" id="a1" onclick="CurrentWork.game_mode='GROUP'; select(1);">
-        <img src="https://i.imgflip.com/34ou8h.png" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Multiplayer</h5>
-          <p class="card-text">Gruppi da 2-5 membri</p>
+        <div class="card rounded bg-secondary" id="a1" onclick="CurrentWork.game_mode='GROUP'; select(1);">
+          <img src="../images/group.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Gruppo</h5>
+            <p class="card-text">Gruppo unico da 2-5 membri</p>
+          </div>
         </div>
-      </div>
-      <div class="card rounded bg-secondary" id="a2" onclick="CurrentWork.game_mode='CLASS'; select(2);">
-        <img src="milosse.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Classe</h5>
-          <p class="card-text">Gruppi da 15-20 membri</p>
+        <div class="card rounded bg-secondary" id="a2" onclick="CurrentWork.game_mode='CLASS'; select(2);">
+          <img src="../images/class.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Classe</h5>
+            <p class="card-text">2-5 gruppi che giocano in parallelo</p>
+          </div>
         </div>
       </div>
     </div>
+  
+    <div class="mt-5" style="display: none;" id="NumberOfDevices">
+      <p>Il numero di device di controllo si riferisce al numero di dispositivi che possono interagire con i campi risposta e la chat. Scegli se attribuire il controllo della storia ad un solo membro per gruppo, o ad ogni giocatore in esso:</p>
 
-    <div class="invisible" id="NumberOfDevices">
-      <p>Scegli se attribuire il controllo della storia ad un membro per gruppo, o ad ogni giocatore:</p>
-
-      <button id="a3" class="btn btn-lg bg-secondary" onclick="CurrentWork.single_device = 1; select(3);">SINGOLO</button>
-      <button id="a4" class="btn btn-lg bg-secondary" onclick="CurrentWork.single_device = 0; select(4);">MULTIPLO</button>
+      <button id="a3" class="btn btn-secondary bg-secondary" onclick="CurrentWork.single_device = 1; select(3);">SINGOLO</button>
+      <button id="a4" class="btn btn-secondary bg-secondary" onclick="CurrentWork.single_device = 0; select(4);">MULTIPLO</button>
     </div>
     
-    <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
-    <button id="a5" class="btn btn-lg btn-secondary mb-3 mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(5);"><i class="fab fa-accessible-icon"></i></button>
-    <button id="a6" class="btn btn-lg btn-secondary mb-3 rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(6);"><i class="fas fa-times"></i></button>
-    <p><a id="StartEditing" class="btn btn-lg btn-primary rounded disabled" onclick="goToSection('EditStory');">Avanti</a></p>
+    <div class="mb-3">
+      <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
+      <button id="a5" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(5);"><i class="fab fa-accessible-icon"></i></button>
+      <button id="a6" class="btn btn-secondary btn-lg rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(6);"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded">Annulla</button>
+    </div>
   </main>
 
 
   <!-- GESTIONE DEL TITOLO DELLA STORIA E DELL'INSIEME DI QUEST -->
   <main role="main" class="inner cover EditorSection" id="EditStory">
-    <h1 class="cover-heading SectionTitle">TITOLO</h1>
+    <h1 class="cover-heading SectionTitle"><em>Storia senza nome</em></h1>
     <p class="lead SectionHeader">
       Cambia il nome della storia e gestisci la lista delle quest.
     </p>
 
-    <div class="input-group mb-3 mt-5 font-weight-bold">
+    <div class="input-group font-weight-bold">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="StoryTitleInput" class="form-control" placeholder="NuovaStoria" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="StoryTitleInput" class="form-control" placeholder="Nuova Storia" onclick="change_savetitle_button('unsaved');">
       <div class="input-group-append">
          <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
     </div>
+
     <div class="col-xs-12 alert alert-info text-justify" role="alert">
       <i class="fas fa-info"></i>
       <p>Di default cliccare su una quest ti permette di impostarne i parametri, tuttavia vi sono le modalità swap e cancel, rispettivamente per scambiare di posizione le quest ed  eliminarle.
@@ -186,14 +187,14 @@
   <main class="inner cover EditorSection" id="EditQuest">
     <h1 class="cover-heading SectionTitle">TITOLO</h1>
     <p class="lead SectionHeader">
-      Cambia il nome della quest e gestisci la lista delle attività.
+      Qui puoi cambiare il nome della quest e gestire la lista delle attività. Una <em>quest</em> è un insieme di attività. L'ordine delle quest è fisso per tutti i giocatori, indipendentemente da come viene completato l'ultimo esercizio.
     </p>
 
-    <div class="input-group mb-3 mt-5 font-weight-bold">
+    <div class="input-group mb-5 font-weight-bold">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="QuestTitleInput" class="form-control" placeholder="NuovaQuest" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="QuestTitleInput" class="form-control" placeholder="Nuova Quest" onclick="change_savetitle_button('unsaved');">
       <div class="input-group-append">
          <button class="btn btn-primary" id="SaveQuestTitle" type="button" onclick="save_title('quest')">Salva</button>
       </div>
@@ -252,10 +253,10 @@
       <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
+      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-3 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
         <i class="fas fa-paragraph"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
+      <button class="btn btn-lg btn-secondary mb-3 mr-3 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
         <i class="far fa-images"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
@@ -284,7 +285,7 @@
     </p>
 
     <div id="AFtype">
-      <h4>Tipologia di input</h4>
+      <h4 class="mb-3">Tipologia di input</h4>
       <div>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Checklist">
@@ -299,10 +300,12 @@
           <label class="form-check-label" for="QuestionType_Number">Numero</label>
         </div>
 
-        <div id="ChecklistPreview">
-          <ul></ul>
+        <div class="mt-5" id="ChecklistPreview">
+          <h4 class="mb-3">Risposte selezionabili</h4>
 
-          <div id="AddAnswerOption" class="input-group input-group-sm mb-3 font-weight-bold">
+          <ul class="mb-3"></ul>
+
+          <div id="AddAnswerOption" class="input-group input-group-sm font-weight-bold">
             <div class="input-group-prepend">
               <span class="input-group-text bg-light">Aggiungi opzione:</span>
             </div>
@@ -325,18 +328,19 @@
       </div>
     </div>
     
-    <!-- Sezione per il settaggio dell'AnswerField - non è soggetto a reload in caso il creator cambi opzione di input -->
-    <div class="w-100" id="AnswerFieldSettings">
-      <h4>Settaggi del campo risposta</h4>
+
+    <!-- SEZIONE DI CREAZIONE CAMPO RISPOSTA -->
+    <div class="w-100 mt-5" id="AnswerFieldSettings">
+      <h4 class="mb-3">Opzioni del campo risposta</h4>
       <div class="row w-100">
         <div class="col-11">
-          <div class="input-group m-1 w-50">
+          <div class="input-group m-1">
             <div class="input-group-prepend">
               <div class="input-group-text">Tip</div>
             </div>
             <input type="text" class="form-control" id="InsertAnswerFieldDescription" id="AnswerScore" placeholder="Indicazione">
           </div>
-        </div>
+       </div>
 
         <div class="col-1">
           <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Eventuale indicazione utile per il giocatore">
@@ -347,7 +351,7 @@
 
       <div class="row w-100">
         <div class="col-11">
-          <div class="input-group m-1 w-50">
+          <div class="input-group m-1">
             <div class="input-group-prepend">
               <span class="input-group-text">Valutazione live</span>
             </div>
@@ -368,7 +372,7 @@
       
       <div class="row w-100">
         <div class="col-11">
-          <div class="input-group m-1 w-50">
+          <div class="input-group m-1">
             <div class="input-group-prepend">
               <span class="input-group-text">Attivazione timer</span>
             </div>
@@ -389,7 +393,7 @@
 
       <div class="row w-100">
         <div class="col-11">
-          <div class="input-group m-1 w-50">
+          <div class="input-group m-1 w-75">
             <div class="input-group-prepend">
               <span class="input-group-text">Tempo</span>
             </div>
@@ -442,11 +446,12 @@
       <h1 class="cover-heading SectionTitle">TITOLO</h1>
     </header>
     <p class="lead SectionHeader">
-      In questa sezione potrai stabilire le conseguenze per ogni tipo di risposta che il giocatore darà, che sia giusta, sbagliata o corrispondente ad un dato specifico.<br>
+      In questa sezione potrai stabilire gli <em>outcome</em> di ogni attività. Per <em>outcome</em> si intende la corrispondenza tra una risposta e la rispettiva conseguenza. Graze all'uso della tabella, sarai in grado di stabilire i reindirizzamenti per ogni specifica risposta, che quindi potrà condurre ad un'altra attività o alla quest successiva.<br>
       <small>Si tenga presente che la verifica della risposta effettuata dall'applicazione di gioco è case-sensitive.</small>
     </p>
 
     <div id="ChooseActivityType" class="p-3">
+      <h4 class="mb-3">Tipologia attività</h4>
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType_Reading">
         <label class="form-check-label" for="ActivityType_Reading">Sola lettura</label>
@@ -457,45 +462,45 @@
       </div>
     </div>
 
-    <div id="ReadingActivity">
-      <h4>Programmazione attività</h4>
-      <table class="OutcomesTable">
-        <tr>
+    <div class="mt-5" id="ReadingActivity">
+      <h4 class="mb-3">Programmazione attività</h4>
+      <table class="w-100 mt-3 OutcomesTable">
+        <tr class="mb-2">
       		<th>Risposta</th>
       		<th>Passa alla quest successiva</th>
-      		<th>Attività su cui spostarsi</th>
+      		<th>Passa ad attività specifica</th>
         </tr>
         <tr>
           <td><em>Sola lettura</em></td>
           <td><input type="checkbox"></td>
-          <td><input type="number" placeholder="0" min="0"></td>
+          <td><input type="number" placeholder="0" size="6" min="0"></td>
         </tr>
       </table>
     </div>
 
-    <div id="AnswerActivity">
-      <div id="AnswerFieldRecap"></div>
+    <div class="mt-5" id="AnswerActivity">
+      <div class="mb-5" id="AnswerFieldRecap"></div>
 
       <h4>Programmazione attività</h4>
 
-      <table class="OutcomesTable">
-        <tr>
+      <table class="w-100 mt-3 OutcomesTable">
+        <tr class="mb-2">
       		<th>Risposta</th>
       		<th>Passa alla quest successiva</th>
-          <th>Attività su cui spostarsi</th>
+          <th>Passa ad attività specifica</th>
           <th>Rimuovi</th>
         </tr>
         <tr>
           <td><em>default</em></td>
           <td><input type="checkbox"></td>
-          <td><input type="number" placeholder="0" min="0"></td>
+          <td><input type="number" placeholder="0" size="6" min="0"></td>
           <td></td>
         </tr>
       </table>
       
-      <div id="AddOutcomeWidget" class="input-group input-group-sm mb-3 font-weight-bold">
+      <div id="AddOutcomeWidget" class="input-group input-group-sm font-weight-bold mb-3 mt-5">
         <div class="input-group-prepend">
-          <span class="input-group-text bg-light">Aggiungi conseguenza a risposta specifica:</span>
+          <span class="input-group-text bg-light">Aggiungi outcome:</span>
         </div>
         <input type="text" class="form-control col-sm-5" placeholder="Risposta">
         <div class="input-group-append">

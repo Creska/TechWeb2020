@@ -5,6 +5,7 @@ html {
 
 body {
   background-color: #333;
+  width: 100%;
   overflow-x: hidden; /*assumendo che non vi sia overflow orizzontale*/
 }
 
@@ -13,21 +14,29 @@ body, .cover-container {
   min-height: 100%;
 }
 
-#navbarNav {
-  width: 100vw;
+@media (min-width: 500px) {
+  .masthead .nav-link {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
 }
 
-#navbarNav a {
-  margin-left: 30px;
+.masthead .nav-link:not(:last-child) {
+  display: none;
 }
 
 main {
-  margin-bottom: 25vh;
+  margin-bottom: 15vh;
+  margin-top: 15vh;
+}
+
+.EditorSection:not(#MainMenu) { 
+  display: none;
   margin-top: 5vh;
 }
 
-.EditorSection {
-  display: none;
+#MainMenu {
+  display: block;
 }
 
 .SectionHeader {
@@ -35,12 +44,10 @@ main {
   text-align: justify;
 }
 
-#MainMenu {
-  display: block;
-}
-
 .alert {
   line-height: 15pt;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
   text-shadow: none;
 }
 
@@ -54,53 +61,72 @@ main {
 }
 
 .BackBtn {
-  margin-top: 25vh;
-}
-
-.card:hover {
-   cursor: pointer;
-   transform: scale(1.1);
+  margin-top: 15vh;
 }
 
 .Save-Cancel {
+  margin-top: 10vh;
+}
+
+.CardGrid {
   margin-top: 5vh;
 }
 
-.locked {
-  opacity: 0.3;
+.card:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
-#EditAnswerField > div {
-  margin-top: 5vh;
+/* ------------------------- */
+
+#NumberOfDevices .btn-secondary {
+  background-color: #666;
+  border-style: none;
+  color: #fff;
 }
 
-#AFui, #AnswerFieldRecap {
-  background-color: #555;
+#ChooseGameMode .rounded-circle {
+  border-style: none;
 }
 
-#AnswerFieldPreview {
-  text-align: center;
-  margin: 0;
-  width: 100%;
-}
-
-#AFui .form-group {
-  width: 100%;
-  padding: 10px;
-}
-
-#AnswerFieldPreview ul {
+#ChecklistPreview ul, #ChecklistPreview li {
   list-style-type: none;
-  margin: 15px 0 15px 0;
-  padding: 0;
+  margin-left: 0;
+  padding-left: 0;
 }
 
-#AnswerFieldPreview li {
-  padding: 0;
+#AnswerFieldSettings .col-1 {
+  display: flex;
+  align-items: center;
 }
 
 #ReadingActivity, #AnswerActivity {
   display: none;
+}
+
+.OutcomesTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.OutcomesTable tr:not(:last-child) {
+  border-bottom-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: grey;
+}
+
+.OutcomesTable th, .OutcomesTable td {
+  max-width: 25%;
+  overflow: hidden;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  word-wrap: break-word;
+}
+
+.OutcomesTable th:not(:last-child), .OutcomesTable td:not(:last-child) {
+  border-right-width: thin;
+  border-right-style: solid;
+  border-color: grey;
 }
 
 #EditText textarea {
@@ -122,24 +148,6 @@ main {
   width: 10vw;
   height: auto;
 }
-
-
-/* non so cosa sia
-  .bd-placeholder-img {
-    font-size: 1.125rem;
-    text-anchor: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  @media (min-width: 768px) {
-    .bd-placeholder-img-lg {
-      font-size: 3.5rem;
-    }
-  } */
-  /*da qui in poi comincia st1*/
 
 
 /*!

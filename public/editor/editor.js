@@ -725,19 +725,25 @@ function setFinalActivity() {
 }
 function saveStory(nome) { 
   value = prompt('bool published: ');
-  story= {//storia ipotetica
-    story_data: [{
+  data_array = get_all_images_bytes();
+    data_array.push({
       name: nome+".json",
       data: CurrentWork
-    }],
+    });
+  story= {//storia ipotetica
+    story_data: data_array,    
     story_name: nome,
     published: value,
     checked: false
+    //story: true ritengo sia inutile
   };
   $.post("/editor/saveStory",story, function(data,status){
     alert("Status: " + status);
   });
 } 
+function get_all_images_bytes(){
+  return 
+}
 function getStory(nome) {//fa crashare l'app anche con published
   value = prompt('bool published: ');
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
@@ -762,20 +768,7 @@ function publisher(name) {//problema con unpublished, funziona se unpub c'è
     alert("Status: " + status);
   });
 }
-function reset_EditStory(){
- /*n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
- GridsOfActivities
- mode = "default";
- first_selected_stage = "";//per lo swap
- first_selected_card_index = -1;
- selected_card = "";//indica l'ultima carta cliccata dall'utente
- 
- n_activities = [];
- GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
- CardClickDisabled = false;
-  //$("#EditStory h1").text("TITOLO");
-  //$("#StoryTitleInput").val("");//TODO:far funzionare questa riga
-  //n_quests = 0;
-  //$("#QuestsGrid").empty();
-  */
-}
+
+//bug grafico nella creazione delle gallerie partendo da una gallery r creandone altre consecutive e altri bug
+
+//manca campo per chiedere nome

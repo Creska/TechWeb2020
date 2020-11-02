@@ -7,12 +7,12 @@ NOTE:
 
 var StoryObj = {
 	ACCESSIBILITY: 0,
-	story_title: "<h1 id='StoryTitle'>Storia di prova</h1>",
+	story_title: "<h1 role='heading' aria-level='1' id='StoryTitle'>Storia di prova</h1>",
 	story_ID: -1,
 	game_mode: "",
 	quests: [
 		{	
-			quest_title: "<h2 class='QuestTitle'>Prima quest</h2>",
+			quest_title: "<h2 role='heading' aria-role='2' class='QuestTitle'>Prima quest</h2>",
 			activities: [
 				{
 					activity_text: 
@@ -99,7 +99,7 @@ var StoryObj = {
 			]
 		},
 		{
-			quest_title: "<h2 class='QuestTitle'>Seconda quest</h2>",
+			quest_title: "<h2 role='heading' aria-level='2' class='QuestTitle'>Seconda quest</h2>",
 			activities: [
 				{
 					activity_text: 
@@ -221,9 +221,6 @@ function handleError() {
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
 	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
-
-	/* TODO: aggiungere l'alert riguardante l'accessibilità del gioco */
-
     goToQuest( 0 );
 };
 
@@ -288,8 +285,52 @@ function goToActivity( activity_n ) {
 
 	NewActivity.append( NewActivityText );
 
-    if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
-        NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
+    if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_type == 'ANSWER' ) {
+		let AF = $( "<div class='AnswerField'></div>" );
+		AF.append( $( "<p class='AnswerFieldDescription'>" + StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.description + "</p>" ));
+
+		switch ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type ) {
+			case 'checklist':
+				AF.append( $( "<ul class='AnswerInput'></ul>" ) );
+				let newli;
+
+				$.each( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field, function(index, value) {
+					newli = $( "<li class='form-check'></li>" );
+					newli.append( $( "<input/>",
+					{
+						class: "form-check-input",
+						type: "radio",
+						name: "radio-checklist",
+						id: "opt" + index
+					}));
+					newli.append( $( "<label/>",
+					{
+						class: "form-check-label",
+						for: "opt" + index,
+						text: value
+					}));
+					AF.find( ".AnswerInput" ).append( newli );
+				});
+				break;
+			case 'text':
+				AF.append( $( "<input/>",
+				{
+					type: "text",
+					placeholder: "Risposta"
+				}));
+				break;
+			case 'number':
+				AF.append( $( "<input/>",
+				{
+					type: "number",
+					placeholder: "0"
+				}));
+				break;
+			default:
+				handleError();
+		}
+
+		NewActivity.append(AF);
 	}
 
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
@@ -311,6 +352,8 @@ function goToActivity( activity_n ) {
 	else {
 		$( ".NextActivity" ).attr( "onclick", "nextStage();" );
 	}
+
+	/* TODO: attiva il cronometro */
 };
 
 
@@ -326,28 +369,20 @@ function toggleIntervalTimer() {
 
 
 /**
-* @param score
-* Funzione che incrementa il punteggio ottenuto rispondendo alle domande in modo giusto
-* La call viene inserita dall'editor all'interno della programmazione delle attività
-*/
-function updateScore( score ) {
-	StoryObj.score[CurrentStatus.QuestN].splice( CurrentStatus.ActivityN, 0, score );
-};
-
-
-/**
  * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato
  */
 function nextStage() {
 	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
-	if ( CurrentStage.answer_field )
+	/* TODO: ferma il cronometro e segna il tempo impiegato a completare l'attività */
+	
+	if ( CurrentStage.activity_type == 'ANSWER' )
 		checkAnswer();
-	else {
-		if ( CurrentStage.answer_outcome == "nextquest" )
+	else if ( CurrentStage.activity_type == 'READING') {
+		if ( CurrentStage.answer_outcome.nextquest )
 			goToQuest( CurrentNavStatus.QuestN + 1 );
 		else
-			goToActivity( CurrentStage.answer_outcome );
+			goToActivity( CurrentStage.answer_outcome.nextactivity );
 	}
 };
 
@@ -363,10 +398,9 @@ function checkAnswer() {
 		/* TODO - manda richiesta */
 	}
 	else {
-		/* ricava la risposta giusta */
 		let PlayerAnswer = "";
 
-		if ( $( ".AnswerField" ).find( "input" ).first().attr( "type" ) == "radio" ) {
+		if ( CurrentActivity.answer_field.type == 'checklist' ) {
 			$( ".AnswerField input" ).each( function() {
 				if ( $(this).prop( "checked" ) ) PlayerAnswer = $(this).next().text();
 			});
@@ -375,21 +409,31 @@ function checkAnswer() {
 			PlayerAnswer = $( ".AnswerField" ).find( "input" ).first().val();
 		
 		/* controlla come proseguire la partita */
-		let goto;
 
-		if ( PlayerAnswer == CurrentActivity.right_answer ) {
-				updateScore( CurrentActivity.answer_score );
-				goto = CurrentActivity.answer_outcome["RightAnswer"];
+		$.each( CurrentActivity.answer_outcome, function(index, value) {
+			if ( value.response == PlayerAnswer ) {
+				if ( value.nextquest ) {
+					goToQuest( CurrentStatus.QuestN + 1 );
+					return;
+				}
+				else {
+					goToActivity( value.nextactivity );
+					return;
+				}
 			}
-		else if ( (PlayerAnswer != CurrentActivity.right_answer) && (PlayerAnswer != "") ){
-			updateScore( 0 );
-			if ( CurrentActivity.answer_outcome[PlayerAnswer] != undefined ) goto = CurrentActivity.answer_outcome[PlayerAnswer];
-			else goto = CurrentActivity.answer_outcome["WrongAnswer"];
-		}
-		else
-			goto = CurrentActivity.answer_outcome["WrongAnswer"];
+		});
 
-		if ( goto == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1);
-		else goToActivity( goto );
+		$.each( CurrentActivity.answer_outcome, function(index, value) {
+			if ( value.response == 'default' ) {
+				if ( value.nextquest ) {
+					goToQuest( CurrentStatus.QuestN + 1 );
+					return;
+				}
+				else {
+					goToActivity( value.nextactivity );
+					return;
+				}
+			}
+		});
 	}
 };

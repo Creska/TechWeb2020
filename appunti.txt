@@ -36,6 +36,8 @@ BUG E PROBLEMI DA CORREGGERE
 * PLAYER
     * Aggiungere cronometro
     * Aggiornare in base alle ultime modifiche dell'editor
+    * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
+    * Migliorare la schermata di inizio
 * TUTTO
     * controllare compatibilità con schermi piccoli
 

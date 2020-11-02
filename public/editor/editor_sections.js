@@ -82,11 +82,11 @@ function select( i ) {
   
 	  switch (i) {
 		case 0:
-		  $( "#NumberOfDevices" ).addClass( "invisible" );
+		  $( "#NumberOfDevices" ).toggle(false);
 		  break;
 		case 1:
 		case 2:
-		  $( "#NumberOfDevices" ).removeClass( "invisible" );
+		  $( "#NumberOfDevices" ).toggle(true);
 	  }
 	}
 	else
@@ -145,8 +145,11 @@ function loadEditAnswerFieldSection() {
  * Aggiunge option all'elenco delle risposte della checklist
  */
 function addAnswerOption( option ) {
+	/* anche se non è un metodo perfetto, return false cancella il link ad href */
+	option = option.replace(/(<([^>]+)>)/gi, "");
+
 	if ( option && option != "default" )
-		$("#ChecklistPreview ul").append( $( "<li>" + "<span>" + option + "</span><button class='btn btn-danger btn-sm' onclick='$(this).parent().remove()'><i class='fas fa-minus'></i></button></li>" ) );
+		$("#ChecklistPreview ul").append( $( "<li>" + "<span>" + option + "</span><a class='badge badge-danger ml-3' href='#' onclick='$(this).parent().remove(); return false;'><i class='fas fa-minus'></i></a></li>" ) );
 
 	$("#AddAnswerOption input").val("");
 };
@@ -156,7 +159,7 @@ function addAnswerOption( option ) {
  * Salva tutte le personalizzazioni che l'utente ha creato per il Campo risposta
  */
 function saveAnswerFieldSettings() {
-	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.description = $( "#InsertAnswerFieldDescription" ).val().trim();
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.description = $( "#InsertAnswerFieldDescription" ).val().trim().replace(/(<([^>]+)>)/gi, "");
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options = [];
 
 	$( "#AFtype input[name=QuestionType]" ).each( function() {
@@ -223,6 +226,8 @@ function loadEditOutcomeSection() {
 	/* caricamento dei dati presenti nel JSON */
 	if ( CurrentStage.activity_type == 'ANSWER' ) {
 		$( "#ActivityType_Answer" ).prop( "checked", true );
+		$( "#AnswerActivity" ).toggle(true);
+		$( "#ReadingActivity" ).toggle(false);
 		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", $( "#AnswerFieldRecap .alert-danger" ).length );
 
 		let tr;
@@ -243,6 +248,8 @@ function loadEditOutcomeSection() {
 	}
 	else if ( CurrentStage.activity_type == 'READING' ) {
 		$( "#ActivityType_Reading" ).prop( "checked", true );
+		$( "#AnswerActivity" ).toggle(false);
+		$( "#ReadingActivity" ).toggle(true);
 		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", false );
 		
 		$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='checkbox']" ).prop( "checked", CurrentStage.answer_outcome[0].nextquest );
@@ -264,6 +271,8 @@ function loadEditOutcomeSection() {
  * Aggiunge alla tabella un nuovo outcome con la label specificata
  */
 function addOutcome( label ) {
+	label = label.replace(/(<([^>]+)>)/gi, ""); // rimuove tags html
+
 	if ( label && label != "default" ) {
 		let newtr = $( "<tr/>" );
   		newtr.append( $.parseHTML( "<td>" + label + "</td>" ) );
@@ -271,10 +280,11 @@ function addOutcome( label ) {
   		newtr.append( ( $( "<input/>",
   		{
     		type: "number",
-    		placeholder: 0,
+			placeholder: 0,
+			size: 6,
     		min: 0
   		})).wrap( "<td></td>" ).parent());
-  		newtr.append( $.parseHTML( `<td><button class="btn btn-danger" onclick="$(this).parent().parent().remove()"><i class='fas fa-minus'></i></button></td>` ) );
+  		newtr.append( $.parseHTML( `<td><a class='badge badge-danger ml-3' href='#' onclick='$(this).parent().parent().remove(); return false;'><i class='fas fa-minus'></i></a></td>` ) );
   		$( "#AnswerActivity .OutcomesTable" ).append( newtr );
 	}
 };
@@ -323,7 +333,7 @@ function saveOutcomes() {
  * Salva il paragrafo di testo inserito ed inserisce, nella rispettiva card, una sottostringa come anteprima
  */
 function saveTextParagraph() {
-  let text = $('#TextParInput').val().trim();
+  let text = $('#TextParInput').val().trim().replace(/(<([^>]+)>)/gi, "");
 
   CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = "<p class='TextParagraph'>" + text + "</p>";
   if (text)
@@ -431,7 +441,7 @@ function saveImageGallery() {
       {
         "class": "d-block w-100",
         src: row.find("img").eq(0).attr("src"),
-        alt: row.find("input").eq(0).val()
+        alt: row.find("input").eq(0).val().replace(/(<([^>]+)>)/gi, "")
       }));
 
       newgallery.children().first().append(newpic);

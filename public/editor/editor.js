@@ -58,7 +58,7 @@ function save_title( which ) {
   let title;
   switch ( which ) {
     case "story":
-      title = $( '#StoryTitleInput' ).val().trim()
+      title = $( '#StoryTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
       CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
 
       if ( title )
@@ -70,7 +70,7 @@ function save_title( which ) {
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
-        title = $("#NewQuestWidget input").val().trim();
+        title = $("#NewQuestWidget input").val().trim().replace(/(<([^>]+)>)/gi, "");
         if ( title ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
@@ -78,7 +78,7 @@ function save_title( which ) {
         }
       }
       else {
-        title = $( '#QuestTitleInput' ).val().trim();
+        title = $( '#QuestTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
 
         if ( title ) {
           // aggiorna il nome della card
@@ -461,6 +461,7 @@ function create_card(titolo) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
       $("#NewQuestWidget input").val("");
+      titolo = titolo.replace(/(<([^>]+)>)/gi, "");
       if ( titolo.trim() == "" )
         titolo = "<i>QuestSenzaNome" + ( n_quests - 1 ) + "</i>";
       color = colors[n_quests % 6];

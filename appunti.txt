@@ -30,7 +30,8 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * I tooltip dopo i click non scompaiono
+    * Mettere il nome dell'app
+    * Fare più piccoli i testi e migliorare le spiegazioni
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 * PLAYER
     * Aggiungere cronometro
@@ -50,7 +51,6 @@ RIASSUNTO DELLE COSE DA FARE:
             * Modifica storia
             * Crea copia - serve per la faccenda delle squadre parallele
         * Nella pubblicazione mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti, che siano prsenti tutte le "alt" nel caso di una partita accessibile, che vi sia il tempo segnato nel caso GETCHRONO sia spuntata
-    * Grafica
     * Accessibilità
 * PLAYER
     * Grafica
@@ -59,7 +59,6 @@ RIASSUNTO DELLE COSE DA FARE:
 DETTAGLI SULLE COSE DA FARE:
 * EDITOR
     * Controllare la faccenda della traduzione di apici e quotes
-    * Aggiungere una guida all'editor css. Scrivere che esistono i container attività e quest - spiegare come modificare gli elementi (soprattutto i figli di attività e quest). Mettere l'elenco delle classi modificabili e avvertire dell'esistenza dei container Quest, Activity e ActivityText
     * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
 * approfondire la differenza tra attr e prop
 

@@ -1,16 +1,4 @@
-/*
-ORGANIZZAZIONE:
-* La storia è un array di quests, che a loro volta sono un array di attività (spiegazioni o sfide)
-* Ogni quest avrà un numero che indica la quest successiva
-* Ogni attività avrà un array i cui numeri indicano le possibili attività successive. Un campo javascript avrà gli IF-ELSE appositi per determinare quale attività attribuire in base alla risposta data. Se un'attività avrà una sola transizione possibile, l'array avrà un numero unico
-* La primissima quest sarà quella che chiederà al giocatore di inserire alcuni parametri. Su questi si basano alcune varianze come la presenza di campi risposta aggiuntivi, le successioni di alcune quest, ecc. Queste varianze sono stabilite a priori dall'autore.
-* Il CSS viene abbinato ad ogni elemento tramite apposito id, che viene settato automaticamente dall'ambiente editor
-* Per il processing dei valori di input client-side ci si può riferire a questo esempio --> https://www.w3schools.com/Js/tryit.asp?filename=tryjs_form_elements
-*/
-
 // Struttura dell'oggetto JSON
-
-// NOTA IMPORTANTE - i campi relativi ai settings forse è meglio toglierli
 
 game_example = {
 	ACCESSIBILITY: 0, // flag che indica se la storia è accessibile
@@ -48,22 +36,5 @@ game_example = {
 			]
 		}
 	],
-	stylesheet: "", // CSS della storia. eventuali stili particolari di quests o attività verranno sovrascritti ad esso
-	score: [] // array che il player trasformerà in matrice. contiene tutti i punteggi delle attività - sarà il player ad aggiornarlo volta per volta
+	stylesheet: "" // CSS della storia. eventuali stili particolari di quests o attività verranno sovrascritti ad esso
 };
-
-
-/*
-SETTINGS
-Inizialmente era prevista anche questa feature - relativa alle impostazioni personalizzate del giocatore che poi andranno ad influire sulla storia.
-Aggiungerla solo se strettamente necessario.
-
-settings: [
-	{
-		setting_name: "", // nome dell'opzione
-		setting_value: "" // valore - vuoto finché il giocatore non sceglie la sua preferenza
-	}
-],
-settings_form: ""
-
-*/

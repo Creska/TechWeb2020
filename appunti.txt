@@ -30,12 +30,14 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
+    * Funzionalità di interfacciamento col server
+    * Funzioni di passaggio a editor grafico, preview e GameMode
     * Mettere il nome dell'app
     * Fare più piccoli i testi e migliorare le spiegazioni
     * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
 * PLAYER
     * Aggiungere cronometro
-    * Aggiornare in base alle ultime modifiche dell'editor
+    * Sistemare la raccolta e l'invio delle stats
     * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
     * Migliorare la schermata di inizio
 * TUTTO
@@ -43,7 +45,6 @@ BUG E PROBLEMI DA CORREGGERE
 
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
-    * Navbar: save, close, change mode, graphic e preview
     * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
         * Idealmente dovrebbero esistere tre identificatori per ogni storia:
             * Nome del file json - utilizzato dall'utente per distinguere ogni documento
@@ -57,14 +58,6 @@ RIASSUNTO DELLE COSE DA FARE:
 * PLAYER
     * Grafica
     * Interfacciamento col server
-
-DETTAGLI SULLE COSE DA FARE:
-* EDITOR
-    * Controllare la faccenda della traduzione di apici e quotes
-    * Completare l'astrazione del file system (creare un file css automaticamente ogni volta che si crea una nuova storia)
-* approfondire la differenza tra attr e prop
-
-
 
 
 

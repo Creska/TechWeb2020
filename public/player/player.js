@@ -1,138 +1,4 @@
-/* Riassunto del funzionamento:
-Questo è solo un test, quindi presenta vari bug che bisogna evitare conoscendo il funzionamento di questo mini-programma.
-Alla schermata dei settings viene richiesto di scegliere una delle due opzioni (evitare di cliccarle entrambe o nessuna). A seconda dell'opzione scelta, cambierà l'attività successiva alla prima.
-NOTE:
-* Per semplicità, l'applicazione internamente identifica le quest e le attività il base all'indice che esse hanno nell'array di cui fanno parte.
-*/
-
-var StoryObj = {
-	ACCESSIBILITY: 0,
-	story_title: "<h1 id='StoryTitle'>Storia di prova</h1>",
-	story_ID: -1,
-	game_mode: "",
-	quests: [
-		{	
-			quest_title: "<h2 class='QuestTitle'>Prima quest</h2>",
-			activities: [
-				{
-					activity_text: 
-					[`<p class='TextParagraph'>Questa è la prima attività della prima quest.<br>Ora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
-					answer_field: 
-					`<div class='AnswerField'>
-						<div class='AnswerFieldDescription'>Inserire la risposta corretta</div>
-						<input class='AnswerInput? type='text'>
-					</div>`,
-					right_answer: "Pippo",
-					answer_score: 1,
-					answer_outcome: {
-						RightAnswer: "nextquest",
-						WrongAnswer: 0,
-						Giovanni: 1
-					},
-					ASK_EVAL: 0,
-					GET_CHRONO: 1,
-					expected_time: 3000,
-					FINAL: 0
-				},
-				{
-					activity_text:
-					[`<p class='TextParagraph'>Questa è la seconda attività della prima quest.<br>Ancora un po' di testo per riempire<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac.</p>`,
-					`<div id="Q0A1_Carousel" class="carousel slide ImageGallery" data-ride="carousel">
-						<div class="carousel-inner">
-					 		<div class="carousel-item active">
-						  		<img src="../images/milan.jpg" class="d-block w-100" alt="...">
-					  		</div>
-					  		<div class="carousel-item">
-								<img src="../images/turin.jpg" class="d-block w-100" alt="...">
-					  		</div>
-						</div>
-						<a class="carousel-control-prev" href="#Q0A1_Carousel" role="button" data-slide="prev">
-    						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    						<span class="sr-only">Previous</span>
-  						</a>
-  						<a class="carousel-control-next" href="#Q0A1_Carousel" role="button" data-slide="next">
-    						<span class="carousel-control-next-icon" aria-hidden="true"></span>
-    						<span class="sr-only">Next</span>
-  						</a>
-					</div>`],
-					answer_field:
-					`<div class='AnswerField'>
-						<div class='AnswerFieldDescription'>Checklist a caso:</div>
-						<ul class='AnswerInput'>
-							<li>
-								<input type='radio' id='radio0'>
-								<label for='radio0'>Prima</label>
-							</li>
-							<li>
-								<input type='radio' id='radio1'>
-								<label for='radio1'>Seconda</label>
-							</li>
-							<li>
-								<input type='radio' id='radio2'>
-								<label for='radio2'>Terza</label>
-							</li>
-							<li>
-								<input type='radio' id='radio3'>
-								<label for='radio3'>Quarta</label>
-							</li>
-							<li>
-								<input type='radio' id='radio4'>
-								<label for='radio4'>Quinta</label>
-							</li>
-							<li>
-								<input type='radio' id='radio5'>
-								<label for='radio5'>Sesta</label>
-							</li>
-						</ul>
-					</div>`,
-					right_answer: "Quinta",
-					answer_score: 420,
-					answer_outcome: {
-						RightAnswer: "nextquest",
-						WrongAnswer: 0
-					},
-					ASK_EVAL: 0,
-					GET_CHRONO: 1,
-					expected_time: 15000,
-					FINAL: 0
-				}
-			]
-		},
-		{
-			quest_title: "<h2 class='QuestTitle'>Seconda quest</h2>",
-			activities: [
-				{
-					activity_text: 
-					[`<p class='TextParagraph'>Questa è la prima attività della seconda quest.<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit pellentesque habitant morbi tristique senectus et. Scelerisque purus semper eget duis at tellus at urna condimentum. Sed faucibus turpis in eu mi. Amet est placerat in egestas. In hac habitasse platea dictumst vestibulum rhoncus. Velit egestas dui id ornare arcu odio. Ultricies tristique nulla aliquet enim tortor at auctor urna nunc. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Sed augue lacus viverra vitae congue eu consequat ac. Convallis posuere morbi leo urna molestie at elementum. At elementum eu facilisis sed. Vivamus at augue eget arcu dictum varius duis at. Massa sapien faucibus et molestie ac feugiat sed lectus vestibulum. Ultricies mi quis hendrerit dolor. Hac habitasse platea dictumst vestibulum. Erat imperdiet sed euismod nisi porta lorem mollis aliquam ut. Sit amet nulla facilisi morbi tempus iaculis urna. Leo in vitae turpis massa sed elementum tempus egestas. Venenatis cras sed felis eget velit aliquet sagittis id. Ut ornare lectus sit amet est placerat in egestas erat. Elit ut aliquam purus sit amet luctus venenatis lectus. In mollis nunc sed id semper risus in hendrerit. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Quisque non tellus orci ac auctor. Felis eget velit aliquet sagittis id consectetur purus ut faucibus.</p>`],
-					answer_field: ``,
-					right_answer: "",
-					answer_score: 69,
-					answer_outcome: 1,
-					ASK_EVAL: 0,
-					GET_CHRONO: 1,
-					expected_time: 10000,
-					FINAL: 0,
-				},
-				{
-					activity_text: 
-					[`<p class='TextParagraph'>Test concluso</p>`],
-					answer_field: ``,
-					right_answer: "",
-					answer_score: 69,
-					answer_outcome: {},
-					ASK_EVAL: 0,
-					GET_CHRONO: 0,
-					expected_time: 10000,
-					FINAL: 1,
-				}
-			]
-		}
-
-	],
-	stylesheet: "",
-	score: []
-};
-
+var StoryObj = storia; // QUESTA E' LA VARIABILE DELLA STORIA
 
 
 
@@ -221,9 +87,6 @@ function handleError() {
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
 	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
-
-	/* TODO: aggiungere l'alert riguardante l'accessibilità del gioco */
-
     goToQuest( 0 );
 };
 
@@ -256,8 +119,6 @@ function goToQuest( quest_n ) {
 
 	NewQuest.append( StoryObj.quests[quest_n].quest_title );
 
-	StoryObj.score.push( [] );
-
 	goToActivity( 0 );
 };
 
@@ -282,14 +143,58 @@ function goToActivity( activity_n ) {
 		"class": "ActivityText"
 	});
 
-	for ( i = 0; i <= StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text.length; i++ ) {
+	for ( i = 0; i < StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text.length; i++ ) {
 		NewActivityText.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text[i] ));
 	}
 
 	NewActivity.append( NewActivityText );
 
-    if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field != "" ) {
-        NewActivity.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field ) );
+    if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_type == 'ANSWER' ) {
+		let AF = $( "<div class='AnswerField'></div>" );
+		AF.append( $( "<p class='AnswerFieldDescription'>" + StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.description + "</p>" ));
+
+		switch ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type ) {
+			case 'checklist':
+				AF.append( $( "<ul class='AnswerInput'></ul>" ) );
+				let newli;
+
+				$.each( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.options, function(index, value) {
+					newli = $( "<li class='form-check'></li>" );
+					newli.append( $( "<input/>",
+					{
+						class: "form-check-input",
+						type: "radio",
+						name: "radio-checklist",
+						id: "opt" + index
+					}));
+					newli.append( $( "<label/>",
+					{
+						class: "form-check-label",
+						for: "opt" + index,
+						text: value
+					}));
+					AF.find( ".AnswerInput" ).append( newli );
+				});
+				break;
+			case 'text':
+				AF.append( $( "<input/>",
+				{
+					type: "text",
+					placeholder: "Risposta"
+				}));
+				break;
+			case 'number':
+				AF.append( $( "<input/>",
+				{
+					type: "number",
+					placeholder: "0"
+				}));
+				break;
+			default:
+				handleError();
+		}
+
+		NewActivity.append(AF);
 	}
 
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
@@ -311,6 +216,8 @@ function goToActivity( activity_n ) {
 	else {
 		$( ".NextActivity" ).attr( "onclick", "nextStage();" );
 	}
+
+	/* TODO: attiva il cronometro */
 };
 
 
@@ -326,28 +233,20 @@ function toggleIntervalTimer() {
 
 
 /**
-* @param score
-* Funzione che incrementa il punteggio ottenuto rispondendo alle domande in modo giusto
-* La call viene inserita dall'editor all'interno della programmazione delle attività
-*/
-function updateScore( score ) {
-	StoryObj.score[CurrentStatus.QuestN].splice( CurrentStatus.ActivityN, 0, score );
-};
-
-
-/**
  * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato
  */
 function nextStage() {
 	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
-	if ( CurrentStage.answer_field )
+	/* TODO: ferma il cronometro e segna il tempo impiegato a completare l'attività */
+	
+	if ( CurrentStage.activity_type == 'ANSWER' )
 		checkAnswer();
-	else {
-		if ( CurrentStage.answer_outcome == "nextquest" )
+	else if ( CurrentStage.activity_type == 'READING') {
+		if ( CurrentStage.answer_outcome[0].nextquest )
 			goToQuest( CurrentNavStatus.QuestN + 1 );
 		else
-			goToActivity( CurrentStage.answer_outcome );
+			goToActivity( CurrentStage.answer_outcome[0].nextactivity );
 	}
 };
 
@@ -363,10 +262,9 @@ function checkAnswer() {
 		/* TODO - manda richiesta */
 	}
 	else {
-		/* ricava la risposta giusta */
 		let PlayerAnswer = "";
 
-		if ( $( ".AnswerField" ).find( "input" ).first().attr( "type" ) == "radio" ) {
+		if ( CurrentActivity.answer_field.type == 'checklist' ) {
 			$( ".AnswerField input" ).each( function() {
 				if ( $(this).prop( "checked" ) ) PlayerAnswer = $(this).next().text();
 			});
@@ -375,21 +273,32 @@ function checkAnswer() {
 			PlayerAnswer = $( ".AnswerField" ).find( "input" ).first().val();
 		
 		/* controlla come proseguire la partita */
-		let goto;
 
-		if ( PlayerAnswer == CurrentActivity.right_answer ) {
-				updateScore( CurrentActivity.answer_score );
-				goto = CurrentActivity.answer_outcome["RightAnswer"];
+		let default_index;
+
+		$.each( CurrentActivity.answer_outcome, function(index, value) {
+			if ( value.response == PlayerAnswer ) {
+				if ( value.nextquest ) {
+					goToQuest( CurrentStatus.QuestN + 1 );
+				}
+				else {
+					goToActivity( value.nextactivity );
+				}
+				return false;
 			}
-		else if ( (PlayerAnswer != CurrentActivity.right_answer) && (PlayerAnswer != "") ){
-			updateScore( 0 );
-			if ( CurrentActivity.answer_outcome[PlayerAnswer] != undefined ) goto = CurrentActivity.answer_outcome[PlayerAnswer];
-			else goto = CurrentActivity.answer_outcome["WrongAnswer"];
-		}
-		else
-			goto = CurrentActivity.answer_outcome["WrongAnswer"];
 
-		if ( goto == "nextquest" ) goToQuest( CurrentStatus.QuestN + 1);
-		else goToActivity( goto );
+			if ( value.response == "default" )
+				default_index = index;
+
+			if ( (index == CurrentActivity.answer_outcome.length - 1) && (value.response != PlayerAnswer) ) {
+				if ( CurrentActivity.answer_outcome[default_index].nextquest ) {
+					goToQuest( CurrentStatus.QuestN + 1 );
+				}
+				else {
+					goToActivity( CurrentActivity.answer_outcome[default_index].nextactivity );
+				}
+				return false;
+			}
+		});
 	}
 };

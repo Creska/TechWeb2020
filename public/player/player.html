@@ -14,13 +14,22 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="player.js"></script>
+    <!--<script src="test.js"></script>-->
+    <script src="player.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        window.onload = function() {
+            if ( StoryObj.ACCESSIBILITY )
+                $("#AccessibilityMsg").append( "<p>La storia è accessibile.</p>" );
+            else
+                $("#AccessibilityMsg").append( "<p>La storia purtroppo NON è accessibile.</p>" );
+        };
+    </script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="player.css">
-
-    <script src="/socket.io/socket.io.js"></script>
 
     <title>Player</title>
 </head>
@@ -34,17 +43,17 @@
         </script>
         <div id="WelcomeText" role="main">
             Schermata iniziale del gioco. Per avviare una nuova partita, premere START
-            <!-- TODO: Aggiungere il messaggio riguardante l'accessibilità -->
+            <div id="AccessibilityMsg"></div>
         </div>
         <button id="StartButton" onclick="startGame();">START</button>
     </div>
 
     <template id="MainContainer">
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
-        <div id="Main" role="main" autofocus>
+        <main id="Main" role="main" aria-relevant="all" autofocus>
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->
             <div class="Quest" aria-live="assertive"></div>
-        </div>
+        </main>
     </template>
 
     <div id='chat-room' aria-live="assertive">

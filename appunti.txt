@@ -30,18 +30,23 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
+    * Aggiungere nella guida dell'editor CSS l'id delle attività e quest
     * Funzionalità di interfacciamento col server
     * Funzioni di passaggio a editor grafico, preview e GameMode
     * Mettere il nome dell'app
-    * Fare più piccoli i testi e migliorare le spiegazioni
-    * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
+    * Migliorare le spiegazioni
 * PLAYER
     * Aggiungere cronometro
-    * Sistemare la raccolta e l'invio delle stats
+    * Sistemare la raccolta e l'invio delle stats: 
+        * inviare UNA volta l'aggiornamento dell'attività in cui il player si trova. poi, ogni 10s un booleano che indica se è ancora lì
+        * ogni volta che l'attività viene completata, invia il tempo che ci ha messo
     * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
     * Migliorare la schermata di inizio
 * TUTTO
     * controllare compatibilità con schermi piccoli
+
+ACESSIBILITA'
+* header: role='heading' aria-level=numero come nel tag
 
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR

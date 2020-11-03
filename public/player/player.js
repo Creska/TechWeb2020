@@ -86,7 +86,7 @@ function handleError() {
  */
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
-	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
+	$( "#Main" ).prepend( $( "<h1 class='StoryTitle'>" + StoryObj.story_title + "</h1>" ) );
     goToQuest( 0 );
 };
 
@@ -117,7 +117,7 @@ function goToQuest( quest_n ) {
 	NewQuest.empty();
 	NewQuest.attr( "id", assignID( "Quest" ) );
 
-	NewQuest.append( StoryObj.quests[quest_n].quest_title );
+	NewQuest.append( $( "<h2 class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h2>" ) );
 
 	goToActivity( 0 );
 };
@@ -143,9 +143,9 @@ function goToActivity( activity_n ) {
 		"class": "ActivityText"
 	});
 
-	for ( i = 0; i < StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text.length; i++ ) {
-		NewActivityText.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text[i] ));
-	}
+	$.each( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text, function(index, value) {
+		addTextPart( NewActivityText, value, index );
+	});
 
 	NewActivity.append( NewActivityText );
 
@@ -198,9 +198,9 @@ function goToActivity( activity_n ) {
 	}
 
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
-		NewActivity.append( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" );
+		NewActivity.append( $( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" ) );
 	else
-		NewActivity.append( "<button class='NextActivity'>PROSEGUI</button>" );
+		NewActivity.append( $( "<button class='NextActivity'>PROSEGUI</button>" ) );
 
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );
@@ -218,6 +218,57 @@ function goToActivity( activity_n ) {
 	}
 
 	/* TODO: attiva il cronometro */
+};
+
+
+/**
+ * @param container --> puntatore al nodo che contiene tutto il testo dell'attività
+ * @param node --> nodo da aggiungere al container
+ * @param  {...any} other --> viene passato un indice per creare sul momento un id per la galleria
+ * Aggiunge un nuovo pezzo al testo dell'attività (paragrafo di testo, immagine o galleria)
+ */
+function addTextPart( container, node, ...other ) {
+	if ( node.type == "text" ) {
+		if ( node.content ) {
+			container.append( $( "<p/>",
+			{
+				class: "TextParagraph",
+				text: node.content
+			}));
+		}
+	}
+	else if ( node.type == "gallery" ) {
+		if ( node.content.length === 1 ) {
+			container.append( $( node.content[0] ).attr( "class", "SingleImage" ) );
+		}
+		else if ( node.content.length > 1 ) {
+			let newgallery = $(`
+			<div class="carousel slide ImageGallery" data-ride="carousel">
+				<div class="carousel-inner"></div>
+				<a class="carousel-control-prev" role="button" data-slide="prev">
+    				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine precedente</span>
+  				</a>
+  				<a class="carousel-control-next" role="button" data-slide="next">
+    				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine successiva</span>
+  				</a>
+			</div>`);
+
+			newgallery.attr( "id", "gallery" + arguments[2] );
+			newgallery.find( "a" ).attr( "href", "#gallery" + arguments[2] );
+
+			let newimage;
+			$.each( node.content, function(index, value) {
+				newimage = $( value ).attr( "class", "d-block w-100" );
+				if (index === 0 )
+					newgallery.find( ".carousel-inner" ).append( newimage.wrap( "<div class='carousel-item active'></div>" ).parent() );
+				else
+					newgallery.find( ".carousel-inner" ).append( newimage.wrap( "<div class='carousel-item'></div>" ).parent() );
+			});
+			container.append( newgallery );
+		}
+	}
 };
 
 

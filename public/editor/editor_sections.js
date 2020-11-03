@@ -335,13 +335,13 @@ function saveOutcomes() {
 function saveTextParagraph() {
   let text = $('#TextParInput').val().trim().replace(/(<([^>]+)>)/gi, "");
 
-  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = "<p class='TextParagraph'>" + text + "</p>";
+  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content = text;
   if (text)
     $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( text.substring(0, 25) + "..." );
   else
-    $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
+	$("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
+	
   GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
-
   back()
 };
 
@@ -357,7 +357,7 @@ function addImage( image, newload ) {
   let newpreview;
 
   if (newload) {
-    newpreview = $( "<img class='SingleImage'>" );
+    newpreview = $( "<img>" );
 
     const reader = new FileReader();
     reader.readAsDataURL(image);
@@ -366,10 +366,8 @@ function addImage( image, newload ) {
       newpreview.attr( "src", this.result );
     });
   }
-  else {
+  else
     newpreview = $(image).clone(); // usata clone() perché senza sarebbe stato modificato direttamente l'oggetto passato come parametro ad addImage()
-    newpreview.attr("class", "SingleImage");
-  }
       
   newrow.append( newpreview );
   newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
@@ -384,76 +382,34 @@ function addImage( image, newload ) {
  * Carica la galleria di anteprima
  */
 function loadEditGallerySection() {
-  $("#GalleryPreview").empty();
+  	$("#GalleryPreview").empty();
 
-  gallery = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] ));
+  	let gallery = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content;
 
-  if ( gallery.prop("tagName") == "IMG" ) {
-    addImage(gallery, false);
-    $( "#GalleryPreview input" ).first().val( gallery.attr("alt") );
-  }
-  else {
-    gallery.find("img").each( function() {
-      addImage(this, false);
-    });
-    /* inserisce in ogni input la descrizione abbinata a ciascuna immagine */
-    $("#GalleryPreview").find("input").each( function(index) {
-      $(this).val( gallery.find("img").eq(index).attr("alt") );
-    });
-  }
+  	$.each( gallery, function(index, value) {
+		addImage( value, false ); // inserisce l'immagine nella gallery di anteprima
+		$("#GalleryPreview").find("input[type=text]").eq(index).val( $(value).attr("alt") ); // inserisce la descrizione
+  	});
 };
 
 
 /**
  * Salva la galleria di immagini nel json.
- * A seconda del numero di immagini, crea una img singola o un carousel di Bootstrap
  */
 function saveImageGallery() {
-  if ( $("#GalleryPreview .row").length == 1 ) {
-	$("#GalleryPreview .row img").first().attr( "alt", $("#GalleryPreview .row input").first().val() );
-	$("#GalleryPreview .row img").first().attr( "class", "SingleImage" );
-	//alert("swag: "+$("#GalleryPreview .row img").first().prop("outerHTML"));
-    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img").first().prop("outerHTML");
-  }
-  else {
-	  /* l'id "ActiveGallery" serve a far funzionare le frecce per scorrere le immagini */
-    let newgallery = $(`
-    <div class="carousel slide ImageGallery" data-ride="carousel" data-interval="false">
-      <div class="carousel-inner">
-      </div>
-      <a class="carousel-control-prev" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </div>`);
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content = [];
 
     $("#GalleryPreview .row").each( function(index) {
-      let row = $(this);
-      let newpic = $("<div class='carousel-item'></div>");
+      	let row = $(this);
+		let newpic = $( "<img/>",
+		{
+			src: row.find("img").first().attr("src"),
+			alt: row.find("input[type=text]").first().val().replace(/(<([^>]+)>)/gi, "")
+		});
 
-      if (index == 0) newpic.addClass("active");
-
-      newpic.append( $("<img/>",
-      {
-        "class": "d-block w-100",
-        src: row.find("img").eq(0).attr("src"),
-        alt: row.find("input").eq(0).val().replace(/(<([^>]+)>)/gi, "")
-      }));
-
-      newgallery.children().first().append(newpic);
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content.push( newpic.prop("outerHTML") );
 	});
-	
-	newgallery.attr( "id", "gallery-index" + CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.length );
-	newgallery.find( "a" ).attr( "href", "#" + newgallery.attr("id") );
-
-    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = newgallery.prop("outerHTML");
-  }
-
-  back();
+  	back();
 };
 
 

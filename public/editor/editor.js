@@ -31,13 +31,12 @@ var CurrentNavStatus = {
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork = {
 	ACCESSIBILITY: 0,
-	story_title: "<div id='StoryTitle' class='StoryTitle'></div>",
+	story_title: "",
 	story_ID: -1,
 	game_mode: "",
 	single_device: 1,
 	quests: [],
-	stylesheet: "",
-	score: []
+	stylesheet: ""
 };
 
 const channel = new BroadcastChannel( "css_channel" );
@@ -59,7 +58,7 @@ function save_title( which ) {
   switch ( which ) {
     case "story":
       title = $( '#StoryTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
-      CurrentWork.story_title = "<h1 id='StoryTitle' class='StoryTitle'>" + title + "</h1>";
+      CurrentWork.story_title = title;
 
       if ( title )
         $( "#EditStory .SectionTitle" ).html( title );
@@ -74,7 +73,7 @@ function save_title( which ) {
         if ( title ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-          CurrentWork.quests[n_quests - 1].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
+          CurrentWork.quests[n_quests - 1].quest_title = title;
         }
       }
       else {
@@ -91,7 +90,7 @@ function save_title( which ) {
           $( '#QuestTitleInput' ).val( old_title );
         }
 
-        CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = "<h2 class='QuestTitle'>" + title + "</h2>";
+        CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
 
         change_savetitle_button( "saved" );
       }
@@ -121,10 +120,16 @@ function create_stuff(what) {
       GridsOfParagraphs[CurrentNavStatus.QuestN].push("");
       break;
     case "TextParagraph":
-      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("<p class='TextParagraph'></p>");
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
+        type: "text",
+        content: ""
+      });
       break;
     case "Gallery":
-      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push("");
+      CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
+        type: "gallery",
+        content: []
+      });
       break;
     default:
       handleError();
@@ -137,7 +142,7 @@ function create_stuff(what) {
  */
 function initQuest() {
 	let EmptyQuest = {	
-		quest_title: "<h2 class='QuestTitle'></h2>",
+		quest_title: "",
 		activities: []
   };
 
@@ -327,14 +332,14 @@ function goToSection(where) {
         $('header').css('display','block');
         
         CurrentNavStatus.QuestN = -1;
-        $("#StoryTitleInput").val( $( $.parseHTML(CurrentWork.story_title)).text() );
+        $("#StoryTitleInput").val( CurrentWork.story_title );
         break;
       case "EditQuest":
         CurrentNavStatus.ActivityN = -1;
 
         if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
-        $("#QuestTitleInput").val( $($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].quest_title)).text() );
+        $("#QuestTitleInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
         $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
       //console.log(GridsOfActivities[CurrentNavStatus.QuestN]);
         $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
@@ -363,7 +368,7 @@ function goToSection(where) {
         $("#EditText header small").html( $("#EditActivity header small").html() );
         $("#EditText header h1").html( $("#EditActivity header h1").html() );
 
-        $("#TextParInput").val($($.parseHTML(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()])).text());
+        $("#TextParInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content );
         break;
       case "EditGallery":
         $("#EditGallery header small").html( $("#EditActivity header small").html() );

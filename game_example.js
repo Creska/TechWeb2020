@@ -14,7 +14,12 @@ game_example = {
 			decisa dal codice JS "action_on_activity_answer". */
 			activities: [
 				{
-					activity_text: [], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
+					activity_text: [
+						{
+							type: "", // "text" oppure "gallery"
+							content: "" // testo oppure array di nodi <img> (url+alt)
+						}
+					], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
 					activity_type: "", // con READING indica attività di sola lettura, con ANSWER indica la presenza del campo risposta
 					answer_field: {
 						description: "", // eventuale indicazione per il giocatore

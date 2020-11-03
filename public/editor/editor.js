@@ -8,7 +8,7 @@ var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var GridsOfActivities = []; // contiene le griglie di attività per ogni quest
 var GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
 var CardClickDisabled = false;
-
+var data_array = []; // array data_story per saveStory
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
 	MainMenu: "MainMenu",
@@ -318,7 +318,7 @@ function goToSection(where) {
       case "MainMenu":
         $('header').css('display','none');
         //chiedi roba all'utente e resetta il json e la la EditStory Section
-        reset_EditStory();
+        //reset_EditStory();
         
         break;
       case "ChooseGameMode":
@@ -710,6 +710,7 @@ function setFinalActivity() {
   }
 };
 
+
   /*
   AJAX CALLS(tutte le seguenti seguono /editor/):
     getStory
@@ -724,27 +725,54 @@ function setFinalActivity() {
     alert("Data: " + data + "\nStatus: " + status);
   });
 }
-function saveStory(nome) { 
-  value = prompt('bool published: ');
-  data_array = get_all_images_bytes();
+function saveStory() { 
+  
+  get_all_images_bytes();
     data_array.push({
-      name: nome+".json",
+      name: "nome.json",
       data: CurrentWork
     });
   story= {//storia ipotetica
     story_data: data_array,    
-    story_name: nome,
-    published: value,
+    story_name: "nome",
+    published: true,
     checked: false
     //story: true ritengo sia inutile
   };
   $.post("/editor/saveStory",story, function(data,status){
     alert("Status: " + status);
+    data_array = [];
   });
 } 
 function get_all_images_bytes(){
-  return 
+  i=0;
+  while(CurrentWork.quests[i]){
+    j=0;
+    current_quest = CurrentWork.quests[i];
+    while(current_quest.activities[j]){
+      current_activity = current_quest.activities[j];
+      current_activity.activity_text.forEach(get_images);
+      j++;
+    }
+    i++;
+  }
 }
+function get_images(act_text, index) {
+  act_text_element = $($.parseHTML(act_text));
+  switch(act_text_element.prop("tagName")){
+    case "IMG":
+      data_array_element = {
+        name:prompt("nome immagine: "),
+        data: act_text_element.attr("src")
+      };
+      data_array.push(data_array_element);
+      break;
+    case "DIV":
+      break;
+    
+  }
+}
+
 function getStory(nome) {//fa crashare l'app anche con published
   value = prompt('bool published: ');
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
@@ -773,3 +801,61 @@ function publisher(name) {//problema con unpublished, funziona se unpub c'è
 //bug grafico nella creazione delle gallerie partendo da una gallery r creandone altre consecutive e altri bug
 
 //manca campo per chiedere nome
+
+//piccolo bug grafico tasto home che compare all'inizio e una volta
+//cliccato sparisce dalla home(non si dovrebbe vedere in primo luogo)
+
+/*
+function saveStory() { 
+  
+  get_all_images_bytes();
+    data_array.push({
+      name: "nome.json",
+      data: CurrentWork
+    });
+  story= {//storia ipotetica
+    story_data: data_array,    
+    story_name: "nome",
+    published: true,
+    checked: true
+    //story: true ritengo sia inutile
+  };
+  $.post("/editor/saveStory",story, function(data,status){
+    alert("Status: " + status);
+    data_array = [];
+  });
+} 
+function get_all_images_bytes(){
+  i=0;
+  while(CurrentWork.quests[i]){
+    j=0;
+    current_quest = CurrentWork.quests[i];
+    while(current_quest.activities[j]){
+      current_activity = current_quest.activities[j];
+      current_activity.activity_text.forEach(get_images);
+      j++;
+    }
+    i++;
+  }
+}
+function get_images(act_text, index) {
+  act_text_element = $($.parseHTML(act_text));
+  switch(act_text_element.prop("tagName")){
+    case "IMG":
+      push_image(act_text_element);
+      data_array.push(data_array_element);
+      break;
+    case "DIV":
+      act_text_element.html().html().children().forEach(push_image);
+      
+      break;
+    
+  }
+}
+function push_image(image_element){
+  data_array_element = {
+    name:prompt("nome immagine: "),
+    data: image_element.attr("src")
+  };
+  data_array.push(data_array_element);
+}*/

@@ -391,6 +391,14 @@ function goToSection(where) {
       case "ChooseStoryToEdit":
         getStories(); 
         break;
+      case "Explorer":
+        //stories_obj = getStories(); 
+        //if( stories_obj.data )
+          //alert(stories_obj.data);
+        //else
+          //alert(stories_obj.status);
+
+        break;
       default:
         handleError();
     }
@@ -726,8 +734,11 @@ function setFinalActivity() {
   
   */
  function getStories() {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
+  //modal di attesa
   $.get("/editor/getStories", function(data, status){
-    alert("Data: " + data + "\nStatus: " + status);
+    
+    return {data:data, status: status };
+
   });
 }
 function saveStory() { 

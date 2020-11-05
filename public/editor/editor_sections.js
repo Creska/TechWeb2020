@@ -341,7 +341,7 @@ function saveTextParagraph() {
   else
 	$("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
 	
-  GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  saveCardGrids();
   back()
 };
 

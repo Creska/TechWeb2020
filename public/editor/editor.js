@@ -9,6 +9,7 @@ var CardClickDisabled = false;
 var Parent = {
 	MainMenu: "MainMenu",
   EditStory: "EditStory",
+  ChooseGameMode: "EditStory",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",
@@ -302,7 +303,7 @@ function get_card_index() {
  * Torna alla sezione precedente
 */
 function back() {
-  first_selected_stage="";
+  
   goToSection(Parent[CurrentNavStatus.Section]);
 };
 
@@ -313,6 +314,7 @@ function back() {
  */
 function goToSection(where) {
   mode = "default";
+  first_selected_stage="";
   switch (CurrentNavStatus.Section) {
     case "EditStory":
     case "EditQuest":
@@ -330,6 +332,9 @@ function goToSection(where) {
         CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( CurrentWork.story_title );
         $("#QuestsGrid").html( CurrentWork.QuestGrid );
+        break;
+      case "ChooseGameMode":
+        loadGameModeSection();
         break;
       case "EditQuest":
         CurrentNavStatus.ActivityN = -1;
@@ -385,12 +390,13 @@ function goToSection(where) {
 
         loadEditOutcomeSection();
         break;
-      default:
-        handleError();
     }
     
     CurrentNavStatus.Section = where;
-    if ( (where == "EditStory") || (where == "EditQuest") ) change_savetitle_button("saved");
+
+    if ( where == "EditStory" || where == "EditQuest" )
+      change_savetitle_button("saved");
+
     $("#"+where).fadeIn();
   });
 };
@@ -848,6 +854,13 @@ function isPublishable( obj ) {
 function MainMenu( action ) {
   switch ( action ) {
     case "NEWSTORY":
+      mode = "default";
+      first_selected_stage = "";
+      first_selected_card_index = -1;
+      selected_card = "";
+      CardClickDisabled = false;
+      b = [0, 0, 0, 0, 0, 0, 0];
+
       $('.masthead').fadeIn();
       initStory();
       goToSection('EditStory');
@@ -858,17 +871,23 @@ function MainMenu( action ) {
 
 
 function Navbar( event ) {
+  /* per ora inseriamo anche la chiusura della finestra */
+
   switch ( event ) {
+    case "Close":
+      /* TODO */
+      break;
+    case "Save":
+      /* TODO */
+      break;
     case "CSSEditor":
       CSS_Editor_Window = window.open( "../shared/css_editor.html" );
       break;
-    case "Home":EditStory
-      $( "#SavePrompt .modal-body p" ).text( "Salvare le modifiche effettuate?" );
-      $( "#SavePrompt .modal-footer button" ).eq(1).attr( "onclick", function() {
-        goToSection( "MainMenu" );
-      })
-      $( "#PromptSave" ).modal("show");
-
+    case "Preview":
+      /* TODO */
+      break;
+    case "Home":
+      /* TODO */
   }
 }
 

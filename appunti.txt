@@ -32,6 +32,7 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id al momento della pubblicazione]
     * [WIP] Funzioni di passaggio a editor grafico, preview e GameMode
+    * Sistemare le descrizioni in ChooseGameMode
     * Rimuovere funzionalità single device
     * Aggiungere nella guida dell'editor CSS l'id delle attività e quest
     * Mettere il nome dell'app

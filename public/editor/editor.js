@@ -351,13 +351,8 @@ function goToSection(where) {
 
         $("#QuestTitleInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
         $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
-<<<<<<< HEAD
-      //console.log(GridsOfActivities[CurrentNavStatus.QuestN]);
-        $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
-=======
 
         $("#ActivitiesGrid").html(CurrentWork.ActivityGrids[CurrentNavStatus.QuestN]); //carica la griglia delle attività
->>>>>>> master
         break;
       case "EditActivity":
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
@@ -403,7 +398,6 @@ function goToSection(where) {
 
         loadEditOutcomeSection();
         break;
-<<<<<<< HEAD
       case "ChooseStoryToEdit":
         getStories(); 
         break;
@@ -417,8 +411,6 @@ function goToSection(where) {
         break;
       default:
         handleError();
-=======
->>>>>>> master
     }
     
     CurrentNavStatus.Section = where;

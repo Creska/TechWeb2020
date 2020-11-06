@@ -1,18 +1,15 @@
 var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
-var n_quests = 0; // numero di quest totali - equivalente a CurrentWork.quests.length
-var n_activities = []; // numero di attività per ogni quest - equivalente a CurrentWork.quests[CurrentNavStatus.QuestN].activities.length
 var mode = "default";
 var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
-var GridsOfActivities = []; // contiene le griglie di attività per ogni quest
-var GridsOfParagraphs = []; // contiene tutte le griglie di paragrafi
 var CardClickDisabled = false;
 var data_array = []; // array data_story per saveStory
 /* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
 var Parent = {
 	MainMenu: "MainMenu",
   EditStory: "EditStory",
+  ChooseGameMode: "EditStory",
 	EditQuest: "EditStory",
 	EditActivity: "EditQuest",
 	EditAnswerField: "EditActivity",
@@ -29,16 +26,12 @@ var CurrentNavStatus = {
 };
 
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
-var CurrentWork = {
-	ACCESSIBILITY: 0,
-	story_title: "",
-	story_ID: -1,
-	game_mode: "",
-	single_device: 1,
-	quests: [],
-	stylesheet: ""
-};
+var CurrentWork;
 
+/* FINESTRE - WIP */
+var CSS_Editor_Window;
+
+/* variabili per editing del CSS */
 const channel = new BroadcastChannel( "css_channel" );
 channel.addEventListener( "message", e => {
   CSSdata = e.data;
@@ -73,7 +66,7 @@ function save_title( which ) {
         if ( title ) {
           /* un titolo di default è già presente nel nuovo elemento quest
           quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-          CurrentWork.quests[n_quests - 1].quest_title = title;
+          CurrentWork.quests[CurrentWork.quests.length - 1].quest_title = title;
         }
       }
       else {
@@ -107,17 +100,14 @@ function save_title( which ) {
 function create_stuff(what) {
   switch (what) {
     case "quest":
-      n_quests += 1;
       CurrentWork.quests.push(initQuest());
-      n_activities.push(0);
-      GridsOfActivities.push("");
-      GridsOfParagraphs.push([]);
+      CurrentWork.ActivityGrids.push("");
+      CurrentWork.ParagraphGrids.push([]);
       save_title("quest");
       break;
     case "activity":
-      n_activities[CurrentNavStatus.QuestN] += 1;
       CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
-      GridsOfParagraphs[CurrentNavStatus.QuestN].push("");
+      CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN].push("");
       break;
     case "TextParagraph":
       CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
@@ -134,6 +124,25 @@ function create_stuff(what) {
     default:
       handleError();
   }
+};
+
+
+/**
+ * Inizializza una nuova storia
+ */
+function initStory() {
+  CurrentWork = {
+    ACCESSIBILITY: 0,
+    story_title: "",
+    story_ID: -1,
+    game_mode: "",
+    single_device: 1,
+    quests: [],
+    stylesheet: "",
+    QuestGrid: "",
+    ActivityGrids: [],
+    ParagraphGrids: []
+  };
 };
 
 
@@ -294,7 +303,7 @@ function get_card_index() {
  * Torna alla sezione precedente
 */
 function back() {
-  first_selected_stage="";
+  
   goToSection(Parent[CurrentNavStatus.Section]);
 };
 
@@ -305,15 +314,12 @@ function back() {
  */
 function goToSection(where) {
   mode = "default";
-  stopAnimation();
-
-  /* la griglia di card corrente viene salvata nell'apposito array globale */
-  switch( CurrentNavStatus.Section ) {
+  first_selected_stage="";
+  switch (CurrentNavStatus.Section) {
+    case "EditStory":
     case "EditQuest":
-      GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
-      break;
     case "EditActivity":
-      GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+      stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid" );
   }
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
     change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
@@ -333,6 +339,10 @@ function goToSection(where) {
         
         CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( CurrentWork.story_title );
+        $("#QuestsGrid").html( CurrentWork.QuestGrid );
+        break;
+      case "ChooseGameMode":
+        loadGameModeSection();
         break;
       case "EditQuest":
         CurrentNavStatus.ActivityN = -1;
@@ -341,8 +351,13 @@ function goToSection(where) {
 
         $("#QuestTitleInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
         $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
+<<<<<<< HEAD
       //console.log(GridsOfActivities[CurrentNavStatus.QuestN]);
         $("#ActivitiesGrid").html(GridsOfActivities[CurrentNavStatus.QuestN]); //carica la griglia delle attività
+=======
+
+        $("#ActivitiesGrid").html(CurrentWork.ActivityGrids[CurrentNavStatus.QuestN]); //carica la griglia delle attività
+>>>>>>> master
         break;
       case "EditActivity":
         if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
@@ -361,7 +376,7 @@ function goToSection(where) {
           $("#FinalStageBtn").next().next().attr( "disabled", false );
         }
     
-        $("#ParagraphsGrid").html(GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
+        $("#ParagraphsGrid").html(CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
         break;
       case "EditText":
         // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
@@ -388,6 +403,7 @@ function goToSection(where) {
 
         loadEditOutcomeSection();
         break;
+<<<<<<< HEAD
       case "ChooseStoryToEdit":
         getStories(); 
         break;
@@ -401,10 +417,15 @@ function goToSection(where) {
         break;
       default:
         handleError();
+=======
+>>>>>>> master
     }
     
     CurrentNavStatus.Section = where;
-    if ( (where == "EditStory") || (where == "EditQuest") ) change_savetitle_button("saved");
+
+    if ( where == "EditStory" || where == "EditQuest" )
+      change_savetitle_button("saved");
+
     $("#"+where).fadeIn();
     
   });
@@ -476,12 +497,12 @@ function create_card(titolo) {
       $("#NewQuestWidget input").val("");
       titolo = titolo.replace(/(<([^>]+)>)/gi, "");
       if ( titolo.trim() == "" )
-        titolo = "<i>QuestSenzaNome" + ( n_quests - 1 ) + "</i>";
-      color = colors[n_quests % 6];
+        titolo = "<i>QuestSenzaNome" + ( CurrentWork.quests.length - 1 ) + "</i>";
+      color = colors[CurrentWork.quests.length % 6];
       break;
     case "ActivitiesGrid":
-      titolo = "Attività" + ( n_activities[CurrentNavStatus.QuestN] - 1 );
-      color = colors[n_activities[CurrentNavStatus.QuestN] % 6];
+      titolo = "Attività" + ( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length - 1 );
+      color = colors[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length % 6];
       break;
     case "ParagraphsGrid":
       if ( titolo == "GALLERY" ) color = colors[0];
@@ -507,10 +528,7 @@ function create_card(titolo) {
   $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
   setAnimation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
 
-  if (CurrentNavStatus.QuestN >= 0 && CurrentNavStatus.ActivityN < 0)
-    GridsOfActivities[CurrentNavStatus.QuestN] = $("#ActivitiesGrid").html();
-  else if (CurrentNavStatus.ActivityN >= 0)
-    GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  saveCardGrids();
 };
 
 
@@ -518,7 +536,7 @@ function create_card(titolo) {
  * Entra o esce dalla cancel mode
  */
 function cancel_mode() {
-  stopAnimation();
+  stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid");
 
   if (mode == "cancel" ) {
     change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
@@ -546,16 +564,13 @@ function cancel_em(obj) {
     /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
     switch (CurrentNavStatus.Section) {
       case "EditStory":
-        GridsOfActivities.splice( get_card_index(), 1 );
-        GridsOfParagraphs.splice( get_card_index(), 1 );
+        CurrentWork.ActivityGrids.splice( get_card_index(), 1 );
+        CurrentWork.ParagraphGrids.splice( get_card_index(), 1 );
         CurrentWork.quests.splice( get_card_index(), 1 );
-        n_quests -= 1;
-        n_activities.splice(CurrentNavStatus.QuestN, 1);
         break;
       case "EditQuest":
-        GridsOfParagraphs[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
+        CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN].splice(get_card_index(), 1);
         CurrentWork.quests[CurrentNavStatus.QuestN].activities.splice(get_card_index(), 1);
-        n_activities[CurrentNavStatus.QuestN] -= 1;
         break;
       case "EditActivity":
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.splice( get_card_index(), 1 );
@@ -581,6 +596,8 @@ function cancel_em(obj) {
         iter.remove();
     }
   }, 1500);
+
+  saveCardGrids();
 };
 
 
@@ -588,7 +605,7 @@ function cancel_em(obj) {
  * Entra o esce dalla swap mode
  */
 function swap_mode() {
-  stopAnimation();
+  stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid");
 
   if(mode == "swap" ) {
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");
@@ -624,17 +641,15 @@ function swap_em(s) {
       switch ( CurrentNavStatus.Section ) {
         case "EditStory":
           [CurrentWork.quests[get_card_index()], CurrentWork.quests[first_selected_card_index]] = [CurrentWork.quests[first_selected_card_index],CurrentWork.quests[get_card_index()]];
-
-          [n_activities[first_selected_card_index], n_activities[get_card_index()]] = [n_activities[get_card_index()], n_activities[first_selected_card_index]];
         
-          [GridsOfActivities[get_card_index()], GridsOfActivities[first_selected_card_index]] = [GridsOfActivities[first_selected_card_index],GridsOfActivities[get_card_index()]];
+          [CurrentWork.ActivityGrids[get_card_index()], CurrentWork.ActivityGrids[first_selected_card_index]] = [CurrentWork.ActivityGrids[first_selected_card_index],CurrentWork.ActivityGrids[get_card_index()]];
 
-          [GridsOfParagraphs[get_card_index()], GridsOfParagraphs[first_selected_card_index]] = [GridsOfParagraphs[first_selected_card_index], GridsOfParagraphs[get_card_index()]];
+          [CurrentWork.ParagraphGrids[get_card_index()], CurrentWork.ParagraphGrids[first_selected_card_index]] = [CurrentWork.ParagraphGrids[first_selected_card_index], CurrentWork.ParagraphGrids[get_card_index()]];
           break;
         case "EditQuest":
           [CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index]] =[CurrentWork.quests[CurrentNavStatus.QuestN].activities[first_selected_card_index],CurrentWork.quests[CurrentNavStatus.QuestN].activities[get_card_index()]];
 
-          [GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()], GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index]] =[GridsOfParagraphs[CurrentNavStatus.QuestN][first_selected_card_index], GridsOfParagraphs[CurrentNavStatus.QuestN][get_card_index()]];
+          [CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][get_card_index()], CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][first_selected_card_index]] =[CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][first_selected_card_index], CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][get_card_index()]];
           break;
         case "EditActivity":
           [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index]] = [CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[first_selected_card_index], CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()]];
@@ -644,6 +659,8 @@ function swap_em(s) {
       let tmp = s;
       s.outerHTML = first_selected_stage.outerHTML;
       first_selected_stage.outerHTML = tmp.outerHTML;
+
+      saveCardGrids();
 
       first_selected_stage_index = -1;
       first_selected_stage = "";
@@ -659,13 +676,16 @@ function swap_em(s) {
 
 
 /**
- * Blocca l'animazione di shaking per tutte le card (nella sezione corrente) che la stanno utilizzando
+ * @param grid
+ * Blocca le animazioni per tutte le card nella griglia specificata
  */
-function stopAnimation() {
-  for (card of $("#" + CurrentNavStatus.Section + " .card")) {
-    if ( card.style.animationName != "initial" )
-      setAnimation("stop", card);
-  }
+function stopAnimation( grid ) {
+  $(grid).find(".card").each( function() {
+    if ( $(this).css("animation-name") == "swashOut" )
+      $(this).remove();
+    else
+      $(this).attr("style", "");
+  });
 };
 
 
@@ -875,3 +895,198 @@ function push_image(image_element){
   };
   data_array.push(data_array_element);
 }*/
+/**
+ * Salva la griglia di cards della sezione corrente
+ */
+function saveCardGrids() {
+  CardClickDisabled = true;
+
+  switch ( CurrentNavStatus.Section ) {
+    case "EditStory":
+      CurrentWork.QuestGrid = $( $("#QuestsGrid").html() );
+      stopAnimation( CurrentWork.QuestGrid );
+      CurrentWork.QuestGrid = CurrentWork.QuestGrid.prop("outerHTML");
+      break;
+    case "EditQuest":
+      CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = $( $("#ActivitiesGrid").html() );
+      stopAnimation( CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] );
+      CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = CurrentWork.ActivityGrids[CurrentNavStatus.QuestN].prop("outerHTML");
+      break;
+    case "EditActivity":
+    case "EditText":
+      CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $( $("#ParagraphsGrid").html() );
+      stopAnimation( CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] );
+      CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN].prop("outerHTML");
+  }
+
+  CardClickDisabled = false;
+};
+
+
+/**
+ * @param obj --> oggeto simil-json
+ * Controlla se la storia è in regola per essere pubblicata.
+ * La procedura ritorna un oggetto composto da un booleano che indica se la storia è pubblicabile, e un array di stringhe che indicano gli errori
+ */
+function isPublishable( obj ) {
+  let res = {
+    ok: true,
+    errors: []
+  };
+
+  let final_activity = false;
+
+  /* controlli sulla storia */
+  if ( obj.story_title === "" ) {
+    res.ok = false;
+    res.errors.push( "Storia - Titolo mancante" );
+  }
+
+  if ( obj.game_mode === "" ) {
+    res.ok = false;
+    res.errors.push( "Storia - Modalità di gioco non specificata" );
+  }
+
+  if ( obj.quests.length < 1 ) {
+    res.ok = false;
+    res.errors.push( "Storia - Nessuna quest presente" );
+  }
+
+  /* controlli sulle quest */
+  $.each( obj.quests, function(q_index, q) {
+    if ( q.quest_title === "" ) {
+      res.ok = false;
+      res.errors.push( "Quest n." + q_index + ": Titolo mancante" );
+    }
+
+    if ( q.activities.length < 1 ) {
+      res.ok = false;
+      res.errors.push( "Quest n." + q_index + ": Nessuna attività presente" );
+    }
+
+    /* controlli sulle attività */
+    $.each( q.activities, function(a_index, a) {
+      
+      /* presenza del testo */
+      if ( a.activity_text.length < 1 ) {
+        res.ok = false;
+        res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Testo mancante" );
+      }
+
+      /* presenza delle descrizioni delle immagini */
+      if ( obj.ACCESSIBILITY ) {
+        $.each( a.activity_text, function(p_index, p) {
+          if ( p.type == "gallery" ) {
+            $.each( p.content, function(image_index, image) {
+              if ( $(image).attr("alt") == "" || $(image).attr("alt") === undefined ) {
+                res.ok = false;
+                res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Mancano alcune descrizioni delle immagini" );
+                return false;
+              }
+            });
+          }
+        });
+      }
+
+      /* presenza e correttezza del campo risposta */
+      if ( a.answer_field.type === "" || ( a.answer_field.type == "checklist" && a.answer_field.options.length < 1 ) ) {
+        res.ok = false;
+        res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Campo risposta creato in modo non corretto" );
+      }
+
+      /* presenza e correttezza degli outcomes */
+      if ( a.ASK_EVAL < 1 && a.FINAL < 1 ) {
+        if ( a.answer_outcome.length < 1 ) {
+          res.ok = false;
+          res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Outcomes specificati in modo non corretto" );
+        }
+        else {
+          $.each( a.answer_outcome, function(outcome_index, outcome) {
+            if ( outcome.nextquest < 1 && outcome.nextactivity === "" ) {
+              res.ok = false;
+              res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Outcomes specificati in modo non corretto" );
+            }
+          });
+        }
+      }
+
+      /* presenza del tempo previsto */
+      if ( a.GET_CHRONO && a.expected_time < 60000 ) {
+        res.ok = false;
+        res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Tempo previsto non specificato" );
+      }
+
+      if ( a.FINAL )
+        final_activity = true;
+      
+    });
+  });
+
+  if ( final_activity == false ) {
+    res.ok = false;
+    res.errors.push( "Quest n." + q_index + ": Attività finale mancante" );
+  }
+
+  return res;
+};
+
+
+/* --------------------- WIP --------------------------- */
+function MainMenu( action ) {
+  switch ( action ) {
+    case "NEWSTORY":
+      mode = "default";
+      first_selected_stage = "";
+      first_selected_card_index = -1;
+      selected_card = "";
+      CardClickDisabled = false;
+      b = [0, 0, 0, 0, 0, 0, 0];
+
+      $('.masthead').fadeIn();
+      initStory();
+      goToSection('EditStory');
+      break;
+  }
+};
+
+
+
+function Navbar( event ) {
+  /* per ora inseriamo anche la chiusura della finestra */
+
+  switch ( event ) {
+    case "Close":
+      /* TODO */
+      break;
+    case "Save":
+      /* TODO */
+      break;
+    case "CSSEditor":
+      CSS_Editor_Window = window.open( "../shared/css_editor.html" );
+      break;
+    case "Preview":
+      /* TODO */
+      break;
+    case "Home":
+      /* TODO */
+  }
+}
+
+
+
+function closeEditor() {
+  switch ( CurrentNavStatus.Section ) {
+    case "MainMenu":
+      /* aggiungere le sezioni di OpenStory e Explorer */
+      window.onbeforeunload = null;
+      window.close();
+      return;
+  }
+
+  $( "#PromptSave" ).modal("show");
+
+  $( "#PromptSave .button[data-dismiss=modal]" ).click( function() {})
+}
+
+
+

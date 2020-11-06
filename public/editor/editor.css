@@ -21,7 +21,7 @@ body, .cover-container {
   }
 }
 
-.masthead .nav-link:not(:last-child) {
+.masthead {
   display: none;
 }
 
@@ -78,6 +78,11 @@ main {
 }
 
 /* ------------------------- */
+
+#s_buttons_div button:first-child {
+  background-color: lightcoral;
+  border-color: lightcoral;
+}
 
 #NumberOfDevices .btn-secondary {
   background-color: #666;

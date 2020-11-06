@@ -1,5 +1,4 @@
 var b = [ false, false, false, false, false, false, false ]; // true: b[i] è selezionato
-var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
 
 /* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
 
@@ -41,31 +40,9 @@ function deselect_other_options( i ) {
 	}
   
 	if( b[x] ) {
-	  change_color_option( "#a" + x, "bg-primary", bgs[x] );
+	  change_color_option( "#a" + x, "bg-primary", "bg-secondary" );
 	  b[x] = false;
 	}
-};
-  
-  
-/**
-* Controlla che siano selezionate le opzioni necessarie per far partire l'editing della storia
-*/
-function check_select() {
-	if( (b[0] ^ b[1] ^ b[2]) && (b[5] ^ b[6]) ) {
-	  if ( b[1] ^ b[2] ) {
-		if ( b[3] ^ b[4] )
-		  $( "#StartEditing" ).removeClass( "disabled" );
-		else
-		  $( "#StartEditing" ).addClass( "disabled" );
-  
-		return;
-	  }
-  
-	  $( "#StartEditing" ).removeClass( "disabled" );
-	}
-	  
-	else
-	  $( "#StartEditing" ).addClass( "disabled" );
 };
 
   
@@ -77,7 +54,7 @@ function select( i ) {
 	b[i] = !b[i];
   
 	if( b[i] ) {
-	  change_color_option( "#a" + i, bgs[i], "bg-primary" );
+	  change_color_option( "#a" + i, "bg-secondary", "bg-primary" );
 	  deselect_other_options( i );
   
 	  switch (i) {
@@ -90,9 +67,57 @@ function select( i ) {
 	  }
 	}
 	else
-	  change_color_option( "#a" + i, "bg-primary", bgs[i] );
-  
-	check_select();
+	  change_color_option( "#a" + i, "bg-primary", "bg-secondary" );
+};
+
+
+/**
+ * Carica, in base ai dati nel json, la sezione di modifica della Game Mode
+ */
+function loadGameModeSection() {
+	b = [0, 0, 0, 0, 0, 0, 0];
+
+	switch ( CurrentWork.game_mode ) {
+		case "SINGLE":
+			select(0);
+			break;
+		case "GROUP":
+			select(1);
+			break;
+		case "CLASS":
+			select(2);
+			break;
+		default:
+			$( "#ChooseGameMode .card-deck .card" ).removeClass( "bg-primary" );
+			$( "#ChooseGameMode .card-deck .card" ).addClass( "bg-secondary" );
+	}
+
+	if ( CurrentWork.ACCESSIBILITY )
+		select(5);
+	else
+		select(6);
+};
+
+
+/**
+ * Salva nel json le modifiche effettuate alla Game Mode
+ */
+function saveGameModeSettings() {
+	if ( b[0] )
+		CurrentWork.game_mode = "SINGLE";
+	else if ( b[1] )
+		CurrentWork.game_mode = "GROUP";
+	else if ( b[2] )
+		CurrentWork.game_mode = "CLASS";
+	else
+		CurrentWork.game_mode = "";
+
+	if ( b[5] )
+		CurrentWork.ACCESSIBILITY = true;
+	else
+		CurrentWork.ACCESSIBILITY = false;
+
+	back();
 };
 
 
@@ -341,7 +366,7 @@ function saveTextParagraph() {
   else
 	$("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
 	
-  GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
+  saveCardGrids();
   back()
 };
 

@@ -27,10 +27,10 @@ var CurrentNavStatus = {
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
 var CurrentWork;
 
-
 /* FINESTRE - WIP */
 var CSS_Editor_Window;
 
+/* variabili per editing del CSS */
 const channel = new BroadcastChannel( "css_channel" );
 channel.addEventListener( "message", e => {
   CSSdata = e.data;
@@ -749,7 +749,7 @@ function isPublishable( obj ) {
 
   let final_activity = false;
 
-  /* controlli generali sulla storia */
+  /* controlli sulla storia */
   if ( obj.story_title === "" ) {
     res.ok = false;
     res.errors.push( "Storia - Titolo mancante" );
@@ -779,13 +779,15 @@ function isPublishable( obj ) {
 
     /* controlli sulle attività */
     $.each( q.activities, function(a_index, a) {
+      
+      /* presenza del testo */
       if ( a.activity_text.length < 1 ) {
         res.ok = false;
         res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Testo mancante" );
       }
 
+      /* presenza delle descrizioni delle immagini */
       if ( obj.ACCESSIBILITY ) {
-        /* controlla le immagini */
         $.each( a.activity_text, function(p_index, p) {
           if ( p.type == "gallery" ) {
             $.each( p.content, function(image_index, image) {
@@ -799,18 +801,29 @@ function isPublishable( obj ) {
         });
       }
 
+      /* presenza e correttezza del campo risposta */
       if ( a.answer_field.type === "" || ( a.answer_field.type == "checklist" && a.answer_field.options.length < 1 ) ) {
         res.ok = false;
         res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Campo risposta creato in modo non corretto" );
       }
 
+      /* presenza e correttezza degli outcomes */
       if ( a.ASK_EVAL < 1 && a.FINAL < 1 ) {
-        if ( a.answer_outcome.length < 1 || ( a.answer_outcome[0].nextquest == false && a.answer_outcome[0].nextquest === "" ) ) {
+        if ( a.answer_outcome.length < 1 ) {
           res.ok = false;
           res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Outcomes specificati in modo non corretto" );
         }
+        else {
+          $.each( a.answer_outcome, function(outcome_index, outcome) {
+            if ( outcome.nextquest < 1 && outcome.nextactivity === "" ) {
+              res.ok = false;
+              res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Outcomes specificati in modo non corretto" );
+            }
+          });
+        }
       }
 
+      /* presenza del tempo previsto */
       if ( a.GET_CHRONO && a.expected_time < 60000 ) {
         res.ok = false;
         res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Tempo previsto non specificato" );

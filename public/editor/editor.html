@@ -663,12 +663,102 @@ $(document).ready( function() {
     </script>
   </main>
 
-  <main role="main" class="inner cover EditorSection" id="Explorer">
+  <main role="main" class="inner cover EditorSection " id="Explorer">
     <a class="nav-link" href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-      <p style="border: solid 1px; ">swag</p>
-      <p style="border: solid 1px; ">swag</p>
+     <!-- <p style="border: solid 1px; " ondrop="drop(event)" ondragover="allowDrop(event)">
+        <img src="loli.png" draggable='true' ondragstart="drag(event)" id="drag1" width="20%" height="30%">
+      </p>
+      <p style="border: solid 1px; " ondrop="drop(event)" ondragover="allowDrop(event)">
+        <img src="loli.png" draggable='true' ondragstart="drag(event)" id="drag2" width="20%" height="30%">
+      </p>  -->
+      <style>
+        .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+      </style>
+  <div class="grid-container">
+    <div class="container">
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag0">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag1">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag2">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag3">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag4">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag5">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>    
+    </div>       
+      
+    <div class="container ">
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag6">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag7">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag8">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag9">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-deck mb-2" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag10">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag11">
+          <div class="card-body text-center">
+            <p class="card-text">4</p>
+          </div>
+        </div>
+      </div>           
+    </div>
+  </div>
   </main>
   <!--
   <div class="EditorSection" id="TestSection">

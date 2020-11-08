@@ -64,12 +64,15 @@ function validateInput(answer, current_quest, current_activity) {
 // indica il numero della quest attiva ed il numero dell'attività attiva
 var CurrentStatus = {
 	QuestN: -1,
+	QuestID: -1,
 	ActivityN: -1,
 	TimeToAnswer: 0,
+	AlreadyHelped: 0,
 	ChatMessages: 0
 };
 
-var interval; // funzione che incrementa ogni 10s il TimeToAnswer
+
+var Chronometer;
 
 
 /**
@@ -112,6 +115,7 @@ function assignID( name ) {
 */
 function goToQuest( quest_n ) {
 	CurrentStatus.QuestN = quest_n;
+	CurrentStatus.QuestID = StoryObj.quests[quest_n].quest_ID;
 
 	let NewQuest = $( ".Quest" );
 	NewQuest.empty();
@@ -200,24 +204,16 @@ function goToActivity( activity_n ) {
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
 		NewActivity.append( $( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" ) );
 	else
-		NewActivity.append( $( "<button class='NextActivity'>PROSEGUI</button>" ) );
+		NewActivity.append( $( "<button class='NextActivity' onclick='nextStage();'>PROSEGUI</button>" ) );
 
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );
 
 	CurrentStatus.TimeToAnswer = 0;
+	CurrentStatus.AlreadyHelped = 0;
 	CurrentStatus.ChatMessages = 0;
 
-	/* Se l'autore ha settato l'expected_time, viene attivato l'apposito cronometro */
-	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
-		$( ".NextActivity" ).attr( "onclick", "clearInterval( interval ); nextStage();" );
-		toggleIntervalTimer();
-	}
-	else {
-		$( ".NextActivity" ).attr( "onclick", "nextStage();" );
-	}
-
-	/* TODO: attiva il cronometro */
+	toggleChronometer();
 };
 
 
@@ -273,23 +269,31 @@ function addTextPart( container, node, ...other ) {
 
 
 /**
- * Attiva l'interval timer che aumenta ogni 10s il TimeToAnswer.
+ * Attiva l'interval timer che aumenta ogni 5s il TimeToAnswer. Invia eventualmente una richiesta di aiuto (non visibile al player) al valutatore
  */
-function toggleIntervalTimer() {
-	interval = setInterval( function() {
-		CurrentStatus.TimeToAnswer += 10000;
-		console.log(CurrentStatus.TimeToAnswer); // debugging
-	}, 10000 );
+function toggleChronometer() {
+	Chronometer = setInterval( function() {
+		CurrentStatus.TimeToAnswer += 5000;
+
+		if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].GET_CHRONO && !CurrentStatus.AlreadyHelped && 
+			CurrentStatus.TimeToAnswer > StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time ) {
+			/* TODO - invia richiesta di aiuto */
+			CurrentStatus.AlreadyHelped = true;
+			console.log("HELP"); // debugging
+		}
+	}, 5000 );
 };
 
 
 /**
- * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato
+ * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato. Invia anche lo status del player al valutatore
  */
 function nextStage() {
 	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
-	/* TODO: ferma il cronometro e segna il tempo impiegato a completare l'attività */
+	clearInterval( Chronometer );
+	console.log( CurrentStatus ); // debugging
+	/* TODO - invia status */
 	
 	if ( CurrentStage.activity_type == 'ANSWER' )
 		checkAnswer();

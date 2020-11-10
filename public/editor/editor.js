@@ -30,14 +30,10 @@ var CurrentWork;
 
 /* FINESTRE - WIP */
 var CSS_Editor_Window;
+var Preview_Window;
 
-/* variabili per editing del CSS */
-const channel = new BroadcastChannel( "css_channel" );
-channel.addEventListener( "message", e => {
-  CSSdata = e.data;
-});
-
-var CSSdata; // va trovato un modo migliore
+/* variabile che contiene il CSS personalizzato dall'autore */
+var CSSdata;
 
 
 /* ------------------------------- PROCEDURE ---------------------------------- */
@@ -143,6 +139,8 @@ function initStory() {
     ActivityGrids: [],
     ParagraphGrids: []
   };
+
+  CSSdata = "";
 };
 
 
@@ -328,6 +326,9 @@ function goToSection(where) {
     change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
 
     switch ( where ) {
+      case "MainMenu":
+        $('.masthead').fadeOut();
+        break;
       case "EditStory":
         CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( CurrentWork.story_title );
@@ -870,42 +871,36 @@ function MainMenu( action ) {
 
 
 
-function Navbar( event ) {
-  /* per ora inseriamo anche la chiusura della finestra */
-
-  switch ( event ) {
-    case "Close":
-      /* TODO */
-      break;
+function Navbar( option ) {
+  switch ( option ) {
     case "Save":
       /* TODO */
       break;
     case "CSSEditor":
-      CSS_Editor_Window = window.open( "../shared/css_editor.html" );
+      if ( CSS_Editor_Window == null ) {
+        CSS_Editor_Window = window.open( "../shared/css_editor.html", "tab" );
+        window.addEventListener( "message", (e) => {
+          switch ( e.data.event_type ) {
+            case "ready":
+              CSS_Editor_Window.postMessage( CSSdata, "*" );
+              break;
+            case "save":
+              CSSdata = e.data.content;
+              break;
+            case "close":
+              CSS_Editor_Window = null;
+          }
+        });
+      }
       break;
     case "Preview":
-      /* TODO */
+      /* TODO - interfacciare col json */
+      Preview_Window = window.open( "../player/player.html", "tab" );
       break;
     case "Home":
-      /* TODO */
+      if ( CSS_Editor_Window )
+        CSS_Editor_Window.close();
+      
+      $( "#SavePrompt" ).modal( "toggle" );
   }
-}
-
-
-
-function closeEditor() {
-  switch ( CurrentNavStatus.Section ) {
-    case "MainMenu":
-      /* aggiungere le sezioni di OpenStory e Explorer */
-      window.onbeforeunload = null;
-      window.close();
-      return;
-  }
-
-  $( "#PromptSave" ).modal("show");
-
-  $( "#PromptSave .button[data-dismiss=modal]" ).click( function() {})
-}
-
-
-
+};

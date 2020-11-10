@@ -30,18 +30,18 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id al momento della pubblicazione]
-    * [WIP] Funzioni di passaggio a editor grafico, preview e GameMode
-    * Sistemare le descrizioni in ChooseGameMode
+    * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
+    * [WIP] Funzioni di passaggio per navbar e main menu
+    * [WIP] Aggiungere le funzionalità relative a quest_ID
     * Rimuovere funzionalità single device
+    * Sistemare le descrizioni in ChooseGameMode
+    * Cambiare le icone degli errori CSS
+    * Sistemare nomi e tooltips dei settings dell'Answer Field
     * Aggiungere nella guida dell'editor CSS l'id delle attività e quest
     * Mettere il nome dell'app
     * Migliorare le spiegazioni
 * PLAYER
-    * Aggiungere cronometro
-    * Sistemare la raccolta e l'invio delle stats: 
-        * inviare UNA volta l'aggiornamento dell'attività in cui il player si trova. poi, ogni 10s un booleano che indica se è ancora lì
-        * ogni volta che l'attività viene completata, invia il tempo che ci ha messo
+    * [WIP] Completare la raccolta e l'invio delle stats
     * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
     * Migliorare la schermata di inizio
 * TUTTO

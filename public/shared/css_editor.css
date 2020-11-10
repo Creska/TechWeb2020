@@ -63,3 +63,11 @@ code pre {
 code pre cite {
     color: indigo;
 }
+
+.modal .close {
+    color: #fff;
+}
+
+.modal-header, .modal-footer {
+    border-color: #666;
+}

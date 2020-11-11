@@ -25,17 +25,18 @@
     /* comunicazione con l'editor CSS */
     window.onload = function() {
       window.addEventListener( "message", (e) => {
-          if ( CSS_Editor_Window == null || e.origin != CSS_Editor_Window.location.origin )
-            return;
+        /*
+        if ( CSS_Editor_Window == null || e.origin != CSS_Editor_Window.location.origin )
+          return;*/
 
-          switch ( e.data.event_type ) {
-            case "ready":
-              CSS_Editor_Window.postMessage( CSSdata, "*" );
-              break;
-            case "save":
-              CSSdata = e.data.content;
-              break;
-          }
+        switch ( e.data.event_type ) {
+          case "ready":
+            CSS_Editor_Window.postMessage( CSSdata, "*" );
+            break;
+          case "save":
+            CSSdata = e.data.content;
+            break;
+        }
       });
     };
 

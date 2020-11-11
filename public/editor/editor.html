@@ -114,22 +114,39 @@ $(document).ready( function() {
         <a class="nav-link" href="javascript: saveStory();" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
           <i class="far fa-save fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
+        <a class="nav-link" href="javascript:Navbar('CSSEditor');" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
           <i class="fab fa-css3 fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
+        <a class="nav-link" href="javascript:Navbar('Preview');" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
           <i class="far fa-eye fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+        <a class="nav-link" href="javascript:Navbar('Home');" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
           <i class="fas fa-home fa-2x"></i>
         </a>
       </nav>
     </div>
   </header>
 
-  <div style="display:none;">
-    <a href="../shared/css_editor.html" target="_blank">Editor CSS</a>
-  </div>
+  <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Salvare prima di tornare al menu principale?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide'); goToSection('MainMenu');">Ignora</button>
+          <button type="button" class="btn btn-primary" onclick="/* TODO */">Salva</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 
   <!-- MENU PRINCIPALE -->
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
@@ -137,8 +154,8 @@ $(document).ready( function() {
     <p class="lead SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="getStories();goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 

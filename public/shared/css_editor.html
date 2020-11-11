@@ -22,35 +22,42 @@
     <link rel="stylesheet" href="css_editor.css">
 
     <script>
-        $( function () {
-            css_editor = CodeMirror( document.querySelector('#css-editor'), {
+        window.onload = function () {
+            MainEditor.postMessage({
+                event_type: "ready",
+                content: ""
+            }, "*" );
+
+            window.addEventListener( "message", (e) => {
+                if ( e.origin != MainEditor.location.origin ) {
+                    window.alert( "Si è verificato un errore. Si consiglia di chiudere e riaprire il CSS Editor.");
+                    window.onbeforeunload = null;
+                    return;
+                }
+
+                css_editor = CodeMirror( document.querySelector('#css-editor'), {
                 lineNumbers: true,
                 tabSize: 50,
-                value: test_stylesheet,
+                value: e.data,
                 theme: 'monokai',
                 mode: 'css',
                 gutters: ["CodeMirror-lint-markers"],
                 lint: true
+                });
+
+                // width and height manip
+                css_editor.setSize(null, "auto");
             });
-            // width and height manip
-            css_editor.setSize(null, "auto");
-        });
+        };
 
         window.onbeforeunload = function (e) {
             var confirmationMessage = "ask";
 
             (e || window.event).returnValue = confirmationMessage;     // Gecko + IE
-            return confirmationMessage;                                /* Safari, Chrome, and other WebKit-derived browsers */
+            return confirmationMessage;                                // Safari, Chrome, and other WebKit-derived browsers
         };
+
     </script>
-
-<!--
-    TODO
-    * compatibilità con mobile
-    * guida
-    * fixare la modalità di scrolling
--->
-
 
     <title>CSS editor</title>
 </head>
@@ -66,7 +73,7 @@
             </div>
 
             <div class="btn-group mr-2" role="group" aria-label="Second group">
-                <button class="btn btn-success" onclick="$('#saveicon').toggle(true); channel.postMessage( css_editor.getValue() );">Salva</button>
+                <button class="btn btn-success" onclick="saveCSS();">Salva</button>
             </div>
                 
             <div class="btn-group mr-2" role="group" aria-label="Third group">
@@ -76,16 +83,34 @@
             </div>
                 
             <div class="btn-group" role="group" aria-label="Fourth group">
-            <button class="btn btn-danger" onclick="
-                if ( window.confirm(`Chiudere l'editor CSS?\nI dati non salvati andranno persi.`) ) {
-                    window.onbeforeunload = null;
-                    window.close(); // NOTA: potrebbe non funzionare nel caso questa window non sia stata aperta da un altro script
-                }">
+            <button class="btn btn-danger" onclick="$('#SavePrompt').modal('toggle');">
                     <i class="fas fa-times"></i>
                 </button>
             </div>    
         </div>  
     </nav>
+
+
+    <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content bg-dark">
+            <div class="modal-header">
+              <h5 class="modal-title">Attenzione</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Salvare prima di chiudere?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="window.onbeforeunload=null; window.close();">Ignora</button>
+              <button type="button" class="btn btn-primary" onclick="saveCSS(); window.onbeforeunload=null; window.close();">Salva</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
 
     <div id="editorUI">
         <div id="css-editor"></div>

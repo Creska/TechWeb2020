@@ -30,14 +30,10 @@ var CurrentWork;
 
 /* FINESTRE - WIP */
 var CSS_Editor_Window;
+var Preview_Window;
 
-/* variabili per editing del CSS */
-const channel = new BroadcastChannel( "css_channel" );
-channel.addEventListener( "message", e => {
-  CSSdata = e.data;
-});
-
-var CSSdata; // va trovato un modo migliore
+/* variabile che contiene il CSS personalizzato dall'autore */
+var CSSdata;
 
 
 /* ------------------------------- PROCEDURE ---------------------------------- */
@@ -143,6 +139,8 @@ function initStory() {
     ActivityGrids: [],
     ParagraphGrids: []
   };
+
+  CSSdata = "";
 };
 
 
@@ -327,12 +325,7 @@ function goToSection(where) {
 
     switch ( where ) {
       case "MainMenu":
-        $('header').css('display','none');
-        //chiedi roba all'utente e resetta il json e la la EditStory Section
-        //reset_EditStory();
-        
-        break;
-      case "ChooseGameMode":
+        $('.masthead').fadeOut();
         break;
       case "EditStory":
         $('header').css('display','block');
@@ -1043,36 +1036,37 @@ function MainMenu( action ) {
 
 
 
-function Navbar( event ) {
-  /* per ora inseriamo anche la chiusura della finestra */
-
-  switch ( event ) {
-    case "Close":
-      /* TODO */
-      break;
+function Navbar( option ) {
+  switch ( option ) {
     case "Save":
       /* TODO */
       break;
     case "CSSEditor":
-      CSS_Editor_Window = window.open( "../shared/css_editor.html" );
+      if ( CSS_Editor_Window == null ) {
+        CSS_Editor_Window = window.open( "../shared/css_editor.html", "tab" );
+        window.addEventListener( "message", (e) => {
+          switch ( e.data.event_type ) {
+            case "ready":
+              CSS_Editor_Window.postMessage( CSSdata, "*" );
+              break;
+            case "save":
+              CSSdata = e.data.content;
+              break;
+            case "close":
+              CSS_Editor_Window = null;
+          }
+        });
+      }
       break;
     case "Preview":
-      /* TODO */
+      /* TODO - interfacciare col json */
+      Preview_Window = window.open( "../player/player.html", "tab" );
       break;
     case "Home":
-      /* TODO */
-  }
-}
-
-
-
-function closeEditor() {
-  switch ( CurrentNavStatus.Section ) {
-    case "MainMenu":
-      /* aggiungere le sezioni di OpenStory e Explorer */
-      window.onbeforeunload = null;
-      window.close();
-      return;
+      if ( CSS_Editor_Window )
+        CSS_Editor_Window.close();
+      
+      $( "#SavePrompt" ).modal( "toggle" );
   }
 
   $( "#PromptSave" ).modal("show");

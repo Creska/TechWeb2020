@@ -71,3 +71,7 @@ code pre cite {
 .modal-header, .modal-footer {
     border-color: #666;
 }
+
+.CodeMirror-hints, .CodeMirror-lint-tooltip {
+z-index: 100000000000 !important;
+}

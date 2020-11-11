@@ -10,8 +10,12 @@ function errorsToString(errors) {
     var error_string = "<div class='css-validation'>";
     for (let i = 0; i < errors.length; i++) {
         let tr_error = errors[i];
-        error_string += error_img + " " + tr_error.children[0].innerHTML + " " + tr_error.children[2].children[0].innerHTML
-        error_string += "<br>"
+        if (tr_error.children[2].innerHTML.trim() == 'Parse Error') {
+            return error_string + "Errore di parsing: Non è stato individuato alcun foglio di stile.<br>Controlla che tu abbia scritto del codice CSS valido.</div>";
+        } else {
+            error_string += error_img + " " + tr_error.children[0].innerHTML + " " + tr_error.children[2].children[0].innerHTML
+            error_string += "<br>"
+        }
     }
     return error_string + " </div>";
 };
@@ -37,7 +41,7 @@ function warningsToString(warnings) {
  * Mostra/nasconde la guida dell'editor
  */
 function showGuide() {
-    if ( $("#guide").css("display") == "none" ) {
+    if ($("#guide").css("display") == "none") {
         $("#editorUI").fadeOut();
         $("#guide").fadeIn();
     }
@@ -101,7 +105,7 @@ function saveCSS() {
     MainEditor.postMessage({
         event_type: "save",
         content: css_editor.getValue()
-    }, "*" );
+    }, "*");
     $('#saveicon').toggle(true);
 }
 

@@ -35,6 +35,7 @@
                     return;
                 }
 
+                $( "#css-editor" ).empty();
                 css_editor = CodeMirror( document.querySelector('#css-editor'), {
                 lineNumbers: true,
                 tabSize: 50,
@@ -93,21 +94,21 @@
 
     <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content bg-dark">
-            <div class="modal-header">
-              <h5 class="modal-title">Attenzione</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Attenzione</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Salvare prima di chiudere?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="window.onbeforeunload=null; window.close();">Ignora</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCSS(); window.onbeforeunload=null; window.close();">Salva</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <p>Salvare prima di chiudere?</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" onclick="window.onbeforeunload=null; window.close();">Ignora</button>
-              <button type="button" class="btn btn-primary" onclick="saveCSS(); window.onbeforeunload=null; window.close();">Salva</button>
-            </div>
-          </div>
         </div>
     </div>
 

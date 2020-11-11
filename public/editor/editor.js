@@ -5,19 +5,6 @@ var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var CardClickDisabled = false;
 
-/* indica, per ogni sezione, quella genitore - gli identificatori sono gli id html */
-var Parent = {
-	MainMenu: "MainMenu",
-  EditStory: "EditStory",
-  ChooseGameMode: "EditStory",
-	EditQuest: "EditStory",
-	EditActivity: "EditQuest",
-	EditAnswerField: "EditActivity",
-  EditText: "EditActivity",
-  EditGallery: "EditActivity",
-  SetAnswerOutcome: "EditActivity"
-};
-
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
@@ -54,7 +41,8 @@ function save_title( which ) {
       else
         $( "#EditStory .SectionTitle" ).html( "<i>StoriaSenzaNome</i>" );
 
-      change_savetitle_button( "saved" );
+      change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
+      $( "#SaveStoryTitle" ).text( "Salvato!" );
       break;
     case "quest":
       if (CurrentNavStatus.QuestN < 0) {
@@ -81,7 +69,8 @@ function save_title( which ) {
 
         CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
 
-        change_savetitle_button( "saved" );
+        change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
+        $( "#SaveQuestTitle" ).text( "Salvato!" );
       }
       break;
     default:
@@ -178,38 +167,6 @@ function initActivity() {
 
 
 /**
- * @param mode --> modalità in cui si trova la gestione delle card
- * Gestisce il pulsante di salvataggio, segnalando quando il save è stato eseguito
- */
-function change_savetitle_button( mode ) {
-  let btn;
-
-  switch ( CurrentNavStatus.Section ) {
-    case "EditStory":
-      btn = $( "#SaveStoryTitle" );
-      break;
-    case "EditQuest":
-      btn = $( "#SaveQuestTitle" );
-      break;
-    default:
-      handleError();
-      break;
-  }
-
-  if ( mode == 'saved' ) {
-    btn.removeClass("bg-primary");
-    btn.addClass("bg-success");
-    btn.text("Salvato!");
-  }
-  else if ( mode == 'unsaved' ) {
-    btn.removeClass('bg-success');
-    btn.addClass('bg-primary');
-    btn.text('Salva');
-  }
-};
-
-
-/**
  * @param target
  * @param decolor --> colore iniziale
  * @param color --> colore finale
@@ -301,8 +258,25 @@ function get_card_index() {
  * Torna alla sezione precedente
 */
 function back() {
-  
-  goToSection(Parent[CurrentNavStatus.Section]);
+  switch ( CurrentNavStatus.Section ) {
+    case "ChooseGameMode":
+      goToSection( "EditStory" );
+      break;
+    case "EditQuest":
+      goToSection( "EditStory" );
+      CurrentNavStatus.QuestN = -1;
+      break;
+    case "EditActivity":
+      goToSection( "EditQuest" );
+      CurrentNavStatus.ActivityN = -1;
+      break;
+    case "EditAnswerField":
+    case "SetAnswerOutcome":
+    case "EditText":
+    case "EditGallery":
+      goToSection( "EditActivity" );
+      break;
+  }
 };
 
 
@@ -311,15 +285,17 @@ function back() {
  * Porta alla sezione specificata, facendo tutti i caricamenti necessari
  */
 function goToSection(where) {
+  /* esegue eventuali reset */
   mode = "default";
-  first_selected_stage="";
-  switch (CurrentNavStatus.Section) {
+  first_selected_stage = "";
+  switch ( CurrentNavStatus.Section ) {
     case "EditStory":
     case "EditQuest":
     case "EditActivity":
       stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid" );
   }
 
+  /* cambia sezione */
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
     
     change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
@@ -330,19 +306,21 @@ function goToSection(where) {
         $('.masthead').fadeOut();
         break;
       case "EditStory":
-        CurrentNavStatus.QuestN = -1;
         $("#StoryTitleInput").val( CurrentWork.story_title );
         $("#QuestsGrid").html( CurrentWork.QuestGrid );
+
+        change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
+        $( "#SaveStoryTitle" ).text( "Salvato!" );
         break;
       case "ChooseGameMode":
         loadGameModeSection();
         break;
       case "EditQuest":
-        CurrentNavStatus.ActivityN = -1;
-
         if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
 
         $("#QuestTitleInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
+        change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
+        $( "#SaveQuestTitle" ).text( "Salvato!" );
         $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
 
         $("#ActivitiesGrid").html(CurrentWork.ActivityGrids[CurrentNavStatus.QuestN]); //carica la griglia delle attività
@@ -394,9 +372,6 @@ function goToSection(where) {
     }
     
     CurrentNavStatus.Section = where;
-
-    if ( where == "EditStory" || where == "EditQuest" )
-      change_savetitle_button("saved");
 
     $("#"+where).fadeIn();
   });
@@ -677,12 +652,7 @@ function getFileExtension( name ) {
  * Funzione da evolvere poi in una procedura di errore - che magari resetta l'applicazione
  */
 function handleError() {
-	window.alert( "!!! MAJOR ERROR !!!" );
-};
-
-
-function promptSave() {
-    /* TODO */
+  window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
 
 
@@ -877,21 +847,7 @@ function Navbar( option ) {
       /* TODO */
       break;
     case "CSSEditor":
-      if ( CSS_Editor_Window == null ) {
-        CSS_Editor_Window = window.open( "../shared/css_editor.html", "tab" );
-        window.addEventListener( "message", (e) => {
-          switch ( e.data.event_type ) {
-            case "ready":
-              CSS_Editor_Window.postMessage( CSSdata, "*" );
-              break;
-            case "save":
-              CSSdata = e.data.content;
-              break;
-            case "close":
-              CSS_Editor_Window = null;
-          }
-        });
-      }
+      CSS_Editor_Window = window.open( "../shared/css_editor.html", "tab" );
       break;
     case "Preview":
       /* TODO - interfacciare col json */

@@ -35,7 +35,7 @@ BUG E PROBLEMI DA CORREGGERE
     * [WIP] Aggiungere le funzionalità relative a quest_ID
     * Rimuovere funzionalità single device
     * Sistemare le descrizioni in ChooseGameMode
-    * Cambiare le icone degli errori CSS
+    * Cambiare le icone degli errori CSS e pulire il codice
     * Sistemare nomi e tooltips dei settings dell'Answer Field
     * Aggiungere nella guida dell'editor CSS l'id delle attività e quest
     * Mettere il nome dell'app

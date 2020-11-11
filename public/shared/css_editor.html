@@ -29,11 +29,12 @@
             }, "*" );
 
             window.addEventListener( "message", (e) => {
+                /*
                 if ( e.origin != MainEditor.location.origin ) {
                     window.alert( "Si è verificato un errore. Si consiglia di chiudere e riaprire il CSS Editor.");
                     window.onbeforeunload = null;
                     return;
-                }
+                }*/
 
                 $( "#css-editor" ).empty();
                 css_editor = CodeMirror( document.querySelector('#css-editor'), {

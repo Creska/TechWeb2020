@@ -11,6 +11,8 @@
   <script src="animations.js"></script>
   <script src="editor_sections.js"></script>
 
+  <script src="../player/test.js"></script> <!-- SOLO PER TEST -->
+
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   
@@ -32,6 +34,15 @@
         trigger : 'hover'
       });
     });
+
+    window.onbeforeunload = function (e) {
+      if ( CurrentNavStatus.Section != "MainMenu" ) { /* TODO - modificare in base a come saranno definite le altre sezioni */
+        var confirmationMessage = "ask";
+
+        (e || window.event).returnValue = confirmationMessage;     // Gecko + IE
+        return confirmationMessage;  // Safari, Chrome, and other WebKit-derived browsers
+      }
+    };
   </script>
 </head>
 
@@ -46,34 +57,48 @@
         <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
           <i class="far fa-save fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Imposta la modalità di gioco">
-          <i class="fas fa-cog fa-2x"></i>
-        </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
+        <a class="nav-link" href="javascript:Navbar('CSSEditor');" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
           <i class="fab fa-css3 fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
+        <a class="nav-link" href="javascript:Navbar('Preview');" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
           <i class="far fa-eye fa-2x"></i>
         </a>
-        <a class="nav-link" href="javascript:" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+        <a class="nav-link" href="javascript:Navbar('Home');" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
           <i class="fas fa-home fa-2x"></i>
         </a>
       </nav>
     </div>
   </header>
 
-  <div style="display:none;">
-    <a href="../shared/css_editor.html" target="_blank">Editor CSS</a>
-  </div>
+  <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Salvare prima di tornare al menu principale?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide'); goToSection('MainMenu');">Ignora</button>
+          <button type="button" class="btn btn-primary" onclick="/* TODO */">Salva</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 
   <!-- MENU PRINCIPALE -->
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
     <h1 class="cover-heading SectionTitle">Benvenuto nello Story Editor!</h1>
     <p class="lead SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('.masthead .nav-link').toggle(true); goToSection('EditStory');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 
@@ -90,21 +115,20 @@
     <div>
       <p>Numero di giocatori:</p>
       <div class="card-deck">
-        <!-- cambiare le immagini -->
-        <div class="card rounded bg-secondary" id="a0" onclick="CurrentWork.game_mode='SINGLE'; select(0);">
+        <div class="card rounded bg-secondary" id="a0" onclick="select(0);">
           <img src="../images/single.jpg" class="card-img-top" alt="..." >
           <div class="card-body">
             <h5 class="card-title">Single Player</h5>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="a1" onclick="CurrentWork.game_mode='GROUP'; select(1);">
+        <div class="card rounded bg-secondary" id="a1" onclick="select(1);">
           <img src="../images/group.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Gruppo</h5>
             <p class="card-text">Gruppo unico da 2-5 membri</p>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="a2" onclick="CurrentWork.game_mode='CLASS'; select(2);">
+        <div class="card rounded bg-secondary" id="a2" onclick="select(2);">
           <img src="../images/class.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Classe</h5>
@@ -114,7 +138,7 @@
       </div>
     </div>
   
-    <div class="mt-5" style="display: none;" id="NumberOfDevices">
+    <div class="mt-5" style="display: none;" id="NumberOfDevices"> <!-- FORSE DA RIMUOVERE -->
       <p>Il numero di device di controllo si riferisce al numero di dispositivi che possono interagire con i campi risposta e la chat. Scegli se attribuire il controllo della storia ad un solo membro per gruppo, o ad ogni giocatore in esso:</p>
 
       <button id="a3" class="btn btn-secondary bg-secondary" onclick="CurrentWork.single_device = 1; select(3);">SINGOLO</button>
@@ -123,13 +147,13 @@
     
     <div class="mb-3">
       <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
-      <button id="a5" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-success" onclick="CurrentWork.ACCESSIBILITY = 1; select(5);"><i class="fab fa-accessible-icon"></i></button>
-      <button id="a6" class="btn btn-secondary btn-lg rounded-circle bg-danger" onclick="CurrentWork.ACCESSIBILITY = 0; select(6);"><i class="fas fa-times"></i></button>
+      <button id="a5" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="select(5);"><i class="fab fa-accessible-icon"></i></button>
+      <button id="a6" class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="select(6);"><i class="fas fa-times"></i></button>
     </div>
     
     <div class="p-3 Save-Cancel">
-      <button class="btn btn-success mb-3 mr-2 ml-2 rounded">Salva</button>
-      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded">Annulla</button>
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveGameModeSettings();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick=back();>Annulla</button>
     </div>
   </main>
 
@@ -158,7 +182,10 @@
     </div>
 
     <div id="s_buttons_div" class=" p-3">
-      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
+      <button class="btn btn-lg btn-secondary mb-3 mr-5 rounded" onclick="goToSection('ChooseGameMode');" data-toggle="tooltip" data-placement="left" title="Cambia la modalità di gioco">
+        <i class="fas fa-cog"></i>
+      </button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="bottom" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
       <button id="s_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='$("#NewQuestWidget").removeClass("invisible");' data-toggle="tooltip" data-placement="top" title="Crea una nuova quest" ><i class="fas fa-plus"></i> </button>

@@ -1,4 +1,4 @@
-const channel = new BroadcastChannel( "css_channel" );
+const MainEditor = window.opener;
 var css_editor;
 
 /**
@@ -92,6 +92,19 @@ function validate_css() {
         }
     })
 };
+
+
+/**
+ * Salva il CSS scritto, inviandolo all'editor principale tramite canale apposito
+ */
+function saveCSS() {
+    MainEditor.postMessage({
+        event_type: "save",
+        content: css_editor.getValue()
+    }, "*" );
+    $('#saveicon').toggle(true);
+}
+
 
 var test_stylesheet = `@charset "UTF-8";
 

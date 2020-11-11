@@ -1,5 +1,4 @@
 var b = [ false, false, false, false, false, false, false ]; // true: b[i] è selezionato
-var bgs = [ "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary", "bg-success", "bg-danger"];
 
 /* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
 
@@ -41,31 +40,9 @@ function deselect_other_options( i ) {
 	}
   
 	if( b[x] ) {
-	  change_color_option( "#a" + x, "bg-primary", bgs[x] );
+	  change_color_option( "#a" + x, "bg-primary", "bg-secondary" );
 	  b[x] = false;
 	}
-};
-  
-  
-/**
-* Controlla che siano selezionate le opzioni necessarie per far partire l'editing della storia
-*/
-function check_select() {
-	if( (b[0] ^ b[1] ^ b[2]) && (b[5] ^ b[6]) ) {
-	  if ( b[1] ^ b[2] ) {
-		if ( b[3] ^ b[4] )
-		  $( "#StartEditing" ).removeClass( "disabled" );
-		else
-		  $( "#StartEditing" ).addClass( "disabled" );
-  
-		return;
-	  }
-  
-	  $( "#StartEditing" ).removeClass( "disabled" );
-	}
-	  
-	else
-	  $( "#StartEditing" ).addClass( "disabled" );
 };
 
   
@@ -77,7 +54,7 @@ function select( i ) {
 	b[i] = !b[i];
   
 	if( b[i] ) {
-	  change_color_option( "#a" + i, bgs[i], "bg-primary" );
+	  change_color_option( "#a" + i, "bg-secondary", "bg-primary" );
 	  deselect_other_options( i );
   
 	  switch (i) {
@@ -90,9 +67,57 @@ function select( i ) {
 	  }
 	}
 	else
-	  change_color_option( "#a" + i, "bg-primary", bgs[i] );
-  
-	check_select();
+	  change_color_option( "#a" + i, "bg-primary", "bg-secondary" );
+};
+
+
+/**
+ * Carica, in base ai dati nel json, la sezione di modifica della Game Mode
+ */
+function loadGameModeSection() {
+	b = [0, 0, 0, 0, 0, 0, 0];
+
+	switch ( CurrentWork.game_mode ) {
+		case "SINGLE":
+			select(0);
+			break;
+		case "GROUP":
+			select(1);
+			break;
+		case "CLASS":
+			select(2);
+			break;
+		default:
+			$( "#ChooseGameMode .card-deck .card" ).removeClass( "bg-primary" );
+			$( "#ChooseGameMode .card-deck .card" ).addClass( "bg-secondary" );
+	}
+
+	if ( CurrentWork.ACCESSIBILITY )
+		select(5);
+	else
+		select(6);
+};
+
+
+/**
+ * Salva nel json le modifiche effettuate alla Game Mode
+ */
+function saveGameModeSettings() {
+	if ( b[0] )
+		CurrentWork.game_mode = "SINGLE";
+	else if ( b[1] )
+		CurrentWork.game_mode = "GROUP";
+	else if ( b[2] )
+		CurrentWork.game_mode = "CLASS";
+	else
+		CurrentWork.game_mode = "";
+
+	if ( b[5] )
+		CurrentWork.ACCESSIBILITY = true;
+	else
+		CurrentWork.ACCESSIBILITY = false;
+
+	back();
 };
 
 
@@ -335,13 +360,13 @@ function saveOutcomes() {
 function saveTextParagraph() {
   let text = $('#TextParInput').val().trim().replace(/(<([^>]+)>)/gi, "");
 
-  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = "<p class='TextParagraph'>" + text + "</p>";
+  CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content = text;
   if (text)
     $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( text.substring(0, 25) + "..." );
   else
-    $("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
-  GridsOfParagraphs[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $("#ParagraphsGrid").html();
-
+	$("#ParagraphsGrid").find(".card-text").eq( get_card_index() ).html( "[vuoto]" );
+	
+  saveCardGrids();
   back()
 };
 
@@ -357,7 +382,7 @@ function addImage( image, newload ) {
   let newpreview;
 
   if (newload) {
-    newpreview = $( "<img class='SingleImage'>" );
+    newpreview = $( "<img>" );
 
     const reader = new FileReader();
     reader.readAsDataURL(image);
@@ -366,10 +391,8 @@ function addImage( image, newload ) {
       newpreview.attr( "src", this.result );
     });
   }
-  else {
+  else
     newpreview = $(image).clone(); // usata clone() perché senza sarebbe stato modificato direttamente l'oggetto passato come parametro ad addImage()
-    newpreview.attr("class", "SingleImage");
-  }
       
   newrow.append( newpreview );
   newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
@@ -384,74 +407,32 @@ function addImage( image, newload ) {
  * Carica la galleria di anteprima
  */
 function loadEditGallerySection() {
-  $("#GalleryPreview").empty();
+  	$("#GalleryPreview").empty();
 
-  gallery = $( $.parseHTML( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] ));
+  	let gallery = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content;
 
-  if ( gallery.prop("tagName") == "IMG" ) {
-    addImage(gallery, false);
-    $( "#GalleryPreview input" ).first().val( gallery.attr("alt") );
-  }
-  else {
-    gallery.find("img").each( function() {
-      addImage(this, false);
-    });
-    /* inserisce in ogni input la descrizione abbinata a ciascuna immagine */
-    $("#GalleryPreview").find("input").each( function(index) {
-      $(this).val( gallery.find("img").eq(index).attr("alt") );
-    });
-  }
+  	$.each( gallery, function(index, value) {
+		addImage( value, false ); // inserisce l'immagine nella gallery di anteprima
+		$("#GalleryPreview").find("input[type=text]").eq(index).val( $(value).attr("alt") ); // inserisce la descrizione
+  	});
 };
 
 
 /**
  * Salva la galleria di immagini nel json.
- * A seconda del numero di immagini, crea una img singola o un carousel di Bootstrap
  */
 function saveImageGallery() {
-  if ( $("#GalleryPreview .row").length == 1 ) {
-	$("#GalleryPreview .row img").first().attr( "alt", $("#GalleryPreview .row input").first().val() );
-	$("#GalleryPreview .row img").first().attr( "class", "SingleImage" );
-
-    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = $("#GalleryPreview .row img").first().prop("outerHTML");
-  }
-  else {
-	  /* l'id "ActiveGallery" serve a far funzionare le frecce per scorrere le immagini */
-    let newgallery = $(`
-    <div class="carousel slide ImageGallery" data-ride="carousel" data-interval="false">
-      <div class="carousel-inner">
-      </div>
-      <a class="carousel-control-prev" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </div>`);
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content = [];
 
     $("#GalleryPreview .row").each( function(index) {
-      let row = $(this);
-      let newpic = $("<div class='carousel-item'></div>");
+      	let row = $(this);
+		let newpic = $( "<img/>",
+		{
+			src: row.find("img").first().attr("src"),
+			alt: row.find("input[type=text]").first().val().replace(/(<([^>]+)>)/gi, "")
+		});
 
-      if (index == 0) newpic.addClass("active");
-
-      newpic.append( $("<img/>",
-      {
-        "class": "d-block w-100",
-        src: row.find("img").eq(0).attr("src"),
-        alt: row.find("input").eq(0).val().replace(/(<([^>]+)>)/gi, "")
-      }));
-
-      newgallery.children().first().append(newpic);
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content.push( newpic.prop("outerHTML") );
 	});
-	
-	newgallery.attr( "id", "gallery-index" + CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.length );
-	newgallery.find( "a" ).attr( "href", "#" + newgallery.attr("id") );
-
-    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()] = newgallery.prop("outerHTML");
-  }
-
-  back();
+  	back();
 };

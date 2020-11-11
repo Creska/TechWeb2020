@@ -64,12 +64,15 @@ function validateInput(answer, current_quest, current_activity) {
 // indica il numero della quest attiva ed il numero dell'attività attiva
 var CurrentStatus = {
 	QuestN: -1,
+	QuestID: -1,
 	ActivityN: -1,
 	TimeToAnswer: 0,
+	AlreadyHelped: 0,
 	ChatMessages: 0
 };
 
-var interval; // funzione che incrementa ogni 10s il TimeToAnswer
+
+var Chronometer;
 
 
 /**
@@ -86,7 +89,7 @@ function handleError() {
  */
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
-	$( "#Main" ).prepend( $.parseHTML( StoryObj.story_title ) );
+	$( "#Main" ).prepend( $( "<h1 class='StoryTitle'>" + StoryObj.story_title + "</h1>" ) );
     goToQuest( 0 );
 };
 
@@ -112,12 +115,13 @@ function assignID( name ) {
 */
 function goToQuest( quest_n ) {
 	CurrentStatus.QuestN = quest_n;
+	CurrentStatus.QuestID = StoryObj.quests[quest_n].quest_ID;
 
 	let NewQuest = $( ".Quest" );
 	NewQuest.empty();
 	NewQuest.attr( "id", assignID( "Quest" ) );
 
-	NewQuest.append( StoryObj.quests[quest_n].quest_title );
+	NewQuest.append( $( "<h2 class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h2>" ) );
 
 	goToActivity( 0 );
 };
@@ -143,9 +147,9 @@ function goToActivity( activity_n ) {
 		"class": "ActivityText"
 	});
 
-	for ( i = 0; i < StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text.length; i++ ) {
-		NewActivityText.append( $.parseHTML( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text[i] ));
-	}
+	$.each( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text, function(index, value) {
+		addTextPart( NewActivityText, value, index );
+	});
 
 	NewActivity.append( NewActivityText );
 
@@ -198,47 +202,98 @@ function goToActivity( activity_n ) {
 	}
 
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
-		NewActivity.append( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" );
+		NewActivity.append( $( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" ) );
 	else
-		NewActivity.append( "<button class='NextActivity'>PROSEGUI</button>" );
+		NewActivity.append( $( "<button class='NextActivity' onclick='nextStage();'>PROSEGUI</button>" ) );
 
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );
 
 	CurrentStatus.TimeToAnswer = 0;
+	CurrentStatus.AlreadyHelped = 0;
 	CurrentStatus.ChatMessages = 0;
 
-	/* Se l'autore ha settato l'expected_time, viene attivato l'apposito cronometro */
-	if ( StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].GET_CHRONO ) {
-		$( ".NextActivity" ).attr( "onclick", "clearInterval( interval ); nextStage();" );
-		toggleIntervalTimer();
-	}
-	else {
-		$( ".NextActivity" ).attr( "onclick", "nextStage();" );
-	}
-
-	/* TODO: attiva il cronometro */
+	toggleChronometer();
 };
 
 
 /**
- * Attiva l'interval timer che aumenta ogni 10s il TimeToAnswer.
+ * @param container --> puntatore al nodo che contiene tutto il testo dell'attività
+ * @param node --> nodo da aggiungere al container
+ * @param  {...any} other --> viene passato un indice per creare sul momento un id per la galleria
+ * Aggiunge un nuovo pezzo al testo dell'attività (paragrafo di testo, immagine o galleria)
  */
-function toggleIntervalTimer() {
-	interval = setInterval( function() {
-		CurrentStatus.TimeToAnswer += 10000;
-		console.log(CurrentStatus.TimeToAnswer); // debugging
-	}, 10000 );
+function addTextPart( container, node, ...other ) {
+	if ( node.type == "text" ) {
+		if ( node.content ) {
+			container.append( $( "<p/>",
+			{
+				class: "TextParagraph",
+				text: node.content
+			}));
+		}
+	}
+	else if ( node.type == "gallery" ) {
+		if ( node.content.length === 1 ) {
+			container.append( $( node.content[0] ).attr( "class", "SingleImage" ) );
+		}
+		else if ( node.content.length > 1 ) {
+			let newgallery = $(`
+			<div class="carousel slide ImageGallery" data-ride="carousel">
+				<div class="carousel-inner"></div>
+				<a class="carousel-control-prev" role="button" data-slide="prev">
+    				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine precedente</span>
+  				</a>
+  				<a class="carousel-control-next" role="button" data-slide="next">
+    				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine successiva</span>
+  				</a>
+			</div>`);
+
+			newgallery.attr( "id", "gallery" + arguments[2] );
+			newgallery.find( "a" ).attr( "href", "#gallery" + arguments[2] );
+
+			let newimage;
+			$.each( node.content, function(index, value) {
+				newimage = $( value ).attr( "class", "d-block w-100" );
+				if (index === 0 )
+					newgallery.find( ".carousel-inner" ).append( newimage.wrap( "<div class='carousel-item active'></div>" ).parent() );
+				else
+					newgallery.find( ".carousel-inner" ).append( newimage.wrap( "<div class='carousel-item'></div>" ).parent() );
+			});
+			container.append( newgallery );
+		}
+	}
 };
 
 
 /**
- * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato
+ * Attiva l'interval timer che aumenta ogni 5s il TimeToAnswer. Invia eventualmente una richiesta di aiuto (non visibile al player) al valutatore
+ */
+function toggleChronometer() {
+	Chronometer = setInterval( function() {
+		CurrentStatus.TimeToAnswer += 5000;
+
+		if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].GET_CHRONO && !CurrentStatus.AlreadyHelped && 
+			CurrentStatus.TimeToAnswer > StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time ) {
+			/* TODO - invia richiesta di aiuto */
+			CurrentStatus.AlreadyHelped = true;
+			console.log("HELP"); // debugging
+		}
+	}, 5000 );
+};
+
+
+/**
+ * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato. Invia anche lo status del player al valutatore
  */
 function nextStage() {
 	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
-	/* TODO: ferma il cronometro e segna il tempo impiegato a completare l'attività */
+	clearInterval( Chronometer );
+	console.log( CurrentStatus ); // debugging
+	/* TODO - invia status */
 	
 	if ( CurrentStage.activity_type == 'ANSWER' )
 		checkAnswer();

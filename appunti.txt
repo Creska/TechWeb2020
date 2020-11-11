@@ -30,34 +30,35 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Funzionalità di interfacciamento col server
-    * Funzioni di passaggio a editor grafico, preview e GameMode
+    * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
+    * [WIP] Funzioni di passaggio per navbar e main menu
+    * [WIP] Aggiungere le funzionalità relative a quest_ID
+    * Rimuovere funzionalità single device
+    * Sistemare le descrizioni in ChooseGameMode
+    * Cambiare le icone degli errori CSS
+    * Sistemare nomi e tooltips dei settings dell'Answer Field
+    * Aggiungere nella guida dell'editor CSS l'id delle attività e quest
     * Mettere il nome dell'app
-    * Fare più piccoli i testi e migliorare le spiegazioni
-    * Cambiare la modalità di slide delle gallery se usare lo stesso id per vari elementi non va bene
+    * Migliorare le spiegazioni
 * PLAYER
-    * Aggiungere cronometro
-    * Sistemare la raccolta e l'invio delle stats
+    * [WIP] Completare la raccolta e l'invio delle stats
     * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
     * Migliorare la schermata di inizio
 * TUTTO
     * controllare compatibilità con schermi piccoli
 
+ACESSIBILITA'
+* header: role='heading' aria-level=numero come nel tag
+
 RIASSUNTO DELLE COSE DA FARE:
 * EDITOR
-    * Interfacciamento col server (EDIT, SERVER e gestione di partite in parallelo)
-        * Idealmente dovrebbero esistere tre identificatori per ogni storia:
-            * Nome del file json - utilizzato dall'utente per distinguere ogni documento
-            * ID numerico - legato al nome del file, ma l'utente non vi interagisce
-            * Titolo della storia - parametro del json, indipendente dal resto
-        * Nella parte di EDIT devono esserci due opzioni:
-            * Modifica storia
-            * Crea copia - serve per la faccenda delle squadre parallele
-        * Nella pubblicazione mettere un ciclo che controlla se sia presente la risposta giusta nel caso non sia spuntata ASK_EVAL, che non ci siano attività o quest vuote, che non vi siano attività che hanno outcomes non definiti, che siano prsenti tutte le "alt" nel caso di una partita accessibile, che vi sia il tempo segnato nel caso GETCHRONO sia spuntata
+    * [WIP] Interfacciamento col server
+    * [WIP] Funzionalità di navbar e main menu
     * Accessibilità
 * PLAYER
-    * Grafica
+    * [WIP] Grafica
     * Interfacciamento col server
+    * Accessibilità
 
 
 

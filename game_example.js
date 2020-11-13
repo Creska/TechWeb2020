@@ -40,6 +40,10 @@ game_example = {
 				}
 			]
 		}
-	],
-	stylesheet: "" // CSS della storia. eventuali stili particolari di quests o attività verranno sovrascritti ad esso
+	]
+};
+
+CSSexample = {
+	sheet: "", // codice CSS
+	valid: true // bool che indica la validità, in base al numero degli errori trovati
 };

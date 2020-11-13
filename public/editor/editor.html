@@ -31,7 +31,7 @@
 
         switch ( e.data.event_type ) {
           case "ready":
-            CSS_Editor_Window.postMessage( CSSdata, "*" );
+            CSS_Editor_Window.postMessage( CSSdata.sheet, "*" );
             break;
           case "save":
             CSSdata = e.data.content;

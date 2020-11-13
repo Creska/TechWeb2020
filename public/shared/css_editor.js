@@ -6,12 +6,12 @@ var css_editor;
  * Stampa tutte le scritte di errore
  */
 function errorsToString(errors) {
-    var error_img = "<img src='../icons/error.png' width='15px' height='15px'/>"
-    var error_string = "<div class='css-validation'>";
+    var error_img = '<i class="fas fa-times-circle fa-sm text-danger"></i>';
+    var error_string = "<div class='css-validation validation-error'>";
     for (let i = 0; i < errors.length; i++) {
         let tr_error = errors[i];
         if (tr_error.children[2].innerHTML.trim() == 'Parse Error') {
-            return error_string + "Errore di parsing: Non è stato individuato alcun foglio di stile.<br>Controlla che tu abbia scritto del codice CSS valido.</div>";
+            return error_string + error_img + " Errore di parsing: non è stato individuato alcun foglio di stile. Per favore, controlla il CSS inserito.</div>";
         } else {
             error_string += error_img + " " + tr_error.children[0].innerHTML + " " + tr_error.children[2].children[0].innerHTML
             error_string += "<br>"
@@ -26,7 +26,7 @@ function errorsToString(errors) {
  * Stampa tutte le scritte di warning
  */
 function warningsToString(warnings) {
-    var warning_img = "<img src='../icons/warning.png' width='15px' height='15px'/>"
+    var warning_img = '<i class="fas fa-exclamation-triangle fa-sm text-warning"></i>';
     var warning_string = "<div class='css-validation'>";
     for (let i = 0; i < warnings.length; i++) {
         let tr_warnings = warnings[i];
@@ -64,7 +64,6 @@ function validate_css() {
         method: 'GET',
         data: { profile: 'css3', warning: 0, output: 'html', text: css_editor.getValue() },
         success: function (data) {
-            //TODO handling how to show errors
             $("#loading").toggle(false);
             $("#cssvaluator").toggle(true);
             var parser = new DOMParser();
@@ -77,9 +76,8 @@ function validate_css() {
                 warning_string = warningsToString(warnings);
             }
             if (parsed_css_validator.getElementById('congrats')) {
-                var congrats = "<div class='css-validation'><img src='../icons/check.png' width='15px' height='15px'/>Non sono stati trovati errori.</div>"
+                var congrats = "<div class='css-validation'><i class='fas fa-check-circle fa-sm text-success'></i> Non sono stati trovati errori.</div>"
                 $('#csserror').html(congrats + "<br><br>" + warning_string);
-                //TODO saving the CSS
             }
             else {
                 let errors = parsed_css_validator.getElementsByClassName('error-section')[0].children[1].children[0].children;
@@ -102,9 +100,14 @@ function validate_css() {
  * Salva il CSS scritto, inviandolo all'editor principale tramite canale apposito
  */
 function saveCSS() {
+    validate_css();
+
     MainEditor.postMessage({
         event_type: "save",
-        content: css_editor.getValue()
+        content: {
+            sheet: css_editor.getValue(),
+            valid: !( $( "#csserror .validation-error" ).length )
+        }
     }, "*");
     $('#saveicon').toggle(true);
 }

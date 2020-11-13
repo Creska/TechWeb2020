@@ -123,13 +123,15 @@ function initStory() {
     game_mode: "",
     single_device: 1,
     quests: [],
-    stylesheet: "",
     QuestGrid: "",
     ActivityGrids: [],
     ParagraphGrids: []
   };
 
-  CSSdata = "";
+  CSSdata = {
+    sheet: "",
+    valid: true
+  };
 };
 
 
@@ -735,6 +737,11 @@ function isPublishable( obj ) {
   if ( obj.game_mode === "" ) {
     res.ok = false;
     res.errors.push( "Storia - Modalità di gioco non specificata" );
+  }
+
+  if ( CSSdata.valid == false ) {
+    res.ok = false;
+    res.errors.push( "Storia - CSS stylesheet non valido" );
   }
 
   if ( obj.quests.length < 1 ) {

@@ -31,6 +31,11 @@ var unpubpath = 'public/player/stories/unpublished/';
     I couldn't find another method to send data between clients, and socket.io is nice and fast to implement anyway...
 
     TODO
+=> check story coherence before writing them(coherence field inside the JSON)
+=> retrieve stories, bot coherent and incoherent
+=> loadPlayer with specific JSON
+=> randomize the order of missions before sending them back to the client
+=> multiple stories handling?
 => should I change all the "else" statements by putting a return after the if?
 => warning about players stopped for too long on a game's specific phase
 => test to-be-valuated handling
@@ -364,9 +369,10 @@ app.get('/editor/getStory', function (req, res) {
 
 app.post('/editor/saveStory', function (req, res) {
     //TODO I should delete everything before writing 
+    //TODO handle multiple stories to be saved
     var story = req.body;
     console.log(story);
-    var story_data = story.story_data; //array [{name: string, data: value}]
+    var story_data = story.story_data; //array [{name: string, data: value, story:true if it's the json file}]
     var story_name = story.story_name; //the name of the story(directory)
     var published = stringToBool(story.published) || false;
     var checked = stringToBool(story.checked);
@@ -427,6 +433,7 @@ app.post('/editor/saveStory', function (req, res) {
 })
 
 app.post('/editor/deleteStory', function (req, res) {
+    //TODO handle multiple stories to get deleted
     var story = req.body;
     var story_name = story.story_name;
     var published = stringToBool(story.published) || false;

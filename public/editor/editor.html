@@ -22,6 +22,24 @@
   <title>Editor</title>
   
   <script>
+    /* comunicazione con l'editor CSS */
+    window.onload = function() {
+      window.addEventListener( "message", (e) => {
+        /*
+        if ( CSS_Editor_Window == null || e.origin != CSS_Editor_Window.location.origin )
+          return;*/
+
+        switch ( e.data.event_type ) {
+          case "ready":
+            CSS_Editor_Window.postMessage( CSSdata.sheet, "*" );
+            break;
+          case "save":
+            CSSdata = e.data.content;
+            break;
+        }
+      });
+    };
+
     /* abilita tutti i tooltips */
 $(document).ready( function() {
       $('[data-toggle="tooltip"]').tooltip({
@@ -127,6 +145,8 @@ $(document).ready( function() {
     </div>
   </header>
 
+
+  <!-- WIDGET PER IL PROMPT DEL SALVATAGGIO -->
   <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content bg-dark">
@@ -145,7 +165,7 @@ $(document).ready( function() {
         </div>
       </div>
     </div>
-</div>
+  </div>
 
 
   <!-- MENU PRINCIPALE -->
@@ -226,7 +246,7 @@ $(document).ready( function() {
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="StoryTitleInput" class="form-control" placeholder="Nuova Storia" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="StoryTitleInput" class="form-control" placeholder="Nuova Storia" onclick="change_color_option('#SaveStoryTitle', 'btn-success', 'btn-primary'); $('#SaveStoryTitle').text('Salva');">
       <div class="input-group-append">
          <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
@@ -278,7 +298,7 @@ $(document).ready( function() {
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
-      <input type="text" id="QuestTitleInput" class="form-control" placeholder="Nuova Quest" onclick="change_savetitle_button('unsaved');">
+      <input type="text" id="QuestTitleInput" class="form-control" placeholder="Nuova Quest" onclick="change_color_option('#SaveQuestTitle', 'btn-success', 'btn-primary'); $('#SaveQuestTitle').text('Salva');">
       <div class="input-group-append">
          <button class="btn btn-primary" id="SaveQuestTitle" type="button" onclick="save_title('quest')">Salva</button>
       </div>

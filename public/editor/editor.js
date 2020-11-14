@@ -382,7 +382,7 @@ function goToSection(where) {
           //alert(stories_obj.data);
         //else
           //alert(stories_obj.status);
-
+          getStories();
         break;
       default:
         handleError();
@@ -1039,18 +1039,36 @@ function Navbar( option ) {
   $( "#PromptSave .button[data-dismiss=modal]" ).click( function() {})
 }
 
-
 function allowDrop(ev) {
+  console.log("entering allow");
+  ev.target.classList.remove("border-white");
+  ev.target.classList.add("border-primary");
   ev.preventDefault();
+} 
+function border_white(ev){
+  ev.target.classList.remove("border-primary");
+  ev.target.classList.add("border-white");
 }
-
 function drag(ev) {
   ev.dataTransfer.setData("text", ev.target.id);
 }
 
 function drop(ev) {
+  border_white(ev);
   ev.preventDefault();
   var data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
+  original_parent = document.getElementById(data).parentElement;
+  if( ev.target.lastElementChild && ev.target.lastElementChild.children.length==1 )
+    ev.target.lastElementChild.appendChild(document.getElementById(data));
+  else {
+    el = $("<div class='card-deck mb-2' ondragover='event.stopPropagation();'></div>");
+    el.append(document.getElementById(data));
+    ev.target.appendChild( el[0]);
+  }
+  while( original_parent.nextElementSibling && original_parent.nextElementSibling.children.length!=0){
+      original_parent.appendChild(original_parent.nextElementSibling.firstElementChild);
+      original_parent = original_parent.nextElementSibling;
+  }
+  //ev.target.appendChild(document.getElementById(data));
 }
 

@@ -20,7 +20,6 @@
   <link rel="stylesheet" href="editor.css">
 
   <title>Editor</title>
-  
   <script>
     /* comunicazione con l'editor CSS */
     window.onload = function() {
@@ -72,7 +71,7 @@ $(document).ready( function() {
 </head>
 
 
-<body class="text-center">
+<body class="text-center"> 
   <div id="loading" style="display: none; margin:auto;"><img src="https://media1.tenor.com/images/e6beafa79c010b6a2b4a7b705dd2bc59/tenor.gif?itemid=12479112" /> </div>
   <button onclick="$.get('/editor/porcodio', function(data, status){});">erore</button>
 <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#success_modal">
@@ -175,7 +174,7 @@ $(document).ready( function() {
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 
@@ -718,23 +717,23 @@ $(document).ready( function() {
 }
       </style>
   <div class="grid-container">
-    <div class="container"  ondragover="allowDrop(event)" ondrop="drop(event)">
-      <div class="card-deck mb-2" >
+    <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
+      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
         <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag0">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">1</p>
           </div>
         </div>
         <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag1">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">2</p>
           </div>
         </div>
-      </div>
-      <div class="card-deck mb-2"  >
+      </div> 
+      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
         <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag2">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">3</p>
           </div>
         </div>
         <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag3">
@@ -742,38 +741,26 @@ $(document).ready( function() {
             <p class="card-text">4</p>
           </div>
         </div>
-      </div>
-      <div class="card-deck mb-2" >
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag4">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag5">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
       </div>    
     </div>       
       
-    <div class="container " ondragover="allowDrop(event)" ondrop="drop(event)"> 
-      <div class="card-deck mb-2" >
+    <div class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
+      <div class="card-deck mb-2" ondragover="event.stopPropagation();">
         <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag6">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">1</p>
           </div>
         </div>
         <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag7">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">2</p>
           </div>
         </div>
       </div>
-      <div class="card-deck mb-2"  >
+      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
         <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag8">
           <div class="card-body text-center">
-            <p class="card-text">4</p>
+            <p class="card-text">3</p>
           </div>
         </div>
         <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag9">
@@ -781,19 +768,7 @@ $(document).ready( function() {
             <p class="card-text">4</p>
           </div>
         </div>
-      </div>
-      <div class="card-deck mb-2"  >
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag10">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag11">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
-      </div>           
+      </div>          
     </div>
   </div>
   </main>
@@ -802,6 +777,7 @@ $(document).ready( function() {
     SEZIONE USATA PER DEBUGGING
   </div>
   -->
+  
   
   <footer class="mastfoot mt-auto">
     <div class="inner small">

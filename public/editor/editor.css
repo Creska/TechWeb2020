@@ -105,10 +105,13 @@ main {
   border-style: none;
 }
 
-#ChecklistPreview ul, #ChecklistPreview li {
+#ChecklistPreview ul, #AnswerFieldRecap ul {
   list-style-type: none;
-  margin-left: 0;
   padding-left: 0;
+  margin: auto;
+  text-align: left;
+  width: 30%;
+  word-wrap: break-word;
 }
 
 #AnswerFieldSettings .col-1 {

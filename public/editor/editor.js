@@ -155,7 +155,11 @@ function initActivity() {
 	let EmptyActivity = {
     activity_text: [],
     activity_type: "",
-		answer_field: {},
+		answer_field: {
+      description: "",
+      type: "",
+      options: []
+    },
 		right_answer: "",
 		answer_outcome: [],
 		ASK_EVAL: 0,

@@ -715,28 +715,31 @@ $(document).ready( function() {
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
 }
-      </style>
+      </style> 
   <div class="grid-container">
+    <!--
+      TODO:
+    -->
     <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
-      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag0">
+      <div class="card-deck mb-2"  >
+        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
           <div class="card-body text-center">
             <p class="card-text">1</p>
           </div>
         </div>
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag1">
+        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag1">
           <div class="card-body text-center">
             <p class="card-text">2</p>
           </div>
         </div>
       </div> 
-      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag2">
+      <div class="card-deck mb-2"  >
+        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag2">
           <div class="card-body text-center">
             <p class="card-text">3</p>
           </div>
         </div>
-        <div class="card bg-danger" draggable='true' ondragstart="drag(event)" id="drag3">
+        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag3">
           <div class="card-body text-center">
             <p class="card-text">4</p>
           </div>
@@ -745,25 +748,25 @@ $(document).ready( function() {
     </div>       
       
     <div class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
-      <div class="card-deck mb-2" ondragover="event.stopPropagation();">
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag6">
+      <div class="card-deck mb-2" >
+        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag6">
           <div class="card-body text-center">
             <p class="card-text">1</p>
           </div>
         </div>
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag7">
+        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag7">
           <div class="card-body text-center">
             <p class="card-text">2</p>
           </div>
         </div>
       </div>
-      <div class="card-deck mb-2" ondragover="event.stopPropagation();" >
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag8">
+      <div class="card-deck mb-2"  >
+        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag8">
           <div class="card-body text-center">
             <p class="card-text">3</p>
           </div>
         </div>
-        <div class="card bg-success" draggable='true' ondragstart="drag(event)" id="drag9">
+        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag9">
           <div class="card-body text-center">
             <p class="card-text">4</p>
           </div>

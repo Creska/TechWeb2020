@@ -1040,35 +1040,44 @@ function Navbar( option ) {
 }
 
 function allowDrop(ev) {
-  console.log("entering allow");
-  ev.target.classList.remove("border-white");
-  ev.target.classList.add("border-primary");
+  //alert("ev.taget over: "+ev.target.outerHTML);
+  border_color(ev,"blue");
   ev.preventDefault();
 } 
-function border_white(ev){
-  ev.target.classList.remove("border-primary");
-  ev.target.classList.add("border-white");
+function border_color(ev,color){
+  switch (color) {
+  case "white":
+    ev.currentTarget.classList.remove("border-primary");
+    ev.currentTarget.classList.add("border-white");
+    break;
+  case "blue":
+    ev.currentTarget.classList.remove("border-white");
+    ev.currentTarget.classList.add("border-primary");
+    break;
+  }
 }
 function drag(ev) {
   ev.dataTransfer.setData("text", ev.target.id);
+
 }
 
-function drop(ev) {
-  border_white(ev);
+function drop(ev) {//il target del drop deve essere sempre il container
+  //il target del drag deve essere sempre la card
+  border_color(ev,"white");
   ev.preventDefault();
   var data = ev.dataTransfer.getData("text");
   original_parent = document.getElementById(data).parentElement;
-  if( ev.target.lastElementChild && ev.target.lastElementChild.children.length==1 )
-    ev.target.lastElementChild.appendChild(document.getElementById(data));
-  else {
-    el = $("<div class='card-deck mb-2' ondragover='event.stopPropagation();'></div>");
-    el.append(document.getElementById(data));
-    ev.target.appendChild( el[0]);
-  }
   while( original_parent.nextElementSibling && original_parent.nextElementSibling.children.length!=0){
       original_parent.appendChild(original_parent.nextElementSibling.firstElementChild);
       original_parent = original_parent.nextElementSibling;
   }
-  //ev.target.appendChild(document.getElementById(data));
+  //alert("ev.currentTarget drop: "+ev.currentTarget.outerHTML);
+  if( ev.currentTarget.lastElementChild && ev.currentTarget.lastElementChild.children.length==1 )
+    ev.currentTarget.lastElementChild.appendChild(document.getElementById(data));
+  else {
+    el = $("<div class='card-deck mb-2' ></div>");
+    el.append(document.getElementById(data));
+    ev.currentTarget.appendChild( el[0]);
+  }
 }
 

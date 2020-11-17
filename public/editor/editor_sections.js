@@ -219,26 +219,34 @@ function saveAnswerFieldSettings() {
 
 /**
  * Carica la sezione ed i parametri in base ai dati salvati nel json. Aggiunge eventuali alert nel caso sia scelta l'opzione di attività interattiva ma mancano i requisiti per farlo funzionare (ovvero: spuntata l'opzione di richeista valutazione, oppure answer field incompleto)
+ * Nel caso si abbia un Answer Field in forma di checklist, vengono elencate le relative opzioni selezionabili
  */
 function loadEditOutcomeSection() {
 	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
-  	/* costruzione del recap dell'Answer Field */
+  	/* aggiunta di eventuali alert o della lista di risposte selezionabili dell'Answer Field */
   	$( "#AnswerFieldRecap" ).empty();
 
-	let OutcomeAlert = $( `<div class="col-xs-12 alert alert-danger text-justify" role="alert"><i class="fas fa-exclamation-circle"></i></div>` );
+	let OutcomeAlert;
 
   	if ( CurrentStage.ASK_EVAL ) {
-    	OutcomeAlert.append( $("<p>Per questa attività è stata richiesta la valutazione in tempo reale.</p>") );
+		OutcomeAlert = $( `<div class="col-xs-12 alert alert-warning text-justify" role="alert"><i class="fas fa-exclamation-triangle"></i></div>` );
+    	OutcomeAlert.append( $("<p>Per questa attività è stata richiesta la valutazione in tempo reale.\nEventuali outcomes inseriti non saranno quindi presi in considerazione dall'applicazione Player.</p>") );
     	$( "#AnswerFieldRecap" ).append( OutcomeAlert );
   	}
   	else {
     	if ( $.isEmptyObject( CurrentStage.answer_field ) || CurrentStage.answer_field.type == "" || ( CurrentStage.answer_field.type == "checklist" && CurrentStage.answer_field.options.length < 2 ) ) {
-			OutcomeAlert.append( $("<p>Campo risposta incompleto.</p>") );
+			OutcomeAlert = $( `<div class="col-xs-12 alert alert-danger text-justify" role="alert"><i class="fas fa-exclamation-circle"></i></div>` );
+			OutcomeAlert.append( $("<p>Campo risposta incompleto.\nRicordati di sistemare se vuoi rendere pubblicabile la storia.</p>") );
 			$( "#AnswerFieldRecap" ).append( OutcomeAlert );
     	}
-    	else {
-      		$( "#AnswerFieldRecap" ).append( $( "<h4>Anteprima del campo risposta</h4>" ) );
+    	else if ( CurrentStage.answer_field.type == "checklist" && CurrentStage.answer_field.options.length >= 2 ) {
+			$( "#AnswerFieldRecap" ).append( $( "<h4>Lista delle risposte selezionabili</h4>" ) );
+			let AnswerList = $( "<ul></ul>" );
+			$.each( CurrentStage.answer_field.options, function( i, val ) {
+				AnswerList.append( $( "<li>" + val + "</li>" ) );
+			});
+			$( "#AnswerFieldRecap" ).append( AnswerList );
     	}
   	}
 
@@ -253,7 +261,6 @@ function loadEditOutcomeSection() {
 		$( "#ActivityType_Answer" ).prop( "checked", true );
 		$( "#AnswerActivity" ).toggle(true);
 		$( "#ReadingActivity" ).toggle(false);
-		$( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", $( "#AnswerFieldRecap .alert-danger" ).length );
 
 		let tr;
 

@@ -319,7 +319,7 @@ $(document).ready( function() {
     </div>
 
     <button type="button" class="btn bg-secondary rounded BackBtn" onclick="back()">
-      <i class="fas fa-long-arrow-alt-left fa-2x"></i>
+      <i class="fas fa-long-arrow-alt-left fa-2x mr-3 ml-3"></i>
     </button>
   </main>
 
@@ -371,7 +371,7 @@ $(document).ready( function() {
     </div>
 
     <button type="button" class="btn bg-secondary rounded BackBtn" onclick="back()">
-      <i class="fas fa-long-arrow-alt-left fa-2x"></i>
+      <i class="fas fa-long-arrow-alt-left fa-2x mr-3 ml-3"></i>
     </button>
   </main>
 
@@ -423,16 +423,14 @@ $(document).ready( function() {
         <script>
           $("#EditAnswerField input[name='QuestionType']").on("change", function() {
             if ( $("#QuestionType_Checklist").prop("checked") )
-		          $( "#ChecklistPreview" ).toggle(true);
+		          $( "#ChecklistPreview" ).fadeIn();
 	          else
-		          $( "#ChecklistPreview" ).toggle(false);
+		          $( "#ChecklistPreview" ).fadeOut();
           });
         </script>
       </div>
     </div>
     
-
-    <!-- SEZIONE DI CREAZIONE CAMPO RISPOSTA -->
     <div class="w-100 mt-5" id="AnswerFieldSettings">
       <h4 class="mb-3">Opzioni del campo risposta</h4>
       <div class="row w-100">
@@ -467,7 +465,7 @@ $(document).ready( function() {
         </div>
 
         <div class="col-1">
-          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Indica se la valutazione è da richiedere sul momento al valutatore">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Se spuntata, indica che la valutazione verrà chiesta automaticamente al valutatore, al momento dell'invio della risposta">
             <i class="fas fa-info"></i>
           </span>
         </div>
@@ -477,7 +475,7 @@ $(document).ready( function() {
         <div class="col-11">
           <div class="input-group m-1">
             <div class="input-group-prepend">
-              <span class="input-group-text">Attivazione timer</span>
+              <span class="input-group-text">Attivazione help timer</span>
             </div>
             <div class="input-group-append">
               <div class="input-group-text">
@@ -488,7 +486,7 @@ $(document).ready( function() {
         </div>
 
         <div class="col-1">
-          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Attiva il timer alla cui scadenza viene segnalato al valutatore un momento di difficoltà">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Attiva il timer alla cui scadenza viene segnalato al valutatore che il player ha superato il tempo previsto per l'attività in esecuzione">
             <i class="fas fa-info"></i>
           </span>
         </div>
@@ -496,19 +494,16 @@ $(document).ready( function() {
 
       <div class="row w-100">
         <div class="col-11">
-          <div class="input-group m-1 w-75">
+          <div class="input-group m-1">
             <div class="input-group-prepend">
-              <span class="input-group-text">Tempo</span>
+              <span class="input-group-text">Tempo previsto (min)</span>
             </div>
             <input type="number" class="form-control" id="AnswerTimer" placeholder="1" min="1">
-            <div class="input-group-append">
-              <span class="input-group-text">min</span>
-            </div>
           </div>
         </div>
       
         <div class="col-1">
-          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Valore del timer">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Valore dell'help timer">
             <i class="fas fa-info"></i>
           </span>
         </div>
@@ -616,14 +611,12 @@ $(document).ready( function() {
     <script>
       $("#ChooseActivityType input[name='ActivityType']").on("change", function() {
         if ( $("#ActivityType_Reading").prop("checked") ) {
-          $( "#ReadingActivity" ).toggle(true);
-          $( "#AnswerActivity" ).toggle(false);
-          $( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", false );
+          $( "#ReadingActivity" ).fadeIn();
+          $( "#AnswerActivity" ).fadeOut();
         }
         else if ( $("#ActivityType_Answer").prop("checked") ) {
-          $( "#AnswerActivity" ).toggle(true);
-          $( "#ReadingActivity" ).toggle(false);
-          $( "#SetAnswerOutcome .Save-Cancel button:first-child" ).attr( "disabled", $( "#AnswerFieldRecap .alert-danger" ).length );
+          $( "#AnswerActivity" ).fadeIn();
+          $( "#ReadingActivity" ).fadeOut();
         }
       });
     </script>

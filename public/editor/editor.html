@@ -72,8 +72,8 @@ $(document).ready( function() {
 
 
 <body class="text-center"> 
-  <div id="loading" style="display: none; margin:auto;"><img src="https://media1.tenor.com/images/e6beafa79c010b6a2b4a7b705dd2bc59/tenor.gif?itemid=12479112" /> </div>
-  <button onclick="$.get('/editor/porcodio', function(data, status){});">erore</button>
+ <!-- <div id="loading" style="display: none; margin:auto;"><img src="https://media1.tenor.com/images/e6beafa79c010b6a2b4a7b705dd2bc59/tenor.gif?itemid=12479112" /> </div>
+  <button onclick="$.get('/editor/porcodio', function(data, status){});">erore</button>-->
 <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#success_modal">
   Success
 </button>-->
@@ -726,7 +726,7 @@ $(document).ready( function() {
     </div> 
   </div>
   </div>
-  <div class="grid-container">
+  <div class="grid-container mb-5">
     <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
       <div class="card-deck mb-2"  >
         <div class="card bg-danger" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
@@ -780,8 +780,11 @@ $(document).ready( function() {
         </div>
       </div>          
     </div>
-
-
+  </div>
+  <div class='grido mt-5'>
+  <textarea  rows="4" cols="50"style="color: red; background-color: transparent;" readonly>
+This is a feedback area, if something went wrong with the server you will (probably) see an error message here. 
+    </textarea>
   </div>
   </main>
   <!--

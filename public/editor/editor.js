@@ -1084,4 +1084,7 @@ function drop(ev) {//il target del drop deve essere sempre il container
     ev.currentTarget.appendChild( el[0]);
   }
 }
+//butto fuori la parte di drop che agisce sul container d'origine, poi do un id
+//"deleteContainer", se sono in esso il deck può contenere fino a 4 card, altrimenti 2
+
 

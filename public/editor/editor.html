@@ -706,13 +706,27 @@ $(document).ready( function() {
         .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    
     grid-gap: 20px;
 }
+.grido {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
       </style> 
+  <div class="grido">
+    <div class="card "  style="opacity: 0; cursor: default;" >
+      <div class="card-body text-center">
+        <p class="card-text">1</p>
+      </div>
+    </div>
+  <div class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
+    <div class="card-deck mb-2">
+           
+    </div> 
+  </div>
+  </div>
   <div class="grid-container">
-    <!--
-      TODO:
-    -->
     <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
       <div class="card-deck mb-2"  >
         <div class="card bg-danger" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
@@ -766,6 +780,8 @@ $(document).ready( function() {
         </div>
       </div>          
     </div>
+
+
   </div>
   </main>
   <!--
@@ -786,17 +802,16 @@ $(document).ready( function() {
 
 </html>
 <!--
-third botton concept:
+third button concept:
   there are three sections which represent a trash can, a 
   published stories container and an unpublished and consistent stories
   container. Every story, which is nothing but a card with the story's
   title within, can be dragged to any section any time, then there's a
-  button to "stage and push" the changes. when the saving is occuring
-  there's a kawaii anime girl gif to delight our users, then a return
-  message is shown together with another gif(ofc) with a satisfied loli
-  or a sad/angry one, representing success and failure respectively. In 
-  the latter case all the errors are shown and associated with the respective
-  story in a feedback section at the bottom of the page, which is cleared
-  everytime a saving is requested. Finally the three main sections are
+  button to "stage/commit and push" the changes. when the saving is occuring
+  there's a loading gif, then a return message is shown together with another
+  gif(ofc) with a satisfied loli or a sad/angry one, representing success and 
+  failure respectively. In the latter case all the errors are shown and associated 
+  with the respective story in a feedback section at the bottom of the page, which
+  is cleared everytime a saving is requested. Finally the three main sections are
   re-created to show the current stories' situation.
 -->

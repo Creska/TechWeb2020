@@ -378,7 +378,9 @@ function goToSection(where) {
         loadEditOutcomeSection();
         break;
       case "ChooseStoryToEdit":
-        getStories(); 
+        CurrentNavStatus.Section = where;
+        create_stories_grid();
+        //getStories(); 
         break;
       case "Explorer":
         //stories_obj = getStories(); 
@@ -386,19 +388,18 @@ function goToSection(where) {
           //alert(stories_obj.data);
         //else
           //alert(stories_obj.status);
-          getStories();
+          //getStories();
         break;
-      default:
+      
+        default:
         handleError();
     }
     
     CurrentNavStatus.Section = where;
-
     $("#"+where).fadeIn();
     
   });
 };
-
 
 /**
  * @param card
@@ -440,6 +441,10 @@ function openCard( card ) {
               break;
           }
         }
+        else if (CurrentNavStatus.Section == "ChooseStoryToEdit") {
+          //load roba su EditStory, poi gotoSection("EditStory")
+            alert("vaffanculo pezzo di merda, se vieni qua io te picchiare");
+          }
     }, 750);
     break;
   }
@@ -455,8 +460,9 @@ function openCard( card ) {
  * Crea una card con tutti i parametri adeguati e la aggiunge al deck
  */
 function create_card(titolo) {
+  //alert("create_card Section: "+CurrentNavStatus.Section);
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
-
+  //alert("current_grid: "current_grid);
   let color;
 
   switch ( current_grid ) {
@@ -476,9 +482,12 @@ function create_card(titolo) {
       if ( titolo == "GALLERY" ) color = colors[0];
       else color = colors[1];
       break;
-    default:
-      handleError();
+    case "StoriesGrid":
+      color = "info";
       break;
+    default:
+      //alert("create_card default");
+      handleError();
   }
 
   let card = $("<div/>",
@@ -495,9 +504,17 @@ function create_card(titolo) {
   
   $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
   setAnimation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
+  if( current_grid != "ChooseStoryToEdit" ) { 
+    saveCardGrids();
+  }
+};//the hell is this
 
-  saveCardGrids();
-};
+function create_stories_grid() {
+  //create_card per ogni storia recuperata con la chiamata ajax
+  for(i=0;i<7;i++){
+    create_card(i);
+  }
+}
 
 
 /**
@@ -1015,7 +1032,7 @@ function MainMenu( action ) {
       goToSection('EditStory');
       break;
   }
-};
+};//what is this?
 
 
 
@@ -1087,4 +1104,11 @@ function drop(ev) {//il target del drop deve essere sempre il container
 //butto fuori la parte di drop che agisce sul container d'origine, poi do un id
 //"deleteContainer", se sono in esso il deck può contenere fino a 4 card, altrimenti 2
 
-
+function go_home(from) {
+  $("#"+from).fadeOut( function () {
+    CurrentNavStatus.Section = "MainMenu";
+    //bisogna impostare anche QuestN e ActivityN?
+    $("#"+from+" .container").empty();
+    $("#MainMenu").fadeIn();
+  });
+}

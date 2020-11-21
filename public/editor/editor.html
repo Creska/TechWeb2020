@@ -173,8 +173,8 @@ $(document).ready( function() {
     <p class="lead SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="getStories();goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 
@@ -271,12 +271,13 @@ $(document).ready( function() {
     </div>
 
     <div id="NewQuestWidget" class="input-group input-group-sm mb-3 font-weight-bold invisible">
-      <div class="input-group-prepend">
+      <div class="input-group-prepend"> 
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
       <input type="text" class="form-control col-sm-5 " placeholder="Titolo della quest">
         <div class="input-group-append">
           <button class="btn btn-sm btn-primary" type="button" onclick='create_stuff("quest");create_card( $("#NewQuestWidget input").val() );$("#NewQuestWidget").addClass("invisible");'>Aggiungi</button>
+
           <button class="btn btn-sm btn-danger" type="button" onclick="$('#NewQuestWidget input').val('');$('#NewQuestWidget').addClass('invisible');">Annulla</button>
         </div>
     </div>
@@ -691,9 +692,19 @@ $(document).ready( function() {
       });
     </script>
   </main>
-
+  <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">
+    <a class="nav-link" href="javascript:go_home('ChooseStoryToEdit')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+      <i class="fas fa-home fa-2x"></i>
+    </a>
+   <p>Quelle che vedi qui sotto sono tutte le storie salvate sul server ma non 
+     pubblicate(se vuoi modificare una storia pubblicata, devi prima ritirarla). 
+     Clicca sulla storia che vuoi editare.
+   </p>
+    <div class="CardGrid container" id="StoriesGrid" >
+    </div>
+  </main>
   <main role="main" class="inner cover EditorSection " id="Explorer">
-    <a class="nav-link" href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+    <a class="nav-link" href="javascript:go_home('Explorer')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
      <!-- <p style="border: solid 1px; " ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -729,24 +740,24 @@ $(document).ready( function() {
   <div class="grid-container mb-5">
     <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
       <div class="card-deck mb-2"  >
-        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
+        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
           <div class="card-body text-center">
             <p class="card-text">1</p>
           </div>
         </div>
-        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag1">
+        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag1">
           <div class="card-body text-center">
             <p class="card-text">2</p>
           </div>
         </div>
       </div> 
       <div class="card-deck mb-2"  >
-        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag2">
+        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag2">
           <div class="card-body text-center">
             <p class="card-text">3</p>
           </div>
         </div>
-        <div class="card bg-danger" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag3">
+        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag3">
           <div class="card-body text-center">
             <p class="card-text">4</p>
           </div>

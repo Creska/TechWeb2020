@@ -311,12 +311,14 @@ function goToSection(where) {
         $('.masthead').fadeOut();
         break;
       case "EditStory":
-        $('header').css('display','block');
-        
+        $('header').css('display','block');       
         CurrentNavStatus.QuestN = -1;
+        if ( CurrentWork.story_title )
+          $( "#EditStory .SectionTitle" ).html( CurrentWork.story_title );
+        else
+          $( "#EditStory .SectionTitle" ).html( "<i>StoriaSenzaNome</i>" );
         $("#StoryTitleInput").val( CurrentWork.story_title );
         $("#QuestsGrid").html( CurrentWork.QuestGrid );
-
         change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
         $( "#SaveStoryTitle" ).text( "Salvato!" );
         break;
@@ -389,8 +391,7 @@ function goToSection(where) {
         //else
           //alert(stories_obj.status);
           //getStories();
-        break;
-      
+        break;   
         default:
         handleError();
     }
@@ -442,8 +443,13 @@ function openCard( card ) {
           }
         }
         else if (CurrentNavStatus.Section == "ChooseStoryToEdit") {
-          //load roba su EditStory, poi gotoSection("EditStory")
-            alert("vaffanculo pezzo di merda, se vieni qua io te picchiare");
+          //sovrascrivo Currentwork con quello recuperato con ajax, poi gotoSection("EditStory")
+            if(!CurrentWork)
+              initStory();
+            goToSection("EditStory");
+            /*$("#ChooseStoryToEdit").fadeOut(function () {
+              $("#EditStory").fadeIn();
+            });*/
           }
     }, 750);
     break;
@@ -460,11 +466,8 @@ function openCard( card ) {
  * Crea una card con tutti i parametri adeguati e la aggiunge al deck
  */
 function create_card(titolo) {
-  //alert("create_card Section: "+CurrentNavStatus.Section);
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
-  //alert("current_grid: "current_grid);
   let color;
-
   switch ( current_grid ) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
@@ -486,7 +489,6 @@ function create_card(titolo) {
       color = "info";
       break;
     default:
-      //alert("create_card default");
       handleError();
   }
 
@@ -538,7 +540,6 @@ function cancel_mode() {
   }
 };
 
-
 /**
  * @param obj
  * Cancella l'oggetto specificato
@@ -548,6 +549,7 @@ function cancel_em(obj) {
   setTimeout( function() {
     /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
     switch (CurrentNavStatus.Section) {
+
       case "EditStory":
         CurrentWork.ActivityGrids.splice( get_card_index(), 1 );
         CurrentWork.ParagraphGrids.splice( get_card_index(), 1 );
@@ -560,9 +562,10 @@ function cancel_em(obj) {
       case "EditActivity":
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.splice( get_card_index(), 1 );
         break;
+      case "ChooseStoryToEdit":
+        break;
       default:
         handleError();
-        break;
     }
 
     /* cancellazione di obj e sistemazione dei decks */
@@ -581,8 +584,9 @@ function cancel_em(obj) {
         iter.remove();
     }
   }, 1500);
-
-  saveCardGrids();
+  if(CurrentNavStatus.Section!="ChooseStoryToEdit"){
+    saveCardGrids();
+  }
 };
 
 
@@ -1105,6 +1109,7 @@ function drop(ev) {//il target del drop deve essere sempre il container
 //"deleteContainer", se sono in esso il deck può contenere fino a 4 card, altrimenti 2
 
 function go_home(from) {
+  mode = "default"; //just in case
   $("#"+from).fadeOut( function () {
     CurrentNavStatus.Section = "MainMenu";
     //bisogna impostare anche QuestN e ActivityN?

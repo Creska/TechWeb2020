@@ -154,7 +154,7 @@ function initQuest() {
 function initActivity() {
 	let EmptyActivity = {
     activity_text: [],
-    activity_type: "",
+    activity_type: "ANSWER",
 		answer_field: {
       description: "",
       type: "",
@@ -341,15 +341,17 @@ function goToSection(where) {
         $("#EditActivity header small").html( $( "#EditStory .card-text").eq(CurrentNavStatus.QuestN).html() );
         $("#EditActivity header h1").html( "Activity" + CurrentNavStatus.ActivityN );
 
-        if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL ) {
-          change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
-          $("#FinalStageBtn").next().attr( "disabled", true );
-          $("#FinalStageBtn").next().next().attr( "disabled", true );
+        /* sistemazione del widget ChooseActivityType */
+        $( "#ChooseActivityType" ).css( "display", "none" );
+        let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+        if ( activity.activity_type == "READING" ) {
+          $( "#EditActivity p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
+
+          if ( activity.FINAL )
+            $( "#EditActivity p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", true );
         }
         else {
-          change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
-          $("#FinalStageBtn").next().attr( "disabled", false );
-          $("#FinalStageBtn").next().next().attr( "disabled", false );
+          $( "#EditActivity p-3" ).first().find( "button" ).attr( "disabled", false );
         }
     
         $("#ParagraphsGrid").html(CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
@@ -979,6 +981,12 @@ function isPublishable( obj ) {
             });
           }
         });
+      }
+
+      /* presenza del testo della domanda */
+      if ( a.answer_field.desription === "" ) {
+        res.ok = false;
+        res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Testo della domanda mancante" );
       }
 
       /* presenza e correttezza del campo risposta */

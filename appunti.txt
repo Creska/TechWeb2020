@@ -35,12 +35,13 @@ BUG E PROBLEMI DA CORREGGERE
     * [WIP] Aggiungere le funzionalità relative a quest_ID
     * Rimuovere funzionalità single device
     * Sistemare le descrizioni in ChooseGameMode
-    * Sistemare nomi e tooltips dei settings dell'Answer Field
     * Mettere il nome dell'app
     * Migliorare le spiegazioni
     * Rifare la guida dell'editor CSS
 * PLAYER
     * Riprogettare l'interfaccia (ad esempio mettere un header per il campo risposta)
+    * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente
+    * Aggiungere segnale di attesa valutazione risposta
     * [WIP] Completare la raccolta e l'invio delle stats
     * Stilizzare l'alert dell'accessibilità (settando le opportune opzioni di accessibilità)
     * Migliorare la schermata di inizio

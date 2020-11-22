@@ -337,8 +337,8 @@ $(document).ready( function() {
     </p>
 
     <div class="p-3">
-      <button id="FinalStageBtn" class="btn btn-lg btn-secondary mb-3 rounded" onclick="setFinalActivity();" data-toggle="tooltip" data-placement="left" title="Marca attività come finale">
-        <i class="fas fa-flag-checkered"></i>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Scegli la tipologia di attività">
+        <i class="fas fa-cog"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
@@ -347,6 +347,29 @@ $(document).ready( function() {
         <i class="fas fa-route"></i>      
       </button>
     </div>
+
+    <div id="ChooseActivityType">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType0">
+        <label class="form-check-label" for="ActivityType0">
+          Interattiva
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType1">
+        <label class="form-check-label" for="ActivityType1">
+          Sola lettura
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType2">
+        <label class="form-check-label" for="ActivityType2">
+          Finale (sola lettura)
+        </label>
+      </div>
+      <button class="btn btn-primary mt-2" onclick="setActivityType();">Salva</button>
+    </div>
+
     <div class="col-xs-12 alert alert-info text-justify" role="alert">
       <i class="fas fa-info"></i>
       <p>Se marchi questa attività come finale, segnalerai che essa verrà setttata il punto d'arrivo del gioco. Di conseguenza non vi sarà alcuna tappa successiva.Attenzione però! Spetta all'autore fare in modo che tutti i possibili percorsi di gioco convergano ad essa.<br>
@@ -403,6 +426,14 @@ $(document).ready( function() {
           <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Number">
           <label class="form-check-label" for="QuestionType_Number">Numero</label>
         </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Date">
+          <label class="form-check-label" for="QuestionType_Date">Data</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="QuestionType" id="QuestionType_Time">
+          <label class="form-check-label" for="QuestionType_Time">Orario</label>
+        </div>
 
         <div class="mt-5" id="ChecklistPreview">
           <h4 class="mb-3">Risposte selezionabili</h4>
@@ -438,14 +469,14 @@ $(document).ready( function() {
         <div class="col-11">
           <div class="input-group m-1">
             <div class="input-group-prepend">
-              <div class="input-group-text">Tip</div>
+              <div class="input-group-text">Richiesta</div>
             </div>
-            <input type="text" class="form-control" id="InsertAnswerFieldDescription" id="AnswerScore" placeholder="Indicazione">
+            <input type="text" class="form-control" id="InsertAnswerFieldDescription" id="AnswerScore" placeholder="Testo della richiesta">
           </div>
        </div>
 
         <div class="col-1">
-          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Eventuale indicazione utile per il giocatore">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Richiesta a cui il giocatore dovrà rispondere">
             <i class="fas fa-info"></i>
           </span>
         </div>
@@ -549,18 +580,6 @@ $(document).ready( function() {
       <small>Si tenga presente che la verifica della risposta effettuata dall'applicazione di gioco è case-sensitive.</small>
     </p>
 
-    <div id="ChooseActivityType" class="p-3">
-      <h4 class="mb-3">Tipologia attività</h4>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType_Reading">
-        <label class="form-check-label" for="ActivityType_Reading">Sola lettura</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType_Answer">
-        <label class="form-check-label" for="ActivityType_Answer">Interattiva</label>
-      </div>
-    </div>
-
     <div class="mt-5" id="ReadingActivity">
       <h4 class="mb-3">Programmazione attività</h4>
       <table class="w-100 mt-3 OutcomesTable">
@@ -578,7 +597,6 @@ $(document).ready( function() {
     </div>
 
     <div class="mt-5" id="AnswerActivity">
-      <div class="mb-5" id="AnswerFieldRecap"></div>
 
       <h4>Programmazione attività</h4>
 
@@ -597,30 +615,11 @@ $(document).ready( function() {
         </tr>
       </table>
       
-      <div id="AddOutcomeWidget" class="input-group input-group-sm font-weight-bold mb-3 mt-5">
-        <div class="input-group-prepend">
-          <span class="input-group-text bg-light">Aggiungi outcome:</span>
-        </div>
-        <input type="text" class="form-control col-sm-5" placeholder="Risposta">
-        <div class="input-group-append">
-          <button class="btn btn-sm btn-primary" type="button" onclick="addOutcome($('#AddOutcomeWidget input').val().trim()); $('#AddOutcomeWidget input').val('')">Aggiungi</button>
-          <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddOutcomeWidget input').val('');">Annulla</button>
-        </div>
+      <div id="AddOutcomeWidget" class="mb-3 mt-5">
+        <p>Aggiungi outcome:</p>
+        <br><button class="btn btn-primary mt-2" onclick="addOutcome();">Aggiungi</button>
       </div>
     </div>
-
-    <script>
-      $("#ChooseActivityType input[name='ActivityType']").on("change", function() {
-        if ( $("#ActivityType_Reading").prop("checked") ) {
-          $( "#ReadingActivity" ).fadeIn();
-          $( "#AnswerActivity" ).fadeOut();
-        }
-        else if ( $("#ActivityType_Answer").prop("checked") ) {
-          $( "#AnswerActivity" ).fadeIn();
-          $( "#ReadingActivity" ).fadeOut();
-        }
-      });
-    </script>
 
     <div class="p-3 Save-Cancel">
       <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveOutcomes();">Salva</button>

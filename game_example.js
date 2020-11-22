@@ -20,7 +20,7 @@ game_example = {
 							content: "" // testo oppure array di nodi <img> (url+alt)
 						}
 					], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
-					activity_type: "", // con READING indica attività di sola lettura, con ANSWER indica la presenza del campo risposta
+					activity_type: "ANSWER", // con READING indica attività di sola lettura, con ANSWER (default) indica la presenza del campo risposta
 					answer_field: {
 						description: "", // eventuale indicazione per il giocatore
 						type: "", // tipo dell'answer field: checklist, number o text

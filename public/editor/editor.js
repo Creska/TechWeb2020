@@ -298,7 +298,7 @@ function goToSection(where) {
     case "EditStory":
     case "EditQuest":
     case "EditActivity":
-      stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid" );
+      stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid" );
   }
 
   /* cambia sezione */
@@ -490,7 +490,7 @@ function create_card(titolo) {
  * Entra o esce dalla cancel mode
  */
 function cancel_mode() {
-  stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid");
+  stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid");
 
   if (mode == "cancel" ) {
     change_color_option("#" + CurrentNavStatus.Section + " .CancelBtn", "btn-primary", "btn-secondary");
@@ -559,7 +559,7 @@ function cancel_em(obj) {
  * Entra o esce dalla swap mode
  */
 function swap_mode() {
-  stopAnimation( "#" + CurrentNavStatus.Section + ".CardGrid");
+  stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid");
 
   if(mode == "swap" ) {
     change_color_option("#" +CurrentNavStatus.Section + " .SwapBtn", "btn-primary", "btn-secondary");

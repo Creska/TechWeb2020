@@ -257,33 +257,32 @@ function saveAnswerFieldSettings() {
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.description = $( "#InsertAnswerFieldDescription" ).val().trim().replace(/(<([^>]+)>)/gi, "");
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options = [];
 
-	$( "#AFtype input[name=QuestionType]" ).each( function() {
-		if ( $(this).prop("checked") ) {
-			switch ( $(this).attr("id") ) {
-				case "QuestionType_Checklist":
-					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "checklist";
-					break;
-				case "QuestionType_Text":
-					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "text";
-					break;
-				case "QuestionType_Number":
-					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "number";
-					break;
-				case "QuestionType_Date":
-					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "date";
-					break;
-				case "QuestionType_Time":
-					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "time";
-			}
+	let new_type = $( "#AFtype input[name=QuestionType]:checked" );
+	if ( new_type ) {
+		switch ( new_type.attr("id") ) {
+			case "QuestionType_Checklist":
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "checklist";
+				$("#ChecklistPreview ul li").each( function() {
+					CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options.push( $(this).find("span").first().text() );
+				});
+				break;
+			case "QuestionType_Text":
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "text";
+				break;
+			case "QuestionType_Number":
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "number";
+				break;
+			case "QuestionType_Date":
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "date";
+				break;
+			case "QuestionType_Time":
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "time";
 		}
-	});
 
-	if ( $("#QuestionType_Checklist").prop("checked") ) {
-		$("#ChecklistPreview ul li").each( function() {
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.options.push( $(this).find("span").first().text() );
-		});
+		if ( new_type.attr("id") != CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type )
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
 	}
-
+	
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = $( "#AnswerTimer" ).val() * 60000;
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].GET_CHRONO = $( "#InsertTimer" ).prop( "checked" );
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].ASK_EVAL = $( "#NeedEvaluation" ).prop( "checked" );
@@ -356,7 +355,7 @@ function loadEditOutcomeSection() {
 
 	/* sistemazione del widget di inserimento outcome */
 	$( "#AddOutcomeWidget .OutcomeInput" ).remove();
-	if ( CurrentStage.activity_type == "ANSWER" && CurrentStage.answer_field && CurrentStage.answer_field.type ) {
+	if ( $( "#SetAnswerOutcome .alert-danger" ).length < 1 ) {
 		if ( CurrentStage.answer_field.type == "checklist" ) {
 			$( "#AddOutcomeWidget > p" ).after( $( "<ul class='OutcomeInput'></ul>" ) );
 			let newli;

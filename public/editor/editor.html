@@ -174,7 +174,7 @@ $(document).ready( function() {
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="getStories();goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 
@@ -735,64 +735,14 @@ $(document).ready( function() {
       </div>
     </div>
   <div class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
-    <div class="card-deck mb-2">
-           
+    <div class="card-deck mb-2">          
     </div> 
   </div>
   </div>
   <div class="grid-container mb-5">
-    <div class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
-      <div class="card-deck mb-2"  >
-        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault();' ondragstart="drag(event)" id="drag0">
-          <div class="card-body text-center">
-            <p class="card-text">1</p>
-          </div>
-        </div>
-        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag1">
-          <div class="card-body text-center">
-            <p class="card-text">2</p>
-          </div>
-        </div>
-      </div> 
-      <div class="card-deck mb-2"  >
-        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag2">
-          <div class="card-body text-center">
-            <p class="card-text">3</p>
-          </div>
-        </div>
-        <div class="card bg-primary" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag3">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
-      </div>    
-    </div>       
-      
-    <div class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
-      <div class="card-deck mb-2" >
-        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag6">
-          <div class="card-body text-center">
-            <p class="card-text">1</p>
-          </div>
-        </div>
-        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag7">
-          <div class="card-body text-center">
-            <p class="card-text">2</p>
-          </div>
-        </div>
-      </div>
-      <div class="card-deck mb-2"  >
-        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag8">
-          <div class="card-body text-center">
-            <p class="card-text">3</p>
-          </div>
-        </div>
-        <div class="card bg-success" draggable='true' ondrop='event.preventDefault()' ondragstart="drag(event)" id="drag9">
-          <div class="card-body text-center">
-            <p class="card-text">4</p>
-          </div>
-        </div>
-      </div>          
+    <div id="publishableContainer" class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
+    </div>             
+    <div id="publishedContainer" class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
     </div>
   </div>
   <div class='grido mt-5'>

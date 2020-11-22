@@ -385,6 +385,10 @@ function goToSection(where) {
         //getStories(); 
         break;
       case "Explorer":
+        getStories();
+        let a =[1,2,3,4,5];
+        let b= ["A","B","C","D"];
+        create_Explorer_grids(a,b);
         //stories_obj = getStories(); 
         //if( stories_obj.data )
           //alert(stories_obj.data);
@@ -1055,7 +1059,7 @@ function Navbar( option ) {
     case "Home":
       if ( CSS_Editor_Window )
         CSS_Editor_Window.close();
-      
+      $("#ChooseStoryToEdit .container").empty();
       $( "#SavePrompt" ).modal( "toggle" );
   }
 
@@ -1116,4 +1120,37 @@ function go_home(from) {
     $("#"+from+" .container").empty();
     $("#MainMenu").fadeIn();
   });
+}
+
+function create_Explorer_grids(a,b){
+  /*    <div class="card-deck mb-2">          
+    </div> */ 
+  if(a){
+    for(i=0;i<a.length;i++){//publishable
+      let card = $("<div/>",
+      {
+        "class": "card bg-warning",
+        "draggable": "true",
+        "ondrop": "event.preventDefault();",
+        "ondragstart": "drag(event)",
+        "id": "pble"+i
+      });
+      card.append( $("<div class='card-body text-center'></div>") );
+      card.children().append( $("<p class='card-text'>" + a[i] + "</p>") );
+    }
+  } 
+  if(b){
+    for(j=0;j<b.length;j++){//published
+      let card = $("<div/>",
+      {
+        "class": "card bg-danger",
+        "draggable": "true",
+        "ondrop": "event.preventDefault();",
+        "ondragstart": "drag(event)",
+        "id": "ped"+j
+      });
+      card.append( $("<div class='card-body text-center'></div>") );
+      card.children().append( $("<p class='card-text'>" + b[j] + "</p>") );
+    }
+  } 
 }

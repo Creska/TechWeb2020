@@ -26,10 +26,10 @@
 </head>
 
 <body>
-    <div id="StartScreen">
+    <main id="StartScreen">
         <script>
             window.onload = function() {
-                $( "#StartScreen" ).prepend( $( "<h1>" + StoryObj.story_title + "</h1>" ) );
+                $( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
 
                 if ( StoryObj.ACCESSIBILITY )
                     $("#AccessibilityMsg").append( $("<p>La storia è accessibile.</p>") );
@@ -37,25 +37,25 @@
                     $("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
             };
         </script>
-        <div id="WelcomeText" role="main">
-            Schermata iniziale del gioco. Per avviare una nuova partita, premere START
-            <div id="AccessibilityMsg"></div>
-        </div>
+
+        <p>Schermata iniziale del gioco. Per avviare una nuova partita, premere START.</p>
+        <p id="AccessibilityMsg" role="alert"></p>
         <button id="StartButton" onclick="startGame();">START</button>
-    </div>
+    </main>
 
     <template id="MainContainer">
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
-        <main id="Main" role="main" aria-relevant="all" autofocus>
+        <main id="Main" aria-relevant="additions text">
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-            <div class="Quest" aria-live="assertive"></div>
+            <div class="Quest"></div>
         </main>
     </template>
 
-    <div id='chat-room' aria-live="assertive">
+    <div id='chat-room'>
+        <h2 aria-level="2">Chat</h2>
         <form action="">
-            Text: <input id="message" type="text" autocomplete="off"><br>
-            <button onclick="CurrentStatus.ChatMessages += 1;">Send</button>
+            <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off"><br>
+            <button onclick="CurrentStatus.ChatMessages += 1;">Invia</button>
         </form>
     </div> 
 

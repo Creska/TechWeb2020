@@ -89,7 +89,7 @@ function handleError() {
  */
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
-	$( "#Main" ).prepend( $( "<h1 class='StoryTitle'>" + StoryObj.story_title + "</h1>" ) );
+	$( "#Main" ).prepend( $( "<h1 aria-level='1' class='StoryTitle'>" + StoryObj.story_title + "</h1>" ) );
     goToQuest( 0 );
 };
 
@@ -117,11 +117,11 @@ function goToQuest( quest_n ) {
 	CurrentStatus.QuestN = quest_n;
 	CurrentStatus.QuestID = StoryObj.quests[quest_n].quest_ID;
 
-	let NewQuest = $( ".Quest" );
-	NewQuest.empty();
+	let NewQuest = $( "<section class='Quest' aria-relevant='additions text'><p role='alert' aria-live='assertive' class='sr-only'>Nuova quest</p></section>" );
 	NewQuest.attr( "id", assignID( "Quest" ) );
+	NewQuest.append( $( "<h2 aria-level='2' class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h2>" ) );
 
-	NewQuest.append( $( "<h2 class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h2>" ) );
+	$( ".Quest" ).replaceWith( NewQuest );
 
 	goToActivity( 0 );
 };
@@ -138,9 +138,10 @@ function goToActivity( activity_n ) {
     let NewActivity = $( "<div/>",
     	{
         	"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
-			id: assignID( "Activity" ),
-			"aria-live": "assertive"
-    	});
+			id: assignID( "Activity" )
+		});
+		
+	NewActivity.append( $( "<p role='alert' aria-live='assertive' class='sr-only'>Nuova attività</p>" ) );
 
 	NewActivityText = $( "<div/>",
 	{
@@ -194,6 +195,10 @@ function goToActivity( activity_n ) {
 					placeholder: "0"
 				}));
 				break;
+			case 'date':
+			case 'time':
+				AF.append( $( "<input/>", { type: StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type } ) );
+				break;
 			default:
 				handleError();
 		}
@@ -239,7 +244,7 @@ function addTextPart( container, node, ...other ) {
 		}
 		else if ( node.content.length > 1 ) {
 			let newgallery = $(`
-			<div class="carousel slide ImageGallery" data-ride="carousel">
+			<div class="carousel slide ImageGallery" aria-label="Galleria di immagini" data-interval="false">
 				<div class="carousel-inner"></div>
 				<a class="carousel-control-prev" role="button" data-slide="prev">
     				<span class="carousel-control-prev-icon" aria-hidden="true"></span>

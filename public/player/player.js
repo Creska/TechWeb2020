@@ -195,6 +195,10 @@ function goToActivity( activity_n ) {
 					placeholder: "0"
 				}));
 				break;
+			case 'date':
+			case 'time':
+				AF.append( $( "<input/>", { type: StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type } ) );
+				break;
 			default:
 				handleError();
 		}

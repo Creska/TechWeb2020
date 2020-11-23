@@ -139,7 +139,7 @@ main {
 }
 
 .OutcomesTable th, .OutcomesTable td {
-  max-width: 25%;
+  max-width: 20%;
   overflow: hidden;
   padding-top: 5px;
   padding-bottom: 5px;

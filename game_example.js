@@ -1,7 +1,8 @@
 // Struttura dell'oggetto JSON
+// ogni valore mostrato qui rappresenta quello di default
 
 game_example = {
-	ACCESSIBILITY: 0, // flag che indica se la storia è accessibile
+	ACCESSIBILITY: false, // flag che indica se la storia è accessibile
 	story_title: "", // probabilmente servirà un div per contenerlo
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)
@@ -30,13 +31,14 @@ game_example = {
 						{
 							response: "", // possibile risposta
 							nextquest: false, // indica se conduce alla prossima quest
-							nextactivity: "" // indica l'attività a cui conduce
+							nextactivity: "", // indica l'attività a cui conduce
+							score: "" // punteggio relativo a questa specifica attività - va sommato al totale; se è vuoto viene considerato uguale a zero
 						}
 					],
-					ASK_EVAL: 0, // flag che indica se c'è necessità di valutazione umana per la risposta
-					GET_CHRONO: 0, // flag che indica se bisogna calcolare il tempo di risposta alla domanda
+					ASK_EVAL: false, // flag che indica se c'è necessità di valutazione umana per la risposta
+					GET_CHRONO: false, // flag che indica se bisogna calcolare il tempo di risposta alla domanda
 					expected_time: 0, // tempo in ms previsto per il completamento dell'attività
-					FINAL: 0 // indica se l'attività è quella finale. In tal caso non vi sarà alcun campo risposta
+					FINAL: false // indica se l'attività è quella finale. In tal caso non vi sarà alcun campo risposta
 				}
 			]
 		}

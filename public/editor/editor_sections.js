@@ -315,13 +315,7 @@ function loadEditOutcomeSection() {
     	}
 	}
 
-	/* reset delle tabelle degli outcomes */
-	$( "#AnswerActivity .OutcomesTable tr:nth-child(n+3)" ).remove();
-	$( ".OutcomesTable input[type=checkbox]" ).prop( "checked", false );
-	$( ".OutcomesTable input[type=number]" ).attr( "disabled", false );
-	$( ".OutcomesTable input[type=number]" ).val( "" );
-
-	/* caricamento dei dati presenti nel JSON */
+	/* preparazione della tabella e caricamento di eventuali dati presenti nel JSON */
 	if ( CurrentStage.activity_type == 'READING' ) {
 		$( "#AnswerActivity" ).toggle(false);
 		$( "#ReadingActivity" ).toggle(true);
@@ -331,10 +325,20 @@ function loadEditOutcomeSection() {
 			$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='number']" ).attr( "disabled", CurrentStage.answer_outcome[0].nextquest );
 			$( "#ReadingActivity .OutcomesTable tr:nth-child(2) :input[type='number']" ).val( CurrentStage.answer_outcome[0].nextactivity );
 		}
+		else {
+			$( "#ReadingActivity .OutcomesTable input[type=checkbox]" ).prop( "checked", false );
+			$( "#ReadingActivity .OutcomesTable input[type=number]" ).attr( "disabled", false );
+			$( "#ReadingActivity .OutcomesTable input[type=number]" ).val( "" );
+		}
 	}
 	else {
 		$( "#AnswerActivity" ).toggle(true);
 		$( "#ReadingActivity" ).toggle(false);
+
+		$( "#AnswerActivity .OutcomesTable tr:nth-child(n+3)" ).remove();
+		$( "#AnswerActivity .OutcomesTable input[type=checkbox]" ).prop( "checked", false );
+		$( "#AnswerActivity .OutcomesTable .NextActivityInput" ).attr( "disabled", false );
+		$( "#AnswerActivity .OutcomesTable input[type=number]" ).val( "" );
 
 		let tr;
 
@@ -348,8 +352,9 @@ function loadEditOutcomeSection() {
 			}
 
 			tr.find("input[type=checkbox]").prop( "checked", value.nextquest );
-			tr.find("input[type=number]").attr( "disabled", value.nextquest );
-			tr.find("input[type=number]").val( value.nextactivity );
+			tr.find(".NextActivityInput").attr( "disabled", value.nextquest );
+			tr.find(".NextActivityInput").val( value.nextactivity );
+			tr.find(".ScoreInput").val( value.score );
 		}); 
 	}
 
@@ -414,11 +419,19 @@ function addOutcome( label ) {
   		newtr.append( $.parseHTML( '<td><input type="checkbox"></td>' ) );
   		newtr.append( ( $( "<input/>",
   		{
-    		type: "number",
+			type: "number",
+			class: "NextActivityInput",
 			placeholder: 0,
 			size: 6,
     		min: 0
-  		})).wrap( "<td></td>" ).parent());
+		})).wrap( "<td></td>" ).parent());
+		newtr.append( ( $( "<input/>",
+  		{
+			type: "number",
+			class: "ScoreInput",
+			placeholder: 0,
+			size: 6
+		})).wrap( "<td></td>" ).parent());
   		newtr.append( $.parseHTML( `<td><a class='badge badge-danger ml-3' href='#' onclick='$(this).parent().parent().remove(); return false;'><i class='fas fa-minus'></i></a></td>` ) );
   		$( "#AnswerActivity .OutcomesTable" ).append( newtr );
 	}
@@ -450,9 +463,10 @@ function saveOutcomes() {
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome.push({
 				response: response_name,
 				nextquest: $(this).find("input[type=checkbox]").first().prop( "checked" ),
-				nextactivity: $(this).find("input[type=number]").first().val()
-			})
-		})
+				nextactivity: $(this).find(".NextActivityInput").first().val(),
+				score: $(this).find(".ScoreInput").first().val(),
+			});
+		});
 	}	
   
   	// console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome); // debugging

@@ -4,7 +4,7 @@ var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var CardClickDisabled = false;
-
+var data_array = [];
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
@@ -752,18 +752,18 @@ function setFinalActivity() {
   });
 }
 function saveStory() { 
-  
   get_all_images_bytes();
     data_array.push({
-      name: "nome.json",
-      data: CurrentWork
+      name: "sadomaso.json",
+      data: CurrentWork,
+      story: true
     });
+  //alert(JSON.stringify(data_array[0].data));
   story= {//storia ipotetica
     story_data: data_array,    
-    story_name: "nome",
+    story_name: "sadomaso",
     published: true,
-    checked: false
-    //story: true ritengo sia inutile
+    checked: true
   };
   $.post("/editor/saveStory",story, function(data,status){
     alert("Status: " + status);
@@ -806,10 +806,10 @@ function getStory(nome) {//fa crashare l'app anche con published
   });
 }
 function deleteStory(nome) {
-  value = prompt('bool published: ');
+  //value = prompt('bool published: ');
   story = {
     story_name: nome,
-    published: value
+    published: true//true per adesso
   };
   $.post("/editor/deleteStory",story, function(data,status){
     alert("Status: " + status);
@@ -1135,6 +1135,10 @@ function create_Explorer_grids(a,b){
     </div> */ 
   if(a){
     for(i=0;i<a.length;i++){//publishable
+      if( i%2 ==0 ){
+        let deck = $("<div/>",{"class": "card-deck mb-2 "});
+        $("#publishableContainer").append(deck);
+      }
       let card = $("<div/>",
       {
         "class": "card bg-warning",
@@ -1145,13 +1149,18 @@ function create_Explorer_grids(a,b){
       });
       card.append( $("<div class='card-body text-center'></div>") );
       card.children().append( $("<p class='card-text'>" + a[i] + "</p>") );
+      $("#publishableContainer > div").last().append(card);
     }
   } 
   if(b){
     for(j=0;j<b.length;j++){//published
+      if( j%2 ==0 ){
+        let deck = $("<div/>",{"class": "card-deck mb-2 "});
+        $("#publishedContainer").append(deck);
+      }
       let card = $("<div/>",
       {
-        "class": "card bg-danger",
+        "class": "card bg-success",
         "draggable": "true",
         "ondrop": "event.preventDefault();",
         "ondragstart": "drag(event)",
@@ -1159,6 +1168,7 @@ function create_Explorer_grids(a,b){
       });
       card.append( $("<div class='card-body text-center'></div>") );
       card.children().append( $("<p class='card-text'>" + b[j] + "</p>") );
+      $("#publishedContainer > div").last().append(card);
     }
   } 
 }

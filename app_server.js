@@ -399,7 +399,7 @@ app.post('/editor/saveStory', function (req, res) {
                 }
                 else {
                     console.log("The directory for the story " + story_name + " was created successfully.")
-                    res.status(200).end();
+                    //res.status(200).end();
                 }
 
             }
@@ -408,9 +408,11 @@ app.post('/editor/saveStory', function (req, res) {
             var buffer;
             if (story_data[index].story) {
                 buffer = JSON.stringify(story_data[index].data);
+                console.log("buffer contains json now");
             }
             else {
-                buffer = story_data[index].data
+                buffer = story_data[index].data;
+                console.log("buffer contains image now");
             }
             fs.writeFile(story_path + story_name + '/' + story_data[index].name, buffer, 'utf8', (err) => {
                 if (err) {
@@ -422,6 +424,7 @@ app.post('/editor/saveStory', function (req, res) {
                         return res.status(200).end();
                     }
                     console.log("Element " + story_data[index].name + " of " + story_name + " saved successfully.")
+                    return res.status(200).end();
                 }
             })
         }

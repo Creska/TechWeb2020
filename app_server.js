@@ -406,6 +406,7 @@ app.post('/editor/saveStory', function (req, res) {
         }
         for (let index = 0; index < story_data.length; index++) {
             var buffer;
+            console.log("current story_data[index].data: "+story_data[index].data);
             if (story_data[index].story) {
                 buffer = JSON.stringify(story_data[index].data);
                 console.log("buffer contains json now");
@@ -424,7 +425,7 @@ app.post('/editor/saveStory', function (req, res) {
                         return res.status(200).end();
                     }
                     console.log("Element " + story_data[index].name + " of " + story_name + " saved successfully.")
-                    return res.status(200).end();
+                    res.status(200).end();
                 }
             })
         }
@@ -456,7 +457,7 @@ app.post('/editor/deleteStory', function (req, res) {
             }
             else {
                 console.log("Story " + story_path + story_name + " deleted successfully.")
-                return;
+                return res.status(200).end();
             }
         })
     }

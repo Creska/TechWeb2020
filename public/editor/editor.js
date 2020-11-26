@@ -4,7 +4,7 @@ var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var CardClickDisabled = false;
-var data_array = [];
+var images_byte_stream =[];
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
@@ -752,24 +752,69 @@ function setFinalActivity() {
   });
 }
 function saveStory() { 
-  get_all_images_bytes();
-    data_array.push({
+  let story = prepare_saveStory_object();
+   /* data_array.push({
       name: "sadomaso.json",
       data: CurrentWork,
       story: true
     });
-  //alert(JSON.stringify(data_array[0].data));
   story= {//storia ipotetica
     story_data: data_array,    
     story_name: "sadomaso",
     published: true,
     checked: true
-  };
+  };*/
   $.post("/editor/saveStory",story, function(data,status){
-    alert("Status: " + status);
-    data_array = [];
+    //alert("Status: " + status);
+    images_byte_stream = [];
   });
 } 
+function prepare_saveStory_object() {
+  let story = [];
+  clean_cw = prepare_saveStory_data();
+  story.push({
+    name: clean_cw.story_title+".json",
+    data: clean_cw,
+    story: true
+  });
+  for( i=0; i<images_byte_stream.length;i++ ) {
+    let img_name = "img-"+clean_cw.story_ID+i.toString();
+    //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
+    /*TO-DO:
+    -fare in modo che gli src in clean_cw siano rimpiazzati con i path sul server
+    -debuggare saveStory in modo che funzioni
+    -vedere come si comporta saveStory con l'editor css
+    -distinguere la section di uscita da saveStory(home oppure ChooseStoryto Edit)
+    -includere le restanti chiamate ajax */
+    story.push({
+      name: img_name,
+      data: images_byte_stream[i]
+    });
+  }
+  return story;
+}
+function prepare_saveStory_data(){
+  let clean_cw = CurrentWork;
+  let i=0;
+  while(clean_cw.quests[i]){
+    let j=0;
+    while(clean_cw.quests[i].activities[j]){
+      clean_cw.quests[i].activities[j].activity_text.forEach(get_src);
+      j++;
+    }
+    i++;
+  } 
+  return clean_cw;
+}
+function get_src(act_text, index) {
+  if( act_text.type == "gallery" ) {
+    $.each( act_text.content, function(pos,value) {
+      let image_bytes = value.slice(10,-9);
+      images_byte_stream.push(image_bytes);
+      }); 
+  }
+}
+/*
 function get_all_images_bytes(){
   i=0;
   while(CurrentWork.quests[i]){
@@ -798,7 +843,7 @@ function get_images(act_text, index) {
     
   }
 }
-
+*/
 function getStory(nome) {//fa crashare l'app anche con published
   value = prompt('bool published: ');
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){

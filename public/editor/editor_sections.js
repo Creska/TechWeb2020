@@ -57,6 +57,7 @@ function select( i ) {
 	  change_color_option( "#a" + i, "bg-secondary", "bg-primary" );
 	  deselect_other_options( i );
   
+	  /*
 	  switch (i) {
 		case 0:
 		  $( "#NumberOfDevices" ).toggle(false);
@@ -65,6 +66,7 @@ function select( i ) {
 		case 2:
 		  $( "#NumberOfDevices" ).toggle(true);
 	  }
+	  */
 	}
 	else
 	  change_color_option( "#a" + i, "bg-primary", "bg-secondary" );

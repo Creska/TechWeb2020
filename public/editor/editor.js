@@ -37,9 +37,9 @@ function save_title( which ) {
       CurrentWork.story_title = title;
 
       if ( title )
-        $( "#EditStory .SectionTitle" ).html( title );
+        $( "#EditStory header small" ).html( title );
       else
-        $( "#EditStory .SectionTitle" ).html( "<i>StoriaSenzaNome</i>" );
+        $( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
 
       change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
       $( "#SaveStoryTitle" ).text( "Salvato!" );
@@ -56,16 +56,17 @@ function save_title( which ) {
       else {
         title = $( '#QuestTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
 
+        // aggiorna il nome della card e il titolo della sezione
         if ( title ) {
-          // aggiorna il nome della card
-          $("#QuestsGrid .card-text").eq( CurrentNavStatus.QuestN ).html( title );
-
-          
+          $( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( title );
+          $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + title );
         }
         else {
-          // se l'input è lasciato vuoto, viene reinserito il titolo vecchio
-          $( '#QuestTitleInput' ).val( old_title );
+          $( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
+          $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
         }
+
+        CurrentWork.QuestGrid = $( "#QuestsGrid" ).html();
 
         CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
 
@@ -312,30 +313,39 @@ function goToSection(where) {
         $('.masthead').fadeOut();
         break;
       case "EditStory":
-        $("#StoryTitleInput").val( CurrentWork.story_title );
-        $("#QuestsGrid").html( CurrentWork.QuestGrid );
+        if ( CurrentWork.story_title )
+          $( "#EditStory header small" ).html( CurrentWork.story_title );
+        else
+          $( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
 
+        $( "#StoryTitleInput" ).val( CurrentWork.story_title );
         change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
         $( "#SaveStoryTitle" ).text( "Salvato!" );
+
+        $( "#QuestsGrid" ).html( CurrentWork.QuestGrid );
         break;
       case "ChooseGameMode":
+        $( "#ChooseGameMode header small" ).html( $( "#EditStory header small" ).html() );
         loadGameModeSection();
         break;
       case "EditQuest":
-        if ( CurrentNavStatus.Section == "EditStory" ) CurrentNavStatus.QuestN = get_card_index();
+        if ( CurrentNavStatus.Section == "EditStory" )
+          CurrentNavStatus.QuestN = get_card_index();
 
-        $("#QuestTitleInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
+        $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + $( "#EditStory .card-text" ).eq(CurrentNavStatus.QuestN).html() );
+
+        $( "#QuestTitleInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
         change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
         $( "#SaveQuestTitle" ).text( "Salvato!" );
-        $("#EditQuest h1").html( $("#EditStory .card-text").eq(get_card_index()).prop("innerHTML") );
 
-        $("#ActivitiesGrid").html(CurrentWork.ActivityGrids[CurrentNavStatus.QuestN]); //carica la griglia delle attività
+        $( "#ActivitiesGrid" ).html( CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] ); //carica la griglia delle attività
         break;
       case "EditActivity":
-        if ( CurrentNavStatus.Section == "EditQuest" ) CurrentNavStatus.ActivityN = get_card_index();
+        if ( CurrentNavStatus.Section == "EditQuest" )
+          CurrentNavStatus.ActivityN = get_card_index();
         
-        $("#EditActivity header small").html( $( "#EditStory .card-text").eq(CurrentNavStatus.QuestN).html() );
-        $("#EditActivity header h1").html( "Activity" + CurrentNavStatus.ActivityN );
+        $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-text" ).eq(CurrentNavStatus.ActivityN).html() );
+        $( "#EditActivity header h1" ).html( "Attività" );
 
         /* sistemazione del widget ChooseActivityType */
         $( "#ChooseActivityType" ).css( "display", "none" );
@@ -350,30 +360,27 @@ function goToSection(where) {
           $( "#EditActivity p-3" ).first().find( "button" ).attr( "disabled", false );
         }
     
-        $("#ParagraphsGrid").html(CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN]); //carica la griglia dei paragrafi/immagini/gallerie
+        //carica la griglia dei paragrafi/immagini/gallerie
+        $( "#ParagraphsGrid" ).html( CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] );
         break;
       case "EditText":
         // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
-        $("#EditText header small").html( $("#EditActivity header small").html() );
-        $("#EditText header h1").html( $("#EditActivity header h1").html() );
+        $( "#EditText header small" ).html( $( "#EditActivity header small" ).html() );
 
-        $("#TextParInput").val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content );
+        $( "#TextParInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content );
         break;
       case "EditGallery":
-        $("#EditGallery header small").html( $("#EditActivity header small").html() );
-        $("#EditGallery header h1").html( $("#EditActivity header h1").html() );
+        $( "#EditGallery header small" ).html( $( "#EditActivity header small" ).html() );
 
         loadEditGallerySection();
         break;
       case "EditAnswerField":
-        $("#EditAnswerField header small").html( $("#EditActivity header small").html() );
-        $("#EditAnswerField header h1").html( $("#EditActivity header h1").html() );
+        $( "#EditAnswerField header small" ).html( $( "#EditActivity header small" ).html() );
 
         loadEditAnswerFieldSection();
         break;
       case "SetAnswerOutcome":
-        $("#SetAnswerOutcome header small").html( $("#EditActivity header small").html() );
-        $("#SetAnswerOutcome header h1").html( $("#EditActivity header h1").html() );
+        $( "#SetAnswerOutcome header small" ).html( $( "#EditActivity header small" ).html() );
 
         loadEditOutcomeSection();
         break;
@@ -383,6 +390,26 @@ function goToSection(where) {
 
     $("#"+where).fadeIn();
   });
+};
+
+
+/**
+ * Mostra/nasconde la guida
+ */
+function showHelp() {
+  if ( $( "#Help" ).css( "display" ) == "none" ) {
+    stopAnimation();
+    $( "#" + CurrentNavStatus.Section ).fadeOut();
+    $( "#Help" ).fadeIn( function() {
+      $( "#HelpBtn" ).html( '<i class="fas fa-times"></i>' );
+    });
+  }
+  else {
+    $( "#Help" ).fadeOut();
+    $( "#" + CurrentNavStatus.Section ).fadeIn( function() {
+      $( "#HelpBtn" ).html( '<i class="fas fa-question"></i>' );
+    });
+  }
 };
 
 

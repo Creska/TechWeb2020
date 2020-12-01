@@ -33,10 +33,8 @@ BUG E PROBLEMI DA CORREGGERE
     * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
     * [WIP] Funzioni di passaggio per navbar e main menu
     * [WIP] Aggiungere le funzionalità relative a quest_ID
-    * Rimuovere funzionalità single device
-    * Sistemare le descrizioni in ChooseGameMode
+    * Risolvere la faccenda del numero di devices e sistemare le descrizioni in ChooseGameMode
     * Mettere il nome dell'app
-    * Migliorare le spiegazioni
     * Rifare la guida dell'editor CSS
 * PLAYER
     * Riprogettare l'interfaccia (ad esempio mettere un header per il campo risposta)

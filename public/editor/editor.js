@@ -13,6 +13,7 @@ var CurrentNavStatus = {
 };
 
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
+
 var CurrentWork;
 
 /* FINESTRE - WIP */
@@ -764,21 +765,24 @@ function saveStory() {
     published: true,
     checked: true
   };*/
+  /* current story is { 'test_sample.json': '', 'img--10': '', 'img--11': '' }*/
+  console.log(story)
   $.post("/editor/saveStory",story, function(data,status){
     //alert("Status: " + status);
     images_byte_stream = [];
   });
 } 
 function prepare_saveStory_object() {
-  let story = [];
-  clean_cw = prepare_saveStory_data();
-  story.push({
+  let data_array = [];
+  let clean_cw = prepare_saveStory_data();//CurrentWork with src fixed
+  
+  data_array.push({
     name: clean_cw.story_title+".json",
     data: clean_cw,
     story: true
   });
   for( i=0; i<images_byte_stream.length;i++ ) {
-    let img_name = "img-"+clean_cw.story_ID+i.toString();
+    let img_name = clean_cw.story_title+"img_"+i;
     //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
     /*TO-DO:
     -fare in modo che gli src in clean_cw siano rimpiazzati con i path sul server
@@ -786,64 +790,46 @@ function prepare_saveStory_object() {
     -vedere come si comporta saveStory con l'editor css
     -distinguere la section di uscita da saveStory(home oppure ChooseStoryto Edit)
     -includere le restanti chiamate ajax */
-    story.push({
+    data_array.push({
       name: img_name,
       data: images_byte_stream[i]
     });
   }
+  let story= {//storia ipotetica
+    story_data: data_array,    
+    story_name: clean_cw.story_title,
+    published: true,//per ora
+    checked: true//per ora
+  };
   return story;
 }
 function prepare_saveStory_data(){
   let clean_cw = CurrentWork;
+  let appendix="";//per ora
   let i=0;
   while(clean_cw.quests[i]){
     let j=0;
     while(clean_cw.quests[i].activities[j]){
-      clean_cw.quests[i].activities[j].activity_text.forEach(get_src);
+      let k=0;
+      while(clean_cw.quests[i].activities[j].activity_text[k]){
+        if( clean_cw.quests[i].activities[j].activity_text[k].type == "gallery" ) {
+          let z=0;
+          while(clean_cw.quests[i].activities[j].activity_text[k].content[z]) {
+            let image_bytes = clean_cw.quests[i].activities[j].activity_text[k].content[z].slice(10,-12);
+            images_byte_stream.push(image_bytes);
+            clean_cw.quests[i].activities[j].activity_text[k].content[z] = clean_cw.quests[i].activities[j].activity_text[k].content[z].replace(image_bytes,"/public/player/stories/"+appendix+"published/"+clean_cw.story_title+"_img_"+z);//story_title per ora al posto di story_id
+            z++;
+            }
+        }
+        k++;
+      }
       j++;
     }
     i++;
   } 
   return clean_cw;
 }
-function get_src(act_text, index) {
-  if( act_text.type == "gallery" ) {
-    $.each( act_text.content, function(pos,value) {
-      let image_bytes = value.slice(10,-9);
-      images_byte_stream.push(image_bytes);
-      }); 
-  }
-}
-/*
-function get_all_images_bytes(){
-  i=0;
-  while(CurrentWork.quests[i]){
-    j=0;
-    current_quest = CurrentWork.quests[i];
-    while(current_quest.activities[j]){
-      current_activity = current_quest.activities[j];
-      current_activity.activity_text.forEach(get_images);
-      j++;
-    }
-    i++;
-  }
-}
-function get_images(act_text, index) {
-  act_text_element = $($.parseHTML(act_text));
-  switch(act_text_element.prop("tagName")){
-    case "IMG":
-      data_array_element = {
-        name:prompt("nome immagine: "),
-        data: act_text_element.attr("src")
-      };
-      data_array.push(data_array_element);
-      break;
-    case "DIV":
-      break;
-    
-  }
-}
-*/
+
 function getStory(nome) {//fa crashare l'app anche con published
   value = prompt('bool published: ');
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){

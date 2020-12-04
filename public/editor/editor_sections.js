@@ -492,7 +492,7 @@ function addImage( image, newload ) {
 
     const reader = new FileReader();
     reader.readAsDataURL(image);
-      
+    //reader.readAsBinaryString(image);  
     reader.addEventListener("load", function() {
       newpreview.attr( "src", this.result );
     });

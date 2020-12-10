@@ -145,12 +145,22 @@
 
     <h3>Numero di giocatori</h3>
     <p class="text-justify">
-      Ogni gioco può essere progettato per uno specifico numero di giocatori. <span class="text-danger">TODO: completare a seconda di cosa sarà fatto alla fine</span>
+      Ogni gioco può essere progettato per uno specifico numero di giocatori. Oltre alla modalità <em>single player</em> vi è anche quella di gruppo, che prevede un numero di giocatori tra 2 e 5. Queste due modalità sono identiche in tutto, a parte il fatto che la seconda permetta appunto di far funzionare il gioco su un numero di dispositivi maggiore di uno. C'è poi una terza modalità, quella per le classi. Questa modalità consente al server di dividere una classe di massimo 25 membri in più gruppi con lo stesso numero di persone (specificato dall'utente). I gruppi vengono creati in base al momento in cui gli studenti scannerizzano il QRcode. In questa particolare mode, tutte le quest, con l'esclusione della prima e dell'ultima, vengono posizionate in ordine random, in modo da evitare assembramenti di studenti in una particolare area. Spetta quindi all'utente creare una storia le cui fasi possano essere affrontate in ordini diversi.</span>
     </p>
 
     <h3>Accessibilità</h3>
     <p class="text-justify">
-      Spuntando la relativa opzione, nel file di gioco vengono inseriti i dati che, automaticamente, permetteranno all'applicazione player di segnalare al giocatore che la partita è accessibile. L'unica ulteriore differenza con la modalità non accessibile è l'obbligo di inserimento delle descrizioni testuali per le immagini, che saranno quindi necessarie per pubblicare la storia in questione. <span class="text-danger">TODO: completare a seconda di cosa sarà fatto alla fine</span>
+      Spuntando la relativa opzione, nel file di gioco vengono inseriti i dati che, automaticamente, permetteranno all'applicazione player di segnalare al giocatore che la partita è accessibile. L'unica ulteriore differenza con la modalità non accessibile è l'obbligo di inserimento delle descrizioni testuali per le immagini, che saranno quindi necessarie per pubblicare la storia in questione.<br>
+      Per rendere la storia completamente e realmente accessibile a giocatori disabili è anche necessario progettare il tutto tenendo conto delle problematiche che affliggono gli studenti affetti da queste patologie:</p>
+    <ul class="text-left">
+      <li>Visive: disabilità visive tra cui cecità, ipovisione e problemi nella distinzione dei colori.</li>
+      <li>Motorie: difficoltà o impossibilità di usare le mani, inclusi tremori, lentezza muscolare, non completa padronanza della mobilità fine, ecc.</li>
+      <li>Uditive: sordità e/o disturbi dell'udito.</li>
+      <li>Convulsioni: attacchi foto-epilettici causati da effetti stroboscopici e/o lampeggianti.</li>
+      <li>Cognitive e intellettive: disabilità dello sviluppo, difficoltà di apprendimento (dislessia, discalculia, ecc.) E disabilità cognitive (sindrome di Down, Alzheimer) di varie origini, che causano effetti negativi su memoria, attenzione, sviluppo, capacità logiche e di problem solving, etc.</li>
+    </ul>
+    <p class="text-justify">
+      L'applicazione è in grado di controllare solamente la presenza delle descrizioni per ogni immagine. Spetta quindi all'autore, nel caso abbia scelto l'opzione <em>Accessibile</em>, il compito di assicurarsi che la storia sia giocabile da tutti gli studenti.
     </p>
     
     <h3>Gestione delle fasi di gioco</h3>
@@ -167,6 +177,7 @@
     <h3>Pubblicazione</h3>
     <p class="text-justify">
       Per rendere accessibile una storia all'applicazione player, e quindi creare l'apposito QRcode, basterà utilizzare la sezione relativa alla pubblicazione dei giochi. In fase di pubblicazione, un'apposita procedura automatica controllerà i requisiti fondamentali perché l'operazione vada a buon fine, e segnala eventuali errori. Ritirare una storia significa renderla non più giocabile dall'applicazione player.
+      In fase di pubblicazione di una storia verrà creato anche l'apposito QRcode.
     </p>
 
     <h2><strong>Modificare le storie</strong></h2>
@@ -219,49 +230,45 @@
       <small></small>
       <h1 class="cover-heading SectionTitle">Modalità di gioco</h1>
     </header>
-    <p class="lead SectionHeader">
+    <p class="lead mb-5 SectionHeader">
       Scegli il numero di giocatori e regola l'accessibilità.
     </p>
 
     <div>
       <p>Numero di giocatori:</p>
       <div class="card-deck">
-        <div class="card rounded bg-secondary" id="a0" onclick="select(0);">
+        <div class="card rounded bg-secondary" id="gm0" onclick="select(0);">
           <img src="../images/single.jpg" class="card-img-top" alt="..." >
           <div class="card-body">
             <h5 class="card-title">Single Player</h5>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="a1" onclick="select(1);">
+        <div class="card rounded bg-secondary" id="gm1" onclick="select(1);">
           <img src="../images/group.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Gruppo</h5>
             <p class="card-text">Gruppo unico da 2-5 membri</p>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="a2" onclick="select(2);">
+        <div class="card rounded bg-secondary" id="gm2" onclick="select(2);">
           <img src="../images/class.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Classe</h5>
-            <p class="card-text">2-5 gruppi che giocano in parallelo</p>
+            <p class="card-text">4-25 membri divisi equamente in gruppi che giocano in parallelo</p>
           </div>
         </div>
       </div>
     </div>
   
-    <!--
-    <div class="mt-5" style="display: none;" id="NumberOfDevices">
-      <p>Il numero di device di controllo si riferisce al numero di dispositivi che possono interagire con i campi risposta e la chat. Scegli se attribuire il controllo della storia ad un solo membro per gruppo, o ad ogni giocatore in esso:</p>
-
-      <button id="a3" class="btn btn-secondary bg-secondary" onclick="CurrentWork.single_device = 1; select(3);">SINGOLO</button>
-      <button id="a4" class="btn btn-secondary bg-secondary" onclick="CurrentWork.single_device = 0; select(4);">MULTIPLO</button>
+    <div class="mt-5" id="PlayersN">
+      <p>Specifica il numero massimo di giocatori previsti per ogni gruppo:</p>
+      <input type="number" placeholder="0" min="2" max="5">
     </div>
-    -->
     
     <div class="mb-3">
       <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
-      <button id="a5" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="select(5);"><i class="fab fa-accessible-icon"></i></button>
-      <button id="a6" class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="select(6);"><i class="fas fa-times"></i></button>
+      <button id="gm3" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="select(3);"><i class="fab fa-accessible-icon"></i></button>
+      <button id="gm4" class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="select(4);"><i class="fas fa-times"></i></button>
     </div>
     
     <div class="p-3 Save-Cancel">

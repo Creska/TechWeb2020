@@ -1,4 +1,4 @@
-var b = [ false, false, false, false, false, false, false ]; // true: b[i] è selezionato
+var gm_b = [ false, false, false, false, false ]; // se gm_b[0] è true --> #gm0 è selezionato 
 
 /* -------------------------------- ROBA PER DEBUGGING ----------------------------------------- */
 
@@ -17,31 +17,21 @@ function printCurrentJson() {
  * Deseleziona tutte le opzioni diverse dal pulsante di indice i
  */
 function deselect_other_options( i ) {
-	let x;
-	switch (i) {
-	  case 3:
-		x = i+1;
-		break;
-	  case 4:
-		x = i-1;
-		break;
-	  case 5:
-		x = i+1;
-		break;
-	  case 6:
-		x = i-1;
-		break;
-	  default:
-		x = -1;
+	if ( i < 3 ) {
 		for ( y = 0; y < 3; y++ ) {
-		  if ( b[y] && (y != i) )
-			x = y;
+			if ( y != i ) {
+				change_color_option( "#gm" + y, "bg-primary", "bg-secondary" );
+	  			gm_b[y] = false;
+			}
 		}
 	}
-  
-	if( b[x] ) {
-	  change_color_option( "#a" + x, "bg-primary", "bg-secondary" );
-	  b[x] = false;
+	else {
+		for ( y = 3; y < 5; y++ ) {
+			if ( y != i ) {
+				change_color_option( "#gm" + y, "bg-primary", "bg-secondary" );
+	  			gm_b[y] = false;
+			}
+		}
 	}
 };
 
@@ -51,25 +41,28 @@ function deselect_other_options( i ) {
 * Seleziona il pulsante con indice i e deseleziona tutti gli altri
 */
 function select( i ) {
-	b[i] = !b[i];
+	gm_b[i] = !gm_b[i];
   
-	if( b[i] ) {
-	  change_color_option( "#a" + i, "bg-secondary", "bg-primary" );
+	if( gm_b[i] ) {
+	  change_color_option( "#gm" + i, "bg-secondary", "bg-primary" );
 	  deselect_other_options( i );
-  
-	  /*
+
 	  switch (i) {
 		case 0:
-		  $( "#NumberOfDevices" ).toggle(false);
+		  $( "#PlayersN" ).fadeOut();
+		  $( "#PlayersN input" ).val( "" );
 		  break;
 		case 1:
 		case 2:
-		  $( "#NumberOfDevices" ).toggle(true);
+		  $( "#PlayersN" ).fadeIn();
+		  $( "#PlayersN input" ).val( "" );
 	  }
-	  */
 	}
-	else
-	  change_color_option( "#a" + i, "bg-primary", "bg-secondary" );
+	else {
+		change_color_option( "#gm" + i, "bg-primary", "bg-secondary" );
+		if ( i < 3 )
+			$( "#PlayersN" ).fadeOut();
+	}
 };
 
 
@@ -77,7 +70,7 @@ function select( i ) {
  * Carica, in base ai dati nel json, la sezione di modifica della Game Mode
  */
 function loadGameModeSection() {
-	b = [0, 0, 0, 0, 0, 0, 0];
+	gm_b = [ false, false, false, false, false ];
 
 	switch ( CurrentWork.game_mode ) {
 		case "SINGLE":
@@ -85,19 +78,24 @@ function loadGameModeSection() {
 			break;
 		case "GROUP":
 			select(1);
+			if ( CurrentWork.players )
+				$( "#PlayersN input" ).val( CurrentWork.players );
 			break;
 		case "CLASS":
 			select(2);
+			if ( CurrentWork.players )
+				$( "#PlayersN input" ).val( CurrentWork.players );
 			break;
 		default:
 			$( "#ChooseGameMode .card-deck .card" ).removeClass( "bg-primary" );
 			$( "#ChooseGameMode .card-deck .card" ).addClass( "bg-secondary" );
+			$( "#PlayersN input" ).val( "" );
 	}
 
 	if ( CurrentWork.ACCESSIBILITY )
-		select(5);
+		select(3);
 	else
-		select(6);
+		select(4);
 };
 
 
@@ -105,16 +103,22 @@ function loadGameModeSection() {
  * Salva nel json le modifiche effettuate alla Game Mode
  */
 function saveGameModeSettings() {
-	if ( b[0] )
+	if ( gm_b[0] )
 		CurrentWork.game_mode = "SINGLE";
-	else if ( b[1] )
+	else if ( gm_b[1] ) {
 		CurrentWork.game_mode = "GROUP";
-	else if ( b[2] )
+		if ( $( "#PlayersN input" ).first().val() )
+			CurrentWork.players = $( "#PlayersN input" ).first().val();
+	}
+	else if ( gm_b[2] ) {
 		CurrentWork.game_mode = "CLASS";
+		if ( $( "#PlayersN input" ).first().val() )
+			CurrentWork.players = $( "#PlayersN input" ).first().val();
+	}
 	else
 		CurrentWork.game_mode = "";
 
-	if ( b[5] )
+	if ( gm_b[3] )
 		CurrentWork.ACCESSIBILITY = true;
 	else
 		CurrentWork.ACCESSIBILITY = false;

@@ -6,7 +6,7 @@ game_example = {
 	story_title: "", // probabilmente servirà un div per contenerlo
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)
-	single_device: 1, // indica se vi è un solo dispositivo per gruppo. di default è settato a true
+	players: 0, // numero di giocatori che avranno un device
 	quests: [
 		{	
 			quest_title: "", // probabilmente servirà un div per contenerlo

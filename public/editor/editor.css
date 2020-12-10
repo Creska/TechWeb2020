@@ -107,10 +107,8 @@ main {
   border-color: lightcoral;
 }
 
-#NumberOfDevices .btn-secondary {
-  background-color: #666;
-  border-style: none;
-  color: #fff;
+#PlayersN {
+  display: none;
 }
 
 #ChooseGameMode .rounded-circle {

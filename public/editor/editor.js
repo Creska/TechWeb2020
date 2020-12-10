@@ -122,7 +122,7 @@ function initStory() {
     story_title: "",
     story_ID: -1,
     game_mode: "",
-    single_device: 1,
+    players: 0,
     quests: [],
     QuestGrid: "",
     ActivityGrids: [],

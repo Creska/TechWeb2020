@@ -853,9 +853,11 @@ function prepare_saveStory_data(){
 }
 
 function getStory(nome) {//fa crashare l'app anche con published
-  value = prompt('bool published: ');
+  //value = prompt('bool published: ');
+  nome = "test_sample";
+  value = true;
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
-    alert("Data: " + data + "\nStatus: " + status);
+  //  alert("Data: " + data + "\nStatus: " + status);
   });
 }
 function deleteStory(nome) {

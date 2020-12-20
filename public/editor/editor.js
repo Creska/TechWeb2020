@@ -4,7 +4,7 @@ var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var CardClickDisabled = false;
-
+var images_byte_stream =[];
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
@@ -13,6 +13,7 @@ var CurrentNavStatus = {
 };
 
 /* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
+
 var CurrentWork;
 
 /* FINESTRE - WIP */
@@ -304,7 +305,6 @@ function goToSection(where) {
 
   /* cambia sezione */
   $("#"+CurrentNavStatus.Section).fadeOut( function() {
-    
     change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
     change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
 
@@ -384,14 +384,32 @@ function goToSection(where) {
 
         loadEditOutcomeSection();
         break;
+      case "ChooseStoryToEdit":
+        CurrentNavStatus.Section = where;
+        create_stories_grid();
+        //getStories(); 
+        break;
+      case "Explorer":
+        getStories();
+        let a =[1,2,3,4,5];
+        let b= ["A","B","C","D"];
+        create_Explorer_grids(a,b);
+        //stories_obj = getStories(); 
+        //if( stories_obj.data )
+          //alert(stories_obj.data);
+        //else
+          //alert(stories_obj.status);
+          //getStories();
+        break;   
+        default:
+        handleError();
     }
     
     CurrentNavStatus.Section = where;
-
     $("#"+where).fadeIn();
+    
   });
 };
-
 
 /**
  * Mostra/nasconde la guida
@@ -453,6 +471,15 @@ function openCard( card ) {
               break;
           }
         }
+        else if (CurrentNavStatus.Section == "ChooseStoryToEdit") {
+          //sovrascrivo Currentwork con quello recuperato con ajax, poi gotoSection("EditStory")
+            if(!CurrentWork)
+              initStory();
+            goToSection("EditStory");
+            /*$("#ChooseStoryToEdit").fadeOut(function () {
+              $("#EditStory").fadeIn();
+            });*/
+          }
     }, 750);
     break;
   }
@@ -469,9 +496,7 @@ function openCard( card ) {
  */
 function create_card(titolo) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
-
   let color;
-
   switch ( current_grid ) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
@@ -489,9 +514,11 @@ function create_card(titolo) {
       if ( titolo == "GALLERY" ) color = colors[0];
       else color = colors[1];
       break;
+    case "StoriesGrid":
+      color = "info";
+      break;
     default:
       handleError();
-      break;
   }
 
   let card = $("<div/>",
@@ -508,9 +535,17 @@ function create_card(titolo) {
   
   $("#"+current_grid+" > div:last-child").append(card); // aggiunge la card al deck
   setAnimation("swashIn",document.getElementById(current_grid).lastChild.lastChild);
+  if( current_grid != "ChooseStoryToEdit" ) { 
+    saveCardGrids();
+  }
+};//the hell is this
 
-  saveCardGrids();
-};
+function create_stories_grid() {
+  //create_card per ogni storia recuperata con la chiamata ajax
+  for(i=0;i<7;i++){
+    create_card(i);
+  }
+}
 
 
 /**
@@ -534,7 +569,6 @@ function cancel_mode() {
   }
 };
 
-
 /**
  * @param obj
  * Cancella l'oggetto specificato
@@ -544,6 +578,7 @@ function cancel_em(obj) {
   setTimeout( function() {
     /* cancella tutte le griglie di card e tutti i dati associati all'elemento obj */
     switch (CurrentNavStatus.Section) {
+
       case "EditStory":
         CurrentWork.ActivityGrids.splice( get_card_index(), 1 );
         CurrentWork.ParagraphGrids.splice( get_card_index(), 1 );
@@ -556,9 +591,10 @@ function cancel_em(obj) {
       case "EditActivity":
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.splice( get_card_index(), 1 );
         break;
+      case "ChooseStoryToEdit":
+        break;
       default:
         handleError();
-        break;
     }
 
     /* cancellazione di obj e sistemazione dei decks */
@@ -577,8 +613,9 @@ function cancel_em(obj) {
         iter.remove();
     }
   }, 1500);
-
-  saveCardGrids();
+  if(CurrentNavStatus.Section!="ChooseStoryToEdit"){
+    saveCardGrids();
+  }
 };
 
 
@@ -691,6 +728,216 @@ function handleError() {
 };
 
 
+/**
+ * Marca l'attività corrente come "finale" o viceversa, a seconda dello stato attuale.
+ */
+function setFinalActivity() {
+  let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+  if ( CurrentStage.FINAL == 0 ) {
+    change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
+    $("#FinalStageBtn").next().attr( "disabled", true );
+    $("#FinalStageBtn").next().next().attr( "disabled", true );
+
+    // segna tutte le altre attività come non finali
+    CurrentWork.quests.forEach( function( q, i ) {
+      q.activities.forEach( function( a, j ) {
+        a.FINAL = 0;
+      });
+    });
+
+    CurrentStage.FINAL = 1;
+  }
+  else {
+    change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
+    $("#FinalStageBtn").next().attr( "disabled", false );
+    $("#FinalStageBtn").next().next().attr( "disabled", false );
+    CurrentStage.FINAL = 0;
+  }
+};
+
+
+  /*
+  AJAX CALLS(tutte le seguenti seguono /editor/):
+    getStory
+    saveStory
+    publisher
+    getStories
+    deleteStory
+  
+  */
+ function getStories() {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
+  //modal di attesa
+  $.get("/editor/getStories", function(data, status){
+    
+    return {data:data, status: status };
+
+  });
+}
+function saveStory() { 
+  let story = prepare_saveStory_object();
+   /* data_array.push({
+      name: "sadomaso.json",
+      data: CurrentWork,
+      story: true
+    });
+  story= {//storia ipotetica
+    story_data: data_array,    
+    story_name: "sadomaso",
+    published: true,
+    checked: true
+  };*/
+  /* current story is { 'test_sample.json': '', 'img--10': '', 'img--11': '' }*/
+  console.log(story)
+  $.post("/editor/saveStory",story, function(data,status){
+    //alert("Status: " + status);
+    images_byte_stream = [];
+  });
+} 
+function prepare_saveStory_object() {
+  let data_array = [];
+  let clean_cw = prepare_saveStory_data();//CurrentWork with src fixed
+  
+  data_array.push({
+    name: clean_cw.story_title+".json",
+    data: clean_cw,
+    story: true
+  });
+  for( i=0; i<images_byte_stream.length;i++ ) {
+    let img_name = clean_cw.story_title+"img_"+i;
+    //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
+    /*TO-DO:
+    -fare in modo che gli src in clean_cw siano rimpiazzati con i path sul server
+    -debuggare saveStory in modo che funzioni
+    -vedere come si comporta saveStory con l'editor css
+    -distinguere la section di uscita da saveStory(home oppure ChooseStoryto Edit)
+    -includere le restanti chiamate ajax */
+    data_array.push({
+      name: img_name,
+      data: images_byte_stream[i]
+    });
+  }
+  let story= {//storia ipotetica
+    story_data: data_array,    
+    story_name: clean_cw.story_title,
+    published: true,//per ora
+    checked: true//per ora
+  };
+  return story;
+}
+function prepare_saveStory_data(){
+  let clean_cw = CurrentWork;
+  let appendix="";//per ora
+  let i=0;
+  while(clean_cw.quests[i]){
+    let j=0;
+    while(clean_cw.quests[i].activities[j]){
+      let k=0;
+      while(clean_cw.quests[i].activities[j].activity_text[k]){
+        if( clean_cw.quests[i].activities[j].activity_text[k].type == "gallery" ) {
+          let z=0;
+          while(clean_cw.quests[i].activities[j].activity_text[k].content[z]) {
+            let image_bytes = clean_cw.quests[i].activities[j].activity_text[k].content[z].slice(10,-12);
+            images_byte_stream.push(image_bytes);
+            clean_cw.quests[i].activities[j].activity_text[k].content[z] = clean_cw.quests[i].activities[j].activity_text[k].content[z].replace(image_bytes,"/public/player/stories/"+appendix+"published/"+clean_cw.story_title+"_img_"+z);//story_title per ora al posto di story_id
+            z++;
+            }
+        }
+        k++;
+      }
+      j++;
+    }
+    i++;
+  } 
+  return clean_cw;
+}
+
+function getStory(nome) {//fa crashare l'app anche con published
+  value = prompt('bool published: ');
+  $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
+    alert("Data: " + data + "\nStatus: " + status);
+  });
+}
+function deleteStory(nome) {
+  //value = prompt('bool published: ');
+  story = {
+    story_name: nome,
+    published: true//true per adesso
+  };
+  $.post("/editor/deleteStory",story, function(data,status){
+    alert("Status: " + status);
+  });
+}
+function publisher(name) {//problema con unpublished, funziona se unpub c'è
+  story = {
+    story_name: name
+  };
+  $.post("/editor/publisher",story, function(data, status){
+    alert("Status: " + status);
+  });
+}
+
+//bug grafico nella creazione delle gallerie partendo da una gallery r creandone altre consecutive e altri bug
+
+//manca campo per chiedere nome
+
+//piccolo bug grafico tasto home che compare all'inizio e una volta
+//cliccato sparisce dalla home(non si dovrebbe vedere in primo luogo)
+
+/*
+function saveStory() { 
+  
+  get_all_images_bytes();
+    data_array.push({
+      name: "nome.json",
+      data: CurrentWork
+    });
+  story= {//storia ipotetica
+    story_data: data_array,    
+    story_name: "nome",
+    published: true,
+    checked: true
+    //story: true ritengo sia inutile
+  };
+  $.post("/editor/saveStory",story, function(data,status){
+    alert("Status: " + status);
+    data_array = [];
+  });
+} 
+function get_all_images_bytes(){
+  i=0;
+  while(CurrentWork.quests[i]){
+    j=0;
+    current_quest = CurrentWork.quests[i];
+    while(current_quest.activities[j]){
+      current_activity = current_quest.activities[j];
+      current_activity.activity_text.forEach(get_images);
+      j++;
+    }
+    i++;
+  }
+}
+function get_images(act_text, index) {
+  act_text_element = $($.parseHTML(act_text));
+  switch(act_text_element.prop("tagName")){
+    case "IMG":
+      push_image(act_text_element);
+      data_array.push(data_array_element);
+      break;
+    case "DIV":
+      act_text_element.html().html().children().forEach(push_image);
+      
+      break;
+    
+  }
+}
+function push_image(image_element){
+  data_array_element = {
+    name:prompt("nome immagine: "),
+    data: image_element.attr("src")
+  };
+  data_array.push(data_array_element);
+}*/
 /**
  * Salva la griglia di cards della sezione corrente
  */
@@ -854,7 +1101,7 @@ function MainMenu( action ) {
       goToSection('EditStory');
       break;
   }
-};
+};//what is this?
 
 
 
@@ -873,7 +1120,108 @@ function Navbar( option ) {
     case "Home":
       if ( CSS_Editor_Window )
         CSS_Editor_Window.close();
-      
+      $("#ChooseStoryToEdit .container").empty();
       $( "#SavePrompt" ).modal( "toggle" );
   }
-};
+
+  $( "#PromptSave" ).modal("show");
+
+  $( "#PromptSave .button[data-dismiss=modal]" ).click( function() {})
+}
+
+function allowDrop(ev) {
+  //alert("ev.taget over: "+ev.target.outerHTML);
+  border_color(ev,"blue");
+  ev.preventDefault();
+} 
+function border_color(ev,color){
+  switch (color) {
+  case "white":
+    ev.currentTarget.classList.remove("border-primary");
+    ev.currentTarget.classList.add("border-white");
+    break;
+  case "blue":
+    ev.currentTarget.classList.remove("border-white");
+    ev.currentTarget.classList.add("border-primary");
+    break;
+  }
+}
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+
+}
+
+function drop(ev) {//il target del drop deve essere sempre il container
+  //il target del drag deve essere sempre la card
+  border_color(ev,"white");
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  original_parent = document.getElementById(data).parentElement;
+  while( original_parent.nextElementSibling && original_parent.nextElementSibling.children.length!=0){
+      original_parent.appendChild(original_parent.nextElementSibling.firstElementChild);
+      original_parent = original_parent.nextElementSibling;
+  }
+  //alert("ev.currentTarget drop: "+ev.currentTarget.outerHTML);
+  if( ev.currentTarget.lastElementChild && ev.currentTarget.lastElementChild.children.length==1 )
+    ev.currentTarget.lastElementChild.appendChild(document.getElementById(data));
+  else {
+    el = $("<div class='card-deck mb-2' ></div>");
+    el.append(document.getElementById(data));
+    ev.currentTarget.appendChild( el[0]);
+  }
+}
+//butto fuori la parte di drop che agisce sul container d'origine, poi do un id
+//"deleteContainer", se sono in esso il deck può contenere fino a 4 card, altrimenti 2
+
+function go_home(from) {
+  mode = "default"; //just in case
+  $("#"+from).fadeOut( function () {
+    CurrentNavStatus.Section = "MainMenu";
+    //bisogna impostare anche QuestN e ActivityN?
+    $("#"+from+" .container").empty();
+    $("#MainMenu").fadeIn();
+  });
+}
+
+function create_Explorer_grids(a,b){
+  /*    <div class="card-deck mb-2">          
+    </div> */ 
+  if(a){
+    for(i=0;i<a.length;i++){//publishable
+      if( i%2 ==0 ){
+        let deck = $("<div/>",{"class": "card-deck mb-2 "});
+        $("#publishableContainer").append(deck);
+      }
+      let card = $("<div/>",
+      {
+        "class": "card bg-warning",
+        "draggable": "true",
+        "ondrop": "event.preventDefault();",
+        "ondragstart": "drag(event)",
+        "id": "pble"+i
+      });
+      card.append( $("<div class='card-body text-center'></div>") );
+      card.children().append( $("<p class='card-text'>" + a[i] + "</p>") );
+      $("#publishableContainer > div").last().append(card);
+    }
+  } 
+  if(b){
+    for(j=0;j<b.length;j++){//published
+      if( j%2 ==0 ){
+        let deck = $("<div/>",{"class": "card-deck mb-2 "});
+        $("#publishedContainer").append(deck);
+      }
+      let card = $("<div/>",
+      {
+        "class": "card bg-success",
+        "draggable": "true",
+        "ondrop": "event.preventDefault();",
+        "ondragstart": "drag(event)",
+        "id": "ped"+j
+      });
+      card.append( $("<div class='card-body text-center'></div>") );
+      card.children().append( $("<p class='card-text'>" + b[j] + "</p>") );
+      $("#publishedContainer > div").last().append(card);
+    }
+  } 
+}

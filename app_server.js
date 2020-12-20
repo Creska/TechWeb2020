@@ -401,7 +401,6 @@ app.post('/editor/saveStory', function (req, res) {
                     console.log("The directory for the story " + story_name + " was created successfully.")
                     res.status(200).end();
                 }
-
             }
         }
         for (let index = 0; index < story_data.length; index++) {
@@ -412,7 +411,7 @@ app.post('/editor/saveStory', function (req, res) {
             else {
                 buffer = story_data[index].data
             }
-            fs.writeFile(story_path + story_name + '/' + story_data[index].name, buffer, 'utf8', (err) => {
+            fs.writeFile(story_path + story_name + '/' + story_data[index].name, buffer, (err) => {
                 if (err) {
                     console.log("An error occurred inside /editor/saveStory while saving " + story_data[index].name + " of " + story_name + ": " + err);
                     return res.status(500).send(JSON.stringify(err)).end();

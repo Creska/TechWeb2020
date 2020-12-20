@@ -42,9 +42,21 @@ main {
   display: block;
 }
 
+#HelpBtn {
+  position: fixed;
+  bottom: 2.5%;
+  right: 2.5%;
+}
+
+#HelpBtn:hover {
+  bottom: 5%;
+  right: 5%;
+  transform: scale(2);
+}
+
 .SectionHeader {
-  margin-bottom: 10vh;
   text-align: justify;
+  text-align-last: center;
 }
 
 .alert {
@@ -95,10 +107,8 @@ main {
   border-color: lightcoral;
 }
 
-#NumberOfDevices .btn-secondary {
-  background-color: #666;
-  border-style: none;
-  color: #fff;
+#PlayersN {
+  display: none;
 }
 
 #ChooseGameMode .rounded-circle {
@@ -139,7 +149,7 @@ main {
 }
 
 .OutcomesTable th, .OutcomesTable td {
-  max-width: 25%;
+  max-width: 20%;
   overflow: hidden;
   padding-top: 5px;
   padding-bottom: 5px;

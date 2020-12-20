@@ -379,12 +379,12 @@ app.post('/editor/saveStory', function (req, res) {
     var story_path;
     console.log("saveStory request received for: " + story_name)
     if (story_name && story_name.indexOf(".") == -1) {
-        if (published) 
-            story_path = pubpath;     
-        else 
+        if (published) {
+            story_path = pubpath;
+        }
+        else {
             story_path = unpubpath;
-  
-        //errore se checked è true e la storia non esiste già sul server
+        }
         if (!checked) {
             if (fs.existsSync(story_path + story_name)) {
                 console.log("The story path already exists, asking the client permission to overwrite.")
@@ -395,38 +395,23 @@ app.post('/editor/saveStory', function (req, res) {
                 if (fs.mkdirSync(story_path + story_name) != undefined) {
                     console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
                     return res.status(500).send(JSON.stringify(err)).end();
-                }
-                else 
-                    console.log("The directory for the story " + story_name + " was created successfully.")
-                
 
-            }
-        }
-        else{
-            if( !fs.existsSync(story_path + story_name) ){
-                console.log("checked is true but no directory was found,so creating the directory for the new story.")
-                if (fs.mkdirSync(story_path + story_name) != undefined) {
-                    console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
-                    return res.status(500).send(JSON.stringify(err)).end();
                 }
-                else 
+                else {
                     console.log("The directory for the story " + story_name + " was created successfully.")
-                
-
+                    res.status(200).end();
+                }
             }
         }
         for (let index = 0; index < story_data.length; index++) {
             var buffer;
-            //console.log("current story_data[index].data: "+story_data[index].data);
             if (story_data[index].story) {
                 buffer = JSON.stringify(story_data[index].data);
-                //console.log("buffer contains json now");
             }
             else {
-                buffer = story_data[index].data;
-                //console.log("buffer contains image now");
+                buffer = story_data[index].data
             }
-            fs.writeFile(story_path + story_name + '/' + story_data[index].name, buffer, 'utf8', (err) => {
+            fs.writeFile(story_path + story_name + '/' + story_data[index].name, buffer, (err) => {
                 if (err) {
                     console.log("An error occurred inside /editor/saveStory while saving " + story_data[index].name + " of " + story_name + ": " + err);
                     return res.status(500).send(JSON.stringify(err)).end();
@@ -436,12 +421,10 @@ app.post('/editor/saveStory', function (req, res) {
                         return res.status(200).end();
                     }
                     console.log("Element " + story_data[index].name + " of " + story_name + " saved successfully.")
-                    res.status(200).end();
                 }
             })
         }
-    } 
-    else {
+    } else {
         console.log("/editor/saveStory BAD REQUEST: Trying to save a story without providing the story name or a name with an extension.")
         return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "Trying to save a story without providing the story name or a name with an extension." })).end()
     }
@@ -469,7 +452,7 @@ app.post('/editor/deleteStory', function (req, res) {
             }
             else {
                 console.log("Story " + story_path + story_name + " deleted successfully.")
-                return res.status(200).end();
+                return;
             }
         })
     }

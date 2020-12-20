@@ -68,7 +68,8 @@ var CurrentStatus = {
 	ActivityN: -1,
 	TimeToAnswer: 0,
 	AlreadyHelped: 0,
-	ChatMessages: 0
+	ChatMessages: 0,
+	TotalScore: 0
 };
 
 
@@ -297,8 +298,6 @@ function nextStage() {
 	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
 
 	clearInterval( Chronometer );
-	console.log( CurrentStatus ); // debugging
-	/* TODO - invia status */
 	
 	if ( CurrentStage.activity_type == 'ANSWER' )
 		checkAnswer();
@@ -308,6 +307,9 @@ function nextStage() {
 		else
 			goToActivity( CurrentStage.answer_outcome[0].nextactivity );
 	}
+
+	console.log( CurrentStatus ); // debugging
+	/* TODO - invia status */
 };
 
 
@@ -332,7 +334,7 @@ function checkAnswer() {
 		else
 			PlayerAnswer = $( ".AnswerField" ).find( "input" ).first().val();
 		
-		/* controlla come proseguire la partita */
+		/* aggiorna il punteggio e controlla come proseguire la partita */
 
 		let default_index;
 
@@ -344,6 +346,8 @@ function checkAnswer() {
 				else {
 					goToActivity( value.nextactivity );
 				}
+
+				CurrentStatus.TotalScore += parseInt(value.score) || 0;
 				return false;
 			}
 
@@ -357,6 +361,8 @@ function checkAnswer() {
 				else {
 					goToActivity( CurrentActivity.answer_outcome[default_index].nextactivity );
 				}
+
+				CurrentStatus.TotalScore += parseInt(CurrentActivity.answer_outcome[default_index].score) || 0;
 				return false;
 			}
 		});

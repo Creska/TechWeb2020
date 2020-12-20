@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="editor.css">
 
   <title>Editor</title>
+
   <script>
     /* comunicazione con l'editor CSS */
     window.onload = function() {
@@ -41,7 +42,7 @@
     };
 
     /* abilita tutti i tooltips */
-$(document).ready( function() {
+    $(document).ready( function() {
       $('[data-toggle="tooltip"]').tooltip({
         trigger : 'hover'
       });
@@ -50,61 +51,66 @@ $(document).ready( function() {
           trigger : 'hover'
         });
       });
-  $(document).ajaxStart(function(){
-    $('#wait_modal').modal('show');
-    //$("#loading").css("display", "block");
-  });
-  $(document).ajaxSuccess(function(){
-    //$('#wait_modal').modal('hide');
-    $('#wait_modal').modal('hide');
-    //$("#loading").css("display", "none");
-    $('#success_modal').modal('show');
-    
-  });
-  $(document).ajaxError(function(){
-    $('#wait_modal').modal('hide');
-    //$("#loading").css("display", "none");
-    $('#fail_modal').modal('show');
-  });
+    });
 
-    }); 
+    /* modali per chiamate ajax */
+    $(document).ajaxStart(function(){
+      $('#wait_modal').modal('show');
+      //$("#loading").css("display", "block");
+    });
+
+    $(document).ajaxSuccess(function(){
+      //$('#wait_modal').modal('hide');
+      $('#wait_modal').modal('hide');
+      //$("#loading").css("display", "none");
+      $('#success_modal').modal('show');
+    });
+
+    $(document).ajaxError(function(){
+      $('#wait_modal').modal('hide');
+      //$("#loading").css("display", "none");
+      $('#fail_modal').modal('show');
+    });
   </script>
 </head>
 
 
-<body class="text-center"> 
-<div class="modal" id="wait_modal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-    <div class="modal-content">    
-        <img style="width: 100%;" src="loading.gif" />              
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="success_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-    <div class="modal-content">      
-        <img style="width: 100%;" src="https://media1.tenor.com/images/d8fb39693bab23e2c3b4ee36317a36ee/tenor.gif?itemid=17836773" />                
-      <div style='color:black' class="modal-body" >
-        é andato tutto bene!
-      </div>
-    </div>
-  </div>
-</div>
+<body class="text-center">
 
-<div class="modal fade" id="fail_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-    <div class="modal-content">      
-        <img style="width: 100%;" src="https://media1.tenor.com/images/87d588d92e1b4decd302a96c265d7a39/tenor.gif?itemid=18634343" />               
-      <div style='color:black' class="modal-body" >
-        Qualcosa è andato storto, che cosa?
+  <!-- MODALI PER CHIAMATE AJAX -->
+  <div class="modal" id="wait_modal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">    
+        <img style="width: 100%;" src="loading.gif" />              
       </div>
     </div>
   </div>
-</div>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-    <div class="modal-content">
+
+  <div class="modal fade" id="success_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">      
+        <img style="width: 100%;" src="https://media1.tenor.com/images/d8fb39693bab23e2c3b4ee36317a36ee/tenor.gif?itemid=17836773" />                
+        <div style='color:black' class="modal-body" >
+        é andato tutto bene!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="fail_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">      
+        <img style="width: 100%;" src="https://media1.tenor.com/images/87d588d92e1b4decd302a96c265d7a39/tenor.gif?itemid=18634343" />               
+        <div style='color:black' class="modal-body" >
+        Qualcosa è andato storto, che cosa?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
       
         <img style="width: 100%;" src="https://media.tenor.com/images/f6d1602a1c9e507b2cfe8e7c98faadd9/tenor.gif" />
                 
@@ -116,8 +122,9 @@ $(document).ready( function() {
       </div>
     </div>
   </div>
-</div>
+  </div>
 
+  <!-- BODY E SEZIONI EDITOR -->
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
   <header class="masthead mb-auto">
@@ -169,8 +176,8 @@ $(document).ready( function() {
     <p class="lead mb-5 SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('Explorer');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('CHOOSESTORY');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('EXPLORER');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
   </main>
 

@@ -30,20 +30,28 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
+    * Fare sistema di salvataggio immagini
+    * Aggiungere possibilità di inserire risposta vuota negli outcomes
     * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
     * [WIP] Funzioni di passaggio per navbar e main menu
-    * [WIP] Aggiungere le funzionalità relative a quest_ID
     * Mettere il nome dell'app
-    * Rifare la guida dell'editor CSS
 * PLAYER
-    * [WIP] Aggiornare il player in base alla divisione in gruppi fatta dall'editor
-    * Riprogettare l'interfaccia (ad esempio mettere un header per il campo risposta)
+    * Aggiornare il player in base alla divisione in gruppi fatta dall'editor
+    * Riprogettare eventualmente l'interfaccia (ad esempio mettere un header per il campo risposta) - nel caso va rifatta la guida dell'editor CSS
     * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente
     * Aggiungere segnale di attesa valutazione risposta
-    * [WIP] Completare la raccolta e l'invio delle stats
+    * Completare la raccolta e l'invio delle stats
 * TUTTO
     * controllare compatibilità con schermi piccoli
     * Pensare a come gestire il QRcode
+
+APPUNTI su roba da fare:
+* al salvataggio bisogna inviare un array di oggetti. per ogni file un oggetto: {namestring, is_story_json, buffer}
+* per inviare le stats "/player/activityUpdate"
+* ChatMessages e score per ogni attività ( quindi ad ogni attività viene resettato )
+* ogni volta che un'attività viene finita vengono inviate le stats
+* timer ogni 5s che fa una post dove passo: (QuestID, ActivityN, time_elapsed). 200 in caso di successo e 400 in caso di errore
+* groupID per sapere il nome del gruppo
 
 ACESSIBILITA'
 * header: role='heading' aria-level=numero come nel tag

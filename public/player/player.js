@@ -21,15 +21,7 @@ function validateInput(answer, current_quest, current_activity) {
 		story = data;
 		console.log(data)
 	})
-	// $.ajax({
-	// 	url: "/player/games/" + $('#game-name').html(),
-	// 	method: "GET",
-	// 	success: function (data) {
-	// 			$('#game-name').remove();
-	// 			var story = data;
-	// 			console.log(data)
-	// 	}
-	// })
+	
 	socket = io.connect('', { query: "type=player" });
 	$('form').submit(function (e) {
 		e.preventDefault();

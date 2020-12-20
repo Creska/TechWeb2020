@@ -1102,8 +1102,16 @@ function MainMenu( action ) {
       initStory();
       goToSection('EditStory');
       break;
+    case "CHOOSESTORY":
+      /* DA FINIRE */
+      goToSection('ChooseStoryToEdit');
+      break;
+    case "EXPLORER":
+      /* DA FINIRE */
+      goToSection('Explorer');
+      break;
   }
-};//what is this?
+};
 
 
 

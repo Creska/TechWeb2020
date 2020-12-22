@@ -4,24 +4,23 @@ var first_selected_stage = "";//per lo swap
 var first_selected_card_index = -1;
 var selected_card = "";//indica l'ultima carta cliccata dall'utente
 var CardClickDisabled = false;
-var images_byte_stream =[];
+
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
 	QuestN: -1,
-	ActivityN: -1
+  ActivityN: -1,
+  TextPartN: -1
 };
 
-/* variabile usata per i salvataggi temporanei del JSON su cui l'utente sta lavorando */
-
+/* variabile usata per i salvataggi temporanei della storia su cui l'utente sta lavorando */
 var CurrentWork;
+var ImgBuffer = [];
+var CSSdata;
 
 /* FINESTRE - WIP */
 var CSS_Editor_Window;
 var Preview_Window;
-
-/* variabile che contiene il CSS personalizzato dall'autore */
-var CSSdata;
 
 
 /* ------------------------------- PROCEDURE ---------------------------------- */
@@ -280,8 +279,11 @@ function back() {
       break;
     case "EditAnswerField":
     case "SetAnswerOutcome":
+      goToSection( "EditActivity" );
+      break;
     case "EditText":
     case "EditGallery":
+      CurrentNavStatus.TextPartN = -1;
       goToSection( "EditActivity" );
       break;
   }
@@ -364,12 +366,16 @@ function goToSection(where) {
         $( "#ParagraphsGrid" ).html( CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] );
         break;
       case "EditText":
+        CurrentNavStatus.TextPartN = get_card_index();
+
         // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
         $( "#EditText header small" ).html( $( "#EditActivity header small" ).html() );
 
-        $( "#TextParInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[get_card_index()].content );
+        $( "#TextParInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content );
         break;
       case "EditGallery":
+        CurrentNavStatus.TextPartN = get_card_index();
+
         $( "#EditGallery header small" ).html( $( "#EditActivity header small" ).html() );
 
         loadEditGallerySection();
@@ -1028,7 +1034,7 @@ function isPublishable( obj ) {
         $.each( a.activity_text, function(p_index, p) {
           if ( p.type == "gallery" ) {
             $.each( p.content, function(image_index, image) {
-              if ( $(image).attr("alt") == "" || $(image).attr("alt") === undefined ) {
+              if ( image.alt == "" || image.alt === undefined ) {
                 res.ok = false;
                 res.errors.push( "Quest n." + q_index + ", Activity n." + a_index + ": Mancano alcune descrizioni delle immagini" );
                 return false;
@@ -1080,7 +1086,7 @@ function isPublishable( obj ) {
 
   if ( final_activity == false ) {
     res.ok = false;
-    res.errors.push( "Quest n." + q_index + ": Attività finale mancante" );
+    res.errors.push( "Storia - Attività finale mancante" );
   }
 
   return res;

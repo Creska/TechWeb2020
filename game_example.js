@@ -18,7 +18,7 @@ game_example = {
 					activity_text: [
 						{
 							type: "", // "text" oppure "gallery"
-							content: "" // testo oppure array di nodi <img> (url+alt)
+							content: "" // testo oppure array di oggetti immagine
 						}
 					], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
 					activity_type: "ANSWER", // con READING indica attività di sola lettura, con ANSWER (default) indica la presenza del campo risposta
@@ -44,6 +44,13 @@ game_example = {
 		}
 	]
 };
+
+// oggetto immagine
+img = {
+	server: false, // indica se è già salvata su server
+	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde all'oggetto di tipo file
+	alt: ""
+}
 
 CSSexample = {
 	sheet: "", // codice CSS

@@ -785,7 +785,15 @@
             case "JPEG":
             case "png":
             case "PNG":
-              if (pic) addImage(pic, true);
+              if (pic) {
+                ImgBuffer.push({
+                  server: false,
+                  src: pic,
+                  alt: ""
+                });
+
+                addImage(ImgBuffer[ImgBuffer.length - 1]);
+              };
           }
         }
       });

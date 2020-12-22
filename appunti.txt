@@ -30,7 +30,6 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Fare sistema di salvataggio immagini
     * Aggiungere possibilità di inserire risposta vuota negli outcomes
     * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
     * [WIP] Funzioni di passaggio per navbar e main menu

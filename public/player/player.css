@@ -132,8 +132,15 @@
     background-color: white;
 }*/
 nav{
-    background-color: darkblue;
+    background-color: rgba(0, 0, 255, 0.5);
     color: ghostwhite;
+    font-size: large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    ;
+}
+.StoryTitle{
+    padding: 10px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 .Quest {
     margin-top: 20px;

@@ -18,21 +18,6 @@
     <script src="player.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
-    <script>
-        $(document).ready( function(){ 
-            var tap = '<div onclick="loadTutorial()"></div>';
-            $("#StartScreen").append(tap);
-        });
-        function clearMain() {
-            $("#StartScreen").empty();
-        }
-        function loadTutorial() { 
-            clearMain();
-            var tutorial = ``;
-            $("#StartScreen").append(tutorial);
-        };
-    </script>  
-
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -84,7 +69,7 @@
         
         <p id="AccessibilityMsg" role="alert"></p>
 
-        <!--TUTORIAL
+        <!--
             <div align="center">
                 <div id="Info" class="card">
                     <div class="card-title">

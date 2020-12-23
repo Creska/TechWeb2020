@@ -1,5 +1,183 @@
 #StoryTitle {
-    background-color: navy;
     color: snow;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+#StartScreen{
+    text-align: center;
+}
+.row{
+    margin: 0 20px 0 5px;
+}
+#FirstStory{
+    background-image: url(images/museo_egizio.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px;
+    border-radius: 20px;
+    border: slategray;
+    padding: 10px;
+}
+#SecondStory{
+    background-image: url(images/galleria_uffizi.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px;
+    border-radius: 20px;
+    border: slategray;
+    padding: 10px;
+}
+#ThirdStory{
+    background-image: url(images/museo_scienza.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px;
+    border-radius: 20px;
+    border: slategray;
+    padding: 10px;
+}
+#FirstStory .card-title{
+    font-size: 30px;
+    text-shadow: 2px 0 #ffae00, -2px 0 #ffae00;            
+    color: whitesmoke;   
+}
+#FirstStory .card-text{
+    color: rgb(245, 245, 245);
+}
+#SecondStory .card-title{
+    font-size: 30px;
+    text-shadow: 2px 0 #3778da, -2px 0 #3778da;            
+    color: white;   
+}
+#SecondStory .card-text{
+    color: rgb(108, 202, 240);
+}
+#ThirdStory .card-title{
+    font-size: 30px;
+    text-shadow: 2px 0 #6bda37, -2px 0 #6bda37;            
+    color: white;   
+}
+#ThirdStory .card-text{
+    color: rgb(231, 233, 199);
+}
+#FirstStory #StartButton{
+    width: 200px;
+    align-content: center;
+    background-color: white; 
+    border: 2px solid #ffae00;
+    border-radius: 10px;
+    color: black;
+    text-align: center;
+    font-size: 20px;
+}
+#FirstStory #StartButton:hover {
+    background-color: #ffae00;
+    color: white;
+}
+#SecondStory #StartButton{
+    width: 200px;
+    background-color: white; 
+    border: 2px solid #3778da;
+    border-radius: 10px;
+    color: black;
+    text-align: center;
+    font-size: 20px;
+}
+#SecondStory #StartButton:hover {
+    background-color: #3778da;
+    color: white;
+}
+#ThirdStory #StartButton{
+    width: 200px;
+    background-color: white; 
+    border: 2px solid #6bda37;
+    border-radius: 10px;
+    color: black;
+    text-align: center;
+    font-size: 20px;
+}
+#ThirdStory #StartButton:hover {
+    background-color:#6bda37;
+    color: white;
+}
+#Main{
+    color: aliceblue;
+    background-image: url(images/sfondo.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+/*#Info{
+    padding: 10px;
+    width: 300px;
+    background-color: darkblue;
+    color: darkorchid;
+    text-align: center;
+}
+#Info .card-text{
+    font-size: small;
+    text-align: justify;
+}
+#ButtonInfo{
+    color: white;
+    background-color: darkorchid;
+    border-color: darkorchid;
+    border-width: thick;
+    border-radius: 10px;
+}
+#ButtonInfo:hover{
+    color: darkorchid;
+    background-color: white;
+}*/
+.AnswerField{
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+.NextActivity{
+    align-content: center;
+    text-align: center;
+    width: 200px;
+    background-color: whitesmoke;
+    color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+.NextActivity:hover{
+    background-color: black;
+    color: whitesmoke;
+}
+.page-footer{
+    padding: 10px;
+    margin-top: 20px;
+}
+#chat-room{
+    text-align: center;
+    font-size: medium;
+    padding: 10px;
+    margin: 0 10px 10px 10px;
+    border: medium double blue;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 255, 0.2);
+}
+#Message{
+    border: 2px solid blue;
+    border-radius: 10px;
+    width: 400px;
+    height: 50px;
+}
+#Send{
+    margin: 10px;
+    font-size: 16px;
+    color: rgb(7, 3, 230);
+    background-color: rgba(0, 0, 255, 0.2); 
+    border: 2px solid rgb(7, 3, 230);
+    border-radius: 10px;
+}
+#send:hover{
+    background-color:rgb(7, 3, 230);
+    border: 2px solid white;
+    color: white;
 }

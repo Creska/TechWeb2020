@@ -7,14 +7,14 @@
 
     <!--Luca: lasciate la versione uncompressed di jquery. La slim manca di tutte le operazioni AJAX-->
     <script src="https://code.jquery.com/jquery-3.5.1.js"
-        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
-    <script src="test.js"></script> <!-- SOLO PER TEST -->
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <script src="test.js"></script>
     <script src="player.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
@@ -23,13 +23,18 @@
     <link rel="stylesheet" href="player.css">
 
     <title>Player</title>
+
+    <style>
+    </style>
 </head>
+
+
 
 <body>
     <main id="StartScreen">
         <script>
             window.onload = function() {
-                $( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
+                //$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
 
                 if ( StoryObj.ACCESSIBILITY )
                     $("#AccessibilityMsg").append( $("<p>La storia è accessibile.</p>") );
@@ -37,28 +42,69 @@
                     $("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
             };
         </script>
-
-        <p>Schermata iniziale del gioco. Per avviare una nuova partita, premere START.</p>
-        <p id="AccessibilityMsg" role="alert"></p>
-        <button id="StartButton" onclick="startGame();">START</button>
+            
+        <div class="row">
+            <div id="FirstStory" class="card col-12">
+                <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
+                <p class="card-text">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
+                <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="SecondStory" class="card col-12">
+                <h3 class="card-title" id="StoryTitle">Furto del quadro</h3>
+                <p class="card-text">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
+                <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="ThirdStory" class="card col-12">
+                <h3 class="card-title" id="StoryTitle">Esperimento informatico</h3>
+                <p class="card-text" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
+                <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
+            </div>
+        </div>
+        
+        <p id="AccessibilityMsg" role="alert">
+            <!--<div align="center">
+                <div id="Info" class="card">
+                    <div class="card-title">
+                        <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
+                    </div>
+                    <div class="card-text">
+                        <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
+                        <img src="..." class="" alt="">
+                        <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
+                        <img src="..." class="" alt="">
+                        <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
+                    </div>
+                    <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
+                </div>
+            </div>-->
+        </p>
     </main>
 
-    <template id="MainContainer">
+    <template id="MainContainer" class="conteiner-fluid">
+        <nav>
+
+        </nav>
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
         <main id="Main" aria-relevant="additions text">
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->
             <div class="Quest"></div>
         </main>
     </template>
-
-    <div id='chat-room'>
-        <h2 aria-level="2">Chat</h2>
-        <form action="">
-            <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off"><br>
-            <button onclick="CurrentStatus.ChatMessages += 1;">Invia</button>
-        </form>
-    </div> 
-
+    <footer class="page-footer">
+        <div class="container-fluid text-center">
+            <div id='chat-room'>
+                <h3 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h3>
+                <form action="">
+                    <input aria-label="Messaggio da inviare" id="Message" type="text" autocomplete="off" value="Invia un messaggio"><br>
+                    <button id="Send" onclick="CurrentStatus.ChatMessages += 1;">Invia</button>
+                </form>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>
@@ -66,7 +112,6 @@
 <!-- gruppi di elementi da stilizzare:
 Id:
 * StoryTitle
-
 Classi:
 * Quest ( container del titolo della quest e del container Activity )
 * Activity ( container di tutti gli elementi dell'attività )
@@ -79,5 +124,4 @@ Classi:
 * SingleImage
 * TextParagraph
 * NextActivity ( pulsante da cliccare per proseguire all'attività successiva )
-
 -->

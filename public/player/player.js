@@ -112,7 +112,7 @@ function goToQuest( quest_n ) {
 
 	let NewQuest = $( "<section class='Quest' aria-relevant='additions text'><p role='alert' aria-live='assertive' class='sr-only'>Nuova quest</p></section>" );
 	NewQuest.attr( "id", assignID( "Quest" ) );
-	NewQuest.append( $( "<h2 aria-level='2' class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h2>" ) );
+	NewQuest.append( $( "<h3 aria-level='2' class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h3>" ) );
 
 	$( ".Quest" ).replaceWith( NewQuest );
 
@@ -200,9 +200,9 @@ function goToActivity( activity_n ) {
 	}
 
 	if ( StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL )
-		NewActivity.append( $( "<button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button>" ) );
+		NewActivity.append( $( "<div align='center'><button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button></div>" ) );
 	else
-		NewActivity.append( $( "<button class='NextActivity' onclick='nextStage();'>PROSEGUI</button>" ) );
+		NewActivity.append( $( "<div align='center'><button class='NextActivity' onclick='nextStage();'>PROSEGUI</button></div>" ) );
 
 	$( ".Activity" ).remove();
 	$( ".Quest" ).append( NewActivity );

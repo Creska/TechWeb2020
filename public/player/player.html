@@ -18,6 +18,22 @@
     <script src="player.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
+    <script>
+        $(document).ready( function(){ 
+            var tap = '<div onclick="loadTutorial()"></div>';
+            $("#StartScreen").append(tap);
+        });
+        function clearMain() {
+            $("#StartScreen").empty();
+        }
+        function loadTutorial() { 
+            clearMain();
+            var tutorial = ``;
+            $("#StartScreen").append(tutorial);
+        };
+    </script>  
+
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="player.css">
@@ -65,8 +81,11 @@
             </div>
         </div>
         
-        <p id="AccessibilityMsg" role="alert">
-            <!--<div align="center">
+        
+        <p id="AccessibilityMsg" role="alert"></p>
+
+        <!--TUTORIAL
+            <div align="center">
                 <div id="Info" class="card">
                     <div class="card-title">
                         <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
@@ -80,18 +99,24 @@
                     </div>
                     <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
                 </div>
-            </div>-->
-        </p>
+            </div>
+        -->
     </main>
 
     <template id="MainContainer" class="conteiner-fluid">
         <nav>
-
+            <ul class=" nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-disabled="true">Punteggio</a>
+                </li>
+            </ul>
         </nav>
         <!-- Main = Container di tutto ciò che fa parte del gioco -->
         <main id="Main" aria-relevant="additions text">
             <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-            <div class="Quest"></div>
+            <div class="Quest card">
+                <h5 class="card-title QuestTitle"></h5>
+            </div>
         </main>
     </template>
     <footer class="page-footer">

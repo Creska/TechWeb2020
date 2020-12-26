@@ -780,6 +780,18 @@ function setFinalActivity() {
 
   });
 }
+/* 
+TO-DO list:
+  -assumendo il fix del campo server nel json, implementare saveStory
+  -implementare getStories nel secondo e terzo pulsante
+  -implementare getStory(con refactoring del json per averlo più comodo)
+  -implementare publish/unpublish/delete story multiplo
+  -gestire area di feedback
+  -gestire saveStory in relazione all'editor CSS
+  -gestire l'after di saveStory
+  -estendere la galleria a tutti i media, non solo le immagini
+  -pulizia e modularizzazione del codice
+*/
 function saveStory() { 
   let story = prepare_saveStory_object();
    /* data_array.push({
@@ -812,12 +824,7 @@ function prepare_saveStory_object() {
   for( i=0; i<images_byte_stream.length;i++ ) {
     let img_name = clean_cw.story_title+"img_"+i;
     //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
-    /*TO-DO:
-    -fare in modo che gli src in clean_cw siano rimpiazzati con i path sul server
-    -debuggare saveStory in modo che funzioni
-    -vedere come si comporta saveStory con l'editor css
-    -distinguere la section di uscita da saveStory(home oppure ChooseStoryto Edit)
-    -includere le restanti chiamate ajax */
+
     data_array.push({
       name: img_name,
       data: images_byte_stream[i]

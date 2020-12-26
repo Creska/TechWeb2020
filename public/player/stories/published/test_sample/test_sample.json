@@ -1,1 +1,44 @@
-{"ACCESSIBILITY":"0","story_title":"test_sample","story_ID":"-1","game_mode":"","single_device":"1","quests":[{"quest_title":"","activities":[{"activity_text":[{"type":"gallery","content":["<img src=\"/public/player/stories/published/test_sample_img_0\" alt=\"uno\">","<img src=\"/public/player/stories/published/test_sample_img_1\" alt=\"due\">"]}],"activity_type":"ANSWER","answer_field":{"description":"","type":""},"right_answer":"","ASK_EVAL":"0","GET_CHRONO":"0","expected_time":"","FINAL":"0"}]}],"QuestGrid":"<div class=\"card-deck mb-2\"><div class=\"card bg-secondary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\"><i>QuestSenzaNome0</i></p></div></div></div>","ActivityGrids":["<div class=\"card-deck mb-2\"><div class=\"card bg-secondary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\">Attività0</p></div></div></div>"],"ParagraphGrids":[["<div class=\"card-deck mb-2\"><div class=\"card bg-primary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\">GALLERY</p></div></div></div>"]]}
+{
+    "ACCESSIBILITY": "0",
+    "story_title": "test_sample",
+    "story_ID": "-1",
+    "game_mode": "",
+    "single_device": "1",
+    "quests": [
+        {
+            "quest_title": "",
+            "activities": [
+                {
+                    "activity_text": [
+                        {
+                            "type": "gallery",
+                            "content": [
+                                "<img src=\"/public/player/stories/published/test_sample_img_0\" alt=\"uno\">",
+                                "<img src=\"/public/player/stories/published/test_sample_img_1\" alt=\"due\">"
+                            ]
+                        }
+                    ],
+                    "activity_type": "ANSWER",
+                    "answer_field": {
+                        "description": "",
+                        "type": ""
+                    },
+                    "right_answer": "",
+                    "ASK_EVAL": "0",
+                    "GET_CHRONO": "0",
+                    "expected_time": "",
+                    "FINAL": "0"
+                }
+            ]
+        }
+    ],
+    "QuestGrid": "<div class=\"card-deck mb-2\"><div class=\"card bg-secondary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\"><i>QuestSenzaNome0</i></p></div></div></div>",
+    "ActivityGrids": [
+        "<div class=\"card-deck mb-2\"><div class=\"card bg-secondary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\">Attività0</p></div></div></div>"
+    ],
+    "ParagraphGrids": [
+        [
+            "<div class=\"card-deck mb-2\"><div class=\"card bg-primary\" onclick=\"openCard( this )\" style=\"\"><div class=\"card-body text-center\"><p class=\"card-text\">GALLERY</p></div></div></div>"
+        ]
+    ]
+}

@@ -12,10 +12,11 @@ var storedJoins = []; //storing the join event of the player in case the valuato
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
 var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
+var story_name = undefined; //name of the story sent
 var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
 var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}
-var pubpath = 'public/player/stories/published/';
-var unpubpath = 'public/player/stories/unpublished/';
+const pubpath = 'public/player/stories/published/';
+const unpubpath = 'public/player/stories/unpublished/';
 
 /*
     TEAMS
@@ -30,23 +31,42 @@ var unpubpath = 'public/player/stories/unpublished/';
     This library simulates an high-level TCP/IP protocol, it's really handy for exchanging informations between clients.
     I couldn't find another method to send data between clients, and socket.io is nice and fast to implement anyway...
 
+    MAYBE
+=> multiple stories handling?
+
     TODO
+=> removing the story once all sockets leave
 => add a number for each group (groupID)
 => check story coherence before writing them(coherence field inside the JSON)
-=> retrieve stories, bot coherent and incoherent
-=> loadPlayer with specific JSON
+=> loadPlayer with specific JSON (?)
 => randomize the order of missions before sending them back to the client
-=> multiple stories handling?
-=> should I change all the "else" statements by putting a return after the if?
 => warning about players stopped for too long on a game's specific phase
 => test to-be-valuated handling
-=> what the fuck does "parallel teams" mean???
 => Return a JSON with the game summary, I think it'll have to contain:
     -Rankings
     -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
 */
 function stringToBool(string) { return string === 'true' }
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
 
 function valuator_emit(method, socket, data) {
     //emits the event passed with the arg to the valuator
@@ -189,11 +209,12 @@ app.get('/player', function (req, res) {
         else {
             console.log("Request for " + story + " received successfully. Returning the player and the story to be loaded.");
             //saving the current game
-            //DINT there could be race conditions between 2 players
-            while (storysent != undefined) {
-                ;;
+            let tempstory = JSON.parse(story_data);
+            if (story_name != undefined && tempstory.story_title != story_name) {
+                return res.status(500).send(JSON.stringify({ code: "BUSY", message: "Another story is being played." })).end();
             }
             storysent = JSON.parse(story_data);
+            story_name = storysent.story_title;
             fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {

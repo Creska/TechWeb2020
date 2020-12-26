@@ -14,7 +14,7 @@ var player_data = new Map(); //stores some player data, need this to be able to 
 var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
 var story_name = undefined; //name of the story sent
 var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
-var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}
+var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
 
@@ -48,25 +48,6 @@ const unpubpath = 'public/player/stories/unpublished/';
     -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
 */
 function stringToBool(string) { return string === 'true' }
-
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
 
 function valuator_emit(method, socket, data) {
     //emits the event passed with the arg to the valuator

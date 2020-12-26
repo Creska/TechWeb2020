@@ -31,6 +31,7 @@ var unpubpath = 'public/player/stories/unpublished/';
     I couldn't find another method to send data between clients, and socket.io is nice and fast to implement anyway...
 
     TODO
+=> add a number for each group (groupID)
 => check story coherence before writing them(coherence field inside the JSON)
 => retrieve stories, bot coherent and incoherent
 => loadPlayer with specific JSON
@@ -159,9 +160,10 @@ io.on('connection', (socket) => {
         //handling input validation to the valuator
         socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
     })
-    socket.on('validate-input-valuator', (answer_is_right, socketID) => {
+    socket.on('validate-input-valuator', (nextQuest, socketID) => {
         //input validation was handled, sending the result back
-        socket.to(socketID).emit('input-valued', answer_is_right);
+        //TODO nextQuest, number
+        socket.to(socketID).emit('input-valued', nextQuest, number, score);
     })
 })
 app.get('/player', function (req, res) {
@@ -222,11 +224,16 @@ app.post('/player/activityUpdate', function (req, res) {
     This is needed for the summary, NOT for the warnings
     */
     var activity = req.body;
-    var time = activity.time || undefined;
-    var help = activity.help || undefined;
+    var questNumber = activity.QuestN;
+    var activityN = activity.ActivityN;
+    var questID = activity.QuestID;
+    var timeToAnswer = activity.TimeToAnswer;
+    var chatMessages = activity.ChatMessages;
+    var Score = activity.Score;
     var socketID = activity.socket || undefined;
     if (time && help && socketID) {
-        player_data.get(socketID).push({ time: time, help: help });
+        //TODO saving player information
+        // player_data.get(socketID).push({ time: time, help: help });
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }
@@ -241,9 +248,12 @@ app.post('/player/playersActivities', function (req, res) {
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
     var activity = req.body;
-    var story_ID = activity.story_ID;
-    var quest_index = activity.quest_index;
-    var activity_index = activity.activity_index;
+    // var story_ID = activity.QuestID;
+    // var quest_index = activity.quest_index;
+    // var activity_index = activity.activity_index;
+    // var time_elapsed = activity.time_elapsed;
+    var questID = activity.QuestID;
+    var activity = activity.ActivityN;
     var time_elapsed = activity.time_elapsed;
     if (story_ID && activity_index && time_elapsed) {
         var maximum_time = stories_map.get(story_ID).game.quests[quest_index].activities[activity_index].expected_time;
@@ -254,10 +264,10 @@ app.post('/player/playersActivities', function (req, res) {
             // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             // why the fuck did I do it this way?
             return res.status(200).end();
-
         }
     } else {
-        console.log("/player/playerWarnings BAD REQUEST, a parameter was not provided.")
+        console.log("/player/playersActivities BAD REQUEST, a parameter was not provided.")
+        //TODO notify valuator of this error
         return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." })).end();
     }
 })
@@ -338,25 +348,14 @@ app.get('/editor/getStory', function (req, res) {
         else {
             story_path = unpubpath;
         }
-        fs.readdir(story_path + story_name, function (err, files) {
+        fs.readFile(story_path + story_name + story_name + ".json", 'utf8', function (err, file) {
             if (err) {
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
             else {
-                var story_elements = [];
-                files.forEach(element => {
-                    let data = fs.readFileSync(story_path + story_name + "/" + element);
-                    if (data) {
-                        story_elements.push({ name: element, data: data, extension: element.substring(element.indexOf('.'), element.length) });
-                    }
-                    else {
-                        console.log("An error accourred inside /editor/getStory, while creating the array to be returned: " + err);
-                        return res.status(500).send(JSON.stringify(err)).end();
-                    }
-                })
                 console.log("Story get successfully.")
-                return res.status(200).send(JSON.stringify(story_elements)).end();
+                return res.status(200).send(file).end();
             }
         })
     }
@@ -395,7 +394,6 @@ app.post('/editor/saveStory', function (req, res) {
                 if (fs.mkdirSync(story_path + story_name) != undefined) {
                     console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
                     return res.status(500).send(JSON.stringify(err)).end();
-
                 }
                 else {
                     console.log("The directory for the story " + story_name + " was created successfully.")

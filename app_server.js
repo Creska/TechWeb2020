@@ -350,7 +350,7 @@ app.get('/editor/getStory', function (req, res) {
         else {
             story_path = unpubpath;
         }
-        fs.readFile(story_path + story_name + story_name + ".json", 'utf8', function (err, file) {
+        fs.readFile(story_path + story_name +"/" + story_name + ".json", 'utf8', function (err, file) {
             if (err) {
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();

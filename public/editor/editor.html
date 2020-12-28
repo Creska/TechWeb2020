@@ -78,10 +78,10 @@
 <body class="text-center">
 
   <!-- MODALI PER CHIAMATE AJAX -->
-  <div class="modal" id="wait_modal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-      <div class="modal-content">    
-        <img style="width: 100%;" src="loading.gif" />              
+  <div class="modal" style="background-color: transparent; border: none;" id="wait_modal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="background-color: transparent; border: none;" role="document">
+      <div class="modal-content" style="background-color: transparent; border: none;">    
+        <img style="width: 75%;" src="loading.gif" />              
       </div>
     </div>
   </div>
@@ -123,7 +123,25 @@
     </div>
   </div>
   </div>
-
+  <div class="modal fade" id="publish_directly" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>La storia è pubblicabile, vuoi pubblicarla già adesso o preferisci salvarla  sul server e basta?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#publish_directly').modal('hide');saveStory(true) ">Pubblica</button>
+          <button type="button" class="btn btn-primary" onclick="$('#publish_directly').modal('hide');saveStory(false)">Salva</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- BODY E SEZIONI EDITOR -->
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
@@ -131,7 +149,7 @@
     <div class="inner">
       <h3 class="masthead-brand">STORY EDITOR</h3>
       <nav class="nav nav-masthead justify-content-center">
-        <a class="nav-link" href="javascript: saveStory();" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
+        <a class="nav-link" href="javascript:start_saving();" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
           <i class="far fa-save fa-2x"></i>
         </a>
         <a class="nav-link" href="javascript:Navbar('CSSEditor');" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">

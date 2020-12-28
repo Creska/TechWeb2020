@@ -294,6 +294,7 @@ function back() {
  * @param where
  * Porta alla sezione specificata, facendo tutti i caricamenti necessari
  */
+
 function goToSection(where) {
   /* esegue eventuali reset */
   mode = "default";
@@ -391,23 +392,12 @@ function goToSection(where) {
         loadEditOutcomeSection();
         break;
       case "ChooseStoryToEdit":
-        CurrentNavStatus.Section = where;
-        create_stories_grid();
-        //getStories(); 
+        getStories("ChooseStoryToEdit"); 
         break;
       case "Explorer":
-        getStories();
-        let a =[1,2,3,4,5];
-        let b= ["A","B","C","D"];
-        create_Explorer_grids(a,b);
-        //stories_obj = getStories(); 
-        //if( stories_obj.data )
-          //alert(stories_obj.data);
-        //else
-          //alert(stories_obj.status);
-          //getStories();
+        getStories("Explorer");
         break;   
-        default:
+      default:
         handleError();
     }
     
@@ -546,10 +536,10 @@ function create_card(titolo) {
   }
 };//the hell is this
 
-function create_stories_grid() {
+function create_stories_grid(array) {
   //create_card per ogni storia recuperata con la chiamata ajax
-  for(i=0;i<7;i++){
-    create_card(i);
+  for(i=0;i<array.length;i++){
+    create_card(array[i]);
   }
 }
 
@@ -772,28 +762,56 @@ function setFinalActivity() {
     deleteStory
   
   */
- function getStories() {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
-  //modal di attesa
+ function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
   $.get("/editor/getStories", function(data, status){
-    
-    return {data:data, status: status };
-
+    let obj = JSON.parse(data);
+    switch (caller) {
+      case "ChooseStoryToEdit":     
+        create_stories_grid(obj.unpublished);
+        break;
+      case "Explorer":
+        create_Explorer_grids(obj.unpublished,obj.published);
+        break;
+    } 
   });
 }
 /* 
 TO-DO list:
-  -assumendo il fix del campo server nel json, implementare saveStory
-  -implementare getStories nel secondo e terzo pulsante
-  -implementare getStory(con refactoring del json per averlo più comodo)
-  -implementare publish/unpublish/delete story multiplo
-  -gestire area di feedback
-  -gestire saveStory in relazione all'editor CSS
-  -gestire l'after di saveStory
-  -estendere la galleria a tutti i media, non solo le immagini
-  -pulizia e modularizzazione del codice
-*/
-function saveStory() { 
-  let story = prepare_saveStory_object();
+  1)Implement saveStory, assuming server's semantics is correct
+    -SaveStory object building(done in testing mode)
+      -add publishable control and feedback(done in primordial version)
+      -add modal for when user tries to save a story that already have that title
+    -Media pushing
+    -Media format testing
+  2)Implement getStories in second and third buttons(done)
+  3)Implement getStory
+    -check why it doesn't work with gallery
+    -check navbar and pray it doesn't bother too much
+    -show what is needed to have publishable story
+  4)Implement multiple publish/unpublish/delete story
+  5)Feedback aea handling
+  6)SaveStory and CSS editor relationship
+  7)After SaveStory handling
+  8)Extend (and fix) to all media, not just images
+  9)Generazione QR code storia
+  10)Make everything accessible
+  11)Make code polite and modular
+Notes:
+  */
+function start_saving() {
+  //build clean_cw
+  //evaluate it with isPublishable
+  //show modal then saveStory or just the latter
+  //for now we just pass Currentwork
+  CurrentWork.publishable = isPublishable(CurrentWork);
+  if(!CurrentWork.publishable.ok)
+    $("#publish_directly").modal("show");
+  else 
+    saveStory(false);
+
+}
+function saveStory(publish) { 
+  let story = prepare_saveStory_object(publish);
    /* data_array.push({
       name: "sadomaso.json",
       data: CurrentWork,
@@ -807,20 +825,34 @@ function saveStory() {
   };*/
   /* current story is { 'test_sample.json': '', 'img--10': '', 'img--11': '' }*/
   console.log(story)
+  /*
+  clean_cw.publishable = isPublishable(clean_cw)
+  if(clean_cw.publishable.ok)
+      //modal che chiede all'utente se vuole salvare o pubblicare direttamente, poi saveStory come onclick del modal
+  else
+    //post saveStory
+  */
   $.post("/editor/saveStory",story, function(data,status){
     //alert("Status: " + status);
-    images_byte_stream = [];
+    //images_byte_stream = [];
   });
 } 
-function prepare_saveStory_object() {
+function prepare_saveStory_object(publish) {
   let data_array = [];
-  let clean_cw = prepare_saveStory_data();//CurrentWork with src fixed
+ /* let clean_cw = prepare_saveStory_json();//CurrentWork with src fixed
   
   data_array.push({
     name: clean_cw.story_title+".json",
     data: clean_cw,
     story: true
-  });
+  });*/
+  //sending currentwork to see what happens when it's sent back with getStory
+  data_array.push({
+    name: CurrentWork.story_title+".json",
+    data: CurrentWork,
+    story: true
+  }); 
+  /* Image handling and pushing
   for( i=0; i<images_byte_stream.length;i++ ) {
     let img_name = clean_cw.story_title+"img_"+i;
     //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
@@ -829,19 +861,28 @@ function prepare_saveStory_object() {
       name: img_name,
       data: images_byte_stream[i]
     });
-  }
-  let story= {//storia ipotetica
+  }*/
+  let story= {//hypotetical story
     story_data: data_array,    
-    story_name: clean_cw.story_title,
-    published: true,//per ora
-    checked: true//per ora
+    //story_name: clean_cw.story_title,
+    story_name: CurrentWork.story_title,
+    published: publish,//for now
+   // checked: true//is actually useless because in the first
+   //button the story is always new while in the second it's always 
+   //overwritten, also stories now are identified with their title
+   //but the id should be used instead, also directory name should be something
+   // like story_title(story_id)
   };
   return story;
 }
-function prepare_saveStory_data(){
-  let clean_cw = CurrentWork;
-  let appendix="";//per ora
+function prepare_saveStory_json(){
+  let clean_cw=CurrentWork;
+  //push file in an array and save it's position(which must not change) in json, which will be used later to get
+  //the file, which name shall be path/name_position to avoid ambiguity
+  //for now don't clone the json and replace images with random bullshit
+  // OLD CURRENTWORK CLEANING
   let i=0;
+  //substitute some stuff
   while(clean_cw.quests[i]){
     let j=0;
     while(clean_cw.quests[i].activities[j]){
@@ -849,10 +890,11 @@ function prepare_saveStory_data(){
       while(clean_cw.quests[i].activities[j].activity_text[k]){
         if( clean_cw.quests[i].activities[j].activity_text[k].type == "gallery" ) {
           let z=0;
+          clean_cw.quests[i].activities[j].activity_text[k].content = "random bullshit";//temporary
           while(clean_cw.quests[i].activities[j].activity_text[k].content[z]) {
-            let image_bytes = clean_cw.quests[i].activities[j].activity_text[k].content[z].slice(10,-12);
-            images_byte_stream.push(image_bytes);
-            clean_cw.quests[i].activities[j].activity_text[k].content[z] = clean_cw.quests[i].activities[j].activity_text[k].content[z].replace(image_bytes,"/public/player/stories/"+appendix+"published/"+clean_cw.story_title+"_img_"+z);//story_title per ora al posto di story_id
+            if( clean_cw.quests[i].activities[j].activity_text[k].content[z].server ) {
+              //replace position with whatever is needed from player
+            }          
             z++;
             }
         }
@@ -862,15 +904,26 @@ function prepare_saveStory_data(){
     }
     i++;
   } 
+  delete clean_cw.ActivityGrids;
+  delete clean_cw.QuestGrid;
+  delete clean_cw.ParagraphGrids;
+  clean_cw.editor_graphics = {
+    //html for each section
+  }
   return clean_cw;
 }
 
-function getStory(nome) {//fa crashare l'app anche con published
+function getStory() {//fa crashare l'app anche con published
   //value = prompt('bool published: ');
-  nome = "test_sample";
+  //var nome = prompt("nome: ");
+  //alert("nome: ", nome)
+  let nome="nut";
   value = true;
   $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
   //  alert("Data: " + data + "\nStatus: " + status);
+  //console.log("json received with getStory: ",JSON.parse(data) )
+  CurrentWork = JSON.parse(data);
+  goToSection("EditStory");
   });
 }
 function deleteStory(nome) {
@@ -1206,11 +1259,13 @@ function go_home(from) {
   });
 }
 
-function create_Explorer_grids(a,b){
+function create_Explorer_grids(unpub,pub){
   /*    <div class="card-deck mb-2">          
-    </div> */ 
-  if(a){
-    for(i=0;i<a.length;i++){//publishable
+    </div> */
+    console.log("unpub: ",unpub) 
+    console.log("pub: ",pub) 
+  if(unpub){
+    for(i=0;i<unpub.length;i++){//unpublishable
       if( i%2 ==0 ){
         let deck = $("<div/>",{"class": "card-deck mb-2 "});
         $("#publishableContainer").append(deck);
@@ -1224,12 +1279,12 @@ function create_Explorer_grids(a,b){
         "id": "pble"+i
       });
       card.append( $("<div class='card-body text-center'></div>") );
-      card.children().append( $("<p class='card-text'>" + a[i] + "</p>") );
+      card.children().append( $("<p class='card-text'>" + unpub[i] + "</p>") );
       $("#publishableContainer > div").last().append(card);
     }
   } 
-  if(b){
-    for(j=0;j<b.length;j++){//published
+  if(pub){
+    for(j=0;j<pub.length;j++){//published
       if( j%2 ==0 ){
         let deck = $("<div/>",{"class": "card-deck mb-2 "});
         $("#publishedContainer").append(deck);
@@ -1243,7 +1298,7 @@ function create_Explorer_grids(a,b){
         "id": "ped"+j
       });
       card.append( $("<div class='card-body text-center'></div>") );
-      card.children().append( $("<p class='card-text'>" + b[j] + "</p>") );
+      card.children().append( $("<p class='card-text'>" +pub[j] + "</p>") );
       $("#publishedContainer > div").last().append(card);
     }
   } 

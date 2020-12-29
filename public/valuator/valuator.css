@@ -56,3 +56,37 @@ body {
     background-color: black;
     color: #C0C0C0;
 }
+
+.chatroom {
+    border-style: solid;
+    color: white;
+}
+
+.container-chat {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  .darker-chat {
+    border-color: rgb(65, 71, 74);
+    background-color: rgb(45, 49, 51);
+  }
+  
+  .container-chat::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  .time-right-chat {
+    float: right;
+    color: #aaa;
+  }
+  
+  .time-left-chat {
+    float: left;
+    color: #999;
+  }

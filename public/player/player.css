@@ -7,6 +7,8 @@
 .row{
     margin: 0 20px 0 5px;
 }
+
+/* la roba commentata va spostata nel css personalizzato delle storie di prova
 #FirstStory{
     background-image: url(images/museo_egizio.jpg);
     background-position: center;
@@ -101,6 +103,8 @@
     background-color:#6bda37;
     color: white;
 }
+*/
+
 #Main{
     color: aliceblue;
     background-image: url(images/sfondo.jpg);
@@ -109,7 +113,7 @@
     background-attachment: fixed;
     background-position: center;
 }
-/*#Info{
+#Info{
     padding: 10px;
     width: 300px;
     background-color: darkblue;
@@ -130,7 +134,7 @@
 #ButtonInfo:hover{
     color: darkorchid;
     background-color: white;
-}*/
+}
 nav{
     background-color: rgba(0, 0, 255, 0.5);
     color: ghostwhite;

@@ -1127,7 +1127,7 @@ function Navbar( option ) {
       /* TODO */
       break;
     case "CSSEditor":
-      CSS_Editor_Window = window.open( "../shared/css_editor.html", "tab" );
+      CSS_Editor_Window = window.open( "../css_editor/css_editor.html", "tab" );
       break;
     case "Preview":
       /* TODO - interfacciare col json */

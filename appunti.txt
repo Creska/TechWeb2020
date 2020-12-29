@@ -30,26 +30,35 @@ APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19
 
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Aggiungere possibilità di inserire risposta vuota negli outcomes
-    * [WIP] Funzionalità di interfacciamento col server [aggiungere creazione dell'id di storia e quest al momento della pubblicazione]
-    * [WIP] Funzioni di passaggio per navbar e main menu
+    * [WIP] Chiamate AJAX
+        * salvataggio
+        * caricamento
+        * cancellazione
+        * pubblicazione (qui va inserita creazione degli id per quest e storia e generazione qrcode)
+        * ritiro
+        * interfaccia
+    * [WAITING] Funzioni di passaggio per navbar e main menu
     * Mettere il nome dell'app
 * PLAYER
-    * Aggiornare il player in base alla divisione in gruppi fatta dall'editor
+    * Sistemare grafica
+    * [WIP] Chiamate AJAX
+        * caricamento (va inserita anche la divisione in gruppi)
+        * invio stats a fine attività
+        * invio stats ogni 5s
+        * richiesta valutazione umana
     * Riprogettare eventualmente l'interfaccia (ad esempio mettere un header per il campo risposta) - nel caso va rifatta la guida dell'editor CSS
     * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente
-    * Aggiungere segnale di attesa valutazione risposta
-    * Completare la raccolta e l'invio delle stats
-* TUTTO
-    * controllare compatibilità con schermi piccoli
-    * Pensare a come gestire il QRcode
+* ORGANIZZAZIONE
+    * Definire il sistema di cartelle - dove vengono salvati i media e il CSS personalizzato
+* STORIE DI PROVA
+    * Completare
 
 APPUNTI su roba da fare:
 * al salvataggio bisogna inviare un array di oggetti. per ogni file un oggetto: {namestring, is_story_json, buffer}
 * per inviare le stats "/player/activityUpdate"
 * ChatMessages e score per ogni attività ( quindi ad ogni attività viene resettato )
 * ogni volta che un'attività viene finita vengono inviate le stats
-* timer ogni 5s che fa una post dove passo: (QuestID, ActivityN, time_elapsed). 200 in caso di successo e 400 in caso di errore
+* timer ogni 5s che fa una post dove passo: (QuestID, ActivityN, time_elapsed)
 * groupID per sapere il nome del gruppo
 
 ACESSIBILITA'

@@ -54,7 +54,8 @@
                     $("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
             };
         </script>
-            
+        
+        <!--
         <div class="row">
             <div id="FirstStory" class="card col-12">
                 <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
@@ -65,7 +66,6 @@
                         title="HELLO"
                         width="80"
                         height="80" /></div>
-                <!--<div align="center"><button id="StartButton">START</button></div>-->
             </div>
         </div>
         <div class="row">
@@ -82,6 +82,7 @@
                 <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
             </div>
         </div>
+    -->
         
         
         <p id="AccessibilityMsg" role="alert"></p>
@@ -109,7 +110,7 @@
         <nav>
             <ul class=" nav justify-content-center">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-disabled="true">Punteggio</a>
+                    <a class="nav-link active" aria-disabled="false">Punteggio</a>
                 </li>
             </ul>
         </nav>
@@ -121,6 +122,7 @@
             </div>
         </main>
     </template>
+
     <footer class="page-footer">
         <div class="container-fluid text-center">
             <div id='chat-room'>
@@ -135,20 +137,3 @@
 </body>
 
 </html>
-
-<!-- gruppi di elementi da stilizzare:
-Id:
-* StoryTitle
-Classi:
-* Quest ( container del titolo della quest e del container Activity )
-* Activity ( container di tutti gli elementi dell'attività )
-* QuestTitle
-* ActivityText ( container di paragrafi e immagini/gallery )
-* AnswerField ( container del campo risposta e della domanda )
-* AnswerFieldDescription ( domanda a cui rispondere )
-* AnswerInput ( campo di risposta )
-* ImageGallery
-* SingleImage
-* TextParagraph
-* NextActivity ( pulsante da cliccare per proseguire all'attività successiva )
--->

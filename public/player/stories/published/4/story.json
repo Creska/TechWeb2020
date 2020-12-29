@@ -1,19 +1,20 @@
 {
     "ACCESSIBILITY": "0",
-    "story_title": "troia",
-    "story_ID": "-1",
+    "story_title": "test_sample",
+    "story_ID": "4",
     "game_mode": "",
     "single_device": "1",
     "quests": [
         {
-            "quest_title": "nonna",
+            "quest_title": "",
             "activities": [
                 {
                     "activity_text": [
                         {
                             "type": "gallery",
                             "content": [
-                                "<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=\" alt=\"normandis\">"
+                                "<img src=\"/public/player/stories/published/test_sample_img_0\" alt=\"uno\">",
+                                "<img src=\"/public/player/stories/published/test_sample_img_1\" alt=\"due\">"
                             ]
                         }
                     ],

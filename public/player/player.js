@@ -1,4 +1,4 @@
-var StoryObj = storia; // QUESTA E' LA VARIABILE DELLA STORIA
+var StoryObj; // QUESTA E' LA VARIABILE DELLA STORIA
 
 
 
@@ -11,36 +11,19 @@ function validateInput(answer, current_quest, current_activity) {
 	socket.emit('validate-input-player', tempactivity.question, answer, socket.id)
 }
 
-function shuffle(array) {
-	var currentIndex = array.length, temporaryValue, randomIndex;
-
-	// While there remain elements to shuffle...
-	while (0 !== currentIndex) {
-
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex -= 1;
-
-		// And swap it with the current element.
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-		array[randomIndex] = temporaryValue;
-	}
-
-	return array;
-}
-
 
 $(function () {
-	$.get("/player/stories/published/" + $('#story-name').html(), function (data) {
-		//removing the useless template
-		$('#story-name').remove();
-		shuffle(data.quests)
-		story = data;
-		console.log(data)
-	})
-
 	socket = io.connect('', { query: "type=player" });
+	$.get("/player/loadJSON", function (data) {
+		//removing the useless template
+		StoryObj = JSON.parse(data);
+		console.log(StoryObj)
+		if (StoryObj.ACCESSIBILITY)
+			$("#AccessibilityMsg").append($("<p>La storia è accessibile.</p>"));
+		else
+			$("#AccessibilityMsg").append($("<p>La storia purtroppo NON è accessibile.</p>"));
+	})
+	//TODO submit method is now deprecated
 	$('form').submit(function (e) {
 		e.preventDefault();
 		//client can't route the rooms: only the server can. I need to send the data there
@@ -51,17 +34,8 @@ $(function () {
 	socket.on('valuator-message', (message) => {
 		//TODO rendering the valuator message
 	})
-	socket.on('input-valued', (answer_is_right) => {
-		//values: -1(no valuator online),0(wrong),1(right)
-		if (answer_is_right == -1) {
-			//TODO no valuator online handling
-		}
-		else if (answer_is_right == 0) {
-			//TODO wrong input handling
-		}
-		else {
-			//TODO right input handling
-		}
+	socket.on('input-valued', (nextQuest, number, score) => {
+		//TODO player handling
 	});
 });
 

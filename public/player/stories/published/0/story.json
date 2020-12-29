@@ -1,7 +1,15 @@
 {
     "ACCESSIBILITY": "0",
     "story_title": "",
+<<<<<<< HEAD
+<<<<<<< HEAD:public/player/stories/published/0/story.json
     "story_ID": "0",
+=======
+    "story_ID": "2",
+>>>>>>> 54c2366... ID paradigm changes & overall improvement:public/player/stories/published/2/story.json
+=======
+    "story_ID": "0",
+>>>>>>> 54c2366... ID paradigm changes & overall improvement
     "game_mode": "",
     "single_device": "1",
     "QuestGrid": ""

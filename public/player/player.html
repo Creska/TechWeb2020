@@ -18,7 +18,7 @@
     <script src="player.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
-
+    <!--Script js per generare bar code-->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
       <script type="text/javascript">
         function generateBarCode()
@@ -44,7 +44,7 @@
 
 <body>
     <main id="StartScreen">
-        <script>
+        <script> 
             window.onload = function() {
                 //$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
 
@@ -54,7 +54,15 @@
                     $("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
             };
         </script>
-            
+        
+        <nav>
+            <ul class=" nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-disabled="true"></a>
+                </li>
+            </ul>
+        </nav>
+
         <div class="row">
             <div id="FirstStory" class="card col-12">
                 <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
@@ -84,7 +92,7 @@
         </div>
         
         
-        <p id="AccessibilityMsg" role="alert"></p>
+        <div id="AccessibilityMsg" role="alert"></div>
 
         <!--
             <div align="center">
@@ -105,7 +113,7 @@
         -->
     </main>
 
-    <template id="MainContainer" class="conteiner-fluid">
+    <template id="MainContainer">
         <nav>
             <ul class=" nav justify-content-center">
                 <li class="nav-item">

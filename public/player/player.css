@@ -1,12 +1,18 @@
-#StoryTitle {
-    color: snow;
-}
 #StartScreen{
     text-align: center;
+    background-color: rgb(250, 250, 220, 0.8);
+}
+nav {
+    padding: 5px;
+    background-color: rgba(180, 190, 195, 0.8);
+    font-size: large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 .row{
     margin: 0 20px 0 5px;
 }
+
+/* la roba commentata va spostata nel css personalizzato delle storie di prova
 #FirstStory{
     background-image: url(images/museo_egizio.jpg);
     background-position: center;
@@ -101,6 +107,8 @@
     background-color:#6bda37;
     color: white;
 }
+*/
+
 #Main{
     color: aliceblue;
     background-image: url(images/sfondo.jpg);
@@ -109,7 +117,7 @@
     background-attachment: fixed;
     background-position: center;
 }
-/*#Info{
+#Info{
     padding: 10px;
     width: 300px;
     background-color: darkblue;
@@ -130,7 +138,7 @@
 #ButtonInfo:hover{
     color: darkorchid;
     background-color: white;
-}*/
+}
 nav{
     background-color: rgba(0, 0, 255, 0.5);
     color: ghostwhite;
@@ -139,42 +147,71 @@ nav{
     ;
 }
 .StoryTitle{
+    text-shadow: 2px -1px #000000, -2px 1px #000000;            
     padding: 10px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 .Quest {
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.QuestTitle{
+    color: rgb(180, 200, 230);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style: oblique;
+}
+.ActivityText{
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 5px;
+    color: rgb(0, 10, 20);
+    border-style: groove;
+    border-color: rgba(30, 143, 255, 0.5);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: medium;
 }
 .AnswerField{
-    margin-top: 20px;
-    margin-left: 10px;
+    background-color: rgba(0, 5, 5, 0.7);
+    padding: 10px;
+    border-radius: 20px;
+    border-color: rgba(30, 143, 255, 0.9);
+    border-style: dotted;    
     margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center, justify;
+    font-style: italic;
+    font-size: large;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .NextActivity{
     align-content: center;
     text-align: center;
     width: 200px;
-    background-color: whitesmoke;
-    color: black;
-    border: 2px solid black;
+    background-color: rgba(25, 1, 130, 0.8);
+    color: white;
+    border: 2px solid rgb(255, 255, 255, 0.5);
     border-radius: 5px;
+    margin-bottom: 20px;
 }
 .NextActivity:hover{
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.8);
     color: whitesmoke;
+    border-color: rgba(0, 0, 0, 0.8);
+}
+#AccessibilityMsg{
+    padding: 5px;
 }
 .page-footer{
     padding: 10px;
-    margin-top: 20px;
+    background-color: rgba(180, 190, 195, 0.8);
 }
 #chat-room{
     text-align: center;
     font-size: medium;
     padding: 10px;
-    margin: 0 10px 10px 10px;
     border: medium double blue;
     border-radius: 10px;
     background-color: rgba(0, 0, 255, 0.2);
@@ -193,8 +230,8 @@ nav{
     border: 2px solid rgb(7, 3, 230);
     border-radius: 10px;
 }
-#send:hover{
+#Send:hover{
     background-color:rgb(7, 3, 230);
-    border: 2px solid white;
+    border: 2px solid rgba(0, 0, 255, 0.2);
     color: white;
 }

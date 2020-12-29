@@ -1,10 +1,18 @@
 var storyNameTimer; //global timer to retrieve active stories
 var storyDataTimer; //global timer tor retrieve information for the stories
-var activeStories; //known active stories
+var activeStoryName; //known active stories
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
+let players = new Map(); //key: socket.id, value: player number
+var player_count = 0;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
+/** TODO
+ * => remove story when it gets closed 
+ * => dynamic load of story
+ * 
+ * 
+ */
 function renderEditor() {
     pageLocation = 2;
     $('#bottoneditor').fadeOut();
@@ -21,24 +29,25 @@ function renderSupport() {
     $('#bottonesupport').fadeOut();
     //rendering the dropdown stories menu
     $.ajax({
-        url: 'localhost:3000/valuator/activeStoriesNames',
+        url: '/valuator/activeStoryName',
         method: 'GET',
-        success: function (data) {
-            activeStories = data;
-            $('#support').fadeIn();
-            $('#home').removeClass('active');
-            $('#defaulth1').html(defaultPageTitle + ": Supporto")
-            if (data.length) {
-                makeDropdown(data);
+        success: function (name) {
+            let data = JSON.parse(name);
+            if (data) {
+                activeStoryName = data;
+                $('#support').fadeIn();
+                $('#home').removeClass('active');
+                $('#defaulth1').html(defaultPageTitle + ": Supporto")
+                $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo alla storia che sta venendo giocata in questo momento.');
+                showStoryChat(data);
             }
             else {
-                $('#defaultdescription').html('Al momento non sono attive storie. Puoi restare su questa schermata, in attesa che inizino.');
+                $('#defaultdescription').html('Al momento non sono è attiva una storia. Puoi restare su questa schermata, in attesa che inizi.');
             }
-            $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
-            startNameTimer();
         },
         error: function (error) {
             //TODO error handling
+            console.error(error);
             $('#defaulth1').html(defaultPageTitle + ": Supporto")
             $('#defaultdescription').html('Errore durante il caricamento delle storie, si prega di ritornare nel menù principale e di riprovare.');
         }
@@ -50,9 +59,9 @@ function toHome() {
         switch (pageLocation) {
             //things to fade out
             case 1:
+                $('#storyname').remove();
                 $('#support').fadeOut();
-                stopNameTimer();
-                stopDataTimer();
+                $('#chatrooms').fadeOut();
                 break;
 
             case 2:
@@ -66,73 +75,97 @@ function toHome() {
         $('#defaultdescription').html(defaultDescription);
     }
 }
-function makeDropdown(data) {
-    var stories_dropdowns = "";
-    data.forEach((item) => {
-        stories_dropdowns += "<a class='dropdown-item' id='" + item.story_ID + " onclick='updateDropdown(this.id,'" + item.story_name + "')'>" + item.story_name + "</a>"
-    })
-    $('#dropdownstories').html(stories_dropdowns);
-}
-function updateDropdown(id, story_name) {
-    $('#dropdownbutton').html("Storie:" + story_name);
-    //TODO I have to decide how to show the information for the story.
-    //activate the story timer only for this specific story, disable the precedent one
-}
-
-function startNameTimer() {
-    storyNameTimer = setInterval(() => {
-        $.ajax({
-            url: 'localhost:3000/valuator/activeStoriesNames',
-            method: 'GET',
-            success: function (data) {
-                if (data.length) {
-                    if (activeStories.length) {
-                        makeDropdown(data);
-                    }
-                    else {
-                        //it's 0, so there were no active stories before, different message
-                        $('#defaultdescription').html('Delle storie stanno ora venendo giocate. Qui puoi fornire aiuto e vedere alcune statistiche riguardo a tutte le storie che stanno venendo giocate in questo momento.<br>Il gioco attualmente selezionato è quello postfisso al simbolo ":" nel dropdown.');
-                        activeStories = data;
-                        makeDropdown(data);
-                    }
-                }
-            },
-            error: function (error) {
-                //TODO error handling
-            }
-        })
-    }, 5000);
+function timeStamp() {
+    let time = new Date();
+    let hours = time.getHours();
+    let minutes = time.getMinutes();
+    let hours_string = "";
+    let minutes_string = "";
+    if (hours < 10) {
+        hours_string += "0"
+    }
+    if (minutes < 10) {
+        minutes_string += "0"
+    }
+    let timestamp = hours_string + hours + ":" + minutes_string + minutes;
+    return timestamp;
 }
 
-function startDataTimer() {
-    storyDataTimer = setInterval(() => {
-        //TODO data handling
-    }, 5000)
-}
-function stopNameTimer() {
-    clearInterval(storyNameTimer)
-}
-function stopDataTimer() {
-    clearInterval(storyDataTimer)
+function showStoryChat() {
+    $('#support').prepend('<h2 id="storyname">Storia: ' + activeStoryName + '</h2>');
+    $('#chatrooms').fadeIn();
 }
 
-function valuateInput(answer_is_right, socketID) {
-    //the answer was valuated, sending whether or not it is right to the server, and then to the player
-    socket.emit('validate-input-valuator', answer_is_right, socketID);
+function makeChatMessage(text, owner) {
+    //owner is the socket ID
+    if (owner == "self") {
+        let message = `  
+        <div class="container-chat darker-chat">
+  <p>`+ text + `</p>
+  <span class="time-left-chat">`+ timeStamp() + `</span>
+  </div>     
+        `
+        //message sent from me, this means that the container for the player already exist
+        $('#' + owner).append(message)
+    }
+    else {
+        let message = `
+        <div class="container-chat">
+  <p>`+ text + `</p>
+  <span class="time-right-chat">`+ timeStamp() + `</span>
+ </div>
+        `
+        //message sent from someone else
+        if (!$('#' + owner)) {
+            //the chat container for that socket doesn't exists
+            makeContainer(owner);
+        }
+        $('#' + owner).append(message)
+    }
+    //https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_chat
+}
+
+
+function makeWarningMessage(text) {
+    //TODO render chat message
+}
+
+function makeValuatorMessage(text) {
+    //TODO render messages to be valued, they will be shown as special chat messages
+}
+
+function makeContainer(id) {
+    player_count++;
+    players.set(id, player_count);
+    $('#chatrooms').append('<div id="' + id + '" class="chatroom" style="margin-right: 10px; margin-left: 10px"><h3>Player ' + player_count + '</h3></div>')
+    let message = `  
+    <div class="container-chat darker-chat col-sm overflow-auto">
+<p style="color: yellow">`+ 'System Message: User joined.' + `</p>
+</div>     
+    `
+    $('#' + id).append(message)
+}
+
+function deleteContainer(id) {
+    $('#' + id).fadeOut();
 }
 $(function () {
     var socket = io.connect('', { query: "type=valuator" });
-    $.get("/valuator/history", function (data) {
-        if (data) {
-            if (data.joins) {
+    //TODO actually store the messages
+    $.get("/valuator/history", function (history) {
+        history = JSON.parse(history)
+        if (history) {
+            if (history.joins) {
                 console.log("History joins found.");
-                data.joins.forEach(element => {
+                history.joins.forEach(element => {
+                    makeContainer(element)
                     console.log("User of room " + element + " has joined.");
                 });
             }
-            if (data.messages) {
+            if (history.messages) {
                 console.log("History messages found.");
-                data.messages.forEach(element => {
+                history.messages.forEach(element => {
+                    makeChatMessage(element.message, element.id)
                     console.log("Received a chat message from " + element.id + ": " + element.message);
                 })
             }
@@ -167,5 +200,6 @@ $(function () {
         something to hold the values for this specific answer
         this fragment will execute valuateInput()
         */
+        socket.emit('validate-input-valuator', nextQuest, number, score, socketID);
     })
 })

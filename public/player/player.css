@@ -1,8 +1,12 @@
-#StoryTitle {
-    color: snow;
-}
 #StartScreen{
     text-align: center;
+    background-color: rgb(250, 250, 220, 0.8);
+}
+nav {
+    padding: 5px;
+    background-color: rgba(180, 190, 195, 0.8);
+    font-size: large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 .row{
     margin: 0 20px 0 5px;
@@ -143,6 +147,7 @@ nav{
     ;
 }
 .StoryTitle{
+    text-shadow: 2px -1px #000000, -2px 1px #000000;            
     padding: 10px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
@@ -158,13 +163,14 @@ nav{
     font-style: oblique;
 }
 .ActivityText{
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.7);
     padding: 5px;
     color: rgb(0, 10, 20);
     border-style: groove;
     border-color: rgba(30, 143, 255, 0.5);
     border-radius: 5px;
     margin-bottom: 20px;
+    font-size: medium;
 }
 .AnswerField{
     background-color: rgba(0, 5, 5, 0.7);
@@ -175,11 +181,9 @@ nav{
     margin-bottom: 20px;
     margin-left: 10px;
     margin-right: 10px;
-}
-.AnswerFieldDescription{
     text-align: center, justify;
     font-style: italic;
-    font-size: medium;
+    font-size: large;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .NextActivity{
@@ -197,15 +201,17 @@ nav{
     color: whitesmoke;
     border-color: rgba(0, 0, 0, 0.8);
 }
+#AccessibilityMsg{
+    padding: 5px;
+}
 .page-footer{
     padding: 10px;
-    margin-top: 20px;
+    background-color: rgba(180, 190, 195, 0.8);
 }
 #chat-room{
     text-align: center;
     font-size: medium;
     padding: 10px;
-    margin: 0 10px 10px 10px;
     border: medium double blue;
     border-radius: 10px;
     background-color: rgba(0, 0, 255, 0.2);

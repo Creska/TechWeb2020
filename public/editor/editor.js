@@ -789,6 +789,9 @@ TO-DO list:
     -check navbar and pray it doesn't bother too much
     -show what is needed to have publishable story
   4)Implement multiple publish/unpublish/delete story
+    -add informative div
+    -add icon to start calls
+    -implement primitive version of calls
   5)Feedback aea handling
   6)SaveStory and CSS editor relationship
   7)After SaveStory handling

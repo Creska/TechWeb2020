@@ -84,11 +84,11 @@ function storyExists(id) {
 }
 
 function storyPath(id) {
-    if (fs.existsSync(pubpath + '/' + id)) {
-        return pubpath + '/' + id;
+    if (fs.existsSync(pubpath + id)) {
+        return pubpath + id;
     }
-    else if (fs.existsSync(unpubpath + '/' + id)) {
-        return unpubpath + '/' + id;
+    else if (fs.existsSync(unpubpath + id)) {
+        return unpubpath + id;
     }
     else {
         return '404'
@@ -485,10 +485,12 @@ app.get('/editor/getStory', function (req, res) {
 app.post('/editor/saveStory', function (req, res) {
     //NOTE: this will always overwrite
     var story = req.body;
+    console.log("story: ",story) 
     var story_json = story.story_json; //JSON story file object
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
 
     var published = stringToBool(story.published) || false;
+    
     var story_id = story_json.story_ID;
     var story_path;
     console.log("saveStory request received.")
@@ -499,27 +501,35 @@ app.post('/editor/saveStory', function (req, res) {
         story_path = unpubpath;
     }
     let path = storyPath(story_json.story_ID)
-    if (path == '404') {
-        console.log("Creating the directory for the new story.")
-        let story_id = crypto.randomBytes(16).toString('base64');
-        if (fs.mkdirSync(story_path + '/' + story_id) != undefined) {
+    if (path == '404') {//id is undefined i.e. the story is new
+        console.log("Creating the directory for the new story.") 
+        //it looks like crypto can generate / as a character which
+        //leads to errors and apparently is not that uncommon, also is there any guarantee that ids
+        //are actually unique?
+        story_id = crypto.randomBytes(16).toString('base64');//overwrite the previously undefined id with the new one
+        console.log("story path: ",story_path ," story id: ",story_id)
+        if (fs.mkdirSync(story_path + story_id) != undefined) {
             console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
             return res.status(500).send(JSON.stringify(err)).end();
-        }
+        } 
         else {
-            console.log("The directory for the story " + story_name + " was created successfully.")
-        }
+            console.log("The directory for the story " + story_json.story_title + " was created successfully.")
+        } 
     }
-    else {
+    if(story_data){//write files inside story directory
         story_data.forEach(file => {
             let options = undefined;
             if (file.native) {
                 options = 'utf8'
             }
             if (file.tostringify) {
+                //stringify is executed assuming file.data is an object
+                //which would be true if the json sent is automatically
+                //reconverted which i think is not, that's why this step
+                //needs to be checked out
                 file.data = JSON.stringify(file.data)
             }
-            let err = fs.writeFileSync(story_path + '/' + story_id + '/' + file.name, data, options);
+            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
             }
@@ -527,19 +537,21 @@ app.post('/editor/saveStory', function (req, res) {
                 console.log("Element " + file.name + " of " + story_id + " saved successfully.")
             }
         })
-        let err = fs.writeFileSync(story_path + '/' + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
-        if (err != undefined) {
-            console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
-        }
-        else {
-            console.log("JSON Story file of " + story_id + " saved successfully.")
-        }
-        console.log("Story " + story_id + " saved successfully.")
     }
+    //write story json inside story directory
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
+    if (err != undefined) {
+        console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
+    } 
+    else {
+        console.log("JSON Story file of " + story_id + " saved successfully.")
+    }
+    console.log("Story " + story_id + " saved successfully.")
+    return res.status(200).send(story_id).end();
 })
 
 app.post('/editor/deleteStory', function (req, res) {
-    var story = req.body;
+    var story = req.body; 
     var story_ids = story.story_ids;
     if (story_ids) {
         story_ids.forEach(story_id => {

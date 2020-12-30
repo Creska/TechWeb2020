@@ -103,80 +103,47 @@ TO-DO list:
 Notes:
   */
 function start_saving() {
-  //build clean_cw
-  //evaluate it with isPublishable
-  //show modal then saveStory or just the latter
-  //for now we just pass Currentwork
-  CurrentWork.publishable = isPublishable(CurrentWork);
-  if(!CurrentWork.publishable.ok)
+  CurrentWork.publishable = isPublishable(CurrentWork); 
+  if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
   else 
     saveStory(false);
-
 }
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);
-   /* data_array.push({
-      name: "sadomaso.json",
-      data: CurrentWork,
-      story: true
-    });
-  story= {//storia ipotetica
-    story_data: data_array,    
-    story_name: "sadomaso",
-    published: true,
-    checked: true
-  };*/
-  /* current story is { 'test_sample.json': '', 'img--10': '', 'img--11': '' }*/
   console.log(story)
-  /*
-  clean_cw.publishable = isPublishable(clean_cw)
-  if(clean_cw.publishable.ok)
-      //modal che chiede all'utente se vuole salvare o pubblicare direttamente, poi saveStory come onclick del modal
-  else
-    //post saveStory
-  */
   $.post("/editor/saveStory",story, function(data,status){
-    //alert("Status: " + status);
+    //alert("Status: " + status + "Story_id: " +data );
     //images_byte_stream = [];
   });
 } 
+/* 
+story = {
+  story_json: CurrentWork,
+  story_data: [
+    {
+      name: string,//extension has to be included probably, storyid+"_css.json", looks like css file is saved as a json
+      data: FILE,
+      native: boolean, //true if the file has to be saved in utf-8 format
+      tostringify: boolean //true if the file is a json, in practice this applies to CSS object
+    }
+  ],
+}
+*/
+//clone CurrentWork and transform it
 function prepare_saveStory_object(publish) {
-  let data_array = [];
- /* let clean_cw = prepare_saveStory_json();//CurrentWork with src fixed
-  
-  data_array.push({
-    name: clean_cw.story_title+".json",
-    data: clean_cw,
-    story: true
-  });*/
-  //sending currentwork to see what happens when it's sent back with getStory
-  data_array.push({
-    name: CurrentWork.story_title+".json",
-    data: CurrentWork,
-    story: true
-  }); 
-  /* Image handling and pushing
-  for( i=0; i<images_byte_stream.length;i++ ) {
-    let img_name = clean_cw.story_title+"img_"+i;
-    //clean_cw.quests[i].activities[i].activity_text.content.replace(image_bytes,"/public/player/stories/unpublished/"+img_name);
-
-    data_array.push({
-      name: img_name,
-      data: images_byte_stream[i]
-    });
-  }*/
-  let story= {//hypotetical story
-    story_data: data_array,    
-    //story_name: clean_cw.story_title,
-    story_name: CurrentWork.story_title,
-    published: publish,//for now
-   // checked: true//is actually useless because in the first
-   //button the story is always new while in the second it's always 
-   //overwritten, also stories now are identified with their title
-   //but the id should be used instead, also directory name should be something
-   // like story_title(story_id)
-  };
+  let story = {
+    story_json: CurrentWork,
+    story_data: [
+      {
+        name: "css_file.json",//extension has to be included probably, storyid+"_css.json", looks like css file is saved as a json
+        data: CSSdata,
+        native: true, //true if the file has to be saved in utf-8 format
+        tostringify: true //true if the file is a json, in practice this applies to CSS object
+      }
+    ],
+    //published:
+  }  
   return story;
 }
 function prepare_saveStory_json(){

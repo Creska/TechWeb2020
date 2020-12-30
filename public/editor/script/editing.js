@@ -856,7 +856,7 @@ function save_title( which ) {
 	CurrentWork = {
 	  ACCESSIBILITY: 0,
 	  story_title: "",
-	  story_ID: -1,
+	  //story_ID: -1,
 	  game_mode: "",
 	  players: 0,
 	  quests: [],

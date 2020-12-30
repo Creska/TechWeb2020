@@ -142,7 +142,7 @@ function prepare_saveStory_object(publish) {
         tostringify: true //true if the file is a json, in practice this applies to CSS object
       }
     ],
-    //published:
+    published: publish
   }  
   return story;
 }

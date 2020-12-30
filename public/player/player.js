@@ -1,63 +1,88 @@
 var StoryObj; // QUESTA E' LA VARIABILE DELLA STORIA
 
-
-
 var socket; // contains the socket for this specific player
 
-function validateInput(answer, current_quest, current_activity) {
-	// send the input to be validated from the valuator
-	// args: the current question being asked, the answer from the player, the ID of the player(socket)
-	var tempactivity = story.quests[current_quest].activities[current_activity];
-	socket.emit('validate-input-player', tempactivity.question, answer, socket.id)
-}
+var Status = {
+	QuestN: -1,
+	QuestID: -1, // l'ID è univoco per tutti i giocatori
+	ActivityN: -1,
+	time_elapsed: 0, // tempo passato dall'inizio dell'attività corrente
+	TotalScore: 0,
+	ActivityRecap: {
+		TimeToAnswer: 0,
+		AlreadyHelped: 0, // forse si può togliere
+		ChatMessages: 0, // numero di messaggi inviati al valutatore durante l'attività
+		Score: 0
+	}
+};
+
+var IntervalTimer;
+
+
 
 
 $(function () {
+	/* query e caricamento della storia */
 	socket = io.connect('', { query: "type=player" });
 	$.get("/player/loadJSON", function (data) {
-		//removing the useless template
 		StoryObj = JSON.parse(data);
-		console.log(StoryObj)
+		// TODO va aggiunto il foglio CSS
+		console.log(StoryObj); // debugging
+
+		// messaggio per l'accessibilità - fixare
 		if (StoryObj.ACCESSIBILITY)
 			$("#AccessibilityMsg").append($("<p>La storia è accessibile.</p>"));
 		else
 			$("#AccessibilityMsg").append($("<p>La storia purtroppo NON è accessibile.</p>"));
 	})
-	//TODO submit method is now deprecated
-	$('form').submit(function (e) {
+
+	//$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
+
+	if ( StoryObj.ACCESSIBILITY )
+		$("#AccessibilityMsg").append( $("<p>La storia è accessibile.</p>") );
+	else
+		$("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
+
+	/* invio messaggio chat */
+	$('#chat-room form').on("submit", function (e) {
 		e.preventDefault();
 		//client can't route the rooms: only the server can. I need to send the data there
 		socket.emit('chat-message', $('#message').val(), socket.id);
 		$('#message').val('');
+		Status.ChatMessages += 1;
 		return false;
 	})
+
+
 	socket.on('valuator-message', (message) => {
 		//TODO rendering the valuator message
 	})
-	socket.on('input-valued', (nextQuest, number, score) => {
-		//TODO player handling
+
+
+	socket.on('input-valued', (nextQuest, activity_n, score) => {
+		Status.TotalScore += score;
+		Status.ActivityRecap.Score += score;
+		
+		/* TODO - invio status */
+
+		if ( nextQuest )
+			goToQuest( Status.QuestN + 1 );
+		else ( nextQuest )
+			goToActivity( activity_n );
 	});
 });
 
 
 
-/* ------------------------------------------------------------------------------- */
 
-
-
-// indica il numero della quest attiva ed il numero dell'attività attiva
-var CurrentStatus = {
-	QuestN: -1,
-	QuestID: -1,
-	ActivityN: -1,
-	TimeToAnswer: 0,
-	AlreadyHelped: 0,
-	ChatMessages: 0,
-	TotalScore: 0
+/**
+ * @param answer --> stringa corrispondente alla risposta
+ * Renderizza un loading ed invia la richiesta di valutazione al Valuator
+ */
+function validateInput( answer ) {
+	/* TODO - inserire il loading al posto della schermata della quest */
+	socket.emit('validate-input-player', StoryObj.quests[Status.QuestN].activities[Status.QuestN].answer_field, answer, socket.id);
 };
-
-
-var Chronometer;
 
 
 /**
@@ -85,10 +110,10 @@ function startGame() {
 */
 function assignID(name) {
 	if (name == "Quest") {
-		return (name + String(CurrentStatus.QuestN));
+		return (name + String(Status.QuestN));
 	}
 	else if (name == "Activity") {
-		return ("Quest" + String(CurrentStatus.QuestN) + name + String(CurrentStatus.ActivityN));
+		return ("Quest" + String(Status.QuestN) + name + String(Status.ActivityN));
 	}
 	else return;
 };
@@ -99,8 +124,8 @@ function assignID(name) {
 * Carica a schermo la quest specificata. Svuota il container della quest e ci aggiunge il titolo nuovo. Poi carica la quest numero zero.
 */
 function goToQuest(quest_n) {
-	CurrentStatus.QuestN = quest_n;
-	CurrentStatus.QuestID = StoryObj.quests[quest_n].quest_ID;
+	Status.QuestN = quest_n;
+	Status.QuestID = StoryObj.quests[quest_n].quest_ID;
 
 	let NewQuest = $("<section class='Quest' aria-relevant='additions text'><p role='alert' aria-live='assertive' class='sr-only'>Nuova quest</p></section>");
 	NewQuest.attr("id", assignID("Quest"));
@@ -118,7 +143,7 @@ function goToQuest(quest_n) {
 * Inserisce anche un pulsante per andare all'attività successiva
 */
 function goToActivity(activity_n) {
-	CurrentStatus.ActivityN = activity_n;
+	Status.ActivityN = activity_n;
 
 	let NewActivity = $("<div/>",
 		{
@@ -133,22 +158,22 @@ function goToActivity(activity_n) {
 			"class": "ActivityText"
 		});
 
-	$.each(StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].activity_text, function (index, value) {
+	$.each(StoryObj.quests[Status.QuestN].activities[Status.ActivityN].activity_text, function (index, value) {
 		addTextPart(NewActivityText, value, index);
 	});
 
 	NewActivity.append(NewActivityText);
 
-	if (StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].activity_type == 'ANSWER') {
+	if (StoryObj.quests[Status.QuestN].activities[activity_n].activity_type == 'ANSWER') {
 		let AF = $("<div class='AnswerField'></div>");
-		AF.append($("<p class='AnswerFieldDescription'>" + StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.description + "</p>"));
+		AF.append($("<p class='AnswerFieldDescription'>" + StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.description + "</p>"));
 
-		switch (StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type) {
+		switch (StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.type) {
 			case 'checklist':
 				AF.append($("<ul class='AnswerInput'></ul>"));
 				let newli;
 
-				$.each(StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.options, function (index, value) {
+				$.each(StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.options, function (index, value) {
 					newli = $("<li class='form-check'></li>");
 					newli.append($("<input/>",
 						{
@@ -182,7 +207,7 @@ function goToActivity(activity_n) {
 				break;
 			case 'date':
 			case 'time':
-				AF.append($("<input/>", { type: StoryObj.quests[CurrentStatus.QuestN].activities[activity_n].answer_field.type }));
+				AF.append($("<input/>", { type: StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.type }));
 				break;
 			default:
 				handleError();
@@ -191,7 +216,7 @@ function goToActivity(activity_n) {
 		NewActivity.append(AF);
 	}
 
-	if (StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].FINAL)
+	if (StoryObj.quests[Status.QuestN].activities[Status.ActivityN].FINAL)
 		NewActivity.append($("<div align='center'><button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button></div>"));
 	else
 		NewActivity.append($("<div align='center'><button class='NextActivity' onclick='nextStage();'>PROSEGUI</button></div>"));
@@ -199,11 +224,22 @@ function goToActivity(activity_n) {
 	$(".Activity").remove();
 	$(".Quest").append(NewActivity);
 
-	CurrentStatus.TimeToAnswer = 0;
-	CurrentStatus.AlreadyHelped = 0;
-	CurrentStatus.ChatMessages = 0;
+	Status.time_elapsed = 0;
+	Status.ActivityRecap.TimeToAnswer = 0;
+	Status.ActivityRecap.AlreadyHelped = 0;
+	Status.ActivityRecap.ChatMessages = 0;
+	Status.ActivityRecap.Score = 0;
 
-	toggleChronometer();
+	IntervalTimer = setInterval(function () {
+		Status.time_elapsed += 5000;
+
+		if (StoryObj.quests[Status.QuestN].activities[Status.ActivityN].GET_CHRONO && !Status.ActivityRecap.AlreadyHelped &&
+			Status.time_elapsed > StoryObj.quests[Status.QuestN].activities[Status.ActivityN].expected_time) {
+			/* TODO - invia richiesta di aiuto */
+			Status.ActivityRecap.AlreadyHelped = true;
+			console.log("HELP"); // debugging
+		}
+	}, 5000);
 };
 
 
@@ -259,41 +295,22 @@ function addTextPart(container, node, ...other) {
 
 
 /**
- * Attiva l'interval timer che aumenta ogni 5s il TimeToAnswer. Invia eventualmente una richiesta di aiuto (non visibile al player) al valutatore
- */
-function toggleChronometer() {
-	Chronometer = setInterval(function () {
-		CurrentStatus.TimeToAnswer += 5000;
-
-		if (StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].GET_CHRONO && !CurrentStatus.AlreadyHelped &&
-			CurrentStatus.TimeToAnswer > StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN].expected_time) {
-			/* TODO - invia richiesta di aiuto */
-			CurrentStatus.AlreadyHelped = true;
-			console.log("HELP"); // debugging
-		}
-	}, 5000);
-};
-
-
-/**
  * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato. Invia anche lo status del player al valutatore
  */
 function nextStage() {
-	let CurrentStage = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
+	let CurrentStage = StoryObj.quests[Status.QuestN].activities[Status.ActivityN];
 
-	clearInterval(Chronometer);
+	clearInterval(IntervalTimer);
+	Status.ActivityRecap.TimeToAnswer = Status.time_elapsed;
 
 	if (CurrentStage.activity_type == 'ANSWER')
 		checkAnswer();
 	else if (CurrentStage.activity_type == 'READING') {
 		if (CurrentStage.answer_outcome[0].nextquest)
-			goToQuest(CurrentNavStatus.QuestN + 1);
+			goToQuest(Status.QuestN + 1);
 		else
 			goToActivity(CurrentStage.answer_outcome[0].nextactivity);
 	}
-
-	console.log(CurrentStatus); // debugging
-	/* TODO - invia status */
 };
 
 
@@ -302,36 +319,37 @@ function nextStage() {
  * Nel caso si necessiti valutazione umana, la procedura attiva una chiamata al server.
  */
 function checkAnswer() {
-	let CurrentActivity = StoryObj.quests[CurrentStatus.QuestN].activities[CurrentStatus.ActivityN];
+	let CurrentActivity = StoryObj.quests[Status.QuestN].activities[Status.ActivityN];
+
+	let PlayerAnswer = "";
+
+	if (CurrentActivity.answer_field.type == 'checklist') {
+		$(".AnswerField input").each(function () {
+			if ($(this).prop("checked")) PlayerAnswer = $(this).next().text();
+		});
+	}
+	else
+		PlayerAnswer = $(".AnswerField").find("input").first().val();
+
 
 	if (CurrentActivity.ASK_EVAL) {
-		/* TODO - manda richiesta */
+		validateInput( PlayerAnswer );
 	}
 	else {
-		let PlayerAnswer = "";
-
-		if (CurrentActivity.answer_field.type == 'checklist') {
-			$(".AnswerField input").each(function () {
-				if ($(this).prop("checked")) PlayerAnswer = $(this).next().text();
-			});
-		}
-		else
-			PlayerAnswer = $(".AnswerField").find("input").first().val();
-
-		/* aggiorna il punteggio e controlla come proseguire la partita */
-
 		let default_index;
+		let goto = {
+			q: -1,
+			a: -1
+		};
 
 		$.each(CurrentActivity.answer_outcome, function (index, value) {
 			if (value.response == PlayerAnswer) {
-				if (value.nextquest) {
-					goToQuest(CurrentStatus.QuestN + 1);
-				}
-				else {
-					goToActivity(value.nextactivity);
-				}
+				if (value.nextquest)
+					goto.q = Status.QuestN + 1;
+				else
+					goto.a = value.nextactivity;
 
-				CurrentStatus.TotalScore += parseInt(value.score) || 0;
+				Status.ActivityRecap.Score += parseInt(value.score) || 0;
 				return false;
 			}
 
@@ -339,16 +357,23 @@ function checkAnswer() {
 				default_index = index;
 
 			if ((index == CurrentActivity.answer_outcome.length - 1) && (value.response != PlayerAnswer)) {
-				if (CurrentActivity.answer_outcome[default_index].nextquest) {
-					goToQuest(CurrentStatus.QuestN + 1);
-				}
-				else {
-					goToActivity(CurrentActivity.answer_outcome[default_index].nextactivity);
-				}
+				if (CurrentActivity.answer_outcome[default_index].nextquest)
+					goto.q = Status.QuestN;
+				else
+					goto.a = CurrentActivity.answer_outcome[default_index].nextactivity;
 
-				CurrentStatus.TotalScore += parseInt(CurrentActivity.answer_outcome[default_index].score) || 0;
+				Status.ActivityRecap.Score += parseInt(CurrentActivity.answer_outcome[default_index].score) || 0;
 				return false;
 			}
 		});
+
+		Status.TotalScore += Status.ActivityRecap.Score;
+
+		/* TODO - invia status */
+
+		if ( goto.q >= 0 )
+			goToQuest( goto.q );
+		else
+			goToActivity( goto.a );
 	}
 };

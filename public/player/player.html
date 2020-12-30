@@ -14,7 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
             integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
             crossorigin="anonymous"></script>
-    <script src="test.js"></script>
+    <script src="test.js"></script> <!-- SOLO PER TEST -->
     <script src="player.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <!--Script js per generare bar code-->
@@ -42,16 +42,6 @@
 
 <body>
     <main id="StartScreen">
-        <script> 
-            window.onload = function() {
-                //$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
-
-                if ( StoryObj.ACCESSIBILITY )
-                    $("#AccessibilityMsg").append( $("<p>La storia è accessibile.</p>") );
-                else
-                    $("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
-            };
-        </script>
         
         <nav>
             <ul class=" nav justify-content-center">
@@ -60,7 +50,8 @@
                 </li>
             </ul>
         </nav>
-    <main id="StartScreen">            
+    
+    <!--
     <main id="StartScreen">            
         <div class="row">
             <div id="FirstStory" class="card col-12">
@@ -134,8 +125,8 @@
             <div id='chat-room'>
                 <h4 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h4>
                 <form action="">
-                    <input aria-label="Messaggio da inviare" id="Message" type="text" autocomplete="off" value="Invia un messaggio"><br>
-                    <button id="Send" onclick="CurrentStatus.ChatMessages += 1;">Invia</button>
+                    <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio"><br>
+                    <button id="Send">Invia</button>
                 </form>
             </div>
         </div>

@@ -90,8 +90,9 @@
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">      
         <img style="width: 100%;" src="https://media1.tenor.com/images/d8fb39693bab23e2c3b4ee36317a36ee/tenor.gif?itemid=17836773" />                
-        <div style='color:black' class="modal-body" >
+        <div id="success_text" style='color:black' class="modal-body" >
         é andato tutto bene!
+          <div id="success_id_text" style="display:none" ></div>
         </div>
       </div>
     </div>
@@ -101,7 +102,7 @@
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">      
         <img style="width: 100%;" src="https://media1.tenor.com/images/87d588d92e1b4decd302a96c265d7a39/tenor.gif?itemid=18634343" />               
-        <div style='color:black' class="modal-body" >
+        <div id="fail_text" style='color:black' class="modal-body" >
         Qualcosa è andato storto, che cosa?
         </div>
       </div>
@@ -149,7 +150,7 @@
     <div class="inner">
       <h3 class="masthead-brand">STORY EDITOR</h3>
       <nav class="nav nav-masthead justify-content-center">
-        <a class="nav-link" href="javascript:start_saving();" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
+        <a class="nav-link" href="javascript:Navbar('Save');" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
           <i class="far fa-save fa-2x"></i>
         </a>
         <a class="nav-link" href="javascript:Navbar('CSSEditor');" data-toggle="tooltip" data-placement="bottom" title="Modifica il CSS">
@@ -822,6 +823,11 @@
   <!-- HELP BUTTON -->
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
 
+  <main role="main" class="inner cover EditorSection " id="final_section">
+    <p>SHOW QR CODE HERE</p>
+    <p id="story_id_p"></p>
+    <button class="btn btn-lg btn-primary" onclick="go_home('final_section')" >Torna alla home</button>
+  </main>
 
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">
     <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">

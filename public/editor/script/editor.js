@@ -52,18 +52,7 @@ function handleError() {
   window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
 
-
-
-  /*
-  AJAX CALLS(tutte le seguenti seguono /editor/):
-    getStory
-    saveStory
-    publisher
-    getStories
-    deleteStory
-  
-  */
- function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
+function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
   $.get("/editor/getStories", function(data, status){
     let obj = JSON.parse(data);
     switch (caller) {
@@ -78,28 +67,19 @@ function handleError() {
 }
 /* 
 TO-DO list:
-  1)Implement saveStory, assuming server's semantics is correct
-    -SaveStory object building(done in testing mode)
-      -add publishable control and feedback(done in primordial version)
-      -add modal for when user tries to save a story that already have that title
-    -Media pushing
-    -Media format testing
-  2)Implement getStories in second and third buttons(done)
-  3)Implement getStory
-    -check why it doesn't work with gallery
-    -check navbar and pray it doesn't bother too much
+  1)Implement getStories in second and third buttons
+  2)Implement getStory
     -show what is needed to have publishable story
-  4)Implement multiple publish/unpublish/delete story
+  3)Implement multiple publish/unpublish/delete story
     -add informative div
-    -add icon to start calls
-    -implement primitive version of calls
-  5)Feedback aea handling
-  6)SaveStory and CSS editor relationship
-  7)After SaveStory handling
-  8)Extend (and fix) to all media, not just images
-  9)Generazione QR code storia
-  10)Make everything accessible
-  11)Make code polite and modular
+    -add button to start calls
+    -implement actual calls
+  4)Feedback aea handling
+  5)navbar handling
+  6)Go home handling
+  7)media handling
+  8)QR code generation
+  9)Make code polite and modular
 Notes:
   */
 function start_saving() {
@@ -112,9 +92,12 @@ function start_saving() {
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);
   console.log(story)
-  $.post("/editor/saveStory",story, function(data,status){
-    //alert("Status: " + status + "Story_id: " +data );
-    //images_byte_stream = [];
+  $.post("/editor/saveStory",story, function(data, status ){
+    if( status == "success" ) {
+      $("#story_id_p").text("Id storia: "+data);
+      goToSection("final_section");
+    }
+
   });
 } 
 /* 
@@ -430,7 +413,7 @@ function MainMenu( action ) {
 function Navbar( option ) {
   switch ( option ) {
     case "Save":
-      /* TODO */
+      start_saving();
       break;
     case "CSSEditor":
       CSS_Editor_Window = window.open( "../css_editor/css_editor.html", "tab" );

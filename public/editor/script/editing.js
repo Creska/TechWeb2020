@@ -138,6 +138,8 @@ function goToSection(where) {
 		case "Explorer":
 		  getStories("Explorer");
 		  break;   
+		case "final_section":
+			break;
 		default:
 		  handleError();
 	  }
@@ -854,6 +856,7 @@ function save_title( which ) {
    */
   function initStory() {
 	CurrentWork = {
+	 // story_ID:"sBlRbq11144a6tdPAjfEow==",
 	  ACCESSIBILITY: 0,
 	  story_title: "",
 	  //story_ID: -1,

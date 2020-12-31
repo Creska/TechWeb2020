@@ -538,7 +538,8 @@ app.post('/editor/saveStory', function (req, res) {
             }
         })
     }
-    //write story json inside story directory
+    //add id field and write story json inside story directory
+    story_json.story_ID = story_id;
     let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);

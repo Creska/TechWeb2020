@@ -144,7 +144,7 @@ function openCard( card ) {
  * @param titolo
  * Crea una card con tutti i parametri adeguati e la aggiunge al deck
  */
-function create_card(titolo) {
+function create_card(titolo,subtitle) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
   let color;
   switch ( current_grid ) {
@@ -177,8 +177,9 @@ function create_card(titolo) {
       onclick: "openCard( this )"
     });
   card.append( $("<div class='card-body text-center'></div>") );
-  card.children().append( $("<p class='card-text'>" + titolo + "</p>") );
-  
+  card.children().append( $("<p class='card-title'><h4>" + titolo + "</h4></p>") );
+  if( subtitle ) 
+    card.children().append( $("<p class='card-subtitle mb-2'<h6>" + subtitle + "</h6></p>") );
   // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
   if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
     $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');
@@ -194,7 +195,9 @@ function create_card(titolo) {
 function create_stories_grid(array) {
   //create_card per ogni storia recuperata con la chiamata ajax
   for(i=0;i<array.length;i++){
-    create_card(array[i]);
+    if(!array[i].title)
+      array[i].title = "senza titolo";
+    create_card(array[i].title,"id: "+array[i].id);
   }
 };
   
@@ -438,6 +441,8 @@ function saveCardGrids() {
       console.log("pub: ",pub) 
     if(unpub){
       for(i=0;i<unpub.length;i++){//unpublishable
+        if( !unpub[i].title )
+          unpub[i].title = "senzatitolo";
         if( i%2 ==0 ){
           let deck = $("<div/>",{"class": "card-deck mb-2 "});
           $("#publishableContainer").append(deck);
@@ -451,12 +456,15 @@ function saveCardGrids() {
           "id": "pble"+i
         });
         card.append( $("<div class='card-body text-center'></div>") );
-        card.children().append( $("<p class='card-text'>" + unpub[i] + "</p>") );
+        card.children().append( $("<p class='card-title'><h4>" + unpub[i].title + "</h4></p>") );
+        card.children().append( $("<p class='card-subtitle'><h6>id: " + unpub[i].id + "</h6></p>") );
         $("#publishableContainer > div").last().append(card);
       }
     } 
     if(pub){
       for(j=0;j<pub.length;j++){//published
+        if( !pub[j].title )
+          pub[j].title = "senzatitolo";
         if( j%2 ==0 ){
           let deck = $("<div/>",{"class": "card-deck mb-2 "});
           $("#publishedContainer").append(deck);
@@ -470,7 +478,8 @@ function saveCardGrids() {
           "id": "ped"+j
         });
         card.append( $("<div class='card-body text-center'></div>") );
-        card.children().append( $("<p class='card-text'>" +pub[j] + "</p>") );
+        card.children().append( $("<p class='card-title'><h4>" + pub[j].title + "</h4></p>") );
+        card.children().append( $("<p class='card-subtitle'><h6>id: " + pub[j].id + "</h6></p>") );
         $("#publishedContainer > div").last().append(card);
       }
     } 

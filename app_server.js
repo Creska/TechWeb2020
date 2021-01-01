@@ -376,7 +376,7 @@ app.get('/player/loadJSON', function (req, res) {
     }
 })
 
-app.get('/editor/getStories', function (req, res) {
+app.get('/editor/getStories', function (req, res) { 
     console.log("getStories request received.")
     var section = req.query.section;
     if (section == 'ChooseStoryToEdit') {
@@ -386,22 +386,21 @@ app.get('/editor/getStories', function (req, res) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
-            else {
-                files.forEach(file => {
-                    fs.readFile(unpubpath + '/' + file + '/' + 'story.json', (err, data) => {
-                        if (err) {
-                            console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
-                            return res.status(500).send(JSON.stringify(err)).end();
-                        }
-                        else {
-                            stories.push({ id: file, title: data.story_title })
-                        }
-                    })
+            else {  
+                files.forEach( file => {
+                    try {
+                        let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
+                        stories.push({ id: file, title: JSON.parse(data).story_title });
+                    }
+                    catch(err) {
+                        console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
+                        return res.status(500).send(JSON.stringify(err)).end();
+                    }
                 })
-                return res.status(200).send(JSON.stringify(stories)).end()
             }
+            console.log("stories: ",stories)//this happens before the forEach for some reason
+            return res.status(200).send(JSON.stringify(stories)).end()
         })
-
     }
     else if (section == 'Explorer') {
         let stories = {}; //returns an object of published stories and publishable ones
@@ -416,10 +415,11 @@ app.get('/editor/getStories', function (req, res) {
                 }
                 else {
                     files.forEach(file => {
-                        let data = fs.readFileSync(unpubpath + '/' + file + '/' + 'story.json');
-                        if (data.publishable) {
+                        let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
+                        data = JSON.parse(data);
+                        if ( stringToBool(data.publishable.ok) ) {
                             publishable.push({ id: file, title: data.story_title })
-                        }
+                        } 
                     })
                     resolve(true)
                 }
@@ -431,10 +431,11 @@ app.get('/editor/getStories', function (req, res) {
                     console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                     res.status(500).send(JSON.stringify(err)).end();
                     reject(false);
-                }
+                } 
                 else {
                     files.forEach(file => {
-                        let data = fs.readFileSync(pubpath + '/' + file + '/' + 'story.json');
+                        let data = fs.readFileSync(pubpath + file + '/' + 'story.json');
+                        data = JSON.parse(data);
                         published.push({ id: file, title: data.story_title })
                     })
                     resolve(true)
@@ -445,6 +446,7 @@ app.get('/editor/getStories', function (req, res) {
             if (values[0] && values[1]) {
                 stories.publishable = publishable;
                 stories.published = published;
+                console.log("Explorer stories", stories)
                 return res.status(200).send(JSON.stringify(stories)).end();
             }
         });

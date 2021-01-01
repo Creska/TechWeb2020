@@ -51,13 +51,19 @@ function getFileExtension( name ) {
 function handleError() {
   window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
-
+/*  getStories ora funziona come vuole mao
+  => GET /editor/getStories, la query vuole il parametro section che 
+  deve essere ChooseStoryToEdit oppure Explorer
+  => NOTA: nel caso di ChooseStoryToEdit viene ritornato un array di
+  storia, con Explorer un oggetto contenente due array come campi
+  .publishable e .published*/
 function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
-  $.get("/editor/getStories", function(data, status){
+  $.get("/editor/getStories?section="+caller, function(data, status){
+    console.log("con caller: ",caller," data: ",JSON.parse(data))
     let obj = JSON.parse(data);
     switch (caller) {
       case "ChooseStoryToEdit":     
-        create_stories_grid(obj.unpublished);
+        create_stories_grid(obj);
         break;
       case "Explorer":
         create_Explorer_grids(obj.unpublished,obj.published);

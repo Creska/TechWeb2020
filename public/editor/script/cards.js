@@ -86,6 +86,14 @@ function get_card_index() {
  * A seconda della modalità corrente, apre la sezione puntata dalla card, oppure attiva la cancel o swap mode.
  * Al momento del click, disabilita per mezzo secondo la possibilità di cliccarci sopra. Questo viene fatto per evitare problemi causati da un doppio click effettuato per sbaglio
  */
+
+function get_id_subtitle(card) {
+  //console.log("card from get_id:subtitle", card)
+  let id = card.lastElementChild.lastElementChild.innerText.slice(4);
+  return id;
+}
+
+
 function openCard( card ) {
   if ( CardClickDisabled )
     return;
@@ -122,8 +130,7 @@ function openCard( card ) {
           }
         }
         else if (CurrentNavStatus.Section == "ChooseStoryToEdit") {
-            let id = card.lastElementChild.lastElementChild.innerText.slice(4);
-            getStory( id);
+            getStory(get_id_subtitle(card));
           }
       }, 750);
       break;
@@ -133,7 +140,6 @@ function openCard( card ) {
     CardClickDisabled = false;
   }, 500);
 };
-  
   
 /**
  * @param titolo
@@ -186,9 +192,7 @@ function create_card(titolo,subtitle) {
   }
 };
 
-
 function create_stories_grid(array) {
-  //create_card per ogni storia recuperata con la chiamata ajax
   for(i=0;i<array.length;i++){
     if(!array[i].title)
       array[i].title = "senza titolo";
@@ -430,10 +434,6 @@ function saveCardGrids() {
 
 
   function create_Explorer_grids(unpub,pub){
-    /*    <div class="card-deck mb-2">          
-      </div> */
-      console.log("unpub: ",unpub) 
-      console.log("pub: ",pub) 
     if(unpub){
       for(i=0;i<unpub.length;i++){//unpublishable
         if( !unpub[i].title )
@@ -451,8 +451,8 @@ function saveCardGrids() {
           "id": "pble"+i
         });
         card.append( $("<div class='card-body text-center'></div>") );
-        card.children().append( $("<p class='card-title'><h4>" + unpub[i].title + "</h4></p>") );
-        card.children().append( $("<p class='card-subtitle'><h6>id: " + unpub[i].id + "</h6></p>") );
+        card.children().append( $("<p class='card-title h4'>" + unpub[i].title + "</p>") );
+        card.children().append( $("<p class='card-subtitle h6'>id: " + unpub[i].id + "</p>") );
         $("#publishableContainer > div").last().append(card);
       }
     } 
@@ -473,8 +473,8 @@ function saveCardGrids() {
           "id": "ped"+j
         });
         card.append( $("<div class='card-body text-center'></div>") );
-        card.children().append( $("<p class='card-title'><h4>" + pub[j].title + "</h4></p>") );
-        card.children().append( $("<p class='card-subtitle'><h6>id: " + pub[j].id + "</h6></p>") );
+        card.children().append( $("<p class='card-title h4'>" + pub[j].title + "</p>") );
+        card.children().append( $("<p class='card-subtitle h6'>id: " + pub[j].id + "</p>") );
         $("#publishedContainer > div").last().append(card);
       }
     } 

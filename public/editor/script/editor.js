@@ -51,13 +51,7 @@ function getFileExtension( name ) {
 function handleError() {
   window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
-/*  getStories ora funziona come vuole mao
-  => GET /editor/getStories, la query vuole il parametro section che 
-  deve essere ChooseStoryToEdit oppure Explorer
-  => NOTA: nel caso di ChooseStoryToEdit viene ritornato un array di
-  storia, con Explorer un oggetto contenente due array come campi
-  .publishable e .published*/
-function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
+function getStories(caller) {
   $.get("/editor/getStories?section="+caller, function(data, status){
     let obj = JSON.parse(data);
     switch (caller) {
@@ -187,13 +181,23 @@ function publisher(story_ids) {
 }
 
 function explorer_calls() {
-  //collect ids from trash can
-  //build array and call deleteStory
-  //collect ids from publishable container
   //track stories that were moved 
   //build array with those stories
+  //call deleteStory
   //call publish
+  let ids_to_delete = [];
+  $("#trash_can").children().each( (index,deck) => {
+    let cards = deck.children;
+    console.log("deck:",cards)
+    for (let card of cards) {
+      console.log("card: ",card)
+      ids_to_delete.push( get_id_subtitle(card) );
+    }
+  })
+  //call delete
+
 }
+
 /*
 function get_all_images_bytes(){
   i=0;

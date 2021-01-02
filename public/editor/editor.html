@@ -865,41 +865,30 @@
 }
 .grido {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) ;
 }
       </style> 
   <div class="grido">
-    
-    <div class="card disabled"   style="opacity:0; background: rgba(0, 128, 0, 0); cursor: default;" >
-      <div class="card-body text-center">
-        <p class="card-text" >Cestino</p>
-      </div>
+  <div class="mb-1" >Cestino</div>
+  <div style="min-width: 20%;" class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
+    <div class="card-deck mb-2" >      
     </div>
-  <div class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
-    <div class="card-deck mb-2">          
-    </div> 
   </div>
-  </div>
+  <div class="mb-1" > <span style="width: 50% ;float: left; text-align: center;">Storie pubblicabili</span> <span style="width: 50%; text-align: center; float: right;">Storie pubblicate</span></div>
   <div class="grid-container mb-3">
     <div id="publishableContainer" class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
     </div>             
     <div id="publishedContainer" class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
     </div>
   </div>
+  </div>
   <button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button>
-  <div class='grido mt-5'>
-  <textarea  rows="4" cols="50"style="color: red; background-color: transparent;" readonly>
+  <div class='grido mt-3'>
+    <textarea  rows="4" cols="50"style="color: red; background-color: transparent;" readonly>
 This is a feedback area, if something went wrong with the server you will (probably) see an error message here. 
     </textarea>
-  </div>
-  </main>
-  <!--
-  <div class="EditorSection" id="TestSection">
-    SEZIONE USATA PER DEBUGGING
-  </div>
-  -->
-  
-  
+  </div>  
+  </main> 
   <footer class="mastfoot mt-auto">
     <div class="inner small">
       <p> a cura di <a href="../about/team.html" target="_blank">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>

@@ -603,7 +603,7 @@ app.post('/editor/publisher', function (req, res) {
                                 console.log("published field updated successfully.")
                             }
                         })
-                        console.log('The story ' + story_name + 'was unpublished.');
+                        console.log('The story ' + story_id + 'was unpublished.');
                     }
                 })
             }
@@ -625,7 +625,7 @@ app.post('/editor/publisher', function (req, res) {
                                 console.log("published field updated successfully.")
                             }
                         })
-                        console.log('The story ' + story_name + 'was published.');
+                        console.log('The story ' + story_id + 'was published.');
                     }
                 })
             }

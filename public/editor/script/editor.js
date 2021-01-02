@@ -72,10 +72,8 @@ function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma n
 }
 /* 
 TO-DO list:
-  -add button to start calls
   -Implement multiple publish/unpublish/delete story
   -Feedback area handling
-  -fix trash can layout
   -add duplicate button( basically delete id field then saveStory)
   -navbar/Go home handling
   -informative paragraph in explorer
@@ -180,7 +178,7 @@ function deleteStory(story_ids) {
   });
 }
 
-function publisher(story_ids) {//problema con unpublished, funziona se unpub c'è
+function publisher(story_ids) {
   story = {
     story_ids: story_ids
   };
@@ -189,7 +187,12 @@ function publisher(story_ids) {//problema con unpublished, funziona se unpub c'�
 }
 
 function explorer_calls() {
-  //delete, publish, unpublish
+  //collect ids from trash can
+  //build array and call deleteStory
+  //collect ids from publishable container
+  //track stories that were moved 
+  //build array with those stories
+  //call publish
 }
 /*
 function get_all_images_bytes(){

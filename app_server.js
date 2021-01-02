@@ -96,10 +96,10 @@ function storyPath(id) {
 }
 
 function storyFolder(id) {
-    if (fs.existsSync(pubpath + '/' + id)) {
+    if (fs.existsSync(pubpath + id)) {
         return 'pubpath'
     }
-    else if (fs.existsSync(unpubpath + '/' + id)) {
+    else if (fs.existsSync(unpubpath + id)) {
         return 'unpubpath'
     }
     else {
@@ -581,29 +581,50 @@ app.post('/editor/deleteStory', function (req, res) {
 })
 
 app.post('/editor/publisher', function (req, res) {
-    //TODO do I have to check if an unpublished story can be published
     var story_ids = req.body.story_ids;
     if (story_ids != undefined) {
         story_ids.forEach(story_id => {
             let path = storyFolder(story_id);
             if (path == 'pubpath') {
-                fs.rename(pubpath + '/' + story_id, unpubpath + '/' + story_id, (err) => {
+                fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
                     if (err) {
                         console.log("An error occurred inside /editor/publisher while unpublishing " + story_name + ": " + err)
                         return res.status(500).send(JSON.stringify(err)).end();
                     }
                     else {
+                        fs.readFile(unpubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                            if (err) { 
+                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
+                                return res.status(500).send(JSON.stringify(err)).end();
+                            }
+                            else {
+                                let story = JSON.parse(file);
+                                story.published = false;
+                                console.log("published field updated successfully.")
+                            }
+                        })
                         console.log('The story ' + story_name + 'was unpublished.');
                     }
                 })
             }
             else if (path == 'unpubpath') {
-                fs.rename(unpubpath + '/' + story_id, pubpath + '/' + story_id, (err) => {
+                fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
                     if (err) {
                         console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
                         return res.status(500).send(JSON.stringify(err)).end();
                     }
                     else {
+                        fs.readFile(pubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                            if (err) { 
+                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
+                                return res.status(500).send(JSON.stringify(err)).end();
+                            }
+                            else {
+                                let story = JSON.parse(file);
+                                story.published = true;
+                                console.log("published field updated successfully.")
+                            }
+                        })
                         console.log('The story ' + story_name + 'was published.');
                     }
                 })

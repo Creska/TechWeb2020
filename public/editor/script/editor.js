@@ -172,22 +172,19 @@ function getStory(id) {//fa crashare l'app anche con published
     goToSection("EditStory");
   });
 }
-function deleteStory(nome) {
-  //value = prompt('bool published: ');
+function deleteStory(story_ids) {
   story = {
-    story_name: nome,
-    published: true//true per adesso
+    story_ids: story_ids
   };
   $.post("/editor/deleteStory",story, function(data,status){
-    alert("Status: " + status);
   });
 }
-function publisher(name) {//problema con unpublished, funziona se unpub c'è
+
+function publisher(story_ids) {//problema con unpublished, funziona se unpub c'è
   story = {
-    story_name: name
+    story_ids: story_ids
   };
   $.post("/editor/publisher",story, function(data, status){
-    alert("Status: " + status);
   });
 }
 
@@ -195,25 +192,6 @@ function explorer_calls() {
   //delete, publish, unpublish
 }
 /*
-function saveStory() { 
-  
-  get_all_images_bytes();
-    data_array.push({
-      name: "nome.json",
-      data: CurrentWork
-    });
-  story= {//storia ipotetica
-    story_data: data_array,    
-    story_name: "nome",
-    published: true,
-    checked: true
-    //story: true ritengo sia inutile
-  };
-  $.post("/editor/saveStory",story, function(data,status){
-    alert("Status: " + status);
-    data_array = [];
-  });
-} 
 function get_all_images_bytes(){
   i=0;
   while(CurrentWork.quests[i]){

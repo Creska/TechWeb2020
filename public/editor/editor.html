@@ -869,9 +869,10 @@
 }
       </style> 
   <div class="grido">
-    <div class="card "  style="opacity: 0; cursor: default;" >
+    
+    <div class="card disabled"   style="opacity:0; background: rgba(0, 128, 0, 0); cursor: default;" >
       <div class="card-body text-center">
-        <p class="card-text">1</p>
+        <p class="card-text" >Cestino</p>
       </div>
     </div>
   <div class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">
@@ -879,12 +880,13 @@
     </div> 
   </div>
   </div>
-  <div class="grid-container mb-5">
+  <div class="grid-container mb-3">
     <div id="publishableContainer" class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
     </div>             
     <div id="publishedContainer" class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
     </div>
   </div>
+  <button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button>
   <div class='grido mt-5'>
   <textarea  rows="4" cols="50"style="color: red; background-color: transparent;" readonly>
 This is a feedback area, if something went wrong with the server you will (probably) see an error message here. 

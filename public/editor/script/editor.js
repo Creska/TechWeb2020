@@ -72,18 +72,17 @@ function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma n
 }
 /* 
 TO-DO list:
-  2)Implement getStory
-    -show what is needed to have publishable story
-  3)Implement multiple publish/unpublish/delete story
-    -add informative div
-    -add button to start calls
-    -implement actual calls
-  4)Feedback aea handling
-  5)navbar handling
-  6)Go home handling
-  7)media handling
-  8)QR code generation
-  9)Make code polite and modular
+  -add button to start calls
+  -Implement multiple publish/unpublish/delete story
+  -Feedback area handling
+  -fix trash can layout
+  -add duplicate button( basically delete id field then saveStory)
+  -navbar/Go home handling
+  -informative paragraph in explorer
+  -button that triggers popover which shows what is missing to make the story publishable
+  -media handling
+  -QR code generation
+  -Make code polite and modular
 Notes:
   */
 function start_saving() {
@@ -192,13 +191,9 @@ function publisher(name) {//problema con unpublished, funziona se unpub c'è
   });
 }
 
-//bug grafico nella creazione delle gallerie partendo da una gallery r creandone altre consecutive e altri bug
-
-//manca campo per chiedere nome
-
-//piccolo bug grafico tasto home che compare all'inizio e una volta
-//cliccato sparisce dalla home(non si dovrebbe vedere in primo luogo)
-
+function explorer_calls() {
+  //delete, publish, unpublish
+}
 /*
 function saveStory() { 
   

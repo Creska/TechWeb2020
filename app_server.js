@@ -461,15 +461,16 @@ app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
     var story_id = req.query.story_id;
     let path = storyPath(story_id);
+    console.log("Id ricevuto: ",story_id)
     if (path != '404') {
-        fs.readFile(path + '/' + story_id + '/story.json', 'utf8', function (err, file) {
-            if (err) {
+        fs.readFile(path + '/story.json', 'utf8', function (err, file) {
+            if (err) { 
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
             else {
                 console.log("Story get successfully.")
-                return res.status(200).send(JSON.stringify(file)).end();
+                return res.status(200).send(file).end();
             }
         })
     }

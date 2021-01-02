@@ -122,13 +122,8 @@ function openCard( card ) {
           }
         }
         else if (CurrentNavStatus.Section == "ChooseStoryToEdit") {
-          //sovrascrivo Currentwork con quello recuperato con ajax, poi gotoSection("EditStory")
-            if(!CurrentWork)
-              initStory();
-            goToSection("EditStory");
-            /*$("#ChooseStoryToEdit").fadeOut(function () {
-              $("#EditStory").fadeIn();
-            });*/
+            let id = card.lastElementChild.lastElementChild.innerText.slice(4);
+            getStory( id);
           }
       }, 750);
       break;

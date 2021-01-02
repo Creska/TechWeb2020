@@ -59,7 +59,6 @@ function handleError() {
   .publishable e .published*/
 function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
   $.get("/editor/getStories?section="+caller, function(data, status){
-    console.log("con caller: ",caller," data: ",JSON.parse(data))
     let obj = JSON.parse(data);
     switch (caller) {
       case "ChooseStoryToEdit":     
@@ -73,7 +72,6 @@ function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma n
 }
 /* 
 TO-DO list:
-  1)Implement getStories in second and third buttons
   2)Implement getStory
     -show what is needed to have publishable story
   3)Implement multiple publish/unpublish/delete story
@@ -97,13 +95,15 @@ function start_saving() {
 }
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);
-  console.log(story)
-  $.post("/editor/saveStory",story, function(data, status ){
-    if( status == "success" ) {
+  $.ajax({
+    url: '/editor/saveStory',
+    type: 'POST',
+    data: JSON.stringify(story),
+    contentType: "application/json",
+    success: function(data) {
       $("#story_id_p").text("Id storia: "+data);
       goToSection("final_section");
     }
-
   });
 } 
 /* 
@@ -164,26 +164,13 @@ function prepare_saveStory_json(){
     }
     i++;
   } 
-  delete clean_cw.ActivityGrids;
-  delete clean_cw.QuestGrid;
-  delete clean_cw.ParagraphGrids;
-  clean_cw.editor_graphics = {
-    //html for each section
-  }
   return clean_cw;
 }
 
-function getStory() {//fa crashare l'app anche con published
-  //value = prompt('bool published: ');
-  //var nome = prompt("nome: ");
-  //alert("nome: ", nome)
-  let nome="nut";
-  value = true;
-  $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
-  //  alert("Data: " + data + "\nStatus: " + status);
-  //console.log("json received with getStory: ",JSON.parse(data) )
-  CurrentWork = JSON.parse(data);
-  goToSection("EditStory");
+function getStory(id) {//fa crashare l'app anche con published
+  $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
+    CurrentWork =JSON.parse(data);
+    goToSection("EditStory");
   });
 }
 function deleteStory(nome) {

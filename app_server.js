@@ -568,7 +568,7 @@ app.post('/editor/deleteStory', function (req, res) {
                     }
                     else {
                         console.log("Story " + path + " deleted successfully.")
-                        return;
+                        return res.status(200).send().end();
                     }
                 })
             }
@@ -604,6 +604,7 @@ app.post('/editor/publisher', function (req, res) {
                             }
                         })
                         console.log('The story ' + story_id + 'was unpublished.');
+                        return res.status(200).send().end();
                     }
                 })
             }
@@ -626,6 +627,7 @@ app.post('/editor/publisher', function (req, res) {
                             }
                         })
                         console.log('The story ' + story_id + 'was published.');
+                        return res.status(200).send().end();
                     }
                 })
             }

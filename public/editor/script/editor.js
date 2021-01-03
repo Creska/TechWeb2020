@@ -66,8 +66,11 @@ function getStories(caller) {
 }
 /* 
 TO-DO list:
-  -Implement multiple publish/unpublish/delete story
   -Feedback area handling
+    -the setting is the following:
+      -if both calls are successful then show the happy loli,
+      otherwise show the questioning loli and write in feedback 
+      textarea what went wrong
   -add duplicate button( basically delete id field then saveStory)
   -navbar/Go home handling
   -informative paragraph in explorer
@@ -158,34 +161,43 @@ function prepare_saveStory_json(){
   return clean_cw;
 }
 
-function getStory(id) {//fa crashare l'app anche con published
+function getStory(id) {
   $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
     CurrentWork =JSON.parse(data);
     goToSection("EditStory");
   });
 }
-function deleteStory(story_ids) {
-  story = {
-    story_ids: story_ids
-  };
-  $.post("/editor/deleteStory",story, function(data,status){
-  });
-}
-
-function publisher(story_ids) {
-  story = {
-    story_ids: story_ids
-  };
-  $.post("/editor/publisher",story, function(data, status){
-  });
-}
 
 function explorer_calls() {
   let ids = gather_ids();
-  if( ids.delete_array.length > 0 )
-    deleteStory(ids.delete_array)
-  if( ids.pub_unpub_array.length > 0 )
-    publisher(ids.pub_unpub_array)  
+  let delete_promise = new Promise( (resolve, reject) => {
+    if( ids.delete_array.length > 0 ) {
+      let story = {
+        story_ids: ids.delete_array
+      };
+      $.post("/editor/deleteStory",story, function(data,status){
+        resolve(status);
+      });
+    }
+  });
+
+  let publisher_promise = new Promise(( resolve, reject) => {
+    if( ids.pub_unpub_array.length > 0 ) {
+      let story = {
+        story_ids: ids.pub_unpub_array
+      };
+      $.post("/editor/publisher",story, function(data, status){
+        resolve(status);
+      });
+    }
+  });
+
+  Promise.all([delete_promise, publisher_promise]).then(status => {
+    if( (status[0] == "success") && (status[1] == "success") )
+      ;
+    else
+      alert("something went wrong:"+status[0]+status[1]);
+  });
 }
 
 function gather_ids() {

@@ -1,0 +1,40 @@
+Roba da fare:
+
+* DIVISIONE IN GRUPPI
+    * Ogni x collegamenti (x = numero massimo di membri per gruppo), essi vengono messi in un gruppo identificato da un ID specifico, aggiunto nel JSON al momento dell'invio, tramite campo "groupID".
+
+* INVIO STATS
+    * Il player tiene queste stats:
+        {
+            QuestN
+            QuestID
+            ActivityN
+            time_elapsed // tempo passato dall'inizio dell'attività
+            ActivityRecap:
+            {
+                TimeToAnswer // tempo completo impiegato per rispondere
+                AlreadyHelped // serve solo all'applicazione player
+                ChatMessages // numero di volte in cui la chat è stata usata durante l'attività corrente
+                Score // punteggio ottenuto tramite l'attività corrente
+            }
+        }
+    * Ogni 5 secondi vengono inviati i campi 2,3,4 delle stats
+    * Ad ogni completamento di un'attività viene inviato l'oggetto stats completo
+
+* VALUTAZIONE UMANA
+    * Obiettivo: il player deve inviare la risposta al valutatore. Ma cosa dovrebbe servire di ulteriore? Il numero dell'attività e l'ID della quest? Anche il testo dell'attività??
+    * Come ricezione, il player si aspetta una tripla <prossima_quest, prossima_attività, score> dove:
+        * prossima_quest --> flag che indica se si passa alla prossima quest
+        * prossima_attività --> indica il numero dell'attività a cui passare. viene ignorato se prossima_quest = true, dato che ogni quest viene iniziata dall'attività 0
+
+* MEDIA
+    * Basically bisognerebbe salvare immagini e video con un nome generato sul momento, in base ai media già salvati
+    * Per semplificare al massimo le cose, io salverei i files nell'oggetto della storia in questo modo:
+        {
+	        needsaving: "", // indica se bisogna salvare il file su server
+	        src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al file
+	        alt: ""
+        }
+
+* SALVATAGGIO DEI FILES
+    * PROBLEMA: per come è stato pensato il CSS, in caso di randomizzazione delle quest, le regole di styling si scollegano dalle quest. Bisogna trovare una soluzione, anche brutta ma che funzioni

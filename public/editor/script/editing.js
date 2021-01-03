@@ -3,6 +3,155 @@ var gm_b = [ false, false, false, false, false ]; // se gm_b[0] è true --> #gm0
 /* ------------------------- */
 
 /**
+ * @param which
+ * Salva il titolo della storia o della quest
+ */
+function save_title( which ) {
+	let title;
+	switch ( which ) {
+	  case "story":
+		title = $( '#StoryTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
+		CurrentWork.story_title = title;
+  
+		if ( title )
+		  $( "#EditStory header small" ).html( title );
+		else
+		  $( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
+  
+		change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
+		$( "#SaveStoryTitle" ).text( "Salvato!" );
+		break;
+	  case "quest":
+		if (CurrentNavStatus.QuestN < 0) {
+		  title = $("#NewQuestWidget input").val().trim().replace(/(<([^>]+)>)/gi, "");
+		  if ( title ) {
+			/* un titolo di default è già presente nel nuovo elemento quest
+			quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
+			CurrentWork.quests[CurrentWork.quests.length - 1].quest_title = title;
+		  }
+		}
+		else {
+		  title = $( '#QuestTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
+  
+		  // aggiorna il nome della card e il titolo della sezione
+		  if ( title ) {
+			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( title );
+			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + title );
+		  }
+		  else {
+			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
+			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
+		  }
+  
+		  CurrentWork.QuestGrid = $( "#QuestsGrid" ).html();
+  
+		  CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
+  
+		  change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
+		  $( "#SaveQuestTitle" ).text( "Salvato!" );
+		}
+		break;
+	  default:
+		  handleError();
+	}
+  };
+  
+  
+  /**
+   * Crea una quest/attività/elemento vuoto e lo aggiunge al json, nonché agli array di supporto
+  */
+  function create_stuff(what) {
+	switch (what) {
+	  case "quest":
+		CurrentWork.quests.push(initQuest());
+		CurrentWork.ActivityGrids.push("");
+		CurrentWork.ParagraphGrids.push([]);
+		save_title("quest");
+		break;
+	  case "activity":
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
+		CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN].push("");
+		break;
+	  case "TextParagraph":
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
+		  type: "text",
+		  content: ""
+		});
+		break;
+	  case "Gallery":
+		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
+		  type: "gallery",
+		  content: []
+		});
+		break;
+	  default:
+		handleError();
+	}
+  };
+  
+  
+  /**
+   * Inizializza una nuova storia
+   */
+  function initStory() {
+	CurrentWork = {
+	 // story_ID:"sBlRbq11144a6tdPAjfEow==",
+	  ACCESSIBILITY: 0,
+	  story_title: "",
+	  //story_ID: -1,
+	  game_mode: "",
+	  players: 0,
+	  quests: [],
+	  QuestGrid: "",
+	  ActivityGrids: [],
+	  ParagraphGrids: []
+	};
+  
+	CSSdata = {
+	  sheet: "",
+	  valid: true
+	};
+  };
+  
+  
+  /**
+   * Inizializza un oggetto quest vuoto per il JSON
+   */
+  function initQuest() {
+	  let EmptyQuest = {	
+		  quest_title: "",
+		  activities: []
+	};
+  
+	  return EmptyQuest;
+  };
+  
+  
+  /**
+   * Inizializza un oggetto attività vuoto per il JSON
+   */
+  function initActivity() {
+	  let EmptyActivity = {
+	  activity_text: [],
+	  activity_type: "ANSWER",
+		  answer_field: {
+		description: "",
+		type: "",
+		options: []
+	  },
+		  right_answer: "",
+		  answer_outcome: [],
+		  ASK_EVAL: 0,
+		  GET_CHRONO: 0,
+	  expected_time: "",
+	  FINAL: 0
+	  };
+  
+	  return EmptyActivity;
+  };
+
+
+/**
  * Torna alla sezione precedente
 */
 function back() {
@@ -345,6 +494,35 @@ function setActivityType() {
 
 	$( "#ChooseActivityType" ).fadeOut();
 };
+
+
+  /**
+ * Marca l'attività corrente come "finale" o viceversa, a seconda dello stato attuale.
+ */
+function setFinalActivity() {
+	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+  
+	if ( CurrentStage.FINAL == 0 ) {
+	  change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
+	  $("#FinalStageBtn").next().attr( "disabled", true );
+	  $("#FinalStageBtn").next().next().attr( "disabled", true );
+  
+	  // segna tutte le altre attività come non finali
+	  CurrentWork.quests.forEach( function( q, i ) {
+		q.activities.forEach( function( a, j ) {
+		  a.FINAL = 0;
+		});
+	  });
+  
+	  CurrentStage.FINAL = 1;
+	}
+	else {
+	  change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
+	  $("#FinalStageBtn").next().attr( "disabled", false );
+	  $("#FinalStageBtn").next().next().attr( "disabled", false );
+	  CurrentStage.FINAL = 0;
+	}
+  };
 
 
 /**
@@ -762,180 +940,3 @@ function addRadio( Container ) {
 	}
 };
 
-
-/**
- * @param which
- * Salva il titolo della storia o della quest
- */
-function save_title( which ) {
-	let title;
-	switch ( which ) {
-	  case "story":
-		title = $( '#StoryTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
-		CurrentWork.story_title = title;
-  
-		if ( title )
-		  $( "#EditStory header small" ).html( title );
-		else
-		  $( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
-  
-		change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
-		$( "#SaveStoryTitle" ).text( "Salvato!" );
-		break;
-	  case "quest":
-		if (CurrentNavStatus.QuestN < 0) {
-		  title = $("#NewQuestWidget input").val().trim().replace(/(<([^>]+)>)/gi, "");
-		  if ( title ) {
-			/* un titolo di default è già presente nel nuovo elemento quest
-			quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-			CurrentWork.quests[CurrentWork.quests.length - 1].quest_title = title;
-		  }
-		}
-		else {
-		  title = $( '#QuestTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
-  
-		  // aggiorna il nome della card e il titolo della sezione
-		  if ( title ) {
-			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( title );
-			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + title );
-		  }
-		  else {
-			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
-			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
-		  }
-  
-		  CurrentWork.QuestGrid = $( "#QuestsGrid" ).html();
-  
-		  CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
-  
-		  change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
-		  $( "#SaveQuestTitle" ).text( "Salvato!" );
-		}
-		break;
-	  default:
-		  handleError();
-	}
-  };
-  
-  
-  /**
-   * Crea una quest/attività/elemento vuoto e lo aggiunge al json, nonché agli array di supporto
-  */
-  function create_stuff(what) {
-	switch (what) {
-	  case "quest":
-		CurrentWork.quests.push(initQuest());
-		CurrentWork.ActivityGrids.push("");
-		CurrentWork.ParagraphGrids.push([]);
-		save_title("quest");
-		break;
-	  case "activity":
-		CurrentWork.quests[CurrentNavStatus.QuestN].activities.push(initActivity());
-		CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN].push("");
-		break;
-	  case "TextParagraph":
-		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
-		  type: "text",
-		  content: ""
-		});
-		break;
-	  case "Gallery":
-		CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
-		  type: "gallery",
-		  content: []
-		});
-		break;
-	  default:
-		handleError();
-	}
-  };
-  
-  
-  /**
-   * Inizializza una nuova storia
-   */
-  function initStory() {
-	CurrentWork = {
-	 // story_ID:"sBlRbq11144a6tdPAjfEow==",
-	  ACCESSIBILITY: 0,
-	  story_title: "",
-	  //story_ID: -1,
-	  game_mode: "",
-	  players: 0,
-	  quests: [],
-	  QuestGrid: "",
-	  ActivityGrids: [],
-	  ParagraphGrids: []
-	};
-  
-	CSSdata = {
-	  sheet: "",
-	  valid: true
-	};
-  };
-  
-  
-  /**
-   * Inizializza un oggetto quest vuoto per il JSON
-   */
-  function initQuest() {
-	  let EmptyQuest = {	
-		  quest_title: "",
-		  activities: []
-	};
-  
-	  return EmptyQuest;
-  };
-  
-  
-  /**
-   * Inizializza un oggetto attività vuoto per il JSON
-   */
-  function initActivity() {
-	  let EmptyActivity = {
-	  activity_text: [],
-	  activity_type: "ANSWER",
-		  answer_field: {
-		description: "",
-		type: "",
-		options: []
-	  },
-		  right_answer: "",
-		  answer_outcome: [],
-		  ASK_EVAL: 0,
-		  GET_CHRONO: 0,
-	  expected_time: "",
-	  FINAL: 0
-	  };
-  
-	  return EmptyActivity;
-  };
-
-
-  /**
- * Marca l'attività corrente come "finale" o viceversa, a seconda dello stato attuale.
- */
-function setFinalActivity() {
-	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
-  
-	if ( CurrentStage.FINAL == 0 ) {
-	  change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
-	  $("#FinalStageBtn").next().attr( "disabled", true );
-	  $("#FinalStageBtn").next().next().attr( "disabled", true );
-  
-	  // segna tutte le altre attività come non finali
-	  CurrentWork.quests.forEach( function( q, i ) {
-		q.activities.forEach( function( a, j ) {
-		  a.FINAL = 0;
-		});
-	  });
-  
-	  CurrentStage.FINAL = 1;
-	}
-	else {
-	  change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
-	  $("#FinalStageBtn").next().attr( "disabled", false );
-	  $("#FinalStageBtn").next().next().attr( "disabled", false );
-	  CurrentStage.FINAL = 0;
-	}
-  };

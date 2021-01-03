@@ -9,16 +9,13 @@ game_example = {
 	players: 0, // numero di giocatori che avranno un device
 	quests: [
 		{	
-			quest_title: "", // probabilmente servirà un div per contenerlo
-			/* Ogni quest è un array di attività. Ad ognuna di esse può succedere una sola attività.
-			Tuttavia, una particolare attività può avere esiti diversi. La scena successiva sarà quindi
-			decisa dal codice JS "action_on_activity_answer". */
+			quest_title: "",
 			activities: [
 				{
 					activity_text: [
 						{
-							type: "", // "text" oppure "gallery"
-							content: "" // testo oppure array di oggetti immagine
+							type: "", // può essere "text", "gallery" o "video"
+							content: "" // testo oppure array di oggetti media - nel caso type=video, l'array di media sarà monoelemento
 						}
 					], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
 					activity_type: "ANSWER", // con READING indica attività di sola lettura, con ANSWER (default) indica la presenza del campo risposta
@@ -45,10 +42,10 @@ game_example = {
 	]
 };
 
-// oggetto immagine
-img = {
-	server: false, // indica se è già salvata su server
-	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde all'oggetto di tipo file
+// oggetto media
+media = {
+	needsaving: "", // indica se bisogna salvare il file su server
+	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al nome che il nuovo file ha all'interno della mappa
 	alt: ""
 }
 

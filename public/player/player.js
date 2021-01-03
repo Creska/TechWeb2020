@@ -10,7 +10,7 @@ var Status = {
 	TotalScore: 0,
 	ActivityRecap: {
 		TimeToAnswer: 0,
-		AlreadyHelped: 0, // forse si può togliere
+		AlreadyHelped: 0,
 		ChatMessages: 0, // numero di messaggi inviati al valutatore durante l'attività
 		Score: 0
 	}
@@ -26,22 +26,16 @@ $(function () {
 	socket = io.connect('', { query: "type=player" });
 	$.get("/player/loadJSON", function (data) {
 		StoryObj = JSON.parse(data);
-		// TODO va aggiunto il foglio CSS
 		console.log(StoryObj); // debugging
 
-		// messaggio per l'accessibilità - fixare
+		// grafica - da sistemare appena possibile
+		$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
+
 		if (StoryObj.ACCESSIBILITY)
 			$("#AccessibilityMsg").append($("<p>La storia è accessibile.</p>"));
 		else
 			$("#AccessibilityMsg").append($("<p>La storia purtroppo NON è accessibile.</p>"));
 	})
-
-	//$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
-
-	if ( StoryObj.ACCESSIBILITY )
-		$("#AccessibilityMsg").append( $("<p>La storia è accessibile.</p>") );
-	else
-		$("#AccessibilityMsg").append( $("<p>La storia purtroppo NON è accessibile.</p>") );
 
 	/* invio messaggio chat */
 	$('#chat-room form').on("submit", function (e) {

@@ -41,8 +41,8 @@
       });
     };
 
-    /* abilita tutti i tooltips */
     $(document).ready( function() {
+      /* abilita tutti i tooltips */
       $('[data-toggle="tooltip"]').tooltip({
         trigger : 'hover'
       });
@@ -50,6 +50,12 @@
         $('[data-toggle="tooltip"]').tooltip({
           trigger : 'hover'
         });
+      });
+
+      /* abilita l'upload dei file */
+      const fileSelector = $("input[type='file']");
+      fileSelector.addEventListener("change", function(event) {
+        addMedia( event.target.files );
       });
     });
 
@@ -792,31 +798,41 @@
       <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveImageGallery();">Salva</button>
       <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
     </div>
+  </main>
 
-    <script>
-      const fileSelector = document.getElementById("UploadImg");
-      fileSelector.addEventListener("change", function(event) {
-        for ( pic of event.target.files ) {
-          switch ( getFileExtension(pic.name) ) {
-            case "jpg":
-            case "JPG":
-            case "jpeg":
-            case "JPEG":
-            case "png":
-            case "PNG":
-              if (pic) {
-                MediaBuffer.push({
-                  server: false,
-                  src: pic,
-                  alt: ""
-                });
 
-                addImage(MediaBuffer[MediaBuffer.length - 1]);
-              };
-          }
-        }
-      });
-    </script>
+  <!-- SCHERMATA DI AGGIUNTA VIDEO -->
+  <main class="inner cover EditorSection" id="AddVideo">
+    <header>
+      <small></small>
+      <h1 class="cover-heading SectionTitle">Video</h1>
+    </header>
+    <p class="lead mb-5 SectionHeader">
+      Carica un file video o linkane uno da YouTube.
+    </p>
+
+    <div id="VideoPreview"></div>
+
+    <textarea id="VideoDescr" placeholder="Descrizione"></textarea>
+
+    <div class="p-3">
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Upload">
+        <i class="fas fa-upload"></i>
+      </button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
+        <i class="fab fa-youtube"></i>
+      </button>
+    </div>
+
+    <div id="YTLink" class="input-group input-group-sm mb-3 font-weight-bold invisible">
+      <input type="text" class="form-control col-sm-5 " placeholder="https://">
+      <div class="input-group-append">
+        <button class="btn btn-sm btn-primary" type="button" onclick="">Aggiungi</button>
+
+        <button class="btn btn-sm btn-danger" type="button" onclick="$('#YTLink input').val('');$('#YTLink').addClass('invisible');">Annulla</button>
+      </div>
+    </div>
+
   </main>
 
 

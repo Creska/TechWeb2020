@@ -865,7 +865,7 @@
 }
 .grido {
   display: grid;
-  grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) ;
+  grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr ;
 }
       </style> 
   <div class="grido">
@@ -879,12 +879,12 @@
     <div id="publishedContainer" class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
     </div>
   </div>
-  </div>
-  <button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button>
-  <div class='grido mt-3'>
-    <textarea  rows="4" cols="50"style="color: red; background-color: transparent;" readonly>
+  <div >
+    <div ><button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button></div>
+    <textarea class='mt-3' rows="4" cols="50" style="width: 100%; color: red; background-color: transparent;" readonly>
 This is a feedback area, if something went wrong with the server you will (probably) see an error message here. 
     </textarea>
+  </div>
   </div>  
   </main> 
   <footer class="mastfoot mt-auto">

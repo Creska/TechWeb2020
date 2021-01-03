@@ -59,7 +59,7 @@ function getStories(caller) {
         create_stories_grid(obj);
         break;
       case "Explorer":
-        create_Explorer_grids(obj.unpublished,obj.published);
+        create_Explorer_grids(obj.publishable,obj.published);
         break;
     } 
   });
@@ -82,7 +82,7 @@ function start_saving() {
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
   else 
-    saveStory(false);
+    saveStory(true);
 }
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);
@@ -123,7 +123,7 @@ function prepare_saveStory_object(publish) {
       }
     ],
     published: publish
-  }  
+  };  
   return story;
 }
 function prepare_saveStory_json(){
@@ -182,8 +182,10 @@ function publisher(story_ids) {
 
 function explorer_calls() {
   let ids = gather_ids();
-  //ids.delete_array
-  //ids.pub_unpub_array
+  if( ids.delete_array.length > 0 )
+    deleteStory(ids.delete_array)
+  if( ids.pub_unpub_array.length > 0 )
+    publisher(ids.pub_unpub_array)  
 }
 
 function gather_ids() {

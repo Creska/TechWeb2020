@@ -417,7 +417,7 @@ app.get('/editor/getStories', function (req, res) {
                     files.forEach(file => {
                         let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
                         data = JSON.parse(data);
-                        if ( stringToBool(data.publishable.ok) ) {
+                        if ( data.publishable.ok ) {
                             publishable.push({ id: file, title: data.story_title })
                         } 
                     })
@@ -492,7 +492,7 @@ app.post('/editor/saveStory', function (req, res) {
     var story_json = story.story_json; //JSON story file object
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
 
-    var published = stringToBool(story.published) || false;
+    var published = story.published;
     
     var story_id = story_json.story_ID;
     var story_path;

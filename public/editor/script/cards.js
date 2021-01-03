@@ -444,7 +444,7 @@ function saveCardGrids() {
         }
         let card = $("<div/>",
         {
-          "class": "card bg-warning",
+          "class": "card bg-danger",
           "draggable": "true",
           "ondrop": "event.preventDefault();",
           "ondragstart": "drag(event)",

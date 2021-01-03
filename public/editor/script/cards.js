@@ -448,7 +448,7 @@ function saveCardGrids() {
           "draggable": "true",
           "ondrop": "event.preventDefault();",
           "ondragstart": "drag(event)",
-          "id": "pble"+i
+          "id": "able"+i
         });
         card.append( $("<div class='card-body text-center'></div>") );
         card.children().append( $("<p class='card-title h4'>" + unpub[i].title + "</p>") );
@@ -470,7 +470,7 @@ function saveCardGrids() {
           "draggable": "true",
           "ondrop": "event.preventDefault();",
           "ondragstart": "drag(event)",
-          "id": "ped"+j
+          "id": "shed"+j
         });
         card.append( $("<div class='card-body text-center'></div>") );
         card.children().append( $("<p class='card-title h4'>" + pub[j].title + "</p>") );

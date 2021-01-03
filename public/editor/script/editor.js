@@ -181,21 +181,35 @@ function publisher(story_ids) {
 }
 
 function explorer_calls() {
-  //track stories that were moved 
-  //build array with those stories
-  //call deleteStory
-  //call publish
+  let ids = gather_ids();
+  //ids.delete_array
+  //ids.pub_unpub_array
+}
+
+function gather_ids() {
   let ids_to_delete = [];
   $("#trash_can").children().each( (index,deck) => {
     let cards = deck.children;
-    console.log("deck:",cards)
     for (let card of cards) {
-      console.log("card: ",card)
       ids_to_delete.push( get_id_subtitle(card) );
     }
   })
-  //call delete
-
+  let ids_to_pub_unpub = [];
+  $("#publishableContainer").children().each( (index,deck) => {
+    let cards = deck.children;
+    for (let card of cards) {
+      if( card.id.slice(0,4) == "shed"  )
+        ids_to_pub_unpub.push( get_id_subtitle(card) );
+    }
+  })
+  $("#publishedContainer").children().each( (index,deck) => {
+    let cards = deck.children;
+    for (let card of cards) {
+      if( card.id.slice(0,4) == "able"  )
+        ids_to_pub_unpub.push( get_id_subtitle(card) );
+    }
+  })
+  return { delete_array:ids_to_delete, pub_unpub_array: ids_to_pub_unpub };
 }
 
 /*

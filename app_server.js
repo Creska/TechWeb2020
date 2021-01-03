@@ -96,10 +96,10 @@ function storyPath(id) {
 }
 
 function storyFolder(id) {
-    if (fs.existsSync(pubpath + '/' + id)) {
+    if (fs.existsSync(pubpath + id)) {
         return 'pubpath'
     }
-    else if (fs.existsSync(unpubpath + '/' + id)) {
+    else if (fs.existsSync(unpubpath + id)) {
         return 'unpubpath'
     }
     else {
@@ -376,7 +376,7 @@ app.get('/player/loadJSON', function (req, res) {
     }
 })
 
-app.get('/editor/getStories', function (req, res) {
+app.get('/editor/getStories', function (req, res) { 
     console.log("getStories request received.")
     var section = req.query.section;
     if (section == 'ChooseStoryToEdit') {
@@ -386,22 +386,21 @@ app.get('/editor/getStories', function (req, res) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
-            else {
-                files.forEach(file => {
-                    fs.readFile(unpubpath + '/' + file + '/' + 'story.json', (err, data) => {
-                        if (err) {
-                            console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
-                            return res.status(500).send(JSON.stringify(err)).end();
-                        }
-                        else {
-                            stories.push({ id: file, title: data.story_title })
-                        }
-                    })
+            else {  
+                files.forEach( file => {
+                    try {
+                        let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
+                        stories.push({ id: file, title: JSON.parse(data).story_title });
+                    }
+                    catch(err) {
+                        console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
+                        return res.status(500).send(JSON.stringify(err)).end();
+                    }
                 })
-                return res.status(200).send(JSON.stringify(stories)).end()
             }
+            console.log("stories: ",stories)//this happens before the forEach for some reason
+            return res.status(200).send(JSON.stringify(stories)).end()
         })
-
     }
     else if (section == 'Explorer') {
         let stories = {}; //returns an object of published stories and publishable ones
@@ -416,10 +415,11 @@ app.get('/editor/getStories', function (req, res) {
                 }
                 else {
                     files.forEach(file => {
-                        let data = fs.readFileSync(unpubpath + '/' + file + '/' + 'story.json');
-                        if (data.publishable) {
+                        let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
+                        data = JSON.parse(data);
+                        if ( data.publishable.ok ) {
                             publishable.push({ id: file, title: data.story_title })
-                        }
+                        } 
                     })
                     resolve(true)
                 }
@@ -431,10 +431,11 @@ app.get('/editor/getStories', function (req, res) {
                     console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                     res.status(500).send(JSON.stringify(err)).end();
                     reject(false);
-                }
+                } 
                 else {
                     files.forEach(file => {
-                        let data = fs.readFileSync(pubpath + '/' + file + '/' + 'story.json');
+                        let data = fs.readFileSync(pubpath + file + '/' + 'story.json');
+                        data = JSON.parse(data);
                         published.push({ id: file, title: data.story_title })
                     })
                     resolve(true)
@@ -445,6 +446,7 @@ app.get('/editor/getStories', function (req, res) {
             if (values[0] && values[1]) {
                 stories.publishable = publishable;
                 stories.published = published;
+                console.log("Explorer stories", stories)
                 return res.status(200).send(JSON.stringify(stories)).end();
             }
         });
@@ -459,15 +461,16 @@ app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
     var story_id = req.query.story_id;
     let path = storyPath(story_id);
+    console.log("Id ricevuto: ",story_id)
     if (path != '404') {
-        fs.readFile(path + '/' + story_id + '/story.json', 'utf8', function (err, file) {
-            if (err) {
+        fs.readFile(path + '/story.json', 'utf8', function (err, file) {
+            if (err) { 
                 console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
             else {
                 console.log("Story get successfully.")
-                return res.status(200).send(JSON.stringify(file)).end();
+                return res.status(200).send(file).end();
             }
         })
     }
@@ -489,7 +492,7 @@ app.post('/editor/saveStory', function (req, res) {
     var story_json = story.story_json; //JSON story file object
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
 
-    var published = stringToBool(story.published) || false;
+    var published = story.published;
     
     var story_id = story_json.story_ID;
     var story_path;
@@ -565,7 +568,7 @@ app.post('/editor/deleteStory', function (req, res) {
                     }
                     else {
                         console.log("Story " + path + " deleted successfully.")
-                        return;
+                        return res.status(200).send().end();
                     }
                 })
             }
@@ -578,30 +581,53 @@ app.post('/editor/deleteStory', function (req, res) {
 })
 
 app.post('/editor/publisher', function (req, res) {
-    //TODO do I have to check if an unpublished story can be published
     var story_ids = req.body.story_ids;
     if (story_ids != undefined) {
         story_ids.forEach(story_id => {
             let path = storyFolder(story_id);
             if (path == 'pubpath') {
-                fs.rename(pubpath + '/' + story_id, unpubpath + '/' + story_id, (err) => {
+                fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
                     if (err) {
                         console.log("An error occurred inside /editor/publisher while unpublishing " + story_name + ": " + err)
                         return res.status(500).send(JSON.stringify(err)).end();
                     }
                     else {
-                        console.log('The story ' + story_name + 'was unpublished.');
+                        fs.readFile(unpubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                            if (err) { 
+                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
+                                return res.status(500).send(JSON.stringify(err)).end();
+                            }
+                            else {
+                                let story = JSON.parse(file);
+                                story.published = false;
+                                console.log("published field updated successfully.")
+                            }
+                        })
+                        console.log('The story ' + story_id + 'was unpublished.');
+                        return res.status(200).send().end();
                     }
                 })
             }
             else if (path == 'unpubpath') {
-                fs.rename(unpubpath + '/' + story_id, pubpath + '/' + story_id, (err) => {
+                fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
                     if (err) {
                         console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
                         return res.status(500).send(JSON.stringify(err)).end();
                     }
                     else {
-                        console.log('The story ' + story_name + 'was published.');
+                        fs.readFile(pubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                            if (err) { 
+                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
+                                return res.status(500).send(JSON.stringify(err)).end();
+                            }
+                            else {
+                                let story = JSON.parse(file);
+                                story.published = true;
+                                console.log("published field updated successfully.")
+                            }
+                        })
+                        console.log('The story ' + story_id + 'was published.');
+                        return res.status(200).send().end();
                     }
                 })
             }

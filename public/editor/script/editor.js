@@ -51,35 +51,33 @@ function getFileExtension( name ) {
 function handleError() {
   window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
-
-function getStories(caller) {//errore 500, ma la chiamata in sè è giusta, ma non trova unpublished
-  $.get("/editor/getStories", function(data, status){
+function getStories(caller) {
+  $.get("/editor/getStories?section="+caller, function(data, status){
     let obj = JSON.parse(data);
     switch (caller) {
       case "ChooseStoryToEdit":     
-        create_stories_grid(obj.unpublished);
+        create_stories_grid(obj);
         break;
       case "Explorer":
-        create_Explorer_grids(obj.unpublished,obj.published);
+        create_Explorer_grids(obj.publishable,obj.published);
         break;
     } 
   });
 }
 /* 
 TO-DO list:
-  1)Implement getStories in second and third buttons
-  2)Implement getStory
-    -show what is needed to have publishable story
-  3)Implement multiple publish/unpublish/delete story
-    -add informative div
-    -add button to start calls
-    -implement actual calls
-  4)Feedback aea handling
-  5)navbar handling
-  6)Go home handling
-  7)media handling
-  8)QR code generation
-  9)Make code polite and modular
+  -Feedback area handling
+    -the setting is the following:
+      -if both calls are successful then show the happy loli,
+      otherwise show the questioning loli and write in feedback 
+      textarea what went wrong
+  -add duplicate button( basically delete id field then saveStory)
+  -navbar/Go home handling
+  -informative paragraph in explorer
+  -button that triggers popover which shows what is missing to make the story publishable
+  -media handling
+  -QR code generation
+  -Make code polite and modular
 Notes:
   */
 function start_saving() {
@@ -87,17 +85,19 @@ function start_saving() {
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
   else 
-    saveStory(false);
+    saveStory(true);
 }
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);
-  console.log(story)
-  $.post("/editor/saveStory",story, function(data, status ){
-    if( status == "success" ) {
+  $.ajax({
+    url: '/editor/saveStory',
+    type: 'POST',
+    data: JSON.stringify(story),
+    contentType: "application/json",
+    success: function(data) {
       $("#story_id_p").text("Id storia: "+data);
       goToSection("final_section");
     }
-
   });
 } 
 /* 
@@ -126,7 +126,7 @@ function prepare_saveStory_object(publish) {
       }
     ],
     published: publish
-  }  
+  };  
   return story;
 }
 function prepare_saveStory_json(){
@@ -158,74 +158,75 @@ function prepare_saveStory_json(){
     }
     i++;
   } 
-  delete clean_cw.ActivityGrids;
-  delete clean_cw.QuestGrid;
-  delete clean_cw.ParagraphGrids;
-  clean_cw.editor_graphics = {
-    //html for each section
-  }
   return clean_cw;
 }
 
-function getStory() {//fa crashare l'app anche con published
-  //value = prompt('bool published: ');
-  //var nome = prompt("nome: ");
-  //alert("nome: ", nome)
-  let nome="nut";
-  value = true;
-  $.get("/editor/getStory?story_name="+nome+"&published="+value, function(data, status){
-  //  alert("Data: " + data + "\nStatus: " + status);
-  //console.log("json received with getStory: ",JSON.parse(data) )
-  CurrentWork = JSON.parse(data);
-  goToSection("EditStory");
-  });
-}
-function deleteStory(nome) {
-  //value = prompt('bool published: ');
-  story = {
-    story_name: nome,
-    published: true//true per adesso
-  };
-  $.post("/editor/deleteStory",story, function(data,status){
-    alert("Status: " + status);
-  });
-}
-function publisher(name) {//problema con unpublished, funziona se unpub c'è
-  story = {
-    story_name: name
-  };
-  $.post("/editor/publisher",story, function(data, status){
-    alert("Status: " + status);
+function getStory(id) {
+  $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
+    CurrentWork =JSON.parse(data);
+    goToSection("EditStory");
   });
 }
 
-//bug grafico nella creazione delle gallerie partendo da una gallery r creandone altre consecutive e altri bug
+function explorer_calls() {
+  let ids = gather_ids();
+  let delete_promise = new Promise( (resolve, reject) => {
+    if( ids.delete_array.length > 0 ) {
+      let story = {
+        story_ids: ids.delete_array
+      };
+      $.post("/editor/deleteStory",story, function(data,status){
+        resolve(status);
+      });
+    }
+  });
 
-//manca campo per chiedere nome
+  let publisher_promise = new Promise(( resolve, reject) => {
+    if( ids.pub_unpub_array.length > 0 ) {
+      let story = {
+        story_ids: ids.pub_unpub_array
+      };
+      $.post("/editor/publisher",story, function(data, status){
+        resolve(status);
+      });
+    }
+  });
 
-//piccolo bug grafico tasto home che compare all'inizio e una volta
-//cliccato sparisce dalla home(non si dovrebbe vedere in primo luogo)
+  Promise.all([delete_promise, publisher_promise]).then(status => {
+    if( (status[0] == "success") && (status[1] == "success") )
+      ;
+    else
+      alert("something went wrong:"+status[0]+status[1]);
+  });
+}
+
+function gather_ids() {
+  let ids_to_delete = [];
+  $("#trash_can").children().each( (index,deck) => {
+    let cards = deck.children;
+    for (let card of cards) {
+      ids_to_delete.push( get_id_subtitle(card) );
+    }
+  })
+  let ids_to_pub_unpub = [];
+  $("#publishableContainer").children().each( (index,deck) => {
+    let cards = deck.children;
+    for (let card of cards) {
+      if( card.id.slice(0,4) == "shed"  )
+        ids_to_pub_unpub.push( get_id_subtitle(card) );
+    }
+  })
+  $("#publishedContainer").children().each( (index,deck) => {
+    let cards = deck.children;
+    for (let card of cards) {
+      if( card.id.slice(0,4) == "able"  )
+        ids_to_pub_unpub.push( get_id_subtitle(card) );
+    }
+  })
+  return { delete_array:ids_to_delete, pub_unpub_array: ids_to_pub_unpub };
+}
 
 /*
-function saveStory() { 
-  
-  get_all_images_bytes();
-    data_array.push({
-      name: "nome.json",
-      data: CurrentWork
-    });
-  story= {//storia ipotetica
-    story_data: data_array,    
-    story_name: "nome",
-    published: true,
-    checked: true
-    //story: true ritengo sia inutile
-  };
-  $.post("/editor/saveStory",story, function(data,status){
-    alert("Status: " + status);
-    data_array = [];
-  });
-} 
 function get_all_images_bytes(){
   i=0;
   while(CurrentWork.quests[i]){

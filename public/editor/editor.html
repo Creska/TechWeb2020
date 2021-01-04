@@ -11,7 +11,6 @@
   <script src="animations.js"></script>
   <script src="script/editing.js"></script>
   <script src="script/cards.js"></script>
-  <script src="test.js"></script>
   <script src="../player/test.js"></script> <!-- SOLO PER TEST -->
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -50,12 +49,6 @@
         $('[data-toggle="tooltip"]').tooltip({
           trigger : 'hover'
         });
-      });
-
-      /* abilita l'upload dei file */
-      const fileSelector = $("input[type='file']");
-      fileSelector.addEventListener("change", function(event) {
-        addMedia( event.target.files );
       });
     });
 
@@ -778,6 +771,8 @@
 
   <!-- SCHERMATA DI MODIFICA GALLERY -->
   <main class="inner cover EditorSection" id="EditGallery">
+    
+
     <header>
       <small></small>
       <h1 class="cover-heading SectionTitle">Galleria di immagini</h1>
@@ -801,6 +796,13 @@
       <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveImageGallery();">Salva</button>
       <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
     </div>
+
+    <script>
+      /* abilita l'upload dei file */
+	    document.getElementById("UploadImg").addEventListener("change", function(event) {
+        uploadMedia( event.target.files );
+      });
+    </script>
   </main>
 
 
@@ -819,10 +821,11 @@
     <textarea id="VideoDescr" placeholder="Descrizione"></textarea>
 
     <div class="p-3">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Upload">
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#UploadVid').trigger('click');" data-toggle="tooltip" data-placement="left" title="Upload">
         <i class="fas fa-upload"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
+      <input type="file" id="UploadVid" style="display:none;">
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
         <i class="fab fa-youtube"></i>
       </button>
     </div>
@@ -835,6 +838,13 @@
         <button class="btn btn-sm btn-danger" type="button" onclick="$('#YTLink input').val('');$('#YTLink').addClass('invisible');">Annulla</button>
       </div>
     </div>
+
+    <script>
+      /* abilita l'upload dei file */
+	    document.getElementById("UploadVid").addEventListener("change", function(event) {
+        uploadMedia( event.target.files );
+      });
+    </script>
 
   </main>
 

@@ -156,26 +156,27 @@ function save_title( which ) {
 */
 function back() {
 	switch ( CurrentNavStatus.Section ) {
-	  case "ChooseGameMode":
-		goToSection( "EditStory" );
-		break;
-	  case "EditQuest":
-		goToSection( "EditStory" );
-		CurrentNavStatus.QuestN = -1;
-		break;
-	  case "EditActivity":
-		goToSection( "EditQuest" );
-		CurrentNavStatus.ActivityN = -1;
-		break;
-	  case "EditAnswerField":
-	  case "SetAnswerOutcome":
-		goToSection( "EditActivity" );
-		break;
-	  case "EditText":
-	  case "EditGallery":
-		CurrentNavStatus.TextPartN = -1;
-		goToSection( "EditActivity" );
-		break;
+	  	case "ChooseGameMode":
+			goToSection( "EditStory" );
+			break;
+	  	case "EditQuest":
+			goToSection( "EditStory" );
+			CurrentNavStatus.QuestN = -1;
+			break;
+	  	case "EditActivity":
+			goToSection( "EditQuest" );
+			CurrentNavStatus.ActivityN = -1;
+			break;
+	  	case "EditAnswerField":
+	  	case "SetAnswerOutcome":
+			goToSection( "EditActivity" );
+			break;
+	  	case "EditText":
+	  	case "EditGallery":
+		case "AddVideo":
+			CurrentNavStatus.TextPartN = -1;
+			goToSection( "EditActivity" );
+			break;
 	}
 };
   
@@ -271,6 +272,13 @@ function goToSection(where) {
   
 		  loadEditGallerySection();
 		  break;
+		case "AddVideo":
+			CurrentNavStatus.TextPartN = get_card_index();
+
+			$( "#AddVideo header small" ).html( $( "#EditActivity header small" ).html() );
+
+			loadAddVideoSection();
+			break;
 		case "EditAnswerField":
 		  $( "#EditAnswerField header small" ).html( $( "#EditActivity header small" ).html() );
   
@@ -833,49 +841,88 @@ function saveTextParagraph() {
 };
 
 
-/**
- * @param img
- * Aggiunge l'immagine specificata alla galleria di anteprima
- */
-function addImage( img ) {
-	let newpreview = $( "<img>" );
+function uploadMedia( list ) {
+	if ( CurrentNavStatus.Section == "EditGallery" ) {
+		for ( media of list ) {
+			if ( media ) {
+				switch ( getFileExtension( media.name ).toLowerCase() ) {
+					case "jpg":
+					case "jpeg":
+					case "png":
+						MediaBuffer.push({
+							needsaving: true,
+							src: media,
+							alt: ""
+						});
+						displayMediaPreview( MediaBuffer[MediaBuffer.length - 1], "gallery" );
+				}
+			}
+		}
+	}
+	else if ( CurrentNavStatus.Section == "AddVideo" ) {
+		let media = list[0];
+		if ( media ) {
+			switch ( getFileExtension( media.name ).toLowerCase() ) {
+				case "mp4":
+				case "webm":
+					MediaBuffer[0] = {
+						needsaving: true,
+						src: media,
+						alt: ""
+					};
+					displayMediaPreview( MediaBuffer[0], "video" );
+			}
+		}
+	}
+};
 
-	if ( img.server ) {
-		newpreview.attr( "src", img.src );
-	}
-	else {
-		let reader = new FileReader();
-    	reader.readAsDataURL( img.src );
-    	reader.addEventListener( "load", function() {
-      		newpreview.attr( "src", this.result );
-    	});
-	}
+
+function displayMediaPreview( media, mediatype ) {
+	if ( mediatype == "gallery" ) {
+		let newpreview = $( "<img>" );
+
+		if ( media.needsaving ) {
+			let reader = new FileReader();
+    		reader.readAsDataURL( media.src );
+    		reader.addEventListener( "load", function() {
+      			newpreview.attr( "src", this.result );
+			});
+		}
+		else {
+			newpreview.attr( "src", media.src );
+		}
 		
-	let newrow = $( "<div class='row'></div>" )
-	newrow.append( newpreview );
-	newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
-	newrow.find( "input" ).val( img.alt );
-  	newrow.append( $( '<button class="btn btn-danger" onclick="rmImage( $(this) );"><i class="fas fa-minus"></i></button>' ));
-  	newrow.children().wrap( "<div class='col-sm'></div>" );
-  	$( "#GalleryPreview" ).append( newrow );
+		let newrow = $( "<div class='row'></div>" )
+		newrow.append( newpreview );
+		newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
+		newrow.find( "input" ).val( media.alt );
+  		newrow.append( $( '<button class="btn btn-danger" onclick="removeMediaPreview( $(this) );"><i class="fas fa-minus"></i></button>' ));
+  		newrow.children().wrap( "<div class='col-sm'></div>" );
+  		$( "#GalleryPreview" ).append( newrow );
+	}
+	else if ( mediatype == "video" ) {
+		/* TODO */
+	}
 };
 
 
 /**
- * @param img
+ * @param media
  * Elimina dall'anteprima l'immagine specificata come argomento. In realtà, quello passato come parametro, è il tasto di eliminazione. In ogni caso, ne si ricava comunque la riga di tabella corrispondente all'immagine da cancellare
  */
-function rmImage( img ) {
-	let iter = img.parent().parent().previousSibling;
-	let count = 0;
+function removeMediaPreview( media ) {
+	if ( CurrentNavStatus.Section == "EditGallery" ) {
+		let iter = media.parent().parent().previousSibling;
+		let count = 0;
 
-	while ( iter ) {
-		count += 1;
-		iter = iter.previousSibling;
+		while ( iter ) {
+			count += 1;
+			iter = iter.previousSibling;
+		}
+
+		$( media.parent().parent() ).remove();
+		MediaBuffer.splice( count, 1 );
 	}
-
-	$( img.parent().parent() ).remove();
-	MediaBuffer.splice( count, 1 );
 };
 
 
@@ -887,14 +934,16 @@ function loadEditGallerySection() {
 
 	MediaBuffer = new Array( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content.length );
 	
-	/* uso questo sistema al posto di eguagliare i due array. in questo modo, una modifica non salvata ad MediaBuffer non influenzerà l'array di CurrentWork */
+	/* uso questo sistema al posto di eguagliare i due array. in questo modo, una modifica non salvata (che influenza MediaBuffer) non attaccherà anche l'array di CurrentWork */
 	for ( i = 0; i < MediaBuffer.length; i++ ) {
 		MediaBuffer[i] = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content[i];
 	}
 
   	$.each( MediaBuffer, function( i, val ) {
-		addImage( val );
+		displayMediaPreview( val, CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].type );
 	});
+
+	
 };
 
 
@@ -911,32 +960,7 @@ function saveImageGallery() {
 };
 
 
-/**
- * @param Container
- * Aggiunge un elemento lista con un relativo radio input al Container specificato
- */
-function addRadio( Container ) {
-	let newButton = $( "<input/>",
-	{
-		type: "radio"
-	});
+function loadAddVideoSection() {
 
-	let newli = $( "<li/>", {});
-
-	switch ( Container ) {
-		case "AnswerInput":
-			newButton.attr( "name", "AnswerInputGroup" );
-			newButton.attr( "id", "AnswerOption" + String( $( "#AnswerInput li" ).length ) );
-			newli.append( newButton );
-			newli.append( $( "<input/>",
-			{
-				type: "text",
-				val: "Opzione" + String( $( "#AnswerInput li" ).length )
-			}));
-			$( "#AnswerInput" ).append( newli );
-			break;
-		default:
-			break;
-	}
-};
+}
 

@@ -611,17 +611,6 @@ app.post('/editor/publisher', function (req, res) {
                                 s = 500;
                             }
                             else {
-                       /* fs.readFile(unpubpath + story_id + '/story.json', 'utf8', function (err, file) {
-                            if (err) { 
-                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
-                                return res.status(500).send(JSON.stringify(err)).end();
-                            }
-                            else {
-                                let story = JSON.parse(file);
-                                story.published = false;
-                                console.log("published field updated successfully.")
-                            }
-                        })*/
                                 console.log('The story ' + story_id + 'was unpublished.');
                                 console.log("pre push: ",fb)
                                 fb.msgs.push({msg:"La storia "+story_id+ " è stata ritirata.", successful: true});
@@ -641,17 +630,6 @@ app.post('/editor/publisher', function (req, res) {
                                 s = 500; 
                             }
                             else {
-                        /*fs.readFile(pubpath + story_id + '/story.json', 'utf8', function (err, file) {
-                            if (err) { 
-                                console.log("An error accourred inside /editor/publish, while updating published field: " + err);
-                                return res.status(500).send(JSON.stringify(err)).end();
-                            }
-                            else {
-                                let story = JSON.parse(file);
-                                story.published = true;
-                                console.log("published field updated successfully.")
-                            }
-                        })*/
                                 console.log('The story ' + story_id + 'was published.');
                                 fb.msgs.push({msg:"La storia "+story_id+ " è stata pubblicata.", successful: true});
                             }
@@ -662,8 +640,9 @@ app.post('/editor/publisher', function (req, res) {
             }
         })
         Promise.all(promises).then( () => {
-            return res.status(s).send(JSON.stringify(fb)).end();
-        });
+                return res.status(s).send(JSON.stringify(fb)).end();
+            }
+        );
     }
     else {
         console.log("/editor/publisher BAD REQUEST: story_ids parameter was not provided.")

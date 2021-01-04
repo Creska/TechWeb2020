@@ -66,17 +66,16 @@ function getStories(caller) {
 }
 /* 
 TO-DO list:
-  -Feedback area handling
-    -the setting is the following:
-      -reload containers with current stories
-  -make unpublished stories deletable
+cazzatine varie
+  -reload containers with current stories
   -add duplicate button( basically delete id field then saveStory)
-  -navbar/Go home handling
+  -navbar/Go home handling, make unpublished stories deletable with navbar butotn or something
   -informative paragraph in explorer
   -button that triggers popover which shows what is missing to make the story publishable
-  -media handling
+  -ajax loli appareance handling
   -QR code generation
   -Make code polite and modular
+Media:
 Notes:
   */
 function start_saving() {

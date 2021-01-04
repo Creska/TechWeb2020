@@ -82,8 +82,10 @@ function start_saving() {
   CurrentWork.publishable = isPublishable(CurrentWork); 
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
-  else 
-    saveStory(true);
+  else {
+    CurrentWork.publishable.ok = true;//for testing purposes
+    saveStory(false);
+  }
 }
 function saveStory(publish) { 
   let story = prepare_saveStory_object(publish);

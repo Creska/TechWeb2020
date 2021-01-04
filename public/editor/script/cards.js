@@ -148,6 +148,7 @@ function openCard( card ) {
 function create_card(titolo,subtitle) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
   let color;
+  let bg_color = "";
   switch ( current_grid ) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
@@ -155,18 +156,19 @@ function create_card(titolo,subtitle) {
       titolo = titolo.replace(/(<([^>]+)>)/gi, "");
       if ( titolo.trim() == "" )
         titolo = "<i>QuestSenzaNome" + ( CurrentWork.quests.length - 1 ) + "</i>";
-      color = colors[CurrentWork.quests.length % 6];
+      color = "bg-"+ colors[CurrentWork.quests.length % 6];
       break;
     case "ActivitiesGrid":
       titolo = "Attività" + ( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length - 1 );
-      color = colors[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length % 6];
+      color = "bg-"+ colors[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length % 6];
       break;
     case "ParagraphsGrid":
       if ( titolo == "GALLERY" ) color = colors[0];
-      else color = colors[1];
+      else color = "bg-"+ colors[1];
       break;
     case "StoriesGrid":
-      color = "info";
+      color = "";
+      bg_color = "background-color: rgb(82, 7, 105);";
       break;
     default:
       handleError();
@@ -174,7 +176,8 @@ function create_card(titolo,subtitle) {
   
   let card = $("<div/>",
     {
-      "class": "card bg-" + color,
+      "style": bg_color,
+      "class": "card " + color,
       onclick: "openCard( this )"
     });
   card.append( $("<div class='card-body text-center'></div>") );
@@ -444,7 +447,8 @@ function saveCardGrids() {
         }
         let card = $("<div/>",
         {
-          "class": "card bg-danger",
+          "class": "card ",
+          "style": "background-color: 	#FF1493;",
           "draggable": "true",
           "ondrop": "event.preventDefault();",
           "ondragstart": "drag(event)",
@@ -466,7 +470,8 @@ function saveCardGrids() {
         }
         let card = $("<div/>",
         {
-          "class": "card bg-success",
+          "class": "card ",
+          "style": "background-color:	#00997d;",
           "draggable": "true",
           "ondrop": "event.preventDefault();",
           "ondragstart": "drag(event)",

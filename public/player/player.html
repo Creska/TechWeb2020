@@ -1,136 +1,137 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-    <!--Luca: lasciate la versione uncompressed di jquery. La slim manca di tutte le operazioni AJAX-->
-    <script src="https://code.jquery.com/jquery-3.5.1.js"
-            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-            crossorigin="anonymous"></script>
-    <script src="test.js"></script> <!-- SOLO PER TEST -->
-    <script src="player.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <!--Script js per generare bar code-->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-      <script type="text/javascript">
-        function generateBarCode()
-        {
-          var nric = $('#text').val();
-          var url = 'https://api.qrserver.com/v1/create-qr-code/?data=' + nric + '&amp;size=50x50';
-          $('#barcode').attr('src', url);
-        }
-      </script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="player.css">
+        <!--Luca: lasciate la versione uncompressed di jquery. La slim manca di tutte le operazioni AJAX-->
+        <script src="https://code.jquery.com/jquery-3.5.1.js"
+                integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+                integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+                crossorigin="anonymous"></script>
+        <script src="test.js"></script> <!-- SOLO PER TEST -->
+        <script src="player.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <!--Script js per generare bar code-->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            function generateBarCode()
+            {
+            var nric = $('#text').val();
+            var url = 'https://api.qrserver.com/v1/create-qr-code/?data=' + nric + '&amp;size=50x50';
+            $('#barcode').attr('src', url);
+            }
+        </script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="player.css">
 
-    <title>Player</title>
+        <title>Player</title>
 
-    <style>
+        <style>
+            
+        </style>
+    </head>
+
+
+
+    <body>
+        <main id="StartScreen">
+            
+            <nav>
+                <ul class=" nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-disabled="true"></a>
+                    </li>
+                </ul>
+            </nav>
         
-    </style>
-</head>
-
-
-
-<body>
-    <main id="StartScreen">
-        
-        <nav>
-            <ul class=" nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-disabled="true"></a>
-                </li>
-            </ul>
-        </nav>
-    
-    <!--
-    <main id="StartScreen">            
-        <div class="row">
-            <div id="FirstStory" class="card col-12">
-                <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
-                <p class="card-text">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
-                <div align="center"><img id='barcode' onclick="startGame();"
-                        src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
-                        alt=""
-                        title="HELLO"
-                        width="80"
-                        height="80" /></div>
-            </div>
-        </div>
-        <div class="row">
-            <div id="SecondStory" class="card col-12">
-                <h3 class="card-title" id="StoryTitle">Furto del quadro</h3>
-                <p class="card-text">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
-                <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
-            </div>
-        </div>
-        <div class="row">
-            <div id="ThirdStory" class="card col-12">
-                <h3 class="card-title" id="StoryTitle">Esperimento informatico</h3>
-                <p class="card-text" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
-                <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
-            </div>
-        </div>
-    -->
-        
-        
-        <div id="AccessibilityMsg" role="alert"></div>
-
         <!--
-            <div align="center">
-                <div id="Info" class="card">
-                    <div class="card-title">
-                        <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
-                    </div>
-                    <div class="card-text">
-                        <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
-                        <img src="..." class="" alt="">
-                        <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
-                        <img src="..." class="" alt="">
-                        <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
-                    </div>
-                    <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
+        <main id="StartScreen">            
+            <div class="row">
+                <div id="FirstStory" class="card col-12">
+                    <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
+                    <p class="card-text">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
+                    <div align="center"><img id='barcode' onclick="startGame();"
+                            src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
+                            alt=""
+                            title="HELLO"
+                            width="80"
+                            height="80" /></div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="SecondStory" class="card col-12">
+                    <h3 class="card-title" id="StoryTitle">Furto del quadro</h3>
+                    <p class="card-text">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
+                    <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="ThirdStory" class="card col-12">
+                    <h3 class="card-title" id="StoryTitle">Esperimento informatico</h3>
+                    <p class="card-text" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
+                    <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
                 </div>
             </div>
         -->
-    </main>
+            
+            
+            <div id="AccessibilityMsg" role="alert"></div>
 
-    <template id="MainContainer">
-        <nav>
-            <ul class=" nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-disabled="false">Punteggio</a>
-                </li>
-            </ul>
-        </nav>
-        <!-- Main = Container di tutto ciò che fa parte del gioco -->
-        <main id="Main" aria-relevant="additions text">
-            <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-            <div class="Quest">
-                <h5 class="QuestTitle"></h5>
-            </div>
+            <!-- Tutorial per mostrare come si gioca
+                <div align="center">
+                    <div id="Info" class="card">
+                        <div class="card-title">
+                            <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
+                        </div>
+                        <div class="card-text">
+                            <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
+                            <img src="..." class="" alt="">
+                            <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
+                            <img src="..." class="" alt="">
+                            <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
+                        </div>
+                        <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
+                    </div>
+                </div>
+            -->
         </main>
-    </template>
 
-    <footer class="page-footer">
-        <div class="container-fluid text-center">
-            <div id='chat-room'>
-                <h4 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h4>
-                <form action="">
-                    <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio"><br>
-                    <button id="Send">Invia</button>
-                </form>
+        <template id="MainContainer">
+            <nav>
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-disabled="false">Punteggio</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Main = Container di tutto ciò che fa parte del gioco -->
+            <main id="Main" aria-relevant="additions text">
+                <!-- Quest = contiene il titolo della quest e il container dell'attività -->
+                <div class="Quest">
+                    <h5 class="QuestTitle"></h5>
+                </div>
+            </main>
+        </template>
+
+        <footer class="page-footer">
+            <div class="container-fluid text-center">
+                <div id='chat-room'>
+                    <h4 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h4>
+                    <form action="">
+                        <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio"><br>
+                        <button id="Send">Invia</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </footer>
-</body>
+        </footer>
+    </body>
 
 </html>

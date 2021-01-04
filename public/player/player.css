@@ -124,6 +124,8 @@ nav {
     color: darkorchid;
     text-align: center;
 }
+
+/* css per tutorial su come si gioca
 #Info .card-text{
     font-size: small;
     text-align: justify;
@@ -139,8 +141,10 @@ nav {
     color: darkorchid;
     background-color: white;
 }
+*/
+
 nav{
-    background-color: rgba(0, 0, 255, 0.5);
+    background-color: rgba(180, 190, 195, 0.8);
     color: ghostwhite;
     font-size: large;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;

@@ -555,44 +555,63 @@ app.post('/editor/saveStory', function (req, res) {
 })
 
 app.post('/editor/deleteStory', function (req, res) {
+    var fb = {msgs: []};//feedback object
     var story = req.body; 
     var story_ids = story.story_ids;
+    var promises = [];
     if (story_ids) {
-        story_ids.forEach(story_id => {
+        var s= 200;
+        story_ids.forEach( (story_id,index,arr) => {
             let path = storyPath(story_id);
             if (path != '404') {
-                fs.rmdir(path, { recursive: true }, (err) => {
-                    if (err) {
-                        console.log("An error occurred inside /editor/deleteStory while removing " + story_id + ": " + err);
-                        return res.status(500).send(JSON.stringify(err)).end();
-                    }
-                    else {
-                        console.log("Story " + path + " deleted successfully.")
-                        return res.status(200).send().end();
-                    }
+                promises.push( new Promise( (resolve,reject) =>{
+                    fs.rmdir(path, { recursive: true }, (err) => {
+                        if (err) {
+                            console.log("An error occurred inside /editor/deleteStory while removing " + story_id + ": " + err);
+                            fb.msgs.push({msg:"Errore nell'eliminazione di "+story_id+ " è .", successful: false});
+                            s = 500;
+                        }
+                        else {
+                            console.log("Story " + path + " deleted successfully.")
+                            fb.msgs.push({msg:"La storia "+story_id+ " è stata eliminata.", successful: true});
+                        }
+                        resolve();
+                    });
                 })
+                );
             }
+        })
+        Promise.all(promises).then( () => {
+            console.log("pre return: ",fb)
+            return res.status(s).send(JSON.stringify(fb)).end();
         })
     }
     else {
         console.log("/editor/deleteStory BAD REQUEST: story_ids parameter was not provided.")
-        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "story_ids parameter was not provided." })).end();
+        fb.msgs.push({msg:"Nessuna storia è stata eliminata.", successful: false});
+        return res.status(400).send(JSON.stringify(fb)).end();
+       // { code: "BAD_REQUEST", message: "story_ids parameter was not provided." }
     }
 })
 
 app.post('/editor/publisher', function (req, res) {
+    var fb = {msgs: []};//feedback object
     var story_ids = req.body.story_ids;
+    var promises = [];
     if (story_ids != undefined) {
-        story_ids.forEach(story_id => {
+        var s = 200;
+        story_ids.forEach( (story_id,index,arr) => {
             let path = storyFolder(story_id);
             if (path == 'pubpath') {
-                fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
-                    if (err) {
-                        console.log("An error occurred inside /editor/publisher while unpublishing " + story_name + ": " + err)
-                        return res.status(500).send(JSON.stringify(err)).end();
-                    }
-                    else {
-                        fs.readFile(unpubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                promises.push( new Promise( (resolve,reject) => {
+                        fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
+                            if (err) {
+                                console.log("An error occurred inside /editor/publisher while unpublishing " + story_id + ": " + err)
+                                fb.msgs.push({msg:"Errore nel ritiro della storia "+story_id+".", successful: false});
+                                s = 500;
+                            }
+                            else {
+                       /* fs.readFile(unpubpath + story_id + '/story.json', 'utf8', function (err, file) {
                             if (err) { 
                                 console.log("An error accourred inside /editor/publish, while updating published field: " + err);
                                 return res.status(500).send(JSON.stringify(err)).end();
@@ -602,20 +621,27 @@ app.post('/editor/publisher', function (req, res) {
                                 story.published = false;
                                 console.log("published field updated successfully.")
                             }
+                        })*/
+                                console.log('The story ' + story_id + 'was unpublished.');
+                                console.log("pre push: ",fb)
+                                fb.msgs.push({msg:"La storia "+story_id+ " è stata ritirata.", successful: true});
+                                console.log("post push: ",fb)                 
+                            }
+                            resolve();
                         })
-                        console.log('The story ' + story_id + 'was unpublished.');
-                        return res.status(200).send().end();
-                    }
-                })
+                    })
+                );
             }
             else if (path == 'unpubpath') {
-                fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
-                    if (err) {
-                        console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
-                        return res.status(500).send(JSON.stringify(err)).end();
-                    }
-                    else {
-                        fs.readFile(pubpath + story_id + '/story.json', 'utf8', function (err, file) {
+                promises.push( new Promise( (resolve,reject) => {
+                        fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
+                            if (err) {
+                                console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
+                                fb.msgs.push({msg:"Errore nella pubblicazione di "+story_id+ ".", successful: false});
+                                s = 500; 
+                            }
+                            else {
+                        /*fs.readFile(pubpath + story_id + '/story.json', 'utf8', function (err, file) {
                             if (err) { 
                                 console.log("An error accourred inside /editor/publish, while updating published field: " + err);
                                 return res.status(500).send(JSON.stringify(err)).end();
@@ -625,17 +651,24 @@ app.post('/editor/publisher', function (req, res) {
                                 story.published = true;
                                 console.log("published field updated successfully.")
                             }
+                        })*/
+                                console.log('The story ' + story_id + 'was published.');
+                                fb.msgs.push({msg:"La storia "+story_id+ " è stata pubblicata.", successful: true});
+                            }
+                            resolve();
                         })
-                        console.log('The story ' + story_id + 'was published.');
-                        return res.status(200).send().end();
-                    }
-                })
+                    })
+                );
             }
         })
+        Promise.all(promises).then( () => {
+            return res.status(s).send(JSON.stringify(fb)).end();
+        });
     }
     else {
         console.log("/editor/publisher BAD REQUEST: story_ids parameter was not provided.")
-        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "story_ids parameter was not provided." })).end();
+        fb.msgs.push({msg:"Nessuna storia è stata pubblicata o ritirata.", successful: false});
+        return res.status(400).send(JSON.stringify(fb)).end();
     }
 })
 

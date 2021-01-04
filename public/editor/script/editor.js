@@ -68,9 +68,8 @@ function getStories(caller) {
 TO-DO list:
   -Feedback area handling
     -the setting is the following:
-      -if both calls are successful then show the happy loli,
-      otherwise show the questioning loli and write in feedback 
-      textarea what went wrong
+      -reload containers with current stories
+  -make unpublished stories deletable
   -add duplicate button( basically delete id field then saveStory)
   -navbar/Go home handling
   -informative paragraph in explorer
@@ -176,7 +175,7 @@ function explorer_calls() {
         story_ids: ids.delete_array
       };
       $.post("/editor/deleteStory",story, function(data,status){
-        resolve(status);
+        resolve(data);
       });
     }
   });
@@ -187,16 +186,33 @@ function explorer_calls() {
         story_ids: ids.pub_unpub_array
       };
       $.post("/editor/publisher",story, function(data, status){
-        resolve(status);
+        console.log("data dopo la post: ",data)
+        resolve(data);
       });
     }
   });
 
-  Promise.all([delete_promise, publisher_promise]).then(status => {
-    if( (status[0] == "success") && (status[1] == "success") )
-      ;
-    else
-      alert("something went wrong:"+status[0]+status[1]);
+  Promise.all([delete_promise, publisher_promise]).then(data => {
+    let msg_array = [];
+    if( data[0] )
+      msg_array = msg_array.concat(JSON.parse(data[0]).msgs); 
+    if( data[1] )
+      msg_array = msg_array.concat(JSON.parse(data[1]).msgs);    
+    if( msg_array.length > 0 ) {
+      msg_array.forEach( message => {
+        let color; 
+        if(message.successful)
+          color = "rgb(85, 255, 6)";
+        else
+          color = "red";
+        let message_div = $("<div/>",
+        {
+          "style": "color:"+color+";",    
+        });
+        message_div.text(message.msg)
+        $("#feedback_div").append(message_div);
+      });
+    }
   });
 }
 

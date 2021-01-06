@@ -54,11 +54,16 @@ function handleError() {
 function getStories(caller) {
   $.get("/editor/getStories?section="+caller, function(data, status){
     let obj = JSON.parse(data);
+    console.log("obj: ",obj)
     switch (caller) {
-      case "ChooseStoryToEdit":     
-        create_stories_grid(obj);
+      case "ChooseStoryToEdit": 
+        if( obj.error_msg )
+          alert(obj.error_msg); 
+        create_stories_grid(obj.stories);
         break;
       case "Explorer":
+        if( obj.error_msg )
+          alert(obj.error_msg); 
         create_Explorer_grids(obj.publishable,obj.published);
         break;
     } 
@@ -193,18 +198,17 @@ function prepare_saveStory_json(){
 
 function getStory(id) {
   $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
-    CurrentWork =JSON.parse(data);
-    /*the line above needs to be replaced  by the following three
-    code lines, because CSSdata is getting no value, thus making
-    saveStory not working(unless CSSdata has already been initialized).
-    However this refactoring needs some work in saveStory server-side as well.
-    Furthermore chooseStoryToEdit needs to be cleared everytime it is
-    faded in or faded out. 
-    let parsed_data = JSON.parse(data);
-    CurrentWork =parsed_data.story;
-    CSSdata = parsed_data.css;*/
+    //CurrentWork =JSON.parse(data);
+    console.log("data: ",data)
+    //console.log("parsed data: ",JSON.parse(data))
+    //let parsed_data = JSON.parse(data);
+    CurrentWork = JSON.parse(data.story);
+    CSSdata = JSON.parse(data.css);
     MainMenu("STORY");
     //goToSection("EditStory");
+  }).fail( err => {
+    console.log(err)
+    alert(err.responseText);
   });
 }
 

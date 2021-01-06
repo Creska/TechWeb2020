@@ -67,18 +67,40 @@ function getStories(caller) {
 /* 
 TO-DO list:
 cazzatine varie
-  -reload containers with current stories
+  -see getStory
+  -make unpublished stories deletable with navbar button
   -add duplicate button( basically delete id field then saveStory)
-  -navbar/Go home handling, make unpublished stories deletable with navbar butotn or something
-  -informative paragraph in explorer
+  -weird reload issue
+    -maybe related to ajax loli
+    -show error loli despite the operation going well, also reloads the page for some reason
   -button that triggers popover which shows what is missing to make the story publishable
   -ajax loli appareance handling
   -QR code generation
+  -in trash can, publishable and published containers, container class
+    should be removed since it's responsiveness sucks, but when we do so,
+    the dragging stuff is fucked up for some reason. this may be as well
+    an occasion to fix this kinky layout.
   -Make code polite and modular
 Media:
 Notes:
+  here is section the transition dynamic:
+  first button -> 
+    MainMenu("NEWSTORY")
+      initialize story and it's handling variables
+      gotoSection("Mainenu") ->
+        MainMenu fadout, .masthead fadein, editStory fadein
+  home button ->
+    navbar("home") ->
+      if css window is open, close it
+      show modal
+    ignora button ->
+      close modal
+      gotoSection("Mainenu") ->
+        reset story handling variables
+        .masthead fadeout, editstory fadeout, MainMenu fadein
   */
 function start_saving() {
+  close_css_window();
   CurrentWork.publishable = isPublishable(CurrentWork); 
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
@@ -114,6 +136,14 @@ story = {
 }
 */
 //clone CurrentWork and transform it
+//goToSection("AddVideo")
+/*let media_array = [{
+  name: string,
+  file: FILE,
+  coordinates: [ 0, 1, 2,3]//the media path has to be written in the json
+  // in the position: quest 0, activity 1, activity_text 2 as the third 
+  //element of the gallery
+}];*/
 function prepare_saveStory_object(publish) {
   let story = {
     story_json: CurrentWork,
@@ -164,7 +194,17 @@ function prepare_saveStory_json(){
 function getStory(id) {
   $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
     CurrentWork =JSON.parse(data);
-    goToSection("EditStory");
+    /*the line above needs to be replaced  by the following three
+    code lines, because CSSdata is getting no value, thus making
+    saveStory not working(unless CSSdata has already been initialized).
+    However this refactoring needs some work in saveStory server-side as well.
+    Furthermore chooseStoryToEdit needs to be cleared everytime it is
+    faded in or faded out. 
+    let parsed_data = JSON.parse(data);
+    CurrentWork =parsed_data.story;
+    CSSdata = parsed_data.css;*/
+    MainMenu("STORY");
+    //goToSection("EditStory");
   });
 }
 
@@ -214,6 +254,7 @@ function explorer_calls() {
         $("#feedback_div").append(message_div);
       });
     }
+    getStories("Explorer");
   });
 }
 
@@ -399,20 +440,21 @@ function isPublishable( obj ) {
   return res;
 };
 
-
+function set_default_story_settings() {
+  mode = "default";
+  first_selected_stage = "";
+  first_selected_card_index = -1;
+  selected_card = "";
+  CardClickDisabled = false;
+  b = [0, 0, 0, 0, 0, 0, 0];//this feels outdated
+}
 /* --------------------- WIP --------------------------- */
-function MainMenu( action ) {
+function MainMenu( action, is_new ) {
   switch ( action ) {
-    case "NEWSTORY":
-      mode = "default";
-      first_selected_stage = "";
-      first_selected_card_index = -1;
-      selected_card = "";
-      CardClickDisabled = false;
-      b = [0, 0, 0, 0, 0, 0, 0];
-
-      $('.masthead').fadeIn();
-      initStory();
+    case "STORY":
+      set_default_story_settings();
+      if( is_new )
+        initStory();
       goToSection('EditStory');
       break;
     case "CHOOSESTORY":
@@ -441,10 +483,11 @@ function Navbar( option ) {
       Preview_Window = window.open( "../player/player.html", "tab" );
       break;
     case "Home":
-      if ( CSS_Editor_Window )
-        CSS_Editor_Window.close();
-      $("#ChooseStoryToEdit .container").empty();
       $( "#SavePrompt" ).modal( "toggle" );
+      break;
+    case "ChooseStoryToEdit":
+      $( "#back_modal" ).modal( "toggle" );
+      break;
   }
 
   $( "#PromptSave" ).modal("show");
@@ -452,15 +495,25 @@ function Navbar( option ) {
   $( "#PromptSave .button[data-dismiss=modal]" ).on( "click",  function() {})
 }
 
-
-
-function go_home(from) {
-  mode = "default"; //just in case
-  $("#"+from).fadeOut( function () {
-    CurrentNavStatus.Section = "MainMenu";
-    //bisogna impostare anche QuestN e ActivityN?
-    $("#"+from+" .container").empty();
-    $("#MainMenu").fadeIn();
-  });
+function change_navbar(how) {
+  switch (how) {
+    case "show":
+      //edit fields noned
+      $("#back_nav").css("display","inherit");
+      $("#final_choose").css("display","inherit");
+      $("#final_home").css("display","none");
+      break;
+    
+    case "hide":
+      //edit fields shown
+      $("#back_nav").css("display","none");
+      $("#final_choose").css("display","none");
+      $("#final_home").css("display","inherit");
+      break;
+  }
 }
 
+function close_css_window() {
+  if ( CSS_Editor_Window )
+    CSS_Editor_Window.close();
+}

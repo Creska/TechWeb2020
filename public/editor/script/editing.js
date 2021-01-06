@@ -187,16 +187,23 @@ function back() {
 */
   
 function goToSection(where) {
-	/* esegue eventuali reset */
+	/* esegue eventuali reset, che non dovrebbero essere necessari
 	mode = "default";
-	first_selected_stage = "";
+	first_selected_stage = "";*/
 	switch ( CurrentNavStatus.Section ) {
-	  case "EditStory":
+	  case "MainMenu":
+		change_navbar("hide");//i'm coming from home so i have to hide extra navbar stuff
+		break;
+	  case "ChooseStoryToEdit":
+		change_navbar("show");
+		break;
+		case "EditStory":
 	  case "EditQuest":
 	  case "EditActivity":
 		stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid" );
 	}
-  
+	if( where == "MainMenu" || where == "final_section")
+	  $('.masthead').fadeOut();
 	/* cambia sezione */
 	$("#"+CurrentNavStatus.Section).fadeOut( function() {
 	  change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
@@ -204,9 +211,9 @@ function goToSection(where) {
   
 	  switch ( where ) {
 		case "MainMenu":
-		  $('.masthead').fadeOut();
 		  break;
 		case "EditStory":
+		  $('.masthead').fadeIn();
 		  if ( CurrentWork.story_title )
 			$( "#EditStory header small" ).html( CurrentWork.story_title );
 		  else

@@ -120,7 +120,8 @@ function openCard( card ) {
         else if (CurrentNavStatus.Section == "EditQuest")
           goToSection("EditActivity");
         else if (CurrentNavStatus.Section == "EditActivity") {
-          switch( $(card).find(".card-text").first().prop("innerHTML") ) {
+          console.log("roba: ", card.innerText )
+          switch( card.innerText ) {
             case "GALLERY":
               goToSection("EditGallery");
               break;
@@ -163,7 +164,7 @@ function create_card(titolo,subtitle) {
       color = "bg-"+ colors[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length % 6];
       break;
     case "ParagraphsGrid":
-      if ( titolo == "GALLERY" ) color = colors[0];
+      if ( titolo == "GALLERY" ) color = "bg-"+colors[0];
       else color = "bg-"+ colors[1];
       break;
     case "StoriesGrid":
@@ -437,6 +438,9 @@ function saveCardGrids() {
 
 
   function create_Explorer_grids(unpub,pub){
+    $("#publishableContainer").empty();
+    $("#publishedContainer").empty();
+    $("#trash_can").empty();
     if(unpub){
       for(i=0;i<unpub.length;i++){//unpublishable
         if( !unpub[i].title )

@@ -582,7 +582,7 @@ app.post('/editor/deleteStory', function (req, res) {
             }
         })
         Promise.all(promises).then( () => {
-            console.log("pre return: ",fb)
+            //console.log("pre return: ",fb)
             return res.status(s).send(JSON.stringify(fb)).end();
         })
     }
@@ -612,9 +612,9 @@ app.post('/editor/publisher', function (req, res) {
                             }
                             else {
                                 console.log('The story ' + story_id + 'was unpublished.');
-                                console.log("pre push: ",fb)
+                                //console.log("pre push: ",fb)
                                 fb.msgs.push({msg:"La storia "+story_id+ " è stata ritirata.", successful: true});
-                                console.log("post push: ",fb)                 
+                                //console.log("post push: ",fb)                 
                             }
                             resolve();
                         })

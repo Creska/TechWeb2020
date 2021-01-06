@@ -108,21 +108,6 @@
     </div>
   </div>
 
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-      <div class="modal-content">
-      
-        <img style="width: 100%;" src="https://media.tenor.com/images/f6d1602a1c9e507b2cfe8e7c98faadd9/tenor.gif" />
-                
-      <div style='color:black' class="modal-body" >
-        Attenzione! se torni nella home perderai tutto quello che non hai salvato, vuoi procedere lo stesso?
-      </div>
-      <div class="modal-footer">
-        <button type="button" onclick="goToSection('MainMenu');" class="btn btn-primary" data-dismiss="modal">ok nigger</button>
-      </div>
-    </div>
-  </div>
-  </div>
   <div class="modal fade" id="publish_directly" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content bg-dark">
@@ -158,6 +143,9 @@
         <a class="nav-link" href="javascript:Navbar('Preview');" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
           <i class="far fa-eye fa-2x"></i>
         </a>
+        <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
+          <i class="fas fa-chevron-circle-left fa-2x"></i>
+        </a>
         <a class="nav-link" href="javascript:Navbar('Home');" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
           <i class="fas fa-home fa-2x"></i>
         </a>
@@ -177,23 +165,41 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Salvare prima di tornare al menu principale?</p>
+          <p>Se torni alla home, perderai tutto il lavoro che hai fatto, vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide'); goToSection('MainMenu');">Ignora</button>
-          <button type="button" class="btn btn-primary" onclick="/* TODO */">Salva</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');close_css_window(); goToSection('MainMenu');">si</button>
+          <button type="button" class="btn btn-primary" onclick="$('#SavePrompt').modal('hide');">no</button>
         </div>
       </div>
     </div>
   </div>
- 
+  <div class="modal fade" id="back_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Se torni alla griglia delle storie, perderai tutte le modifiche che hai fatto finora, vuoi procedere comunque?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">si</button>
+          <button type="button" class="btn btn-primary" onclick="$('#back_modal').modal('hide');">no</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MENU PRINCIPALE -->
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
     <h1 class="cover-heading SectionTitle">Benvenuto nello Story Editor!</h1>
     <p class="lead mb-5 SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('NEWSTORY');" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('STORY',true);" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('CHOOSESTORY');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('EXPLORER');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
     </div>
@@ -357,9 +363,6 @@
 
   <!-- GESTIONE DEL TITOLO DELLA STORIA E DELL'INSIEME DI QUEST -->
   <main role="main" class="inner cover EditorSection" id="EditStory">
-    <a class="nav-link" href="javascript:go_home('EditStory')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
-      <i class="fas fa-home fa-2x"></i>
-    </a>
     <header>
       <small></small>
       <h1 class="cover-heading SectionTitle">Storia</h1>
@@ -825,7 +828,7 @@
         <i class="fas fa-upload"></i>
       </button>
       <input type="file" id="UploadVid" style="display:none;">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="right" title="Aggiungi un link a YouTube">
         <i class="fab fa-youtube"></i>
       </button>
     </div>
@@ -853,35 +856,37 @@
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
 
   <main role="main" class="inner cover EditorSection " id="final_section">
+    <div id="final_choose">
+      <div class="mb-3">La storia è stata aggiornata con successo! <br>
+      Ora premi uno dei due pulsanti per proseguire.
+      </div>
+      <button class="btn btn-lg btn-primary mr-3" onclick="goToSection('ChooseStoryToEdit')" >Torna alla griglia delle storie</button>
+      <button class="btn btn-lg btn-primary" onclick="goToSection('MainMenu')" >Torna alla home</button>
+    </div>
+    <div id="final_home">
     <p>SHOW QR CODE HERE</p>
     <p id="story_id_p"></p>
-    <button class="btn btn-lg btn-primary" onclick="go_home('final_section')" >Torna alla home</button>
+    <button class="btn btn-lg btn-primary" onclick="goToSection('MainMenu')" >Torna alla home</button>
+    </div>
   </main>
 
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">
-    <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
-      <i class="fas fa-trash"></i>
-    </button>
-    <a class="nav-link" href="javascript:go_home('ChooseStoryToEdit')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+    <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-   <p>Quelle che vedi qui sotto sono tutte le storie salvate sul server ma non 
-     pubblicate(se vuoi modificare una storia pubblicata, devi prima ritirarla). 
-     Clicca sulla storia che vuoi editare.
-   </p>
-    <div class="CardGrid container" id="StoriesGrid" >
+    <div class="col-xs-12 alert alert-info text-justify" role="alert">
+      <i class="fas fa-info"></i>
+      <p>Queste sono le storie salvate sul server ma non pubblicate. Clicca su una 
+        storia per editarla.
+      </p>
+    </div>
+    <div class="CardGrid " id="StoriesGrid" >
     </div>
   </main>
   <main style="flex-grow: 1; min-width: 100%;" role="main" class="inner cover EditorSection " id="Explorer">
-    <a class="nav-link" href="javascript:go_home('Explorer')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+    <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-     <!-- <p style="border: solid 1px; " ondrop="drop(event)" ondragover="allowDrop(event)">
-        <img src="loli.png" draggable='true' ondragstart="drag(event)" id="drag1" width="20%" height="30%">
-      </p>
-      <p style="border: solid 1px; " ondrop="drop(event)" ondragover="allowDrop(event)">
-        <img src="loli.png" draggable='true' ondragstart="drag(event)" id="drag2" width="20%" height="30%">
-      </p>  -->
       <style>
         .grid-container {
     display: grid;
@@ -893,7 +898,19 @@
   display: grid;
   grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
 }
+.alert-info {
+  color: rgb(142, 227, 241);
+  background-color: rgb(20, 59, 67);
+  border-color: rgb(30, 89, 97);
+}
       </style> 
+  <div class="col-xs-12 alert alert-info text-justify" role="alert">
+    <i class="fas fa-info"></i>
+    <p>Le storie pubblicabili e quelle pubblicate sono qui
+       mostrate, trascinale nel cestino per eliminarle o nell'altro 
+       riquadro per pubblicarle/ritirarle. Quando hai deciso, premi il pulsante 
+      in basso e guarda l'area di feedback per sapere com'è andata l'operazione.</p>
+  </div>
   <div class="grido">
   <div class="mb-1" >Cestino</div>
   <div id="trash_can" style="min-width: 20%;" class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 

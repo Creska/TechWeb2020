@@ -565,9 +565,6 @@ app.post('/editor/saveStory', function (req, res) {
             //TO-DO: before writing the media, check if it's name is already
             //saved, if so append (1) to the name and check again and so 
             //on until a new name is found
-            var media_data = file.data.replace(/^data:image\/\w+;base64,/, "");
-            //var buf = Buffer.from(media_data, 'base64');
-            //console.log("buffer: ",buf)
             let err = fs.writeFileSync(story_path + story_id + '/' + file.name,file.data, options);//data was changed in data.file
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);

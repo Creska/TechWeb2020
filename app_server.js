@@ -403,7 +403,7 @@ app.get('/editor/getStories', function (req, res) {
             console.log("stories: ",stories)//this happens before the forEach for some reason
             let error_msg;
             if( any_error ) //at least one story wasn't retrieved
-                error_msg = "Qualche storia non è stata reperita nel server."   
+                error_msg = "Qualche storia non è stata reperita nel server.";   
             return res.status(200).send(JSON.stringify({error_msg: error_msg,stories:stories})).end();
         })
     }
@@ -493,6 +493,7 @@ app.get('/editor/getStory', function (req, res) {
                     resolve(file);
             });
         });
+        //the css must be sent as well
         let css_promise = new Promise( (resolve,reject) => {
             fs.readFile(path + '/css.json', 'utf8', function (err, file) {
                 if(err)
@@ -556,19 +557,26 @@ app.post('/editor/saveStory', function (req, res) {
                 options = 'utf8'
             }
             //else
-              //  options = { encoding: null }; theoretically this would 
-              //guarantee the file being written as a binary buffer(otherwise
-              //it is utf-8 even if options is undefined), but in practice
-              //there's no difference
+              //  options = { encoding: null }; dunno
             if (file.tostringify) {
                 file.data = JSON.stringify(file.data)
             }
+            console.log("file.data: ",file.data)
+            //TO-DO: before writing the media, check if it's name is already
+            //saved, if so append (1) to the name and check again and so 
+            //on until a new name is found
             let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
+                //TO-DO: add array of not retrieved files to the successful response so the user can know 
             }
             else {
-                console.log("Element " + file.name + " of " + story_id + " saved successfully.")
+                //write path in the json if coordinates field exists
+                if( file.coordinates ){
+                    console.log("file.coordinates", file.coordinates)
+                    story_json.quests[ file.coordinates[0] ].activities[ file.coordinates[1] ].activity_text[ file.coordinates[2] ].content[ file.coordinates[3] ].src='/'+ story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                }
+                    console.log("Element " + file.name + " of " + story_id + " saved successfully.")
             }
         })
     }
@@ -576,6 +584,7 @@ app.post('/editor/saveStory', function (req, res) {
     story_json.story_ID = story_id;
     let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
+        //TO-DO: send response with status 500 because story_json is essential, make sure to have only one response sent.
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
     } 
     else {

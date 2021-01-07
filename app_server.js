@@ -561,11 +561,14 @@ app.post('/editor/saveStory', function (req, res) {
             if (file.tostringify) {
                 file.data = JSON.stringify(file.data)
             }
-            console.log("file.data: ",file.data)
+          //console.log("file.data: ",file.data)
             //TO-DO: before writing the media, check if it's name is already
             //saved, if so append (1) to the name and check again and so 
             //on until a new name is found
-            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
+            var media_data = file.data.replace(/^data:image\/\w+;base64,/, "");
+            //var buf = Buffer.from(media_data, 'base64');
+            //console.log("buffer: ",buf)
+            let err = fs.writeFileSync(story_path + story_id + '/' + file.name,file.data, options);//data was changed in data.file
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
                 //TO-DO: add array of not retrieved files to the successful response so the user can know 
@@ -573,7 +576,6 @@ app.post('/editor/saveStory', function (req, res) {
             else {
                 //write path in the json if coordinates field exists
                 if( file.coordinates ){
-                    console.log("file.coordinates", file.coordinates)
                     story_json.quests[ file.coordinates[0] ].activities[ file.coordinates[1] ].activity_text[ file.coordinates[2] ].content[ file.coordinates[3] ].src='/'+ story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
                 }
                     console.log("Element " + file.name + " of " + story_id + " saved successfully.")

@@ -31,7 +31,7 @@ Roba da fare:
     * Basically bisognerebbe salvare immagini e video con un nome generato sul momento, in base ai media già salvati
     * Per semplificare al massimo le cose, io salverei i files nell'oggetto della storia in questo modo:
         {
-	        needsaving: "", // indica se bisogna salvare il file su server
+	        isFile: "", // indica se il campo src fa riferimento ad un file vero e proprio. in tal caso va salvato su server
 	        src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al file
 	        alt: ""
         }

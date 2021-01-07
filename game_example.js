@@ -44,7 +44,7 @@ game_example = {
 
 // oggetto media
 media = {
-	needsaving: "", // indica se bisogna salvare il file su server
+	isFile: "", // indica se bisogna salvare il file su server
 	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al nome che il nuovo file ha all'interno della mappa
 	alt: ""
 }

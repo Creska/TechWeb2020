@@ -84,6 +84,12 @@ function save_title( which ) {
 		  content: []
 		});
 		break;
+		case "Video":
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
+			  type: "video",
+			  content: []
+			});
+			break;
 	  default:
 		handleError();
 	}
@@ -173,7 +179,7 @@ function back() {
 			break;
 	  	case "EditText":
 	  	case "EditGallery":
-		case "AddVideo":
+		case "VideoSection":
 			CurrentNavStatus.TextPartN = -1;
 			goToSection( "EditActivity" );
 			break;
@@ -272,12 +278,12 @@ function goToSection(where) {
   
 		  loadEditGallerySection();
 		  break;
-		case "AddVideo":
+		case "VideoSection":
 			CurrentNavStatus.TextPartN = get_card_index();
 
-			$( "#AddVideo header small" ).html( $( "#EditActivity header small" ).html() );
+			$( "#VideoSection header small" ).html( $( "#EditActivity header small" ).html() );
 
-			loadAddVideoSection();
+			loadVideoSection();
 			break;
 		case "EditAnswerField":
 		  $( "#EditAnswerField header small" ).html( $( "#EditActivity header small" ).html() );
@@ -849,8 +855,9 @@ function uploadMedia( list ) {
 					case "jpg":
 					case "jpeg":
 					case "png":
+					case "gif":
 						MediaBuffer.push({
-							needsaving: true,
+							isFile: true,
 							src: media,
 							alt: ""
 						});
@@ -859,14 +866,14 @@ function uploadMedia( list ) {
 			}
 		}
 	}
-	else if ( CurrentNavStatus.Section == "AddVideo" ) {
+	else if ( CurrentNavStatus.Section == "VideoSection" ) {
 		let media = list[0];
 		if ( media ) {
 			switch ( getFileExtension( media.name ).toLowerCase() ) {
 				case "mp4":
 				case "webm":
 					MediaBuffer[0] = {
-						needsaving: true,
+						isFile: true,
 						src: media,
 						alt: ""
 					};
@@ -880,9 +887,10 @@ function uploadMedia( list ) {
 function displayMediaPreview( media, mediatype ) {
 	if ( mediatype == "gallery" ) {
 		let newpreview = $( "<img>" );
+		let reader;
 
-		if ( media.needsaving ) {
-			let reader = new FileReader();
+		if ( media.isFile ) {
+			reader = new FileReader();
     		reader.readAsDataURL( media.src );
     		reader.addEventListener( "load", function() {
       			newpreview.attr( "src", this.result );
@@ -901,7 +909,23 @@ function displayMediaPreview( media, mediatype ) {
   		$( "#GalleryPreview" ).append( newrow );
 	}
 	else if ( mediatype == "video" ) {
-		/* TODO */
+		if ( media.isFile ) {
+			$( "#VideoPreview video" ).toggle(false);
+			$( "#Video_Empty" ).toggle(false);
+
+			$( "#Video_IsLoaded p" ).eq( 1 ).html( media.src.name );
+			$( "#Video_IsLoaded" ).toggle(true);
+		}
+		else {
+			$( "#Video_IsLoaded" ).toggle(false);
+			$( "#Video_Empty" ).toggle(false);
+
+			$( "#VideoPreview video source" ).attr( "src", media.src );
+			$( "#VideoPreview video source" ).attr( "type", "video/" + getFileExtension( media.src ) );
+			$( "#VideoPreview video" ).toggle(true);
+		}
+
+		$( "#VideoDescr" ).val( media.alt );
 	}
 };
 
@@ -942,8 +966,6 @@ function loadEditGallerySection() {
   	$.each( MediaBuffer, function( i, val ) {
 		displayMediaPreview( val, CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].type );
 	});
-
-	
 };
 
 
@@ -960,7 +982,26 @@ function saveImageGallery() {
 };
 
 
-function loadAddVideoSection() {
+function loadVideoSection() {
+	MediaBuffer = new Array( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content.length );
 
-}
+	if ( MediaBuffer.length ) {
+		MediaBuffer[0] = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content[0];
+		displayMediaPreview( MediaBuffer[0], "video" );
+	}
+	else {
+		$( "#Video_IsLoaded" ).toggle(false);
+		$( "#VideoPreview video" ).toggle(false);
+	}
+};
+
+
+function saveVideoSection() {
+	if ( MediaBuffer.length )
+		MediaBuffer[0].alt = $( "#VideoDescr" ).val().replace(/(<([^>]+)>)/gi, "");
+	
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;
+
+	back();
+};
 

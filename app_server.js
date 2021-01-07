@@ -494,7 +494,7 @@ app.get('/editor/getStory', function (req, res) {
             });
         });
         let css_promise = new Promise( (resolve,reject) => {
-            fs.readFile(path + '/css_file.json', 'utf8', function (err, file) {
+            fs.readFile(path + '/css.json', 'utf8', function (err, file) {
                 if(err)
                     reject(err);
                 else
@@ -526,9 +526,7 @@ app.post('/editor/saveStory', function (req, res) {
     console.log("story: ",story) 
     var story_json = story.story_json; //JSON story file object
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
-
-    var published = story.published;
-    
+    var published = story.published;   
     var story_id = story_json.story_ID;
     var story_path;
     console.log("saveStory request received.")
@@ -541,9 +539,6 @@ app.post('/editor/saveStory', function (req, res) {
     let path = storyPath(story_json.story_ID)
     if (path == '404') {//id is undefined i.e. the story is new
         console.log("Creating the directory for the new story.") 
-        //it looks like crypto can generate / as a character which
-        //leads to errors and apparently is not that uncommon, also is there any guarantee that ids
-        //are actually unique?
         story_id = crypto.randomBytes(16).toString('base64');//overwrite the previously undefined id with the new one
         console.log("story path: ",story_path ," story id: ",story_id)
         if (fs.mkdirSync(story_path + story_id) != undefined) {
@@ -560,11 +555,12 @@ app.post('/editor/saveStory', function (req, res) {
             if (file.native) {
                 options = 'utf8'
             }
+            //else
+              //  options = { encoding: null }; theoretically this would 
+              //guarantee the file being written as a binary buffer(otherwise
+              //it is utf-8 even if options is undefined), but in practice
+              //there's no difference
             if (file.tostringify) {
-                //stringify is executed assuming file.data is an object
-                //which would be true if the json sent is automatically
-                //reconverted which i think is not, that's why this step
-                //needs to be checked out
                 file.data = JSON.stringify(file.data)
             }
             let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file

@@ -72,7 +72,6 @@ function getStories(caller) {
 /* 
 TO-DO list:
 cazzatine varie
-  -see getStory
   -make unpublished stories deletable with navbar button
   -add duplicate button( basically delete id field then saveStory)
   -weird reload issue
@@ -124,6 +123,9 @@ function saveStory(publish) {
     success: function(data) {
       $("#story_id_p").text("Id storia: "+data);
       goToSection("final_section");
+    },
+    error: function(err) {
+      alert("something nasty happened");
     }
   });
 } 
@@ -136,64 +138,55 @@ story = {
       data: FILE,
       native: boolean, //true if the file has to be saved in utf-8 format
       tostringify: boolean //true if the file is a json, in practice this applies to CSS object
+      coordinates: //true if it is a media
     }
   ],
-}
-*/
-//clone CurrentWork and transform it
+}*/
 //goToSection("AddVideo")
-/*let media_array = [{
-  name: string,
-  file: FILE,
-  coordinates: [ 0, 1, 2,3]//the media path has to be written in the json
-  // in the position: quest 0, activity 1, activity_text 2 as the third 
-  //element of the gallery
-}];*/
-function prepare_saveStory_object(publish) {
-  let story = {
-    story_json: CurrentWork,
-    story_data: [
+function prepare_saveStory_object(publish){
+  let clean_cw = Object.assign({}, CurrentWork);//clone CurrentWork
+  let q=0;
+  let story_data = [
       {
-        name: "css_file.json",//extension has to be included probably, storyid+"_css.json", looks like css file is saved as a json
+        name: "css.json",
         data: CSSdata,
-        native: true, //true if the file has to be saved in utf-8 format
-        tostringify: true //true if the file is a json, in practice this applies to CSS object
+        native: true, 
+        tostringify: true 
       }
-    ],
+  ];
+  let coordinates = [];
+  while(clean_cw.quests[q]){
+    let a=0;
+    while(clean_cw.quests[q].activities[a]){
+      let at=0;
+      while(clean_cw.quests[q].activities[a].activity_text[at]){
+        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ) {
+          let c=0;
+          while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
+            if( clean_cw.quests[q].activities[a].activity_text[at].content[c].needsaving ) {//hopefully it will be renamed isFile
+              //push media in story_data
+              story_data.push({
+                name: clean_cw.quests[q].activities[a].activity_text[at].content[c].src.name,
+                data: clean_cw.quests[q].activities[a].activity_text[at].content[c].src,
+                coordinates: [q,a,at,c]//new field added for server-side path writing
+              });
+              clean_cw.quests[q].activities[a].activity_text[at].content[c].src= "";
+            }          
+            c++;
+            }
+        }
+        at++;
+      }
+      a++;
+    }
+    q++;
+  } 
+  let story = {
+    story_json: clean_cw,
+    story_data: story_data,
     published: publish
   };  
   return story;
-}
-function prepare_saveStory_json(){
-  let clean_cw=CurrentWork;
-  //push file in an array and save it's position(which must not change) in json, which will be used later to get
-  //the file, which name shall be path/name_position to avoid ambiguity
-  //for now don't clone the json and replace images with random bullshit
-  // OLD CURRENTWORK CLEANING
-  let i=0;
-  //substitute some stuff
-  while(clean_cw.quests[i]){
-    let j=0;
-    while(clean_cw.quests[i].activities[j]){
-      let k=0;
-      while(clean_cw.quests[i].activities[j].activity_text[k]){
-        if( clean_cw.quests[i].activities[j].activity_text[k].type == "gallery" ) {
-          let z=0;
-          clean_cw.quests[i].activities[j].activity_text[k].content = "random bullshit";//temporary
-          while(clean_cw.quests[i].activities[j].activity_text[k].content[z]) {
-            if( clean_cw.quests[i].activities[j].activity_text[k].content[z].server ) {
-              //replace position with whatever is needed from player
-            }          
-            z++;
-            }
-        }
-        k++;
-      }
-      j++;
-    }
-    i++;
-  } 
-  return clean_cw;
 }
 
 function getStory(id) {
@@ -295,44 +288,6 @@ function gather_ids() {
   })
   return { delete_array:ids_to_delete, pub_unpub_array: ids_to_pub_unpub };
 }
-
-/*
-function get_all_images_bytes(){
-  i=0;
-  while(CurrentWork.quests[i]){
-    j=0;
-    current_quest = CurrentWork.quests[i];
-    while(current_quest.activities[j]){
-      current_activity = current_quest.activities[j];
-      current_activity.activity_text.forEach(get_images);
-      j++;
-    }
-    i++;
-  }
-}
-function get_images(act_text, index) {
-  act_text_element = $($.parseHTML(act_text));
-  switch(act_text_element.prop("tagName")){
-    case "IMG":
-      push_image(act_text_element);
-      data_array.push(data_array_element);
-      break;
-    case "DIV":
-      act_text_element.html().html().children().forEach(push_image);
-      
-      break;
-    
-  }
-}
-function push_image(image_element){
-  data_array_element = {
-    name:prompt("nome immagine: "),
-    data: image_element.attr("src")
-  };
-  data_array.push(data_array_element);
-}*/
-
-
 
 /**
  * @param obj --> oggeto simil-json

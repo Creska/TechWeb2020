@@ -197,6 +197,7 @@ function create_card(titolo,subtitle) {
 };
 
 function create_stories_grid(array) {
+  $("#StoriesGrid").empty();
   for(i=0;i<array.length;i++){
     if(!array[i].title)
       array[i].title = "senza titolo";

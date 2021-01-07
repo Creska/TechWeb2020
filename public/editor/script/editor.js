@@ -220,9 +220,12 @@ function explorer_calls() {
         story_ids: ids.delete_array
       };
       $.post("/editor/deleteStory",story, function(data,status){
+        console.log("data dopo deletestory: ",data)
         resolve(data);
       });
     }
+    else
+      resolve();
   });
 
   let publisher_promise = new Promise(( resolve, reject) => {
@@ -235,15 +238,20 @@ function explorer_calls() {
         resolve(data);
       });
     }
+    else
+      resolve();
   });
 
   Promise.all([delete_promise, publisher_promise]).then(data => {
+    console.log("i'm inside promise all")
     let msg_array = [];
     if( data[0] )
       msg_array = msg_array.concat(JSON.parse(data[0]).msgs); 
     if( data[1] )
       msg_array = msg_array.concat(JSON.parse(data[1]).msgs);    
     if( msg_array.length > 0 ) {
+      //console.log("msg array: ",msg_array)
+      $("#feedback_div").empty();
       msg_array.forEach( message => {
         let color; 
         if(message.successful)
@@ -257,8 +265,8 @@ function explorer_calls() {
         message_div.text(message.msg)
         $("#feedback_div").append(message_div);
       });
+      getStories("Explorer");
     }
-    getStories("Explorer");
   });
 }
 

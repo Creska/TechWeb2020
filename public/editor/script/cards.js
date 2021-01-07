@@ -125,6 +125,9 @@ function openCard( card ) {
             case "GALLERY":
               goToSection("EditGallery");
               break;
+            case "VIDEO":
+              goToSection("VideoSection");
+              break;
             default:
               goToSection("EditText");
               break;
@@ -165,6 +168,7 @@ function create_card(titolo,subtitle) {
       break;
     case "ParagraphsGrid":
       if ( titolo == "GALLERY" ) color = "bg-"+colors[0];
+      else if ( titolo == "VIDEO" ) color = "bg-" + colors[5];
       else color = "bg-"+ colors[1];
       break;
     case "StoriesGrid":

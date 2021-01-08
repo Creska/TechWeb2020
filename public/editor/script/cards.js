@@ -397,27 +397,28 @@ function saveCardGrids() {
   };
 
 
-  function allowDrop(ev) {
-    //alert("ev.taget over: "+ev.target.outerHTML);
-    border_color(ev,"blue");
-    ev.preventDefault();
-  } 
-  function border_color(ev,color){
-    switch (color) {
-    case "white":
-      ev.currentTarget.classList.remove("border-primary");
-      ev.currentTarget.classList.add("border-white");
-      break;
-    case "blue":
-      ev.currentTarget.classList.remove("border-white");
-      ev.currentTarget.classList.add("border-primary");
-      break;
-    }
+function allowDrop(ev) {
+   //alert("ev.taget over: "+ev.target.outerHTML);
+   border_color(ev,"blue");
+  ev.preventDefault();
+} 
+
+function border_color(ev,color){
+  switch (color) {
+  case "white":
+     ev.currentTarget.classList.remove("border-primary");
+    ev.currentTarget.classList.add("border-white");
+    break;
+  case "blue":
+    ev.currentTarget.classList.remove("border-white");
+    ev.currentTarget.classList.add("border-primary");
+    break;
   }
-  function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+}
   
-  }
+function drag(ev) {
+   ev.dataTransfer.setData("text", ev.target.id);  
+}
   
   function drop(ev) {//il target del drop deve essere sempre il container
     //il target del drag deve essere sempre la card

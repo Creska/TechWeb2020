@@ -50,6 +50,7 @@
           trigger : 'hover'
         });
       });
+      
     });
 
     /* modali per chiamate ajax */
@@ -62,35 +63,33 @@
       //$('#wait_modal').modal('hide');
       $('#wait_modal').modal('hide');
       //$("#loading").css("display", "none");
-      $('#success_modal').modal('show');
+      //$('#success_modal').modal('show');
     });
 
     $(document).ajaxError(function(){
       $('#wait_modal').modal('hide');
       //$("#loading").css("display", "none");
-      $('#fail_modal').modal('show');
+      //$('#fail_modal').modal('show');
     });
   </script>
 </head>
-
-
 <body class="text-center">
 
   <!-- MODALI PER CHIAMATE AJAX -->
-  <div class="modal" style="background-color: transparent; border: none;" id="wait_modal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal" style="background-color: transparent; border: none;" id="wait_modal"  tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" style="background-color: transparent; border: none;" role="document">
       <div class="modal-content" style="background-color: transparent; border: none;">    
-        <img style="width: 75%;" src="loading.gif" />              
+        <img style="width: 75%;" src="loading.gif" />                  
       </div>
     </div>
   </div>
 
   <div class="modal fade" id="success_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-      <div class="modal-content">      
+      <div class="modal-content"> 
         <img style="width: 100%;" src="https://media1.tenor.com/images/d8fb39693bab23e2c3b4ee36317a36ee/tenor.gif?itemid=17836773" />                
         <div id="success_text" style='color:black' class="modal-body" >
-        é andato tutto bene!
+        L'operazione è riuscita!
           <div id="success_id_text" style="display:none" ></div>
         </div>
       </div>
@@ -102,7 +101,7 @@
       <div class="modal-content">      
         <img style="width: 100%;" src="https://media1.tenor.com/images/87d588d92e1b4decd302a96c265d7a39/tenor.gif?itemid=18634343" />               
         <div id="fail_text" style='color:black' class="modal-body" >
-        Qualcosa è andato storto, che cosa?
+        Qualcosa è andato storto nel server, operazione non riuscita!
         </div>
       </div>
     </div>
@@ -375,7 +374,12 @@
       <h1 class="cover-heading SectionTitle">Storia</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
-      Qui puoi gestire le impostazioni generali del gioco e la lista di tutte le quest.
+      Qui puoi gestire le impostazioni generali del gioco e la lista di tutte le quest.<br>
+      clicca <a data-toggle="collapse" onclick="show_evaluation();" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><b>qui</b></a> per vedere cosa serve alla tua storia per
+      essere pubblicabile(in ogni caso la storia è salvabile).
+      <div class="collapse"id="collapseExample">
+       .
+      </div>
     </p>
 
     <div class="input-group font-weight-bold">
@@ -923,6 +927,16 @@
   background-color: rgb(20, 59, 67);
   border-color: rgb(30, 89, 97);
 }
+.alert-danger {
+  color: rgb(225, 134, 143);
+  background-color: rgb(67, 12, 17);
+  border-color: rgb(104, 18, 27);
+}
+.alert-success {
+  color: rgb(153, 230, 171);
+  background-color: rgb(26, 62, 41);
+  border-color: rgb(37, 90, 50);
+}
       </style> 
   <div class="col-xs-12 alert alert-info text-justify" role="alert">
     <i class="fas fa-info"></i>
@@ -933,18 +947,18 @@
   </div>
   <div class="grido">
   <div class="mb-1" >Cestino</div>
-  <div id="trash_can" style="min-width: 20%;" class=" container border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
+  <div id="trash_can" style="min-width: 20%;" class=" container-fluid border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
   </div>
   <div class="mb-1" > <span style="width: 50% ;float: left; text-align: center;">Storie pubblicabili</span> <span style="width: 50%; text-align: center; float: right;">Storie pubblicate</span></div>
   <div class="grid-container mb-3">
-    <div id="publishableContainer" class="container border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
+    <div id="publishableContainer" class="container-fluid border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
     </div>             
-    <div id="publishedContainer" class="container border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
+    <div id="publishedContainer" class="container-fluid border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
     </div>
   </div>
   <div ><button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button></div>
   <div  class="mt-3" >Area di feedback</div>
-  <div id="feedback_div" style="width: 100%; text-align: left;" class="container border border-white rounded" >
+  <div id="feedback_div" style="width: 100%; text-align: left;" class="container-fluid border border-white rounded" >
   </div>
   </div>  
   </main> 

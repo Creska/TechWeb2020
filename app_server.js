@@ -590,7 +590,9 @@ app.post('/editor/saveStory', function (req, res) {
     let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
-        return res.status(500).send({ err: err, file_errors: file_errors });
+        //TO-DO delete (recursively) the directory since saveStory was rejected, it has
+        //no reason to stay and the files it contains are space-wasting junk.
+        return res.status(500).send(err);
     }
     else {
         console.log("JSON Story file of " + story_id + " saved successfully.")

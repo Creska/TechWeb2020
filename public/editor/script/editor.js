@@ -72,15 +72,6 @@ function getStories(caller) {
 /* 
 TO-DO list:
 cazzatine varie
-  -weird reload issue
-    -maybe related to ajax loli
-    -show error loli despite the operation going well, also reloads the page for some reason
-  -button that triggers popover which shows what is missing to make the story publishable
-  -ajax loli appareance handling
-  -in trash can, publishable and published containers, container class
-    should be removed since it's responsiveness sucks, but when we do so,
-    the dragging stuff is fucked up for some reason. this may be as well
-    an occasion to fix this kinky layout.
   -Make code polite and modular
   */
 function start_saving() {
@@ -112,9 +103,11 @@ function saveStory(publish) {
         $("#story_id_p").append("Se vuoi puoi provare ad aggiungerli in un secondo momento.");
       }
       goToSection("final_section");
+      $('#success_modal').modal('show');
     },
     error: function(err) {
-      alert("something nasty happened");
+      console.log(err)
+      $('#fail_modal').modal('show');
     }
   });
 } 
@@ -149,10 +142,10 @@ function prepare_saveStory_object(publish){
     while(clean_cw.quests[q].activities[a]){
       let at=0;
       while(clean_cw.quests[q].activities[a].activity_text[at]){
-        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ) {
+        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ||clean_cw.quests[q].activities[a].activity_text[at].type == "video" ) {
           let c=0;
           while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
-            if( clean_cw.quests[q].activities[a].activity_text[at].content[c].needsaving ) {//hopefully it will be renamed isFile
+            if( clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile ) {
               //push media in story_data
               story_data.push({
                 name: clean_cw.quests[q].activities[a].activity_text[at].content[c].src.name,
@@ -401,6 +394,24 @@ function isPublishable( obj ) {
 
   return res;
 };
+
+function show_evaluation() {
+  let obj=isPublishable(CurrentWork);
+  $("#collapseExample").empty();
+  if(obj.ok){
+    $("#collapseExample").css("color","rgb(153, 230, 171)");
+    $("#collapseExample").css("background-color","rgb(26, 62, 41)");
+    $("#collapseExample").css("border-color","rgb(37, 90, 50)");
+    $("#collapseExample").text("La storia è pubblicabile!");
+  }else{
+    $("#collapseExample").css("color","rgb(225, 134, 143)");
+    $("#collapseExample").css("background-color","rgb(67, 12, 17)");
+    $("#collapseExample").css("border-color","rgb(104, 18, 27)");
+    obj.errors.forEach( error => {
+      $("#collapseExample").append(error+"<br>");
+    });
+  }
+}
 
 function set_default_story_settings() {
   mode = "default";

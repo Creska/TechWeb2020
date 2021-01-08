@@ -23,6 +23,14 @@ var player_per_group_count = 0; //temp counter of players per group
 let group = 0; //last group
 let groupstory = undefined; //last shuffled group story
 
+function nonce() {
+    let id = crypto.randomBytes(16).toString('base64');
+    while (storyExists(id)) {
+        id = crypto.randomBytes(16).toString('base64');
+    }
+    return id;
+}
+
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -376,7 +384,7 @@ app.get('/player/loadJSON', function (req, res) {
     }
 })
 
-app.get('/editor/getStories', function (req, res) { 
+app.get('/editor/getStories', function (req, res) {
     console.log("getStories request received.")
     var section = req.query.section;
     var any_error = false;
@@ -387,24 +395,24 @@ app.get('/editor/getStories', function (req, res) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
             }
-            else {  
-                files.forEach( file => {
+            else {
+                files.forEach(file => {
                     try {
                         let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
                         stories.push({ id: file, title: JSON.parse(data).story_title });
                     }
-                    catch(err) {
+                    catch (err) {
                         console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
                         any_error = true;
                         //return res.status(500).send(JSON.stringify(err)).end();
                     }
                 })
             }
-            console.log("stories: ",stories)//this happens before the forEach for some reason
+            console.log("stories: ", stories)//this happens before the forEach for some reason
             let error_msg;
-            if( any_error ) //at least one story wasn't retrieved
-                error_msg = "Qualche storia non è stata reperita nel server.";   
-            return res.status(200).send(JSON.stringify({error_msg: error_msg,stories:stories})).end();
+            if (any_error) //at least one story wasn't retrieved
+                error_msg = "Qualche storia non è stata reperita nel server.";
+            return res.status(200).send(JSON.stringify({ error_msg: error_msg, stories: stories })).end();
         })
     }
     else if (section == 'Explorer') {
@@ -420,13 +428,13 @@ app.get('/editor/getStories', function (req, res) {
                 }
                 else {
                     files.forEach(file => {
-                        if( fs.existsSync(unpubpath + file + '/' + 'story.json') ) {
+                        if (fs.existsSync(unpubpath + file + '/' + 'story.json')) {
                             let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
-                            if(!data)
+                            if (!data)
                                 any_error = true;
                             else {
                                 data = JSON.parse(data);
-                                if ( data.publishable.ok ) 
+                                if (data.publishable.ok)
                                     publishable.push({ id: file, title: data.story_title });
                             }
                         }
@@ -443,12 +451,12 @@ app.get('/editor/getStories', function (req, res) {
                     console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                     res.status(500).send(JSON.stringify(err)).end();
                     reject(false);
-                } 
+                }
                 else {
                     files.forEach(file => {
-                        if( fs.existsSync(pubpath + file + '/' + 'story.json') ) {
+                        if (fs.existsSync(pubpath + file + '/' + 'story.json')) {
                             let data = fs.readFileSync(pubpath + file + '/' + 'story.json');
-                            if( !data)
+                            if (!data)
                                 any_error = true;
                             else {
                                 data = JSON.parse(data);
@@ -466,7 +474,7 @@ app.get('/editor/getStories', function (req, res) {
             if (values[0] && values[1]) {
                 stories.publishable = publishable;
                 stories.published = published;
-                if(any_error)
+                if (any_error)
                     stories.error_msg = "C'è stato qualche errore nel server, qualche storia potrebbe non essere stata reperita."
                 console.log("Explorer stories", stories)
                 return res.status(200).send(JSON.stringify(stories)).end();
@@ -483,29 +491,29 @@ app.get('/editor/getStory', function (req, res) {
     console.log("getStory request received.")
     var story_id = req.query.story_id;
     let path = storyPath(story_id);
-    console.log("Id ricevuto: ",story_id)
+    console.log("Id ricevuto: ", story_id)
     if (path != '404') {
-        let story_promise = new Promise( (resolve,reject) => {
+        let story_promise = new Promise((resolve, reject) => {
             fs.readFile(path + '/story.json', 'utf8', function (err, file) {
-                if(err)
+                if (err)
                     reject(err);
                 else
                     resolve(file);
             });
         });
         //the css must be sent as well
-        let css_promise = new Promise( (resolve,reject) => {
+        let css_promise = new Promise((resolve, reject) => {
             fs.readFile(path + '/css.json', 'utf8', function (err, file) {
-                if(err)
+                if (err)
                     reject(err);
                 else
                     resolve(file);
             });
         });
-        Promise.all([story_promise, css_promise]).then( file => {
-            console.log("Story get successful., object sent: ",{story:file[0],css:file[1]})
-            return res.status(200).send({story:file[0],css:file[1]}).end();
-        }).catch( err => {
+        Promise.all([story_promise, css_promise]).then(file => {
+            console.log("Story get successful., object sent: ", { story: file[0], css: file[1] })
+            return res.status(200).send({ story: file[0], css: file[1] }).end();
+        }).catch(err => {
             console.log("An error accourred inside /editor/getStory, while retrieving an unpublished story: ");
             return res.status(500).send("C'è stato un errore nel recupero dei file della storia").end();
         });
@@ -523,11 +531,12 @@ app.get('/editor/getStory', function (req, res) {
 
 app.post('/editor/saveStory', function (req, res) {
     //NOTE: this will always overwrite
+    let file_errors = [];
     var story = req.body;
-    console.log("story: ",story) 
+    console.log("story: ", story)
     var story_json = story.story_json; //JSON story file object
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
-    var published = story.published;   
+    var published = story.published;
     var story_id = story_json.story_ID;
     var story_path;
     console.log("saveStory request received.")
@@ -539,43 +548,40 @@ app.post('/editor/saveStory', function (req, res) {
     }
     let path = storyPath(story_json.story_ID)
     if (path == '404') {//id is undefined i.e. the story is new
-        console.log("Creating the directory for the new story.") 
-        story_id = crypto.randomBytes(16).toString('base64');//overwrite the previously undefined id with the new one
-        console.log("story path: ",story_path ," story id: ",story_id)
+        console.log("Creating the directory for the new story.")
+        story_id = nonce();//overwrite the previously undefined id with the new one
+        console.log("story path: ", story_path, " story id: ", story_id)
         if (fs.mkdirSync(story_path + story_id) != undefined) {
             console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
             return res.status(500).send(JSON.stringify(err)).end();
-        } 
+        }
         else {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
-        } 
+        }
     }
-    if(story_data){//write files inside story directory
+    if (story_data) {//write files inside story directory
         story_data.forEach(file => {
             let options = undefined;
             if (file.native) {
                 options = 'utf8'
             }
             //else
-              //  options = { encoding: null }; dunno
+            //  options = { encoding: null }; dunno
             if (file.tostringify) {
                 file.data = JSON.stringify(file.data)
             }
-          //console.log("file.data: ",file.data)
-            //TO-DO: before writing the media, check if it's name is already
-            //saved, if so append (1) to the name and check again and so 
-            //on until a new name is found
-            let err = fs.writeFileSync(story_path + story_id + '/' + file.name,file.data, options);//data was changed in data.file
+            //console.log("file.data: ",file.data)
+            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
-                //TO-DO: add array of not retrieved files to the successful response so the user can know 
+                file_errors.push({ name: file.name, story_id: story_id });
             }
             else {
                 //write path in the json if coordinates field exists
-                if( file.coordinates ){
-                    story_json.quests[ file.coordinates[0] ].activities[ file.coordinates[1] ].activity_text[ file.coordinates[2] ].content[ file.coordinates[3] ].src='/'+ story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                if (file.coordinates) {
+                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].src = '/' + story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
                 }
-                    console.log("Element " + file.name + " of " + story_id + " saved successfully.")
+                console.log("Element " + file.name + " of " + story_id + " saved successfully.")
             }
         })
     }
@@ -583,36 +589,36 @@ app.post('/editor/saveStory', function (req, res) {
     story_json.story_ID = story_id;
     let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
-        //TO-DO: send response with status 500 because story_json is essential, make sure to have only one response sent.
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
-    } 
+        return res.status(500).send({ err: err, file_errors: file_errors });
+    }
     else {
         console.log("JSON Story file of " + story_id + " saved successfully.")
     }
     console.log("Story " + story_id + " saved successfully.")
-    return res.status(200).send(story_id).end();
+    return res.status(200).send({ story_id: story_id, file_errors: file_errors }).end();
 })
 
 app.post('/editor/deleteStory', function (req, res) {
-    var fb = {msgs: []};//feedback object
-    var story = req.body; 
+    var fb = { msgs: [] };//feedback object
+    var story = req.body;
     var story_ids = story.story_ids;
     var promises = [];
     if (story_ids) {
-        var s= 200;
-        story_ids.forEach( (story_id,index,arr) => {
+        var s = 200;
+        story_ids.forEach((story_id, index, arr) => {
             let path = storyPath(story_id);
             if (path != '404') {
-                promises.push( new Promise( (resolve,reject) =>{
+                promises.push(new Promise((resolve, reject) => {
                     fs.rmdir(path, { recursive: true }, (err) => {
                         if (err) {
                             console.log("An error occurred inside /editor/deleteStory while removing " + story_id + ": " + err);
-                            fb.msgs.push({msg:"Errore nell'eliminazione di "+story_id+ " è .", successful: false});
+                            fb.msgs.push({ msg: "Errore nell'eliminazione di " + story_id + " è .", successful: false });
                             s = 500;
                         }
                         else {
                             console.log("Story " + path + " deleted successfully.")
-                            fb.msgs.push({msg:"La storia "+story_id+ " è stata eliminata.", successful: true});
+                            fb.msgs.push({ msg: "La storia " + story_id + " è stata eliminata.", successful: true });
                         }
                         resolve();
                     });
@@ -620,72 +626,72 @@ app.post('/editor/deleteStory', function (req, res) {
                 );
             }
         })
-        Promise.all(promises).then( () => {
+        Promise.all(promises).then(() => {
             //console.log("pre return: ",fb)
             return res.status(s).send(JSON.stringify(fb)).end();
         })
     }
     else {
         console.log("/editor/deleteStory BAD REQUEST: story_ids parameter was not provided.")
-        fb.msgs.push({msg:"Nessuna storia è stata eliminata.", successful: false});
+        fb.msgs.push({ msg: "Nessuna storia è stata eliminata.", successful: false });
         return res.status(400).send(JSON.stringify(fb)).end();
-       // { code: "BAD_REQUEST", message: "story_ids parameter was not provided." }
+        // { code: "BAD_REQUEST", message: "story_ids parameter was not provided." }
     }
 })
 
 app.post('/editor/publisher', function (req, res) {
-    var fb = {msgs: []};//feedback object
+    var fb = { msgs: [] };//feedback object
     var story_ids = req.body.story_ids;
     var promises = [];
     if (story_ids != undefined) {
         var s = 200;
-        story_ids.forEach( (story_id,index,arr) => {
+        story_ids.forEach((story_id, index, arr) => {
             let path = storyFolder(story_id);
             if (path == 'pubpath') {
-                promises.push( new Promise( (resolve,reject) => {
-                        fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
-                            if (err) {
-                                console.log("An error occurred inside /editor/publisher while unpublishing " + story_id + ": " + err)
-                                fb.msgs.push({msg:"Errore nel ritiro della storia "+story_id+".", successful: false});
-                                s = 500;
-                            }
-                            else {
-                                console.log('The story ' + story_id + 'was unpublished.');
-                                //console.log("pre push: ",fb)
-                                fb.msgs.push({msg:"La storia "+story_id+ " è stata ritirata.", successful: true});
-                                //console.log("post push: ",fb)                 
-                            }
-                            resolve();
-                        })
+                promises.push(new Promise((resolve, reject) => {
+                    fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
+                        if (err) {
+                            console.log("An error occurred inside /editor/publisher while unpublishing " + story_id + ": " + err)
+                            fb.msgs.push({ msg: "Errore nel ritiro della storia " + story_id + ".", successful: false });
+                            s = 500;
+                        }
+                        else {
+                            console.log('The story ' + story_id + 'was unpublished.');
+                            //console.log("pre push: ",fb)
+                            fb.msgs.push({ msg: "La storia " + story_id + " è stata ritirata.", successful: true });
+                            //console.log("post push: ",fb)                 
+                        }
+                        resolve();
                     })
+                })
                 );
             }
             else if (path == 'unpubpath') {
-                promises.push( new Promise( (resolve,reject) => {
-                        fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
-                            if (err) {
-                                console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
-                                fb.msgs.push({msg:"Errore nella pubblicazione di "+story_id+ ".", successful: false});
-                                s = 500; 
-                            }
-                            else {
-                                console.log('The story ' + story_id + 'was published.');
-                                fb.msgs.push({msg:"La storia "+story_id+ " è stata pubblicata.", successful: true});
-                            }
-                            resolve();
-                        })
+                promises.push(new Promise((resolve, reject) => {
+                    fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
+                        if (err) {
+                            console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
+                            fb.msgs.push({ msg: "Errore nella pubblicazione di " + story_id + ".", successful: false });
+                            s = 500;
+                        }
+                        else {
+                            console.log('The story ' + story_id + 'was published.');
+                            fb.msgs.push({ msg: "La storia " + story_id + " è stata pubblicata.", successful: true });
+                        }
+                        resolve();
                     })
+                })
                 );
             }
         })
-        Promise.all(promises).then( () => {
-                return res.status(s).send(JSON.stringify(fb)).end();
-            }
+        Promise.all(promises).then(() => {
+            return res.status(s).send(JSON.stringify(fb)).end();
+        }
         );
     }
     else {
         console.log("/editor/publisher BAD REQUEST: story_ids parameter was not provided.")
-        fb.msgs.push({msg:"Nessuna storia è stata pubblicata o ritirata.", successful: false});
+        fb.msgs.push({ msg: "Nessuna storia è stata pubblicata o ritirata.", successful: false });
         return res.status(400).send(JSON.stringify(fb)).end();
     }
 })

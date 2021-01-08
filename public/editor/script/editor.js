@@ -72,36 +72,16 @@ function getStories(caller) {
 /* 
 TO-DO list:
 cazzatine varie
-  -make unpublished stories deletable with navbar button
-  -add duplicate button( basically delete id field then saveStory)
   -weird reload issue
     -maybe related to ajax loli
     -show error loli despite the operation going well, also reloads the page for some reason
   -button that triggers popover which shows what is missing to make the story publishable
   -ajax loli appareance handling
-  -QR code generation
   -in trash can, publishable and published containers, container class
     should be removed since it's responsiveness sucks, but when we do so,
     the dragging stuff is fucked up for some reason. this may be as well
     an occasion to fix this kinky layout.
   -Make code polite and modular
-Media:
-Notes:
-  here is section the transition dynamic:
-  first button -> 
-    MainMenu("NEWSTORY")
-      initialize story and it's handling variables
-      gotoSection("Mainenu") ->
-        MainMenu fadout, .masthead fadein, editStory fadein
-  home button ->
-    navbar("home") ->
-      if css window is open, close it
-      show modal
-    ignora button ->
-      close modal
-      gotoSection("Mainenu") ->
-        reset story handling variables
-        .masthead fadeout, editstory fadeout, MainMenu fadein
   */
 function start_saving() {
   close_css_window();
@@ -109,7 +89,7 @@ function start_saving() {
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
   else {
-    CurrentWork.publishable.ok = true;//for testing purposes
+    //CurrentWork.publishable.ok = true;//for testing purposes
     saveStory(false);
   }
 }
@@ -121,7 +101,16 @@ function saveStory(publish) {
     data: JSON.stringify(story),
     contentType: "application/json",
     success: function(data) {
-      $("#story_id_p").text("Id storia: "+data);
+      $("#story_id_p").text("Id storia: "+data.story_id);//data? { story_id: string, file_errors: array }
+      if( data.file_errors && data.file_errors.length > 0 ) {
+        let list = $("<ul/>");
+        $("#story_id_p").append(", ma i seguenti file non sono stati salvati:");
+        data.file_errors.forEach( element => {
+          list.append("<li>"+element.name+"</li>");
+        });
+        $("#story_id_p").append(list);
+        $("#story_id_p").append("Se vuoi puoi provare ad aggiungerli in un secondo momento.");
+      }
       goToSection("final_section");
     },
     error: function(err) {
@@ -202,6 +191,12 @@ function getStory(id) {
   }).fail( err => {
     console.log(err)
     alert(err.responseText);
+  });
+}
+
+function delete_current_story() {
+  $.post("/editor/deleteStory",{story_ids:[CurrentWork.story_ID]}, function(data,status){
+    $("#story_id_p").text(JSON.parse(data).msgs[0].msg)
   });
 }
 
@@ -467,15 +462,16 @@ function change_navbar(how) {
     case "show":
       //edit fields noned
       $("#back_nav").css("display","inherit");
-      $("#final_choose").css("display","inherit");
-      $("#final_home").css("display","none");
-      break;
-    
+      $("#delete_nav").css("display","inherit");
+      $("#duplicate_nav").css("display","inherit");
+      $("#final_button").attr("onclick","goToSection('ChooseStoryToEdit')");
+      break;   
     case "hide":
       //edit fields shown
       $("#back_nav").css("display","none");
-      $("#final_choose").css("display","none");
-      $("#final_home").css("display","inherit");
+      $("#delete_nav").css("display","none");
+      $("#duplicate_nav").css("display","none");
+      $("#final_button").attr("onclick","goToSection('MainMenu')");
       break;
   }
 }

@@ -203,7 +203,7 @@ function goToSection(where) {
 	  case "ChooseStoryToEdit":
 		change_navbar("show");
 		break;
-		case "EditStory":
+	  case "EditStory":
 	  case "EditQuest":
 	  case "EditActivity":
 		stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid" );

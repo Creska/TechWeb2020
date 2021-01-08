@@ -143,6 +143,12 @@
         <a class="nav-link" href="javascript:Navbar('Preview');" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
           <i class="far fa-eye fa-2x"></i>
         </a>
+        <a class="nav-link" id="duplicate_nav" href="javascript:delete CurrentWork.story_ID;start_saving();" data-toggle="tooltip" data-placement="bottom" title="Duplica la storia">
+          <i class="fas fa-clone fa-2x"></i>
+        </a>
+        <a class="nav-link" id="delete_nav" href='javascript:delete_current_story();goToSection("final_section");' data-toggle="tooltip" data-placement="bottom" title="Cancella la storia">
+          <i class="fas fa-trash-alt fa-2x"></i>
+        </a>
         <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
           <i class="fas fa-chevron-circle-left fa-2x"></i>
         </a>
@@ -879,18 +885,9 @@
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
 
   <main role="main" class="inner cover EditorSection " id="final_section">
-    <div id="final_choose">
-      <div class="mb-3">La storia è stata aggiornata con successo! <br>
-      Ora premi uno dei due pulsanti per proseguire.
-      </div>
-      <button class="btn btn-lg btn-primary mr-3" onclick="goToSection('ChooseStoryToEdit')" >Torna alla griglia delle storie</button>
-      <button class="btn btn-lg btn-primary" onclick="goToSection('MainMenu')" >Torna alla home</button>
-    </div>
-    <div id="final_home">
     <p>SHOW QR CODE HERE</p>
     <p id="story_id_p"></p>
-    <button class="btn btn-lg btn-primary" onclick="goToSection('MainMenu')" >Torna alla home</button>
-    </div>
+    <button class="btn btn-lg btn-primary" id="final_button" >Clicca per proseguire</button>
   </main>
 
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">

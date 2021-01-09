@@ -1,12 +1,21 @@
 #StartScreen{
     text-align: center;
-    background-color: rgb(250, 250, 220, 0.8);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 nav {
-    padding: 5px;
     background-color: rgba(180, 190, 195, 0.8);
-    font-size: large;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgba(255, 255, 255);
+    font-family: fantasy;
+    font-size: 20px;
+}
+#logo{
+    padding: 5px;
+    font-size: 20px;
+    font-family: monospace;
+    width: 75%;
+    height: 25%;
+    position: relative;
+    overflow: hidden;
 }
 .row{
     margin: 0 20px 0 5px;
@@ -22,50 +31,44 @@ nav {
     border-radius: 20px;
     border: slategray;
     padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    position: relative;
 }
-#SecondStory{
-    background-image: url(images/galleria_uffizi.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    margin: 10px;
-    border-radius: 20px;
-    border: slategray;
-    padding: 10px;
-}
-#ThirdStory{
-    background-image: url(images/museo_scienza.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    margin: 10px;
-    border-radius: 20px;
-    border: slategray;
-    padding: 10px;
+#FirstStory::after{
+    content: ' ';
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    z-index: 0;
 }
 #FirstStory .card-title{
     font-size: 30px;
     text-shadow: 2px 0 #ffae00, -2px 0 #ffae00;            
     color: whitesmoke;   
+    z-index: 1;
+    position: relative;
 }
 #FirstStory .card-text{
+    font-size: 20px;
+    width: 100%;
+    margin: 10 auto;
     color: rgb(245, 245, 245);
+    z-index: 1;
+    position: relative;
 }
-#SecondStory .card-title{
-    font-size: 30px;
-    text-shadow: 2px 0 #3778da, -2px 0 #3778da;            
-    color: white;   
-}
-#SecondStory .card-text{
-    color: rgb(108, 202, 240);
-}
-#ThirdStory .card-title{
-    font-size: 30px;
-    text-shadow: 2px 0 #6bda37, -2px 0 #6bda37;            
-    color: white;   
-}
-#ThirdStory .card-text{
-    color: rgb(231, 233, 199);
+#barcode{
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
 }
 #FirstStory #StartButton{
     width: 200px;
@@ -75,24 +78,124 @@ nav {
     border-radius: 10px;
     color: black;
     text-align: center;
-    font-size: 20px;
+    font-size: 12px;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
 }
 #FirstStory #StartButton:hover {
     background-color: #ffae00;
     color: white;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
+}
+
+#SecondStory{
+    background-image: url(images/galleria_uffizi.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px;
+    border-radius: 20px;
+    border: slategray;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+#SecondStory::after{
+    content: ' ';
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    z-index: 0;
+}
+#SecondStory .card-title{
+    font-size: 30px;
+    text-shadow: 2px 0 #3778da, -2px 0 #3778da;            
+    color: white;   
+    z-index: 1;
+    position: relative;
+}
+#SecondStory .card-text{
+    font-size: 20px;
+    width: 100%;
+    margin: 10 auto;
+    color: rgb(108, 202, 240);
+    z-index: 1;
+    position: relative;
 }
 #SecondStory #StartButton{
-    width: 200px;
+    width: auto;
     background-color: white; 
     border: 2px solid #3778da;
     border-radius: 10px;
     color: black;
     text-align: center;
-    font-size: 20px;
+    font-size: 12px;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
 }
 #SecondStory #StartButton:hover {
     background-color: #3778da;
     color: white;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
+}
+
+#ThirdStory{
+    background-image: url(images/museo_scienza.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px;
+    border-radius: 20px;
+    border: slategray;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+#ThirdStory::after{
+    content: ' ';
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    z-index: 0;
+}
+#ThirdStory .card-title{
+    font-size: 30px;
+    text-shadow: 2px 0 #6bda37, -2px 0 #6bda37;            
+    color: white;   
+    z-index: 1;
+    position: relative;
+}
+#ThirdStory .card-text{
+    font-size: 20px;
+    width: 100%;
+    margin: 10 auto;
+    color: rgb(231, 233, 199);
+    z-index: 1;
+    position: relative;
 }
 #ThirdStory #StartButton{
     width: 200px;
@@ -101,11 +204,17 @@ nav {
     border-radius: 10px;
     color: black;
     text-align: center;
-    font-size: 20px;
+    font-size: 12px;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
 }
 #ThirdStory #StartButton:hover {
     background-color:#6bda37;
     color: white;
+    margin: 10 auto;
+    z-index: 1;
+    position: relative;
 }
 */
 
@@ -143,13 +252,6 @@ nav {
 }
 */
 
-nav{
-    background-color: rgba(180, 190, 195, 0.8);
-    color: ghostwhite;
-    font-size: large;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    ;
-}
 .StoryTitle{
     text-shadow: 2px -1px #000000, -2px 1px #000000;            
     padding: 10px;
@@ -221,9 +323,10 @@ nav{
     background-color: rgba(0, 0, 255, 0.2);
 }
 #message{
+    font-size: 20px;
     border: 2px solid blue;
     border-radius: 10px;
-    width: 400px;
+    width: fit-content;
     height: 50px;
 }
 #Send{

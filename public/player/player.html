@@ -18,6 +18,9 @@
         <script src="test.js"></script> <!-- SOLO PER TEST -->
         <script src="player.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <!--Script per le animazioni del testo-->
+        <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+        
         <!--Script js per generare bar code-->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script type="text/javascript">
@@ -47,42 +50,87 @@
             <nav>
                 <ul class=" nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-disabled="true"></a>
+                        <a class="nav-link active" aria-disabled="true">
+                            <img id="logo" class="logo" src="images/logo.png"></img>
+                        </a>
                     </li>
                 </ul>
             </nav>
         
+        <script>
+            ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+        </script>
+
         <!--
         <main id="StartScreen">            
             <div class="row">
-                <div id="FirstStory" class="card col-12">
-                    <h3 class="card-title" id="StoryTitle">Risveglio della mummia</h3>
-                    <p class="card-text">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
-                    <div align="center"><img id='barcode' onclick="startGame();"
-                            src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
-                            alt=""
-                            title="HELLO"
-                            width="80"
-                            height="80" /></div>
+                <div id="FirstStory" class="card col-12 sequenced-1">
+                    <h3 class="card-title smooth-1" id="StoryTitle">Risveglio della mummia</h3>
+                    <p class="card-text choppy-1">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
+                    <div align="center">
+                        <button id="StartButton" class="tagline-1">Press qrcode to start the game<br>
+                            <img id='barcode' onclick="startGame();"
+                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
+                                alt=""
+                                title="HELLO"
+                                width="80"
+                                height="80" />
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="row">
-                <div id="SecondStory" class="card col-12">
-                    <h3 class="card-title" id="StoryTitle">Furto del quadro</h3>
-                    <p class="card-text">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
-                    <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
+                <div id="SecondStory" class="card col-12 sequenced-2">
+                    <h3 class="card-title smooth-2" id="StoryTitle">Furto del quadro</h3>
+                    <p class="card-text choppy-2">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
+                    <div align="center">
+                        <button id="StartButton" class="tagline-2">Press qrcode to start the game<br>
+                            <img id='barcode' onclick="startGame();"
+                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
+                                alt=""
+                                title="START"
+                                width="80"
+                                height="80"/>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="row">
-                <div id="ThirdStory" class="card col-12">
-                    <h3 class="card-title" id="StoryTitle">Esperimento informatico</h3>
-                    <p class="card-text" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
-                    <div align="center"><button id="StartButton"  onclick="startGame();">START</button></div>
-                </div>
+                <div id="ThirdStory" class="card col-12 sequenced-3">
+                    <h3 class="card-title smooth-3" id="StoryTitle">Esperimento informatico</h3>
+                    <p class="card-text choppy-3" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
+                    <div align="center">
+                        <button id="StartButton" class="tagline-3">Press qrcode to start the game<br>
+                            <img id='barcode' onclick="startGame();"
+                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
+                                alt=""
+                                title="START"
+                                width="80"
+                                height="80"/>
+                        </button>                
+                    </div>
             </div>
-        -->
+        
+        <script>
+
+            ScrollReveal().reveal('.sequenced-1', { origin: 'right', interval: 200, distance: '100px', delay: 50 });
+            ScrollReveal().reveal('.sequenced-2', { origin: 'right', interval: 600, distance: '200px', delay: 150 });
+            ScrollReveal().reveal('.sequenced-3', { origin: 'right', interval: 1000, distance: '300px', delay: 200 });
+
+            ScrollReveal().reveal('.smooth-1', { distance: '200px', delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.smooth-2', { distance: '3000px', delay: 200, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.smooth-3', { distance: '400px', delay: 250, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+
+            ScrollReveal().reveal('.choppy-1', { distance: '300px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.choppy-2', { distance: '400px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.choppy-3', { distance: '500px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+
+            ScrollReveal().reveal('.tagline-1', { distance: '400px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.tagline-2', { distance: '500px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            ScrollReveal().reveal('.tagline-3', { distance: '600px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
             
-            
+        </script>
+        -->   
             <div id="AccessibilityMsg" role="alert"></div>
 
             <!-- Tutorial per mostrare come si gioca
@@ -122,7 +170,7 @@
         </template>
 
         <footer class="page-footer">
-            <div class="container-fluid text-center">
+            <div class="container-fluid text-center chat">
                 <div id='chat-room'>
                     <h4 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h4>
                     <form action="">
@@ -133,5 +181,7 @@
             </div>
         </footer>
     </body>
+
+    <script>ScrollReveal().reveal('.chat', { origin: 'bottom', distance:'1000px', duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)'})</script>
 
 </html>

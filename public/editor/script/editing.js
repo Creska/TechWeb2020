@@ -208,7 +208,9 @@ function goToSection(where) {
 	  case "EditActivity":
 		stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid" );
 	}
-	if( where == "MainMenu" || where == "final_section")
+	if( where == "EditStory")//make sure error div is not shown, it can't be done after fadeout
+		$("#EditStory_div_error").css("display", "none");
+	if( where == "MainMenu" || where == "final_section" || where == "ChooseStoryToEdit")
 	  $('.masthead').fadeOut();
 	/* cambia sezione */
 	$("#"+CurrentNavStatus.Section).fadeOut( function() {

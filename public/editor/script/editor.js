@@ -55,18 +55,21 @@ function getStories(caller) {
   $.get("/editor/getStories?section="+caller, function(data, status){
     let obj = JSON.parse(data);
     console.log("obj: ",obj)
+    $(".error_div").css("display", "none");
     switch (caller) {
       case "ChooseStoryToEdit": 
-        if( obj.error_msg )
-          alert(obj.error_msg); 
         create_stories_grid(obj.stories);
         break;
       case "Explorer":
-        if( obj.error_msg )
-          alert(obj.error_msg); 
+
         create_Explorer_grids(obj.publishable,obj.published);
         break;
-    } 
+    }
+    if( obj && obj.error_msg ){
+      $("#"+caller +"_div_error p").empty();
+      $("#"+caller+ "_div_error p").text(obj.error_msg); 
+      $("#"+caller+"_div_error").css("display", "inherit");
+    }  
   });
 }
 /* 
@@ -107,7 +110,7 @@ function saveStory(publish) {
     },
     error: function(err) {
       console.log(err)
-      $('#fail_modal').modal('show');
+      //$('#fail_modal').modal('show');
     }
   });
 } 
@@ -178,18 +181,26 @@ function getStory(id) {
     //console.log("parsed data: ",JSON.parse(data))
     //let parsed_data = JSON.parse(data);
     CurrentWork = JSON.parse(data.story);
-    CSSdata = JSON.parse(data.css);
     MainMenu("STORY");
+    if(data.css)
+      CSSdata = JSON.parse(data.css);
+    else {
+      CSSdata = {
+        sheet: "",
+        valid: true
+      };
+      $("#EditStory_div_error").css("display", "inherit");
+      $("#EditStory_div_error p").text("Il css non è stato recuperato correttamente, perciò adesso è vuoto e salvando andrai a scrivere il css sul server(se c'è).");
+    }
     //goToSection("EditStory");
-  }).fail( err => {
-    console.log(err)
-    alert(err.responseText);
   });
 }
 
 function delete_current_story() {
   $.post("/editor/deleteStory",{story_ids:[CurrentWork.story_ID]}, function(data,status){
-    $("#story_id_p").text(JSON.parse(data).msgs[0].msg)
+    $("#story_id_p").text(JSON.parse(data).msgs[0].msg);
+    goToSection("final_section");
+    $('#success_modal').modal('show');
   });
 }
 
@@ -463,9 +474,9 @@ function Navbar( option ) {
       break;
   }
 
-  $( "#PromptSave" ).modal("show");
+  //$( "#PromptSave" ).modal("show");
 
-  $( "#PromptSave .button[data-dismiss=modal]" ).on( "click",  function() {})
+  //$( "#PromptSave .button[data-dismiss=modal]" ).on( "click",  function() {})
 }
 
 function change_navbar(how) {

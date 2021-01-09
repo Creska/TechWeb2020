@@ -69,7 +69,7 @@
     $(document).ajaxError(function(){
       $('#wait_modal').modal('hide');
       //$("#loading").css("display", "none");
-      //$('#fail_modal').modal('show');
+      $('#fail_modal').modal('show');
     });
   </script>
 </head>
@@ -145,7 +145,7 @@
         <a class="nav-link" id="duplicate_nav" href="javascript:delete CurrentWork.story_ID;start_saving();" data-toggle="tooltip" data-placement="bottom" title="Duplica la storia">
           <i class="fas fa-clone fa-2x"></i>
         </a>
-        <a class="nav-link" id="delete_nav" href='javascript:delete_current_story();goToSection("final_section");' data-toggle="tooltip" data-placement="bottom" title="Cancella la storia">
+        <a class="nav-link" id="delete_nav" href='javascript:delete_current_story();' data-toggle="tooltip" data-placement="bottom" title="Cancella la storia">
           <i class="fas fa-trash-alt fa-2x"></i>
         </a>
         <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
@@ -391,7 +391,9 @@
          <button class="btn btn-success" id="SaveStoryTitle" type="button" onclick="save_title('story')">Salvato!</button>
       </div>
     </div>
-
+    <div style="display:none;" class="col-xs-12 alert alert-danger text-justify" id="EditStory_div_error" role="alert">
+      <i class="fas fa-exclamation"></i><p ></p>
+    </div>
     <div id="s_buttons_div" class="mt-5 p-3">
       <button class="btn btn-lg btn-secondary mb-3 mr-5 rounded" onclick="goToSection('ChooseGameMode');" data-toggle="tooltip" data-placement="left" title="Cambia la modalità di gioco">
         <i class="fas fa-cog"></i>
@@ -907,6 +909,9 @@
         storia per editarla.
       </p>
     </div>
+    <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="ChooseStoryToEdit_div_error" role="alert">
+      <i class="fas fa-exclamation"></i><p ></p>
+    </div>
     <div class="CardGrid " id="StoriesGrid" >
     </div>
   </main>
@@ -947,6 +952,9 @@
        mostrate, trascinale nel cestino per eliminarle o nell'altro 
        riquadro per pubblicarle/ritirarle. Quando hai deciso, premi il pulsante 
       in basso e guarda l'area di feedback per sapere com'è andata l'operazione.</p>
+  </div>
+  <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="Explorer_div_error" role="alert">
+    <i class="fas fa-exclamation"></i><p  ></p>
   </div>
   <div class="grido">
   <div class="mb-1" >Cestino</div>

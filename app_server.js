@@ -504,14 +504,9 @@ app.get('/editor/getStory', function (req, res) {
         //the css must be sent as well
         let css_promise = new Promise((resolve, reject) => {
             fs.readFile(path + '/css.json', 'utf8', function (err, file) {
-                if (err)
-                    reject(err);
-                else
-                    resolve(file);
+                resolve(file);
             });
         });
-        //TO-DO: if css file is missing, return still 200
-        //also in duplicate only the json is actually saved...
         Promise.all([story_promise, css_promise]).then(file => {
             console.log("Story get successful., object sent: ", { story: file[0], css: file[1] })
             return res.status(200).send({ story: file[0], css: file[1] }).end();

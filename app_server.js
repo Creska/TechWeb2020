@@ -510,6 +510,8 @@ app.get('/editor/getStory', function (req, res) {
                     resolve(file);
             });
         });
+        //TO-DO: if css file is missing, return still 200
+        //also in duplicate only the json is actually saved...
         Promise.all([story_promise, css_promise]).then(file => {
             console.log("Story get successful., object sent: ", { story: file[0], css: file[1] })
             return res.status(200).send({ story: file[0], css: file[1] }).end();
@@ -580,6 +582,7 @@ app.post('/editor/saveStory', function (req, res) {
                 //write path in the json if coordinates field exists
                 if (file.coordinates) {
                     story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].src = '/' + story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].isFile= false;
                 }
                 console.log("Element " + file.name + " of " + story_id + " saved successfully.")
             }

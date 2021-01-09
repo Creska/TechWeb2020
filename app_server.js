@@ -8,7 +8,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const fs = require('fs');
 const cheerio = require('cheerio')
-const crypto = require('crypto');
+var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
@@ -23,10 +23,10 @@ var player_per_group_count = 0; //temp counter of players per group
 let group = 0; //last group
 let groupstory = undefined; //last shuffled group story
 
-function nonce() {
-    let id = crypto.randomBytes(16).toString('base64');
+function UNF() {
+    let id = uniqueFilename('');
     while (storyExists(id)) {
-        id = crypto.randomBytes(16).toString('base64');
+        id = uniqueFilename('');
     }
     return id;
 }
@@ -541,6 +541,7 @@ app.post('/editor/saveStory', function (req, res) {
     var published = story.published;
     var story_id = story_json.story_ID;
     var story_path;
+    var duplicate_check = [];
     console.log("saveStory request received.")
     if (published) {
         story_path = pubpath;
@@ -551,7 +552,7 @@ app.post('/editor/saveStory', function (req, res) {
     let path = storyPath(story_json.story_ID)
     if (path == '404') {//id is undefined i.e. the story is new
         console.log("Creating the directory for the new story.")
-        story_id = nonce();//overwrite the previously undefined id with the new one
+        story_id = UNF();//overwrite the previously undefined id with the new one
         console.log("story path: ", story_path, " story id: ", story_id)
         if (fs.mkdirSync(story_path + story_id) != undefined) {
             console.log("An error occurred inside /editor/saveStory while creating the directory for a story: " + err);
@@ -572,6 +573,10 @@ app.post('/editor/saveStory', function (req, res) {
             if (file.tostringify) {
                 file.data = JSON.stringify(file.data)
             }
+            if (duplicate_check.includes(file.name)) {
+                file.name = file.name + UNF();
+            }
+            duplicate_check.push(file.name);
             //console.log("file.data: ",file.data)
             let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
             if (err != undefined) {
@@ -593,9 +598,16 @@ app.post('/editor/saveStory', function (req, res) {
     let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
-        //TO-DO delete (recursively) the directory since saveStory was rejected, it has
-        //no reason to stay and the files it contains are space-wasting junk.
-        return res.status(500).send(err);
+        console.log("Deleting " + story_id + " folder...")
+        let remove_err = fs.rmdirSync(story_path + '/' + story_id, { recursive: true });
+        if (remove_err != undefined) {
+            console.log("An error occurred inside /editor/saveStory while deleting the folder " + story_id + ": " + err)
+            return res.status(500).send([err, remove_err]);
+        }
+        else {
+            console.log("Folder " + story_id + " deleted successfully.")
+            return res.status(500).send(err);
+        }
     }
     else {
         console.log("JSON Story file of " + story_id + " saved successfully.")

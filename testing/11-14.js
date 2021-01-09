@@ -1,4 +1,4 @@
-var sroria = {
+var storia11_14 = {
     ACCESSIBILITY: 1, 
 	story_title: "Furto del quadro", 
 	story_ID: -1, 

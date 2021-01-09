@@ -15,7 +15,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
                 integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
                 crossorigin="anonymous"></script>
-        <script src="test.js"></script> <!-- SOLO PER TEST -->
         <script src="player.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <!--Script per le animazioni del testo-->
@@ -31,109 +30,46 @@
             $('#barcode').attr('src', url);
             }
         </script>
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="player.css">
 
-        <title>Player</title>
+        <!-- TEST STUFF -->
+        <script src="test.js"></script>
+        <script src="../testing/11-14.js"></script>
+        <script src="../testing/7-10.js"></script>
 
-        <style>
-            
-        </style>
+        <title>Player</title>
     </head>
 
 
 
     <body>
-        <main id="StartScreen">
-            
-            <nav>
-                <ul class=" nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-disabled="true">
-                            <img id="logo" class="logo" src="images/logo.png"></img>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        
+        <nav>
+            <ul class=" nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-disabled="true">
+                        <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
         <script>
             ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
         </script>
 
-        <!--
-        <main id="StartScreen">            
-            <div class="row">
-                <div id="FirstStory" class="card col-12 sequenced-1">
-                    <h3 class="card-title smooth-1" id="StoryTitle">Risveglio della mummia</h3>
-                    <p class="card-text choppy-1">Storia ambientata all'interno del museo degli egizi di Torino, improntata per la fascia di età 7-10 anni.</p>              
-                    <div align="center">
-                        <button id="StartButton" class="tagline-1">Press qrcode to start the game<br>
-                            <img id='barcode' onclick="startGame();"
-                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
-                                alt=""
-                                title="HELLO"
-                                width="80"
-                                height="80" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div id="SecondStory" class="card col-12 sequenced-2">
-                    <h3 class="card-title smooth-2" id="StoryTitle">Furto del quadro</h3>
-                    <p class="card-text choppy-2">Storia ambientata all'interno della galleria degli uffizi a Firenze, improntata per la fascia di età 11-14 anni.</p>
-                    <div align="center">
-                        <button id="StartButton" class="tagline-2">Press qrcode to start the game<br>
-                            <img id='barcode' onclick="startGame();"
-                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
-                                alt=""
-                                title="START"
-                                width="80"
-                                height="80"/>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div id="ThirdStory" class="card col-12 sequenced-3">
-                    <h3 class="card-title smooth-3" id="StoryTitle">Esperimento informatico</h3>
-                    <p class="card-text choppy-3" >Storia ambientata all'interno del museo della scienza e delle tecnologia di Milano, improntata per la fascia di età 15-18 anni.</p>
-                    <div align="center">
-                        <button id="StartButton" class="tagline-3">Press qrcode to start the game<br>
-                            <img id='barcode' onclick="startGame();"
-                                src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100"
-                                alt=""
-                                title="START"
-                                width="80"
-                                height="80"/>
-                        </button>                
-                    </div>
-            </div>
-        
-        <script>
-
-            ScrollReveal().reveal('.sequenced-1', { origin: 'right', interval: 200, distance: '100px', delay: 50 });
-            ScrollReveal().reveal('.sequenced-2', { origin: 'right', interval: 600, distance: '200px', delay: 150 });
-            ScrollReveal().reveal('.sequenced-3', { origin: 'right', interval: 1000, distance: '300px', delay: 200 });
-
-            ScrollReveal().reveal('.smooth-1', { distance: '200px', delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.smooth-2', { distance: '3000px', delay: 200, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.smooth-3', { distance: '400px', delay: 250, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-
-            ScrollReveal().reveal('.choppy-1', { distance: '300px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.choppy-2', { distance: '400px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.choppy-3', { distance: '500px', rotate: {x: 500, z: 500}, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-
-            ScrollReveal().reveal('.tagline-1', { distance: '400px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.tagline-2', { distance: '500px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            ScrollReveal().reveal('.tagline-3', { distance: '600px', duration: 700, origin: 'left', easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            
-        </script>
-        -->   
+        <main id="StartScreen">
             <div id="AccessibilityMsg" role="alert"></div>
 
-            <!-- Tutorial per mostrare come si gioca
+            <div id="test">
+                <button onclick="test_story('a');">7-10</button>
+                <button onclick="test_story('b');">11-14</button>
+                <button onclick="test_story('c');">15-18</button>
+            </div>
+
+            <!-- Questa sarà la schermata di inizio e va sistemata
                 <div align="center">
                     <div id="Info" class="card">
                         <div class="card-title">
@@ -177,6 +113,16 @@
                         <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio"><br>
                         <button id="Send">Invia</button>
                     </form>
+
+                    <h5 id="chat-history">Cronologia</h5>
+                    <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
+                    all'inizio di ogni attività la cronologia si svuota -->
+                    <ul>
+                        <li><q class="player-msg">aaaaaaaaaaa</q></li>
+                        <li><q class="valuator-msg">bbbbbbbbbbb</q></li>
+                        <li><q class="player-msg">cccccccccccc</q></li>
+                        <li> <q class="valuator-msg">dddddddddd</q></li>
+                    </ul>
                 </div>
             </div>
         </footer>

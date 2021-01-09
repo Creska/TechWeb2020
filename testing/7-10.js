@@ -1,4 +1,4 @@
-var sroria = {
+var storia7_10 = {
     ACCESSIBILITY: 1, 
 	story_title: "Risveglio della mummia", 
 	story_ID: -1, 

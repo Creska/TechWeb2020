@@ -21,7 +21,11 @@ nav {
     margin: 0 20px 0 5px;
 }
 
-/* la roba commentata va spostata nel css personalizzato delle storie di prova
+body {
+    overflow-x: hidden;
+}
+
+/* roba vecchia
 #FirstStory{
     background-image: url(images/museo_egizio.jpg);
     background-position: center;
@@ -220,7 +224,7 @@ nav {
 
 #Main{
     color: aliceblue;
-    background-image: url(images/sfondo.jpg);
+    background-image: url(../images/sfondo_player.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -234,7 +238,6 @@ nav {
     text-align: center;
 }
 
-/* css per tutorial su come si gioca
 #Info .card-text{
     font-size: small;
     text-align: justify;
@@ -250,7 +253,6 @@ nav {
     color: darkorchid;
     background-color: white;
 }
-*/
 
 .StoryTitle{
     text-shadow: 2px -1px #000000, -2px 1px #000000;            

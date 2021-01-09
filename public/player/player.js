@@ -67,6 +67,22 @@ $(function () {
 });
 
 
+/* FUNZIONE USATA PER I TEST */
+function test_story(par) {
+	switch (par) {
+		case "a":
+			StoryObj = storia7_10;
+			break;
+		case "b":
+			StoryObj = storia11_14;
+			break;
+		case "c":
+			StoryObj = storia15_18;
+	}
+
+	startGame();
+}
+
 
 
 /**

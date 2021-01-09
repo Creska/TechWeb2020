@@ -37,8 +37,8 @@
 
         <!-- TEST STUFF -->
         <script src="test.js"></script>
-        <script src="../testing/11-14.js"></script>
-        <script src="../testing/7-10.js"></script>
+        <script src="../../testing/11-14.js"></script>
+        <script src="../../testing/7-10.js"></script>
 
         <title>Player</title>
     </head>
@@ -63,29 +63,27 @@
         <main id="StartScreen">
             <div id="AccessibilityMsg" role="alert"></div>
 
-            <div id="test">
+            <div id="test"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
                 <button onclick="test_story('a');">7-10</button>
                 <button onclick="test_story('b');">11-14</button>
                 <button onclick="test_story('c');">15-18</button>
             </div>
 
-            <!-- Questa sarà la schermata di inizio e va sistemata
-                <div align="center">
-                    <div id="Info" class="card">
-                        <div class="card-title">
-                            <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
-                        </div>
-                        <div class="card-text">
-                            <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
-                            <img src="..." class="" alt="">
-                            <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
-                            <img src="..." class="" alt="">
-                            <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
-                        </div>
-                        <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
+            <div class="align-items-center">
+                <div id="Info" class="card">
+                    <div class="card-title">
+                        <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
                     </div>
+                    <div class="card-text">
+                        <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
+                        <img src="..." class="" alt="">
+                        <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
+                        <img src="..." class="" alt="">
+                        <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
+                     </div>
+                    <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
                 </div>
-            -->
+            </div>
         </main>
 
         <template id="MainContainer">

@@ -88,7 +88,7 @@ function start_saving() {
   }
 }
 async function saveStory(publish) { 
-  let clean_cw = Object.assign({}, CurrentWork);//clone CurrentWork
+  let clean_cw = jQuery.extend(true, {}, CurrentWork);//deep copy CurrentWork
   let q=0;
   let story_data = [
       {

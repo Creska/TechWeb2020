@@ -1,3 +1,4 @@
+const BSON = require('bson');
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
@@ -530,18 +531,22 @@ app.post('/editor/saveStory', function (req, res) {
     //NOTE: this will always overwrite
     let file_errors = [];
     var story = req.body;
-    console.log("story: ", story)
-    var story_json = story.story_json; //JSON story file object
+    var story_json = story.story_json; //probably needs to be parsed
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
     var published = story.published;
     var story_id = story_json.story_ID;
     var story_path;
     var duplicate_check = [];
+    let path_piece;
     console.log("saveStory request received.")
+    console.log("published", published)
     if (published) {
+        console.log("for some reason i'm here, despite published being: ",published)
         story_path = pubpath;
+        path_piece = "published";
     }
     else {
+        path_piece = "unpublished";
         story_path = unpubpath;
     }
     let path = storyPath(story_json.story_ID)
@@ -557,14 +562,16 @@ app.post('/editor/saveStory', function (req, res) {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
         }
     }
+    
     if (story_data) {//write files inside story directory
         story_data.forEach(file => {
             let options = undefined;
             if (file.native) {
                 options = 'utf8'
             }
-            //else
-            //  options = { encoding: null }; dunno
+            else
+                options = 'binary';
+            console.log("options: ",options)
             if (file.tostringify) {
                 file.data = JSON.stringify(file.data)
             }
@@ -572,8 +579,7 @@ app.post('/editor/saveStory', function (req, res) {
                 file.name = file.name + UNF();
             }
             duplicate_check.push(file.name);
-            //console.log("file.data: ",file.data)
-            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data, options);//data was changed in data.file
+            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data,options);
             if (err != undefined) {
                 console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
                 file_errors.push({ name: file.name, story_id: story_id });
@@ -581,7 +587,7 @@ app.post('/editor/saveStory', function (req, res) {
             else {
                 //write path in the json if coordinates field exists
                 if (file.coordinates) {
-                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].src = '/' + story_path + story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].src = '/player/stories/' + path_piece + '/'+ story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
                     story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].isFile= false;
                 }
                 console.log("Element " + file.name + " of " + story_id + " saved successfully.")

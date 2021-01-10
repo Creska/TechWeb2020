@@ -87,8 +87,60 @@ function start_saving() {
     saveStory(false);
   }
 }
-function saveStory(publish) { 
-  let story = prepare_saveStory_object(publish);
+async function saveStory(publish) { 
+  let clean_cw = Object.assign({}, CurrentWork);//clone CurrentWork
+  let q=0;
+  let story_data = [
+      {
+        name: "css.json",
+        data: CSSdata,
+        native: true, 
+        tostringify: true 
+      }
+  ];
+  let coordinates = [];
+  let reader = new FileReader();
+  /*reader.addEventListener( "load", function() {
+    story_data[index].data =this.result;
+  });*/
+  while(clean_cw.quests[q]){
+    let a=0;
+    while(clean_cw.quests[q].activities[a]){
+      let at=0;
+      while(clean_cw.quests[q].activities[a].activity_text[at]){
+        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ||clean_cw.quests[q].activities[a].activity_text[at].type == "video" ) {
+          let c=0;
+          while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
+            if( clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile ) {
+              //push media in story_data
+              //files.push( clean_cw.quests[q].activities[a].activity_text[at].content[c].src );
+              let promise= new Promise( (resolve,reject) => {
+                reader.readAsBinaryString(clean_cw.quests[q].activities[a].activity_text[at].content[c].src);
+                reader.onload= function() {resolve(this.result)};
+              });
+              let buf = await promise;
+              story_data.push({
+                name: clean_cw.quests[q].activities[a].activity_text[at].content[c].src.name,
+                data: buf,
+                coordinates: [q,a,at,c]//new field added for server-side path writing
+              });
+              clean_cw.quests[q].activities[a].activity_text[at].content[c].src= "";
+            }          
+            c++;
+            }
+        }
+        at++;
+      }
+      a++;
+    }
+    q++;
+  } 
+
+  let story = {
+    story_json: clean_cw,
+    story_data: story_data,
+    published: publish,
+  };  
   $.ajax({
     url: '/editor/saveStory',
     type: 'POST',
@@ -114,65 +166,6 @@ function saveStory(publish) {
     }
   });
 } 
-/* 
-story = {
-  story_json: CurrentWork,
-  story_data: [
-    {
-      name: string,//extension has to be included probably, storyid+"_css.json", looks like css file is saved as a json
-      data: FILE,
-      native: boolean, //true if the file has to be saved in utf-8 format
-      tostringify: boolean //true if the file is a json, in practice this applies to CSS object
-      coordinates: //true if it is a media
-    }
-  ],
-}*/
-//goToSection("AddVideo")
-function prepare_saveStory_object(publish){
-  let clean_cw = Object.assign({}, CurrentWork);//clone CurrentWork
-  let q=0;
-  let story_data = [
-      {
-        name: "css.json",
-        data: CSSdata,
-        native: true, 
-        tostringify: true 
-      }
-  ];
-  let coordinates = [];
-  while(clean_cw.quests[q]){
-    let a=0;
-    while(clean_cw.quests[q].activities[a]){
-      let at=0;
-      while(clean_cw.quests[q].activities[a].activity_text[at]){
-        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ||clean_cw.quests[q].activities[a].activity_text[at].type == "video" ) {
-          let c=0;
-          while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
-            if( clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile ) {
-              //push media in story_data
-              story_data.push({
-                name: clean_cw.quests[q].activities[a].activity_text[at].content[c].src.name,
-                data: clean_cw.quests[q].activities[a].activity_text[at].content[c].src,
-                coordinates: [q,a,at,c]//new field added for server-side path writing
-              });
-              clean_cw.quests[q].activities[a].activity_text[at].content[c].src= "";
-            }          
-            c++;
-            }
-        }
-        at++;
-      }
-      a++;
-    }
-    q++;
-  } 
-  let story = {
-    story_json: clean_cw,
-    story_data: story_data,
-    published: publish
-  };  
-  return story;
-}
 
 function getStory(id) {
   $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){

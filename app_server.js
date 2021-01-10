@@ -1,4 +1,3 @@
-const BSON = require('bson');
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
@@ -540,8 +539,7 @@ app.post('/editor/saveStory', function (req, res) {
     let path_piece;
     console.log("saveStory request received.")
     console.log("published", published)
-    if (published) {
-        console.log("for some reason i'm here, despite published being: ",published)
+    if (stringToBool(published)) {
         story_path = pubpath;
         path_piece = "published";
     }
@@ -566,13 +564,13 @@ app.post('/editor/saveStory', function (req, res) {
     if (story_data) {//write files inside story directory
         story_data.forEach(file => {
             let options = undefined;
-            if (file.native) {
+            if (stringToBool(file.native)) {
                 options = 'utf8'
             }
             else
                 options = 'binary';
             console.log("options: ",options)
-            if (file.tostringify) {
+            if (stringToBool(file.tostringify)) {
                 file.data = JSON.stringify(file.data)
             }
             if (duplicate_check.includes(file.name)) {

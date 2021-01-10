@@ -144,8 +144,8 @@ async function saveStory(publish) {
   $.ajax({
     url: '/editor/saveStory',
     type: 'POST',
-    data: JSON.stringify(story),
-    contentType: "application/json",
+    data: story,
+    //contentType: "application/json",
     success: function(data) {
       $("#story_id_p").text("Id storia: "+data.story_id);//data? { story_id: string, file_errors: array }
       if( data.file_errors && data.file_errors.length > 0 ) {

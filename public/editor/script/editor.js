@@ -137,7 +137,7 @@ async function saveStory(publish) {
   } 
 
   let story = {
-    story_json: clean_cw,
+    story_json: JSON.stringify(clean_cw),
     story_data: story_data,
     published: publish,
   };  

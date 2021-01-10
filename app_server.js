@@ -530,7 +530,7 @@ app.post('/editor/saveStory', function (req, res) {
     //NOTE: this will always overwrite
     let file_errors = [];
     var story = req.body;
-    var story_json = story.story_json; //probably needs to be parsed
+    var story_json = JSON.parse(story.story_json); //probably needs to be parsed
     var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
     var published = story.published;
     var story_id = story_json.story_ID;

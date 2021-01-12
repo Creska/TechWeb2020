@@ -35,11 +35,11 @@ function save_title( which ) {
   
 		  // aggiorna il nome della card e il titolo della sezione
 		  if ( title ) {
-			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( title );
+			$( "#QuestsGrid .card-title strong" ).eq( CurrentNavStatus.QuestN ).html( title );
 			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + title );
 		  }
 		  else {
-			$( "#QuestsGrid .card-text" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
+			$( "#QuestsGrid .card-title strong" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
 			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
 		  }
   
@@ -227,11 +227,12 @@ function goToSection(where) {
 		  else
 			$( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
   
+		  $( "#ErrorList" ).empty();
 		  $( "#StoryTitleInput" ).val( CurrentWork.story_title );
 		  change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
 		  $( "#SaveStoryTitle" ).text( "Salvato!" );
   
-		  $( "#QuestsGrid" ).html( CurrentWork.QuestGrid );
+		  $( "#QuestsGrid" ).html( String(CurrentWork.QuestGrid) );
 		  break;
 		case "ChooseGameMode":
 		  $( "#ChooseGameMode header small" ).html( $( "#EditStory header small" ).html() );
@@ -241,7 +242,7 @@ function goToSection(where) {
 		  if ( CurrentNavStatus.Section == "EditStory" )
 			CurrentNavStatus.QuestN = get_card_index();
   
-		  $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + $( "#EditStory .card-text" ).eq(CurrentNavStatus.QuestN).html() );
+		  $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + $( "#EditStory .card-title strong" ).eq(CurrentNavStatus.QuestN).html() );
   
 		  $( "#QuestTitleInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
 		  change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
@@ -253,7 +254,7 @@ function goToSection(where) {
 		  if ( CurrentNavStatus.Section == "EditQuest" )
 			CurrentNavStatus.ActivityN = get_card_index();
 		  
-		  $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-text" ).eq(CurrentNavStatus.ActivityN).html() );
+		  $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-title strong" ).eq(CurrentNavStatus.ActivityN).html() );
 		  $( "#EditActivity header h1" ).html( "Attività" );
   
 		  /* sistemazione del widget ChooseActivityType */
@@ -847,9 +848,9 @@ function saveTextParagraph() {
 
   CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = text;
   if (text)
-    $("#ParagraphsGrid").find(".card-text").eq( CurrentNavStatus.TextPartN ).html( text.substring(0, 25) + "..." );
+    $("#ParagraphsGrid").find("strong").eq( CurrentNavStatus.TextPartN ).html( text.substring(0, 25) + "..." );
   else
-	$("#ParagraphsGrid").find(".card-text").eq( CurrentNavStatus.TextPartN ).html( "[vuoto]" );
+	$("#ParagraphsGrid").find("strong").eq( CurrentNavStatus.TextPartN ).html( "[vuoto]" );
 	
   saveCardGrids();
   back()

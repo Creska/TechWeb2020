@@ -25,7 +25,14 @@ var storia11_14 = {
                                 La Galleria degli Uffizi è un grande palazzo di proprietà dello Stato italiano. 
                                 Ospita un elevato numero di pezzi d’arte di grandissima importanza. 
                                 Le più famose sono certamente le pitture, tra cui opere di Leonardo Da Vinci, Botticelli e Piero Della Francesca.`
-                        }
+                        },
+                        {
+                            type: "gallery",
+                            content: ['<img src="../images/galleria_uffizi.jpg" alt="La foto mostra la galleria uffizi di Firenze">', 
+                                      '<img src="../images/LDV.jpg" alt="La foto mostra il volto di Leonardo da Vinci">',
+                                      '<img src="../images/Botticelli.png" alt="La foto mostra il volto di Sandro Botticelli">', 
+                                      '<img src="../images/PDF.jpg" alt="La foto mostra il presunto volto di Piero della Francesca">']
+                        },
                     ],
                     activity_type: 'ANSWER',
                     answer_field: {
@@ -101,30 +108,13 @@ var storia11_14 = {
                     ],
                     activity_type: 'ANSWER',
                     answer_field: {
-                        description: "Quale di questi autori è conosciuto con un soprannome o con uno pseudonimo?",
-                        type: "checklist",
-                        options: ['Leonardo da Vinci', 'Raffaello', 'Caravaggio', 'Sandro Botticelli']
+                        description: "Quanti autori, di quelli citati in precedenza, sono conosciuto con un soprannome o con uno pseudonimo?",
+                        type: "number",
+                        options: []
                     },
-                    answer_outcome: [{
-                        response: 'Caravaggio',
-                        nextquest: 1,
-                        nextactivity: 0, 
-                        score:""
-                    },
+                    answer_outcome: [
                     {
-                        response: 'Sandro Botticelli',
-                        nextquest: 1,
-                        nextactivity: 0, 
-                        score:""
-                    },
-                    {
-                        response: 'Leonardo da Vinci',
-                        nextquest: 0,
-                        nextactivity: 1, 
-                        score:""
-                    },
-                    {
-                        response: 'Raffaello',
+                        response: '2',
                         nextquest: 0,
                         nextactivity: 1, 
                         score:""
@@ -141,12 +131,79 @@ var storia11_14 = {
                     FINAL: 0            
                 },
                 {
+                    activity_text: [
+                        {
+                            type:"text",
+                            content: `
+                                Tanti artisti, al tempo di codesti, si appropriavano di un soprannome o di uno pseudonimo.`
+                        },
+                        {
+                            type:"text",
+                            content: `
+                                Il denominarsi con un nome diverso dal proprio consisteva in una forma di tutela per la propria persona e soprattutto per le persone care all'artista.`
+                        }
+                    ],
+                    activity_type: 'ANSWER',
+                    answer_field: {
+                        description: "Quale tra queste coppie di autori sono conosciuto con un soprannome o con uno pseudonimo?",
+                        type: "checklist",
+                        options: ['Leonardo da Vinci e Caravaggio', 'Raffaello e Caravaggio', 'Sandro Botticelli e Caravaggio', 
+                                'Sandro Botticelli e Leonardo da Vinci', 'Sandro Botticelli e Raffaello', 'Leonardo da Vinci e Raffaello']
+                    },
+                    answer_outcome: [
+                    {
+                        response: 'Leonardo da Vinci e Caravaggio',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    },
+                    {
+                        response: 'Raffaello e Caravaggio',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    },
+                    {
+                        response: 'Sandro Botticelli e Caravaggio',
+                        nextquest: 1,
+                        nextactivity: 0, 
+                        score:""
+                    },
+                    {
+                        response: 'Sandro Botticelli e Leonardo da Vinci',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    },
+                    {
+                        response: 'Sandro Botticelli e Raffaello',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    },
+                    {
+                        response: 'Leonardo da Vinci e Raffaello',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    },
+                    {
+                        response: 'default',
+                        nextquest: 0,
+                        nextactivity: 2, 
+                        score:""
+                    }],
+                    ASK_EVAL: 0,
+                    GET_CHRONO: 0,
+                    expected_time: 30000,
+                    FINAL: 0            
+                },
+                {
                     activity_text:[
                         {
                             type:"text",
                             content: `
-                                Molti degli artisti che conosciamo oggigiorno sono diventati famosi con quello che, in realtà, non era il loro vero nome. 
-                                Dei quattro artisti della tua lista, ben due sono conosciuti con un soprannome particolare.`
+                                Per quanto possa sembrare bizzarro e strano, i due artisti con un nome d'arte sono loro: Caravaggio e Sandro Botticelli.`
                         },
                         {
                             type:"text",
@@ -154,9 +211,19 @@ var storia11_14 = {
                                 Caravaggio, infatti anche noto come “Il Caravaggio”, nacque Michelangelo Morisi ma, negli anni a venire, fu sempre indicato con il nome del feudo dove ha vissuto per un periodo importante.`
                         },
                         {
+                            type: "gallery",
+                            content: ['<img style="padding-bottom: 15px;" src="../images/opera_c1.jpg" alt="La foto mostra la opera "Bacco"">', 
+                                      '<img style="padding-bottom: 15px;" src="../images/opera_c2.jpg" alt="La foto mostra la opera "Il sacrificio di Isacco"">']
+                        },
+                        {
                             type:"text",
                             content: `
                                 “Sandro Botticelli” invece era un vero e proprio pseudonimo, composto dal nome di battesimo e dal soprannome del fratello di colui che si chiamava in realtà Alessandro di Mariano di Vanni Filipepi. `
+                        }, 
+                        {
+                            type: "gallery",
+                            content: ['<img style="padding-bottom: 15px;" src="../images/opera_b1.jpeg" alt="La foto mostra la opera "Nascita di Venere"">', 
+                                      '<img style="padding-bottom: 15px;" src="../images/opera_b2.jpg" alt="La foto mostra la opera "La primavera"">']
                         }
                     ],
                     activity_type: 'READING',
@@ -188,10 +255,10 @@ var storia11_14 = {
                                 Decidi quindi di procedere a modo tuo, girando per il museo e approfondendo la storia di questi due importanti artisti, alla ricerca di un qualche elemento utile ricollegabile al misterioso messaggio mail.`
                         },
                         {
-                        type:"text",
-                        content: `
-                            Botticelli nacque nel 1445 a Firenze, mentre Caravaggio nel 1571 a Milano. 
-                            Entrambi gli autori vissero quindi nella prima parte dell’Età Moderna, l’era immediatamente successiva al Medioevo.`
+                            type:"text",
+                            content: `
+                                Botticelli nacque nel 1445 a Firenze, mentre Caravaggio nel 1571 a Milano. 
+                                Entrambi gli autori vissero quindi nella prima parte dell’Età Moderna, l’era immediatamente successiva al Medioevo.`
                         }
                     ],
                     activity_type: 'ANSWER',
@@ -224,6 +291,11 @@ var storia11_14 = {
                             Mentre rimugini sul contesto storico che potrebbe essere legato al movente dei criminali, continui distrattamente a guardare tutti i pannelli che raccontano la storia degli artisti. 
                             Una delle figure, all’improvviso, cattura la tua attenzione. Il dipinto in questione è la “Vocazione di San Matteo” di Caravaggio. 
                             La figura rappresentata è infatti estremamente buia, e nel cartello di fianco è scritto chiaramente che i soggetti della scena sono Cristo e gli apostoli.`
+                    }, 
+                    {
+                        type: "gallery",
+                        content: ['<img style="padding-bottom: 15px;" src="../images/vocazione.jpg" alt="La foto mostra la opera "Vocazione di San Matteo"">', 
+                                  '<img style="padding-bottom: 15px;" src="../images/cristo_vocazione.jpg" alt="La foto mostra Cristo">']
                     }],
                     activity_type: 'ANSWER',
                     answer_field: {
@@ -234,8 +306,8 @@ var storia11_14 = {
                     },
                     answer_outcome: [{
                         response: 'Al tempo la religione era un argomento molto controverso ed era rischioso provare a trattarla in opere artistiche',
-                        nextquest: 0,
-                        nextactivity: 1, 
+                        nextquest: 1,
+                        nextactivity: 0, 
                         score:""
                     },
                     {
@@ -270,6 +342,11 @@ var storia11_14 = {
                         type: "text",
                         content:`Dopo solamente un paio di minuti scopri altri interessanti dettagli. 
                             L’artista, nel 1606, ha infatti svelato una nuova opera, titolata “La morte della Vergine” e commissionata da un membro dell’istituzione papale. `
+                    },
+                    {
+                        type: "gallery",
+                        content: ['<img style="padding-bottom: 15px;" src="../images/morte_vergine.jpg" alt="La foto mostra la opera "La morte della vergine"">', 
+                                  '<img style="padding-bottom: 15px;" src="../images/vergine.jpg" alt="La foto mostra la vergine">']
                     }],
                     activity_type: 'ANSWER',
                     answer_field: {
@@ -437,6 +514,11 @@ var storia11_14 = {
                         type:"text",
                         content: `
                             Gli storici e biografi contattati per rianalizzare la storia del Caravaggio si sono concentrati alla fine su due opzioni: Roma e la Sicilia.`
+                    },
+                    {
+                        type: "gallery",
+                        content: ['<img style="padding-bottom: 15px;" src="../images/roma.jpg" alt="La foto mostra Roma"">', 
+                                  '<img style="padding-bottom: 15px;" src="../images/sicilia.jpg" alt="La foto mostra la Sicilia">']
                     }],
                     activity_type: 'READING',
                     answer_field: {},

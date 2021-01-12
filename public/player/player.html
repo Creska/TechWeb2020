@@ -46,21 +46,30 @@
 
 
     <body>
-        <nav>
-            <ul class=" nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-disabled="true">
-                        <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
-                    </a>
-                </li>
-            </ul>
-        </nav>
 
-        <script>
-            ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-        </script>
+        
+  
+        
 
         <main id="StartScreen">
+            <nav>
+                <ul class=" nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-disabled="true">
+                            <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
+                        </a>
+                    </li>
+                    <li>
+                        <button id="Logo-Info" data-toggle=modal data-target=#Info>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+    
+            <script>
+                ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            </script>
+            
             <div id="AccessibilityMsg" role="alert"></div>
 
             <div id="test"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
@@ -69,19 +78,35 @@
                 <button onclick="test_story('c');">15-18</button>
             </div>
 
-            <div class="align-items-center">
-                <div id="Info" class="card">
-                    <div class="card-title">
-                        <h5><b>INFORMAZIONI</b></h5><i>come si gioca?</i>
+
+            <!-- Modal -->
+            <div class="modal fade" id=Info role=dialog>
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p class="modal-title">Informazioni</p>
+                        </div>
+                        <div class="modal-body>">
+                            <p style="padding-top: 10px; margin-left: 10px; margin-right: 10px;">Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività, come:</p>
+                            <ul style="text-align: left;">
+                                <li>
+                                    Domande a scelta multipla;
+                                </li>
+                                <li>
+                                    Domande aperte a risposta breve;
+                                </li>
+                                <li>
+                                    Domande aperte a risposta univoca.
+                                </li>
+                            </ul>
+                            <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
+                            <img src="../images/prosegui.png" alt="pulsante del prosegui" style="width: 200px; height: 50px; padding-bottom: 10px;">
+                            <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
                     </div>
-                    <div class="card-text">
-                        <p>Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività.</p>
-                        <img src="..." class="" alt="">
-                        <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
-                        <img src="..." class="" alt="">
-                        <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
-                     </div>
-                    <button id='ButtonInfo' onclick='startGame()'>Prosegui</button>
                 </div>
             </div>
         </main>

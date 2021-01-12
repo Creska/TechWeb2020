@@ -374,15 +374,17 @@
       <h1 class="cover-heading SectionTitle">Storia</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
-      Qui puoi gestire le impostazioni generali del gioco e la lista di tutte le quest.<br>
-      clicca <a data-toggle="collapse" onclick="show_evaluation();" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><b>qui</b></a> per vedere cosa serve alla tua storia per
-      essere pubblicabile(in ogni caso la storia è salvabile).
-      <div class="collapse"id="collapseExample">
-       .
-      </div>
+      Qui puoi gestire le impostazioni generali del gioco e la lista di tutte le quest.
     </p>
 
-    <div class="input-group font-weight-bold">
+    <p>
+      Perché una storia sia pubblicabile, deve soddisfare i requisiti necessari per un corretto funzionamento.<br>
+      <a class="btn btn-primary mt-2" data-toggle="collapse" onclick="show_evaluation();" href="#ErrorList" role="button" aria-expanded="false" aria-controls="ErrorList">Verifica</a>
+    </p>
+    
+    <div class="collapse" id="ErrorList"></div>
+
+    <div class="input-group font-weight-bold mt-5">
       <div class="input-group-prepend">
         <span class="input-group-text bg-light">Titolo:</span>
       </div>
@@ -512,8 +514,6 @@
     <div class="col-xs-12 alert alert-info text-justify" role="alert">
       <i class="fas fa-info"></i>
       <p>Marcando questa attività come finale, un'eventuale altra attività segnata come tale verrà riportata alla tipologia di sola lettura.
-        <br>Se carichi un media con un certo nome, e sul server è già presente un file con
-         quel nome, allora al nome del media verrà aggiunto un suffisso (i), dove i è un indice >= 1.
       </p>
     </div>
 
@@ -524,7 +524,7 @@
       <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-3 rounded" onclick='create_stuff("TextParagraph");create_card("[vuoto]");' data-toggle="tooltip" data-placement="top" title="Aggiungi paragrafo di testo">
         <i class="fas fa-paragraph"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 mr-3 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
+      <button class="btn btn-lg btn-secondary mb-3 mr-2 rounded" onclick='create_stuff("Gallery");create_card("GALLERY");' data-toggle="tooltip" data-placement="top" title="Aggiungi galleria di immagini">
         <i class="far fa-images"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 mr-3 rounded" onclick='create_stuff("Video");create_card("VIDEO");' data-toggle="tooltip" data-placement="top" title="Aggiungi un video">
@@ -846,7 +846,7 @@
 
       <div id="Video_Empty"></div>
 
-      <video control>
+      <video controls>
         <source src="" type="">
       </video>
     </div>

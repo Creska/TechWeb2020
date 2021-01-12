@@ -7,18 +7,19 @@ BUG E PROBLEMI DA CORREGGERE
         * pubblicazione (qui va inserita creazione degli id per quest e storia e generazione qrcode)
         * ritiro
         * interfaccia
-    * [WAITING] Funzioni di passaggio per navbar e main menu
+    * [WIP] Funzioni di passaggio per navbar e main menu
     * Sistemare l'associazione tra quest e id CSS - non funzionerebbe nel caso di randomizzazione - aggiungere un metodo. Altrimenti andrebbe ripensata l'intera personalizzazione del CSS
-    * Mettere il nome dell'app
+    * Sistemare il tutto
+    * Mettere il logo dell'app
 * PLAYER
     * Sistemare grafica
-    * [WIP] Chiamate AJAX
+    * [WAITING] Chiamate AJAX
         * caricamento (va inserita anche la divisione in gruppi)
         * invio stats a fine attività
         * invio stats ogni 5s
-        * richiesta valutazione umana
-    * Riprogettare eventualmente l'interfaccia (ad esempio mettere un header per il campo risposta) - nel caso va rifatta la guida dell'editor CSS
-    * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente
+    * Sistemare roba di accessibilità
+    * Sistemare la scelta degli id delle quest in caso la storia sia per classe
+    * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * ORGANIZZAZIONE
     * Definire il sistema di cartelle - dove vengono salvati i media e il CSS personalizzato
 * STORIE DI PROVA

@@ -1,6 +1,8 @@
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
+const formidableMiddleware = require('express-formidable');//formData parsing
+app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 500 * 1024 * 1024})); 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
@@ -527,12 +529,9 @@ app.get('/editor/getStory', function (req, res) {
 
 
 app.post('/editor/saveStory', function (req, res) {
-    //NOTE: this will always overwrite
+    var story_json = JSON.parse(req.fields.story_json);
+    var published = req.fields.published;
     let file_errors = [];
-    var story = req.body;
-    var story_json = JSON.parse(story.story_json); //probably needs to be parsed
-    var story_data = story.story_data; //array [{name: string, data: value, native: true if utf8, tostringify: true if JSON.stringify() is needed}]
-    var published = story.published;
     var story_id = story_json.story_ID;
     var story_path;
     var duplicate_check = [];
@@ -561,7 +560,7 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     
-    if (story_data) {//write files inside story directory
+   /* if (story_data) {//write files inside story directory
         story_data.forEach(file => {
             let options = undefined;
             if (stringToBool(file.native)) {
@@ -591,10 +590,30 @@ app.post('/editor/saveStory', function (req, res) {
                 console.log("Element " + file.name + " of " + story_id + " saved successfully.")
             }
         })
+    }*/
+    let promises = [];
+    for( key in req.files ) {
+        console.log("path: ",req.files[key].path)
+        promises.push( new Promise( (resolve,reject) => {
+                fs.rename(req.files[key].path, "public/"+req.files[key].name, (err) => {
+                    if (err) {
+                        reject(err)
+                    }
+                    else {
+                        resolve()
+                    }
+                });
+            })
+        );
     }
+    Promise.all(promises).then(() => {
+        console.log("rename resolved")
+    }).catch(err => {
+        console.log("rename rejected")
+    })
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;
-    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', req.fields.story_json, 'utf8');
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")

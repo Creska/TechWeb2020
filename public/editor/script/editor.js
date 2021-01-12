@@ -167,6 +167,37 @@ async function saveStory(publish) {
   });
 } 
 
+function Form_save() {
+  let story_data = [
+    {
+      name: "css.json",
+      data: CSSdata,
+      native: true, 
+      tostringify: true 
+    }
+];
+  var formData = new FormData();
+  formData.append("story_json", JSON.stringify(CurrentWork) );//CurrentWork is expected to be stringified
+  formData.append("story_css", story_data);
+  formData.append("published", false);
+  formData.append("file_data", CurrentWork.quests[0].activities[0].activity_text[0].content[0].src);
+  formData.append("media_data", CurrentWork.quests[0].activities[0].activity_text[1].content[0].src);
+  /*for (var pair of formData.entries()) {
+    console.log(pair[0]+ ', ' + pair[1]); 
+}*/
+  console.log("get", formData.get("file_data"))
+  $.ajax({
+    url: '/editor/saveStory',
+    type: 'POST',
+    contentType: false ,
+    processData: false,
+    data: formData,
+    success: function(data) {
+      alert("success!")
+    }
+  });
+}
+
 function getStory(id) {
   $.get("/editor/getStory?story_id="+encodeURIComponent(id), function(data, status){
     //CurrentWork =JSON.parse(data);

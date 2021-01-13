@@ -2,7 +2,7 @@ const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
 const formidableMiddleware = require('express-formidable');//formData parsing
-app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 500 * 1024 * 1024})); 
+app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 500 * 1024 * 1024, uploadDir: 'temp'})); 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
@@ -531,19 +531,21 @@ app.get('/editor/getStory', function (req, res) {
 app.post('/editor/saveStory', function (req, res) {
     var story_json = JSON.parse(req.fields.story_json);
     var published = req.fields.published;
-    let file_errors = [];
+    var file_errors = [];
     var story_id = story_json.story_ID;
     var story_path;
+    var css_error = false;
     var duplicate_check = [];
-    let path_piece;
+    var path_piece;
+    var media_map = JSON.parse(req.fields.coordinates);
     console.log("saveStory request received.")
     console.log("published", published)
     if (stringToBool(published)) {
+        path_piece = 'published';
         story_path = pubpath;
-        path_piece = "published";
     }
     else {
-        path_piece = "unpublished";
+        path_piece = 'unpublished';
         story_path = unpubpath;
     }
     let path = storyPath(story_json.story_ID)
@@ -560,60 +562,45 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     
-   /* if (story_data) {//write files inside story directory
-        story_data.forEach(file => {
-            let options = undefined;
-            if (stringToBool(file.native)) {
-                options = 'utf8'
-            }
-            else
-                options = 'binary';
-            console.log("options: ",options)
-            if (stringToBool(file.tostringify)) {
-                file.data = JSON.stringify(file.data)
-            }
-            if (duplicate_check.includes(file.name)) {
-                file.name = file.name + UNF();
-            }
-            duplicate_check.push(file.name);
-            let err = fs.writeFileSync(story_path + story_id + '/' + file.name, file.data,options);
-            if (err != undefined) {
-                console.log("An error occurred inside /editor/saveStory while saving " + file.name + " of " + story_id + ": " + err);
-                file_errors.push({ name: file.name, story_id: story_id });
-            }
-            else {
-                //write path in the json if coordinates field exists
-                if (file.coordinates) {
-                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].src = '/player/stories/' + path_piece + '/'+ story_id + '/' + file.name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
-                    story_json.quests[file.coordinates[0]].activities[file.coordinates[1]].activity_text[file.coordinates[2]].content[file.coordinates[3]].isFile= false;
-                }
-                console.log("Element " + file.name + " of " + story_id + " saved successfully.")
-            }
-        })
-    }*/
-    let promises = [];
     for( key in req.files ) {
         console.log("path: ",req.files[key].path)
-        promises.push( new Promise( (resolve,reject) => {
-                fs.rename(req.files[key].path, "public/"+req.files[key].name, (err) => {
-                    if (err) {
-                        reject(err)
-                    }
-                    else {
-                        resolve()
-                    }
-                });
-            })
-        );
+        try {
+            if( fs.existsSync(req.files[key].path) ){
+                let file_name = req.files[key].name;
+                /*if (duplicate_check.includes(file_name)) {
+                    file_name = file_name + UNF();
+                    console.log("file_name: ",file_name)
+                }
+                duplicate_check.push(file.name);*/
+                fs.renameSync(req.files[key].path, story_path + story_id + '/' +file_name); 
+                let coordinates = media_map[key];
+                if (coordinates) {
+                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].src = '/player/stories/' + path_piece + '/'+ story_id + '/' + file_name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].isFile= false;
+                }
+            }
+            else{
+                console.log("file ",req.files[key].name+" not found in project temp directory")
+                file_errors.push({ name: req.files[key].name });
+            }
+        }
+        catch (err) { 
+            console.log("error with file: ",req.files[key].name, err)
+            file_errors.push({ name: req.files[key].name });
+        }
     }
-    Promise.all(promises).then(() => {
-        console.log("rename resolved")
-    }).catch(err => {
-        console.log("rename rejected")
-    })
+    console.log("file checking and moving completed")
+    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, 'utf8');
+    if (css_err != undefined) {
+        console.log("error while css");
+        css_error = true;
+    }
+    else {
+       console.log("css saved successfully")      
+    }
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;
-    let err = fs.writeFileSync(story_path + story_id + '/story.json', req.fields.story_json, 'utf8');
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
@@ -631,7 +618,7 @@ app.post('/editor/saveStory', function (req, res) {
         console.log("JSON Story file of " + story_id + " saved successfully.")
     }
     console.log("Story " + story_id + " saved successfully.")
-    return res.status(200).send({ story_id: story_id, file_errors: file_errors }).end();
+    return res.status(200).send({ story_id: story_id, file_errors: file_errors, css_error: css_error }).end();
 })
 
 app.post('/editor/deleteStory', function (req, res) {

@@ -87,22 +87,11 @@ function start_saving() {
     saveStory(false);
   }
 }
-async function saveStory(publish) { 
+function prepare_saveStory_stuff() { 
   let clean_cw = jQuery.extend(true, {}, CurrentWork);//deep copy CurrentWork
+  let coordinates= {};
+  let media = {};
   let q=0;
-  let story_data = [
-      {
-        name: "css.json",
-        data: CSSdata,
-        native: true, 
-        tostringify: true 
-      }
-  ];
-  let coordinates = [];
-  let reader = new FileReader();
-  /*reader.addEventListener( "load", function() {
-    story_data[index].data =this.result;
-  });*/
   while(clean_cw.quests[q]){
     let a=0;
     while(clean_cw.quests[q].activities[a]){
@@ -112,19 +101,12 @@ async function saveStory(publish) {
           let c=0;
           while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
             if( clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile ) {
-              //push media in story_data
-              //files.push( clean_cw.quests[q].activities[a].activity_text[at].content[c].src );
-              let promise= new Promise( (resolve,reject) => {
-                reader.readAsBinaryString(clean_cw.quests[q].activities[a].activity_text[at].content[c].src);
-                reader.onload= function() {resolve(this.result)};
-              });
-              let buf = await promise;
-              story_data.push({
-                name: clean_cw.quests[q].activities[a].activity_text[at].content[c].src.name,
-                data: buf,
-                coordinates: [q,a,at,c]//new field added for server-side path writing
-              });
-              clean_cw.quests[q].activities[a].activity_text[at].content[c].src= "";
+              let key = "key"+q+a+at+c;
+              console.log("key: ", key)
+              media[key] = clean_cw.quests[q].activities[a].activity_text[at].content[c].src;
+              coordinates[key] = [q,a,at,c];
+              clean_cw.quests[q].activities[a].activity_text[at].content[c].src = "";             
+              clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile = false;
             }          
             c++;
             }
@@ -135,22 +117,32 @@ async function saveStory(publish) {
     }
     q++;
   } 
+  return { clean_cw: clean_cw, coordinates: coordinates, media: media };
+} 
 
-  let story = {
-    story_json: JSON.stringify(clean_cw),
-    story_data: story_data,
-    published: publish,
-  };  
+function saveStory(publish) {
+  let stuff = prepare_saveStory_stuff();
+  var formData = new FormData();
+  formData.append("story_json", JSON.stringify(stuff.clean_cw) );//CurrentWork is expected to be stringified
+  formData.append("story_css", JSON.stringify(CSSdata));
+  formData.append("published", publish);
+  formData.append("coordinates", JSON.stringify(stuff.coordinates));
+  for( key in stuff.media ) {
+    formData.append(key,stuff.media[key] );
+  }
   $.ajax({
     url: '/editor/saveStory',
     type: 'POST',
-    data: story,
-    //contentType: "application/json",
-    success: function(data) {
+    contentType: false ,
+    processData: false,
+    data: formData,
+    success: function (data) {
       $("#story_id_p").text("Id storia: "+data.story_id);//data? { story_id: string, file_errors: array }
       if( data.file_errors && data.file_errors.length > 0 ) {
         let list = $("<ul/>");
         $("#story_id_p").append(", ma i seguenti file non sono stati salvati:");
+        if(data.css_error)
+          list.append("<li>Il file css.</li>");
         data.file_errors.forEach( element => {
           list.append("<li>"+element.name+"</li>");
         });
@@ -159,41 +151,6 @@ async function saveStory(publish) {
       }
       goToSection("final_section");
       $('#success_modal').modal('show');
-    },
-    error: function(err) {
-      console.log(err)
-      //$('#fail_modal').modal('show');
-    }
-  });
-} 
-
-function Form_save() {
-  let story_data = [
-    {
-      name: "css.json",
-      data: CSSdata,
-      native: true, 
-      tostringify: true 
-    }
-];
-  var formData = new FormData();
-  formData.append("story_json", JSON.stringify(CurrentWork) );//CurrentWork is expected to be stringified
-  formData.append("story_css", story_data);
-  formData.append("published", false);
-  formData.append("file_data", CurrentWork.quests[0].activities[0].activity_text[0].content[0].src);
-  formData.append("media_data", CurrentWork.quests[0].activities[0].activity_text[1].content[0].src);
-  /*for (var pair of formData.entries()) {
-    console.log(pair[0]+ ', ' + pair[1]); 
-}*/
-  console.log("get", formData.get("file_data"))
-  $.ajax({
-    url: '/editor/saveStory',
-    type: 'POST',
-    contentType: false ,
-    processData: false,
-    data: formData,
-    success: function(data) {
-      alert("success!")
     }
   });
 }

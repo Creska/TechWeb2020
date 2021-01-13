@@ -378,20 +378,20 @@ function saveCardGrids() {
   
     switch ( CurrentNavStatus.Section ) {
       case "EditStory":
-        CurrentWork.QuestGrid = $( $("#QuestsGrid").html() );
+        CurrentWork.QuestGrid = $( $( "#QuestsGrid" ).prop( "outerHTML" ) );
         stopAnimation( CurrentWork.QuestGrid );
-        CurrentWork.QuestGrid = CurrentWork.QuestGrid.prop("outerHTML");
+        CurrentWork.QuestGrid = CurrentWork.QuestGrid.html();
         break;
       case "EditQuest":
-        CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = $( $("#ActivitiesGrid").html() );
+        CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = $( $( "#ActivitiesGrid" ).prop( "outerHTML" ) );
         stopAnimation( CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] );
-        CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = CurrentWork.ActivityGrids[CurrentNavStatus.QuestN].prop("outerHTML");
+        CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] = CurrentWork.ActivityGrids[CurrentNavStatus.QuestN].html();
         break;
       case "EditActivity":
       case "EditText":
-        CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $( $("#ParagraphsGrid").html() );
+        CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = $( $( "#ParagraphsGrid" ).prop( "outerHTML" ) );
         stopAnimation( CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] );
-        CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN].prop("outerHTML");
+        CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN] = CurrentWork.ParagraphGrids[CurrentNavStatus.QuestN][CurrentNavStatus.ActivityN].html();
     }
   
     CardClickDisabled = false;

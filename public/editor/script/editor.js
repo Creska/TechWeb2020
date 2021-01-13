@@ -341,9 +341,9 @@ function isPublishable( obj ) {
     res.errors.push( "Storia - CSS stylesheet non valido" );
   }
 
-  if ( obj.quests.length < 1 ) {
+  if ( obj.quests.length < 4 ) {
     res.ok = false;
-    res.errors.push( "Storia - Nessuna quest presente" );
+    res.errors.push( "Storia - Numero di quest insufficiente" );
   }
 
   /* controlli sulle quest */
@@ -353,9 +353,9 @@ function isPublishable( obj ) {
       res.errors.push( "Quest n." + q_index + ": Titolo mancante" );
     }
 
-    if ( q.activities.length < 1 ) {
+    if ( q.activities.length < 3 ) {
       res.ok = false;
-      res.errors.push( "Quest n." + q_index + ": Nessuna attività presente" );
+      res.errors.push( "Quest n." + q_index + ": Numero di attività insufficiente" );
     }
 
     /* controlli sulle attività */
@@ -432,18 +432,18 @@ function isPublishable( obj ) {
 
 function show_evaluation() {
   let obj=isPublishable(CurrentWork);
-  $("#collapseExample").empty();
+  $("#ErrorList").empty();
   if(obj.ok){
-    $("#collapseExample").css("color","rgb(153, 230, 171)");
-    $("#collapseExample").css("background-color","rgb(26, 62, 41)");
-    $("#collapseExample").css("border-color","rgb(37, 90, 50)");
-    $("#collapseExample").text("La storia è pubblicabile!");
+    $("#ErrorList").css("color","rgb(153, 230, 171)");
+    $("#ErrorList").css("background-color","rgb(26, 62, 41)");
+    $("#ErrorList").css("border-color","rgb(37, 90, 50)");
+    $("#ErrorList").text("La storia è pubblicabile!");
   }else{
-    $("#collapseExample").css("color","rgb(225, 134, 143)");
-    $("#collapseExample").css("background-color","rgb(67, 12, 17)");
-    $("#collapseExample").css("border-color","rgb(104, 18, 27)");
+    $("#ErrorList").css("color","rgb(225, 134, 143)");
+    $("#ErrorList").css("background-color","rgb(67, 12, 17)");
+    $("#ErrorList").css("border-color","rgb(104, 18, 27)");
     obj.errors.forEach( error => {
-      $("#collapseExample").append(error+"<br>");
+      $("#ErrorList").append(error+"<br>");
     });
   }
 }

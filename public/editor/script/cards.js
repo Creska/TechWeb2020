@@ -157,8 +157,8 @@ function create_card(titolo,subtitle) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
       $("#NewQuestWidget input").val("");
-      titolo = titolo.replace(/(<([^>]+)>)/gi, "");
-      if ( titolo.trim() == "" )
+      titolo = titolo.replace(/(<([^>]+)>)/gi, "").trim();
+      if ( titolo == "" )
         titolo = "<i>QuestSenzaNome" + ( CurrentWork.quests.length - 1 ) + "</i>";
       color = "bg-"+ colors[CurrentWork.quests.length % 6];
       break;
@@ -186,9 +186,10 @@ function create_card(titolo,subtitle) {
       onclick: "openCard( this )"
     });
   card.append( $("<div class='card-body text-center'></div>") );
-  card.children().append( $("<p class='card-title'><h4>" + titolo + "</h4></p>") );
+  card.children().first().append( $( "<p class='card-title'><strong>" + titolo + "</strong></p>" ) );
+
   if( subtitle ) 
-    card.children().append( $("<p class='card-subtitle mb-2'<h6>" + subtitle + "</h6></p>") );
+    card.children().append( $("<p class='card-subtitle mb-2'>" + subtitle + "</p>") );
   // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
   if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
     $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');

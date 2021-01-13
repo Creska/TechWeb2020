@@ -229,56 +229,87 @@ body {
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
-}
-#Info{
+    margin-right: 10px;
+    border: slategray;
     padding: 10px;
-    width: 300px;
-    background-color: darkblue;
-    color: darkorchid;
-    text-align: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+#Main::after{
+    content: ' ';
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    z-index: 0;
 }
 
-#Info .card-text{
-    font-size: small;
-    text-align: justify;
-}
-#ButtonInfo{
-    color: white;
-    background-color: darkorchid;
-    border-color: darkorchid;
-    border-width: thick;
-    border-radius: 10px;
-}
-#ButtonInfo:hover{
-    color: darkorchid;
+#Logo-Info {
+    background-image: url(../images/info.png);
     background-color: white;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-color: black;
+    border-radius: 15px;
+    border-style: solid;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 5px;
+    right: 5px;
+}
+.modal-title{
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    font-style: oblique;
+    font-weight: bolder;
+    color: cornflowerblue;
+}
+.modal-body{
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .StoryTitle{
     text-shadow: 2px -1px #000000, -2px 1px #000000;            
-    padding: 10px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    z-index: 10;
+    position: relative;
 }
 .Quest {
     margin-top: 20px;
     margin-bottom: 20px;
     margin-left: 20px;
     margin-right: 20px;
+    z-index: 1;
+    position: relative;
 }
 .QuestTitle{
     color: rgb(180, 200, 230);
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-style: oblique;
+    z-index: 1;
+    position: relative;
 }
 .ActivityText{
     background-color: rgba(255, 255, 255, 0.7);
+    text-align: left justify;
     padding: 5px;
     color: rgb(0, 10, 20);
     border-style: groove;
     border-color: rgba(30, 143, 255, 0.5);
     border-radius: 5px;
     margin-bottom: 20px;
-    font-size: medium;
+    font-size: 20px;
+    z-index: 1;
+    position: relative;
 }
 .AnswerField{
     background-color: rgba(0, 5, 5, 0.7);
@@ -291,8 +322,10 @@ body {
     margin-right: 10px;
     text-align: center, justify;
     font-style: italic;
-    font-size: large;
+    font-size: 25px;
     font-family: Georgia, 'Times New Roman', Times, serif;
+    z-index: 1;
+    position: relative;
 }
 .NextActivity{
     align-content: center;
@@ -303,14 +336,34 @@ body {
     border: 2px solid rgb(255, 255, 255, 0.5);
     border-radius: 5px;
     margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
 }
 .NextActivity:hover{
     background-color: rgba(0, 0, 0, 0.8);
     color: whitesmoke;
     border-color: rgba(0, 0, 0, 0.8);
 }
+.CloseGameBtn{
+    align-content: center;
+    text-align: center;
+    width: 200px;
+    background-color: rgba(25, 1, 130, 0.8);
+    color: white;
+    border: 2px solid rgb(255, 255, 255, 0.5);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
+}
+.CloseGameBtn:hover{
+    background-color: rgba(0, 0, 0, 0.8);
+    color: whitesmoke;
+    border-color: rgba(0, 0, 0, 0.8);
+}
 #AccessibilityMsg{
     padding: 5px;
+    position: relative;
 }
 .page-footer{
     padding: 10px;

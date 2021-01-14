@@ -843,6 +843,7 @@
       Carica un file video o linkane uno da YouTube.
     </p>
 
+    <!--
     <div id="VideoPreview">
       <div id="Video_IsLoaded">
         <p>file caricato</p>
@@ -857,29 +858,32 @@
     </div>
 
     <textarea id="VideoDescr" placeholder="Descrizione"></textarea>
+    -->
+
+    <div id="yt-video">
+      <span>PLACEHOLDER</span>
+    </div>
 
     <div class="p-3">
+      <!--
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#UploadVid').trigger('click');" data-toggle="tooltip" data-placement="left" title="Upload">
         <i class="fas fa-upload"></i>
       </button>
       <input type="file" id="UploadVid" style="display:none;">
-      <!--
+      -->
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
         <i class="fab fa-youtube"></i>
       </button>
-      -->
     </div>
 
-    <!--
     <div id="YTLink" class="input-group input-group-sm mb-3 font-weight-bold invisible">
       <input type="text" class="form-control col-sm-5 " placeholder="https://">
       <div class="input-group-append">
-        <button class="btn btn-sm btn-primary" type="button" onclick="embedMedia($('#YTLink input').val());">Aggiungi</button>
+        <button class="btn btn-sm btn-primary" type="button" onclick="embedVideo($('#YTLink input').val());">Aggiungi</button>
 
         <button class="btn btn-sm btn-danger" type="button" onclick="$('#YTLink input').val('');$('#YTLink').addClass('invisible');">Annulla</button>
       </div>
     </div>
-    -->
 
     <div class="p-3 Save-Cancel">
       <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveVideoSection();">Salva</button>

@@ -10,7 +10,7 @@ var CurrentNavStatus = {
 
 /* variabile usata per i salvataggi temporanei della storia su cui l'utente sta lavorando */
 var CurrentWork;
-var MediaBuffer = [];
+var MediaBuffer;
 var CSSdata;
 
 /* FINESTRE */
@@ -97,7 +97,7 @@ function prepare_saveStory_stuff() {
     while(clean_cw.quests[q].activities[a]){
       let at=0;
       while(clean_cw.quests[q].activities[a].activity_text[at]){
-        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" ||clean_cw.quests[q].activities[a].activity_text[at].type == "video" ) {
+        if( clean_cw.quests[q].activities[a].activity_text[at].type == "gallery" /*||clean_cw.quests[q].activities[a].activity_text[at].type == "video" */ ) {
           let c=0;
           while(clean_cw.quests[q].activities[a].activity_text[at].content[c]) {
             if( clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile ) {

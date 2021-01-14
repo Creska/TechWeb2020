@@ -15,7 +15,7 @@ game_example = {
 					activity_text: [
 						{
 							type: "", // può essere "text", "gallery" o "video"
-							content: "" // testo oppure array di oggetti media - nel caso type=video, l'array di media sarà monoelemento
+							content: "" // rispettivamente può essere una stringa di testo, un'array di oggetti immagine, oppure una stringa html
 						}
 					], // testo HTML dell'attività. è un array in cui ogni elemento è un testo/immagine/galleria
 					activity_type: "ANSWER", // con READING indica attività di sola lettura, con ANSWER (default) indica la presenza del campo risposta

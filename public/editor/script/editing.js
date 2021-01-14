@@ -87,7 +87,7 @@ function save_title( which ) {
 		case "Video":
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text.push({
 			  type: "video",
-			  content: []
+			  content: ""
 			});
 			break;
 	  default:
@@ -919,6 +919,9 @@ function displayMediaPreview( media, mediatype ) {
   		$( "#GalleryPreview" ).append( newrow );
 	}
 	else if ( mediatype == "video" ) {
+		$( "#yt-video" ).html( media.content );
+
+		/*
 		if ( media.isFile ) {
 			$( "#VideoPreview video" ).toggle(false);
 			$( "#Video_Empty" ).toggle(false);
@@ -936,6 +939,7 @@ function displayMediaPreview( media, mediatype ) {
 		}
 
 		$( "#VideoDescr" ).val( media.alt );
+		*/
 	}
 };
 
@@ -992,6 +996,35 @@ function saveImageGallery() {
 };
 
 
+function embedVideo( html_text ) {
+	let parsed_text = $.parseHTML( html_text );
+
+	let isHtml = parsed_text.filter( function(e) {
+		return e instanceof HTMLElement;
+	}).length;
+
+	if ( isHtml ) {
+		parsed_text = $( parsed_text );
+		
+		if ( parsed_text.prop( "tagName" ) != "IFRAME" )
+			return;
+
+		parsed_text.removeAttr( "width" );
+		parsed_text.removeAttr( "length" );
+		parsed_text.html( "" );
+
+		MediaBuffer = {
+			type: "video",
+			content: html_text
+		};
+
+		$( "#YTLink input" ).val( "" );
+		$( "#YTLink" ).addClass( "invisible" );
+		displayMediaPreview( MediaBuffer, "video" );
+	}
+};
+
+
 function loadVideoSection() {
 	MediaBuffer = new Array( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content.length );
 
@@ -1000,17 +1033,23 @@ function loadVideoSection() {
 		displayMediaPreview( MediaBuffer[0], "video" );
 	}
 	else {
+		$("#yt-video").html("<span>PLACEHOLDER</span>");
+
+		/*
 		$( "#Video_IsLoaded" ).toggle(false);
 		$( "#VideoPreview video" ).toggle(false);
+		*/
 	}
 };
 
 
 function saveVideoSection() {
+	/*
 	if ( MediaBuffer.length )
 		MediaBuffer[0].alt = $( "#VideoDescr" ).val().replace(/(<([^>]+)>)/gi, "");
+	*/
 	
-	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN] = MediaBuffer;
 
 	back();
 };

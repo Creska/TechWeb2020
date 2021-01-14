@@ -946,12 +946,12 @@ function displayMediaPreview( media, mediatype ) {
  */
 function removeMediaPreview( media ) {
 	if ( CurrentNavStatus.Section == "EditGallery" ) {
-		let iter = media.parent().parent().previousSibling;
+		let iter = media.parent().parent().prev();
 		let count = 0;
 
-		while ( iter ) {
+		while ( iter.length ) {
 			count += 1;
-			iter = iter.previousSibling;
+			iter = iter.prev();
 		}
 
 		$( media.parent().parent() ).remove();

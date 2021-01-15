@@ -11,7 +11,6 @@
   <script src="animations.js"></script>
   <script src="script/editing.js"></script>
   <script src="script/cards.js"></script>
-  <script src="../player/test.js"></script> <!-- SOLO PER TEST -->
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -73,6 +72,8 @@
     });
   </script>
 </head>
+
+
 <body class="text-center">
 
   <!-- MODALI PER CHIAMATE AJAX -->
@@ -126,21 +127,23 @@
       </div>
     </div>
   </div>
-  <!-- BODY E SEZIONI EDITOR -->
+
+
+  <!-- SEZIONI EDITOR -->
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
   <header class="masthead mb-auto">
     <div class="inner">
       <h3 class="masthead-brand">STORY EDITOR</h3>
       <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
+          <i class="fas fa-chevron-circle-left fa-2x"></i>
+        </a>
         <a class="nav-link" id="duplicate_nav" href="javascript:delete CurrentWork.story_ID;start_saving();" data-toggle="tooltip" data-placement="bottom" title="Duplica la storia">
           <i class="fas fa-clone fa-2x"></i>
         </a>
         <a class="nav-link" id="delete_nav" href='javascript:delete_current_story();' data-toggle="tooltip" data-placement="bottom" title="Cancella la storia">
           <i class="fas fa-trash-alt fa-2x"></i>
-        </a>
-        <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
-          <i class="fas fa-chevron-circle-left fa-2x"></i>
         </a>
         <a class="nav-link" href="javascript:Navbar('Save');" data-toggle="tooltip" data-placement="bottom" title="Salva la storia su server">
           <i class="far fa-save fa-2x"></i>
@@ -159,7 +162,7 @@
   </header>
 
 
-  <!-- WIDGET PER IL PROMPT DEL SALVATAGGIO -->
+  <!-- WIDGET DI PROMPT SALVATAGGIO -->
   <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content bg-dark">
@@ -170,15 +173,16 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Se torni alla home, perderai tutto il lavoro che hai fatto, vuoi procedere comunque?</p>
+          <p>Se torni alla home, perderai tutte le modifiche non salvate. Vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');close_css_window(); goToSection('MainMenu');">si</button>
-          <button type="button" class="btn btn-primary" onclick="$('#SavePrompt').modal('hide');">no</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');close_css_window(); goToSection('MainMenu');">Procedi</button>
+          <button type="button" class="btn btn-primary" onclick="$('#SavePrompt').modal('hide');">Rimani</button>
         </div>
       </div>
     </div>
   </div>
+
   <div class="modal fade" id="back_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content bg-dark">
@@ -189,11 +193,11 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Se torni alla griglia delle storie, perderai tutte le modifiche che hai fatto finora, vuoi procedere comunque?</p>
+          <p>Se torni alla griglia delle storie, perderai tutte le modifiche non salvate. Vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">si</button>
-          <button type="button" class="btn btn-primary" onclick="$('#back_modal').modal('hide');">no</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">Procedi</button>
+          <button type="button" class="btn btn-primary" onclick="$('#back_modal').modal('hide');">Rimani</button>
         </div>
       </div>
     </div>
@@ -325,20 +329,20 @@
     <div>
       <p>Numero di giocatori:</p>
       <div class="card-deck">
-        <div class="card rounded bg-secondary" id="gm0" onclick="select(0);">
+        <div class="card rounded bg-secondary w-25" id="gm0" onclick="select(0);">
           <img src="../images/single.jpg" class="card-img-top" alt="..." >
           <div class="card-body">
             <h5 class="card-title">Single Player</h5>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="gm1" onclick="select(1);">
+        <div class="card rounded bg-secondary w-25" id="gm1" onclick="select(1);">
           <img src="../images/group.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Gruppo</h5>
             <p class="card-text">Gruppo unico da 2-5 membri</p>
           </div>
         </div>
-        <div class="card rounded bg-secondary" id="gm2" onclick="select(2);">
+        <div class="card rounded bg-secondary w-25" id="gm2" onclick="select(2);">
           <img src="../images/class.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Classe</h5>
@@ -376,12 +380,12 @@
       Qui puoi gestire le impostazioni generali del gioco e la lista di tutte le quest.
     </p>
 
-    <p>
-      Perché una storia sia pubblicabile, deve soddisfare i requisiti necessari per un corretto funzionamento.<br>
-      <a class="btn btn-primary mt-2" data-toggle="collapse" onclick="show_evaluation();" href="#ErrorList" role="button" aria-expanded="false" aria-controls="ErrorList">Verifica</a>
-    </p>
+    <div class="text-center rounded info-section">
+      <p class="m-3">Perché una storia sia pubblicabile, deve soddisfare i requisiti necessari per un corretto funzionamento.</p>
+      <a class="btn btn-primary m-3" data-toggle="collapse" onclick="show_evaluation();" href="#ErrorList" role="button" aria-expanded="false" aria-controls="ErrorList">Verifica</a>
+    </div>
     
-    <div class="collapse" id="ErrorList"></div>
+    <div class="collapse rounded-bottom" id="ErrorList"></div>
 
     <div class="input-group font-weight-bold mt-5">
       <div class="input-group-prepend">
@@ -477,18 +481,18 @@
     </p>
 
     <div class="p-3">
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Scegli la tipologia di attività">
+      <button class="btn btn-lg btn-secondary rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Scegli la tipologia di attività">
         <i class="fas fa-cog"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="goToSection('SetAnswerOutcome')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
+      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('SetAnswerOutcome')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
         <i class="fas fa-route"></i>      
       </button>
     </div>
 
-    <div id="ChooseActivityType">
+    <div id="ChooseActivityType" class="p-3">
       <div class="form-check">
         <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType0">
         <label class="form-check-label" for="ActivityType0">
@@ -510,13 +514,10 @@
       <button class="btn btn-primary mt-2" onclick="setActivityType();">Salva</button>
     </div>
 
-    <div class="col-xs-12 alert alert-info text-justify" role="alert">
-      <i class="fas fa-info"></i>
-      <p>Marcando questa attività come finale, un'eventuale altra attività segnata come tale verrà riportata alla tipologia di sola lettura.
-        <br>Se carichi un media con un certo nome, e sul server è già presente un file con
-         quel nome, allora al nome del media verrà aggiunto un suffisso (i), dove i è un indice >= 1.<br>
-         La dimensione complessiva dei media della storia supera i 500 mb.
-      </p>
+    <div class="text-center rounded info-section m-3">
+      <p class="mt-3">Marcando questa attività come finale, un'eventuale altra attività segnata come tale verrà riportata alla tipologia di sola lettura.</p>
+      <p>Eventuali file omonimi caricati verranno contrassegnati con un indice, come già viene fatto dai moderni sistemi operativi.</p>
+      <p class="mt-3">L'inserimento di media comporta l'aumento di dimensione del file della storia. Può quindi essere necessario un breve tempo di attesa prima che il salvataggio sia completo.</p>
     </div>
 
     <div id="q_buttons_div" class="p-3">
@@ -530,7 +531,7 @@
         <i class="far fa-images"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 mr-3 rounded" onclick='create_stuff("Video");create_card("VIDEO");' data-toggle="tooltip" data-placement="top" title="Aggiungi un video">
-        <i class="fas fa-film"></i>
+        <i class="fab fa-youtube"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">
         <i class="fas fa-trash"></i>
@@ -583,16 +584,16 @@
         <div class="mt-5" id="ChecklistPreview">
           <h4 class="mb-3">Risposte selezionabili</h4>
 
-          <ul class="mb-3"></ul>
+          <ul class="border border-light rounded p-3 mb-3"></ul>
 
           <div id="AddAnswerOption" class="input-group input-group-sm font-weight-bold">
             <div class="input-group-prepend">
               <span class="input-group-text bg-light">Aggiungi opzione:</span>
             </div>
-            <input type="text" class="form-control col-sm-5" placeholder="Risposta">
+            <input type="text" class="form-control col-sm-5" placeholder="...">
             <div class="input-group-append">
               <button class="btn btn-sm btn-primary" type="button" onclick="addAnswerOption( $('#AddAnswerOption input').val().trim() );">Aggiungi</button>
-              <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddAnswerOption input').val('');">Annulla</button>
+              <button class="btn btn-sm btn-danger" type="button" onclick="$('#AddAnswerOption input').val('');">Cancella</button>
             </div>
           </div>
         </div>
@@ -663,7 +664,7 @@
         </div>
 
         <div class="col-1">
-          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Attiva il timer alla cui scadenza viene segnalato al valutatore che il player ha superato il tempo previsto per l'attività in esecuzione">
+          <span class="badge badge-pill badge-light" data-toggle="tooltip" data-placement="left" title="Indica l'utilizzo dell'help timer. Alla scadenza i questo timer, l'applicazione valutatore riceve una notifica riguardante un probabile momento di difficoltà da parte del giocatore">
             <i class="fas fa-info"></i>
           </span>
         </div>
@@ -763,7 +764,7 @@
       
       <div id="AddOutcomeWidget" class="mb-3 mt-5">
         <p>Aggiungi outcome:</p>
-        <br><button class="btn btn-primary mt-2" onclick="addOutcome();">Aggiungi</button>
+        <br><button class="btn btn-primary mt-3" onclick="addOutcome();">Aggiungi</button>
       </div>
     </div>
 
@@ -936,21 +937,7 @@
   display: grid;
   grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
 }
-.alert-info {
-  color: rgb(142, 227, 241);
-  background-color: rgb(20, 59, 67);
-  border-color: rgb(30, 89, 97);
-}
-.alert-danger {
-  color: rgb(225, 134, 143);
-  background-color: rgb(67, 12, 17);
-  border-color: rgb(104, 18, 27);
-}
-.alert-success {
-  color: rgb(153, 230, 171);
-  background-color: rgb(26, 62, 41);
-  border-color: rgb(37, 90, 50);
-}
+
       </style> 
   <div class="col-xs-12 alert alert-info text-justify" role="alert">
     <i class="fas fa-info"></i>

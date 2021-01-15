@@ -75,6 +75,32 @@ main {
   text-align: center;
 }
 
+.alert-warning {
+  color: rgb(65, 45, 2);
+  background-color: rgba(255, 208, 52, 0.5);
+  border-color: rgb(65, 45, 2);
+}
+
+.alert-danger {
+  color: rgb(216, 148, 154);
+  background-color: rgba(168, 54, 63, 0.5);
+  border-color: rgb(216, 148, 154);
+}
+
+.alert-success {
+  color: rgb(153, 230, 171);
+  background-color: rgb(26, 62, 41);
+  border-color: rgb(37, 90, 50);
+}
+
+.info-section {
+  border-style: solid;
+  border-width: thin;
+  color: rgb(142, 227, 241);
+  background-color: rgb(20, 59, 67);
+  border-color: rgb(142, 227, 241);
+}
+
 .BackBtn {
   margin-top: 15vh;
 }
@@ -126,6 +152,9 @@ main {
   text-align: left;
   width: 30%;
   word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #AnswerFieldSettings .col-1 {

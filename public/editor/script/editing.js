@@ -728,7 +728,7 @@ function loadEditOutcomeSection() {
 	$( "#AddOutcomeWidget .OutcomeInput" ).remove();
 	if ( $( "#SetAnswerOutcome .alert-danger" ).length < 1 ) {
 		if ( CurrentStage.answer_field.type == "checklist" ) {
-			$( "#AddOutcomeWidget > p" ).after( $( "<ul class='OutcomeInput'></ul>" ) );
+			$( "#AddOutcomeWidget > p" ).after( $( "<ul class='border border-light rounded p-3 OutcomeInput'></ul>" ) );
 			let newli;
 
 			$.each( CurrentStage.answer_field.options, function(index, value) {

@@ -127,9 +127,15 @@ function saveStory(publish) {
   formData.append("story_css", JSON.stringify(CSSdata));
   formData.append("published", publish);
   formData.append("coordinates", JSON.stringify(stuff.coordinates));
+  let dim=0;
   for( key in stuff.media ) {
+    dim += stuff.media[key].size;
     formData.append(key,stuff.media[key] );
   }
+  if( dim >= (100 * 1024 * 1024) ){
+    $("#too_much_modal").modal("show");
+  }
+  else {
   $.ajax({
     url: '/editor/saveStory',
     type: 'POST',
@@ -153,6 +159,7 @@ function saveStory(publish) {
       $('#success_modal').modal('show');
     }
   });
+  }
 }
 
 function getStory(id) {

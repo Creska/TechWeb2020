@@ -2,7 +2,12 @@ const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
 const formidableMiddleware = require('express-formidable');//formData parsing
-app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 500 * 1024 * 1024, uploadDir: 'temp'})); 
+app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 100 * 1024 * 1024, uploadDir: 'temp'},[ {
+    event: 'error',
+    action: function (req, res, next, err) { 
+        res.status(500).send();
+    }
+}])); 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files

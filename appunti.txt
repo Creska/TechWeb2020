@@ -1,27 +1,25 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * [WIP] Chiamate AJAX
-        * salvataggio
-        * caricamento
-        * cancellazione
-        * pubblicazione (qui va inserita creazione degli id per quest e storia e generazione qrcode)
-        * ritiro
-        * interfaccia
-    * [WIP] Funzioni di passaggio per navbar e main menu
-    * Sistemare l'associazione tra quest e id CSS - non funzionerebbe nel caso di randomizzazione - aggiungere un metodo. Altrimenti andrebbe ripensata l'intera personalizzazione del CSS
-    * Sistemare il tutto
-    * Mettere il logo dell'app
+    * Rivalutare l'organizzazione dell'accessibilità
+    * Creazione degli id per quest e storia e generazione qrcode
+    * Finire di sistemare le funzioni di passaggio per navbar e main menu
+    * [WIP] Sistemare l'associazione tra quest e id CSS - non funzionerebbe nel caso di randomizzazione - aggiungere un metodo. Altrimenti andrebbe ripensata l'intera personalizzazione del CSS
+    * Finire sistemazione grafica:
+        * Logo
+        * Generale
+        * Cleanup
+        * Help
 * PLAYER
-    * Sistemare grafica
+    * Aggiungere video
+    * Inserire placeholder nelle cartelle
+    * [WAITING] Sistemare grafica
     * [WAITING] Chiamate AJAX
         * caricamento (va inserita anche la divisione in gruppi)
         * invio stats a fine attività
         * invio stats ogni 5s
-    * Sistemare roba di accessibilità
-    * Sistemare la scelta degli id delle quest in caso la storia sia per classe
-    * Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
-* ORGANIZZAZIONE
-    * Definire il sistema di cartelle - dove vengono salvati i media e il CSS personalizzato
+    * [WAITING] Sistemare roba di accessibilità
+    * [WAITING] Sistemare la scelta degli id delle quest in caso la storia sia per classe
+    * [WAITING] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * STORIE DI PROVA
     * Completare
 

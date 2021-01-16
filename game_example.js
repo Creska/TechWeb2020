@@ -42,7 +42,7 @@ game_example = {
 	]
 };
 
-// oggetto media
+// oggetto immagine
 media = {
 	isFile: "", // indica se bisogna salvare il file su server
 	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al nome che il nuovo file ha all'interno della mappa

@@ -919,7 +919,7 @@ function displayMediaPreview( media, mediatype ) {
   		$( "#GalleryPreview" ).append( newrow );
 	}
 	else if ( mediatype == "video" ) {
-		$( "#yt-video" ).html( media.content );
+		$( "#yt-video" ).html( media );
 
 		/*
 		if ( media.isFile ) {
@@ -961,6 +961,10 @@ function removeMediaPreview( media ) {
 		$( media.parent().parent() ).remove();
 		MediaBuffer.splice( count, 1 );
 	}
+	else if ( CurrentNavStatus.Section == "VideoSection" ) {
+		$( "#yt-video" ).html( "<div class='video-placeholder'>Nessun video selezionato</div>" );
+		MediaBuffer = "";
+	}
 };
 
 
@@ -996,7 +1000,8 @@ function saveImageGallery() {
 };
 
 
-function embedVideo( html_text ) {
+function embedVideo() {
+	html_text = $( "#YTLink textarea" ).val();
 	let parsed_text = $.parseHTML( html_text );
 
 	let isHtml = parsed_text.filter( function(e) {
@@ -1006,34 +1011,38 @@ function embedVideo( html_text ) {
 	if ( isHtml ) {
 		parsed_text = $( parsed_text );
 		
-		if ( parsed_text.prop( "tagName" ) != "IFRAME" )
+		if ( parsed_text.prop( "tagName" ) != "IFRAME" ) {
+			$( "yt-video" ).html( "<div class='video-placeholder'>Errore: Elemento non identificato correttamente</div>" );
 			return;
+		}
 
 		parsed_text.removeAttr( "width" );
 		parsed_text.removeAttr( "length" );
 		parsed_text.html( "" );
 
-		MediaBuffer = {
-			type: "video",
-			content: html_text
-		};
+		MediaBuffer = html_text;
 
-		$( "#YTLink input" ).val( "" );
+		$( "#YTLink textarea" ).val( "" );
 		$( "#YTLink" ).addClass( "invisible" );
 		displayMediaPreview( MediaBuffer, "video" );
+		return;
 	}
+
+	$( "#yt-video" ).html( "<div class='video-placeholder'>Errore: Elemento non identificato correttamente</div>" );
+	return;
 };
 
 
 function loadVideoSection() {
-	MediaBuffer = new Array( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content.length );
+	MediaBuffer = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content;
 
-	if ( MediaBuffer.length ) {
-		MediaBuffer[0] = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content[0];
-		displayMediaPreview( MediaBuffer[0], "video" );
+	$( "#YTLink textarea" ).val( "" );
+
+	if ( MediaBuffer ) {
+		displayMediaPreview( MediaBuffer, "video" );
 	}
 	else {
-		$("#yt-video").html("<span>PLACEHOLDER</span>");
+		$( "#yt-video" ).html( "<div class='video-placeholder'>Nessun video selezionato</div>" );
 
 		/*
 		$( "#Video_IsLoaded" ).toggle(false);
@@ -1049,7 +1058,7 @@ function saveVideoSection() {
 		MediaBuffer[0].alt = $( "#VideoDescr" ).val().replace(/(<([^>]+)>)/gi, "");
 	*/
 	
-	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN] = MediaBuffer;
+	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;
 
 	back();
 };

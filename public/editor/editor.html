@@ -853,7 +853,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <h1 class="cover-heading SectionTitle">Video</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
-      Carica un file video o linkane uno da YouTube.
+      Aggiungi l'embed di un video di YouTube.
     </p>
 
     <!--
@@ -873,28 +873,29 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     <textarea id="VideoDescr" placeholder="Descrizione"></textarea>
     -->
 
-    <div id="yt-video">
-      <span>PLACEHOLDER</span>
-    </div>
+    <div id="yt-video" class="text-center"></div>
 
-    <div class="p-3">
+    <div class="p-3 m-3">
       <!--
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#UploadVid').trigger('click');" data-toggle="tooltip" data-placement="left" title="Upload">
         <i class="fas fa-upload"></i>
       </button>
       <input type="file" id="UploadVid" style="display:none;">
       -->
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un link a YouTube">
-        <i class="fab fa-youtube"></i>
+      <button class="btn btn-secondary rounded mr-1" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un embed da YouTube">
+        Embed
+      </button>
+      <button class="btn btn-secondary rounded" onclick="removeMediaPreview();" data-toggle="tooltip" data-placement="right" title="Rimuovi embed">
+        <i class="fas fa-undo-alt"></i>
       </button>
     </div>
 
-    <div id="YTLink" class="input-group input-group-sm mb-3 font-weight-bold invisible">
-      <input type="text" class="form-control col-sm-5 " placeholder="https://">
+    <div id="YTLink" class="input-group invisible">
+      <textarea class="form-control" placeholder="Inserisci qui l'iframe di embed"></textarea>
       <div class="input-group-append">
-        <button class="btn btn-sm btn-primary" type="button" onclick="embedVideo($('#YTLink input').val());">Aggiungi</button>
+        <button class="btn btn-sm btn-primary" type="button" onclick="embedVideo();">Aggiungi</button>
 
-        <button class="btn btn-sm btn-danger" type="button" onclick="$('#YTLink input').val('');$('#YTLink').addClass('invisible');">Annulla</button>
+        <button class="btn btn-sm btn-danger" type="button" onclick="$('#YTLink textarea').val('');$('#YTLink').addClass('invisible');">Annulla</button>
       </div>
     </div>
 
@@ -903,12 +904,14 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
     </div>
 
+    <!--
     <script>
       /* abilita l'upload dei file */
 	    document.getElementById("UploadVid").addEventListener("change", function(event) {
         uploadMedia( event.target.files );
       });
     </script>
+    -->
   </main>
 
 
@@ -925,11 +928,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-    <div class="col-xs-12 alert alert-info text-justify" role="alert">
-      <i class="fas fa-info"></i>
-      <p>Queste sono le storie salvate sul server ma non pubblicate. Clicca su una 
-        storia per editarla.
-      </p>
+    <div class="text-center rounded info-section">
+      <p class="m-3">Qui sotto puoi visualizzare l'elenco delle storie salvate su server ma non pubblicate. Clicca su una storia per editarla.</p>
     </div>
     <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="ChooseStoryToEdit_div_error" role="alert">
       <i class="fas fa-exclamation"></i><p ></p>
@@ -953,14 +953,11 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
 }
 
-      </style> 
-  <div class="col-xs-12 alert alert-info text-justify" role="alert">
-    <i class="fas fa-info"></i>
-    <p>Le storie pubblicabili e quelle pubblicate sono qui
-       mostrate, trascinale nel cestino per eliminarle o nell'altro 
-       riquadro per pubblicarle/ritirarle. Quando hai deciso, premi il pulsante 
-      in basso e guarda l'area di feedback per sapere com'è andata l'operazione.</p>
-  </div>
+      </style>
+
+<div class="text-center rounded info-section">
+  <p class="m-3">Trascina ogni card per regolare la pubblicazione della rispettiva storia o per spostarla nel cestino. Clicca su <strong>Vai!</strong> per sapere se le operazioni effettuate sono andate a buon fine.</p>
+</div>
   <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="Explorer_div_error" role="alert">
     <i class="fas fa-exclamation"></i><p  ></p>
   </div>

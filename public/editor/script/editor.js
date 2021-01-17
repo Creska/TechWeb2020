@@ -325,7 +325,7 @@ function isPublishable( obj ) {
       }
 
       /* presenza delle descrizioni delle immagini */
-      if ( obj.ACCESSIBILITY ) {
+      if ( obj.accessibility.WA_visual || obj.accessibility.WA_convulsions || obj.accessibility.WA_cognitive ) {
         $.each( a.activity_text, function(p_index, p) {
           if ( p.type == "gallery" ) {
             $.each( p.content, function(image_index, image) {

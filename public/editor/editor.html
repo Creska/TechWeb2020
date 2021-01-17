@@ -357,10 +357,33 @@
       <input type="number" placeholder="0" min="2" max="5">
     </div>
     
-    <div class="mb-3">
-      <p class="mt-5">Adesso scegli se rendere la storia accessibile (scelta consigliata) o meno:</p>
-      <button id="gm3" class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="select(3);"><i class="fab fa-accessible-icon"></i></button>
-      <button id="gm4" class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="select(4);"><i class="fas fa-times"></i></button>
+    <div class="mb-3" id="Access">
+      <p class="mt-5">Adesso scegli per quali tipologie di disabilità rendere la storia accessibile:</p>
+      <button class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',true);"><i class="fab fa-accessible-icon"></i></button>
+      <button class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',false);"><i class="fas fa-times"></i></button>
+
+      <div class="">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="WA_visual">
+          <label class="custom-control-label" for="WA_visual">visive</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="WA_motor">
+          <label class="custom-control-label" for="WA_motor">motorie</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="WA_hearing">
+          <label class="custom-control-label" for="WA_hearing">uditive</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="WA_convulsions">
+          <label class="custom-control-label" for="WA_convulsions">epilessia/convulsioni</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="WA_cognitive">
+          <label class="custom-control-label" for="WA_cognitive">cognitive/intellettive</label>
+        </div>
+      </div>
     </div>
     
     <div class="p-3 Save-Cancel">

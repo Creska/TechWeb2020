@@ -2,7 +2,13 @@
 // ogni valore mostrato qui rappresenta quello di default
 
 game_example = {
-	ACCESSIBILITY: false, // flag che indica se la storia è accessibile
+	accessibility: {
+		WA_visual: false,
+		WA_motor: false,
+		WA_hearing: false,
+		WA_convulsions: false,
+		WA_cognitive: false
+	}, // flags che indicano per quale tipo di disabilità la storia è accessibile
 	story_title: "", // probabilmente servirà un div per contenerlo
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)

@@ -1,4 +1,4 @@
-var gm_b = [ false, false, false, false, false ]; // se gm_b[0] è true --> #gm0 è selezionato 
+var gm_b = [ false, false, false ]; // se gm_b[0] è true --> #gm0 è selezionato 
 
 /* ------------------------- */
 
@@ -101,10 +101,14 @@ function save_title( which ) {
    */
   function initStory() {
 	CurrentWork = {
-	 // story_ID:"sBlRbq11144a6tdPAjfEow==",
-	  ACCESSIBILITY: 0,
+	  accessibility: {
+		  WA_visual: false,
+		  WA_motor: false,
+		  WA_hearing: false,
+		  WA_convulsions: false,
+		  WA_cognitive: false
+	  },
 	  story_title: "",
-	  //story_ID: -1,
 	  game_mode: "",
 	  players: 0,
 	  quests: [],
@@ -348,20 +352,10 @@ function showHelp() {
  * Deseleziona tutte le opzioni diverse dal pulsante di indice i
  */
 function deselect_other_options( i ) {
-	if ( i < 3 ) {
-		for ( y = 0; y < 3; y++ ) {
-			if ( y != i ) {
-				change_color_option( "#gm" + y, "bg-primary", "bg-secondary" );
-	  			gm_b[y] = false;
-			}
-		}
-	}
-	else {
-		for ( y = 3; y < 5; y++ ) {
-			if ( y != i ) {
-				change_color_option( "#gm" + y, "bg-primary", "bg-secondary" );
-	  			gm_b[y] = false;
-			}
+	for ( y = 0; y < 3; y++ ) {
+		if ( y != i ) {
+			change_color_option( "#gm" + y, "bg-primary", "bg-secondary" );
+			  gm_b[y] = false;
 		}
 	}
 };
@@ -401,7 +395,7 @@ function select( i ) {
  * Carica, in base ai dati nel json, la sezione di modifica della Game Mode
  */
 function loadGameModeSection() {
-	gm_b = [ false, false, false, false, false ];
+	gm_b = [ false, false, false ];
 
 	switch ( CurrentWork.game_mode ) {
 		case "SINGLE":
@@ -423,10 +417,9 @@ function loadGameModeSection() {
 			$( "#PlayersN input" ).val( "" );
 	}
 
-	if ( CurrentWork.ACCESSIBILITY )
-		select(3);
-	else
-		select(4);
+	for ( [key,value] of Object.entries( CurrentWork.accessibility ) ) {
+		$( "#" + String( key ) ).prop( "checked", value );
+	}
 };
 
 
@@ -449,10 +442,9 @@ function saveGameModeSettings() {
 	else
 		CurrentWork.game_mode = "";
 
-	if ( gm_b[3] )
-		CurrentWork.ACCESSIBILITY = true;
-	else
-		CurrentWork.ACCESSIBILITY = false;
+	$.each( $( "#Access input[type=checkbox]" ), function( i, val ) {
+		CurrentWork.accessibility[ $(val).attr("id") ] = $( val ).prop( "checked" );
+	});
 
 	back();
 };

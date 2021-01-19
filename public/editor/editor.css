@@ -145,7 +145,7 @@ main {
   display: none;
 }
 
-#ChecklistPreview ul, #AddOutcomeWidget ul {
+#Access ul, #ChecklistPreview ul, #AddOutcomeWidget ul {
   list-style-type: none;
   padding-left: 0;
   margin: auto;

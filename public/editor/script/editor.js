@@ -46,11 +46,13 @@ function getFileExtension( name ) {
 
 
 /**
- * Funzione da evolvere poi in una procedura di errore - che magari resetta l'applicazione
+ * Alert di errore
  */
 function handleError() {
-  window.alert( "ERRORE !\nPer evitare rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
+  window.alert( "ERRORE !\nPer evitare eventuali rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
+
+
 function getStories(caller) {
   $.get("/editor/getStories?section="+caller, function(data, status){
     let obj = JSON.parse(data);

@@ -243,8 +243,13 @@ function goToSection(where) {
 		  loadGameModeSection();
 		  break;
 		case "EditQuest":
-		  if ( CurrentNavStatus.Section == "EditStory" )
+		  if ( CurrentNavStatus.Section == "EditStory" ) {
 			CurrentNavStatus.QuestN = get_card_index();
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN] === undefined ) {
+				handleError();
+				return;
+			}
+		  }
   
 		  $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + $( "#EditStory .card-title strong" ).eq(CurrentNavStatus.QuestN).html() );
   
@@ -255,23 +260,30 @@ function goToSection(where) {
 		  $( "#ActivitiesGrid" ).html( CurrentWork.ActivityGrids[CurrentNavStatus.QuestN] ); //carica la griglia delle attività
 		  break;
 		case "EditActivity":
-		  if ( CurrentNavStatus.Section == "EditQuest" )
+		  if ( CurrentNavStatus.Section == "EditQuest" ) {
 			CurrentNavStatus.ActivityN = get_card_index();
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN] === undefined ) {
+				handleError();
+				return;
+			}
+		  }
 		  
 		  $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-title strong" ).eq(CurrentNavStatus.ActivityN).html() );
 		  $( "#EditActivity header h1" ).html( "Attività" );
   
-		  /* sistemazione del widget ChooseActivityType */
+		  /* sistemazione dei pulsanti */
 		  $( "#ChooseActivityType" ).css( "display", "none" );
 		  let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 		  if ( activity.activity_type == "READING" ) {
-			$( "#EditActivity p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
+			$( "#EditActivity .p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
   
 			if ( activity.FINAL )
-			  $( "#EditActivity p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", true );
+			  $( "#EditActivity .p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", true );
+			else
+			  $( "#EditActivity .p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", false );
 		  }
 		  else {
-			$( "#EditActivity p-3" ).first().find( "button" ).attr( "disabled", false );
+			$( "#EditActivity .p-3" ).first().find( "button" ).attr( "disabled", false );
 		  }
 	  
 		  //carica la griglia dei paragrafi/immagini/gallerie
@@ -279,6 +291,10 @@ function goToSection(where) {
 		  break;
 		case "EditText":
 		  CurrentNavStatus.TextPartN = get_card_index();
+		  if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN] === undefined ) {
+			handleError();
+			return;
+		  }
   
 		  // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
 		  $( "#EditText header small" ).html( $( "#EditActivity header small" ).html() );
@@ -287,6 +303,10 @@ function goToSection(where) {
 		  break;
 		case "EditGallery":
 		  CurrentNavStatus.TextPartN = get_card_index();
+		  if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN] === undefined ) {
+			handleError();
+			return;
+		  }
   
 		  $( "#EditGallery header small" ).html( $( "#EditActivity header small" ).html() );
   
@@ -294,6 +314,10 @@ function goToSection(where) {
 		  break;
 		case "VideoSection":
 			CurrentNavStatus.TextPartN = get_card_index();
+			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN] === undefined ) {
+				handleError();
+				return;
+			}
 
 			$( "#VideoSection header small" ).html( $( "#EditActivity header small" ).html() );
 

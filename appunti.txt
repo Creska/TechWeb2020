@@ -1,8 +1,5 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Sistemare bugs:
-        * I tasti per answer field e outcomes rimangono disabilitati
-        * il controllo di pubblicazione fa vari errori
     * Creazione degli id per quest e storia e generazione qrcode
     * Finire di sistemare le funzioni di passaggio per navbar e main menu
     * [WIP] Sistemare l'associazione tra quest e id CSS - non funzionerebbe nel caso di randomizzazione - aggiungere un metodo. Altrimenti andrebbe ripensata l'intera personalizzazione del CSS

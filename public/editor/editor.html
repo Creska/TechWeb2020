@@ -133,7 +133,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
           </button>
         </div>
         <div class="modal-body">
-          <p>La storia è pubblicabile, vuoi pubblicarla già adesso o preferisci salvarla  sul server e basta?</p>
+          <p>La storia è pubblicabile. Vuoi pubblicarla già adesso o preferisci salvarla sul server e occupartene in un secondo momento?</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="$('#publish_directly').modal('hide');saveStory(true) ">Pubblica</button>
@@ -149,7 +149,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
   <header class="masthead mb-auto">
     <div class="inner">
-      <h3 class="masthead-brand">STORY EDITOR</h3>
+      <a class="nav-link masthead-brand" href="javascript:Navbar('Home');" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+        <i class="fas fa-home fa-2x"></i>
+      </a>
       <nav class="nav nav-masthead justify-content-center">
         <a class="nav-link" id="back_nav" href="javascript:Navbar('ChooseStoryToEdit');" data-toggle="tooltip" data-placement="bottom" title="Torna alla griglia di storie">
           <i class="fas fa-chevron-circle-left fa-2x"></i>
@@ -168,9 +170,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         </a>
         <a class="nav-link" href="javascript:Navbar('Preview');" data-toggle="tooltip" data-placement="bottom" title="Visualizza l'anteprima">
           <i class="far fa-eye fa-2x"></i>
-        </a>
-        <a class="nav-link" href="javascript:Navbar('Home');" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
-          <i class="fas fa-home fa-2x"></i>
         </a>
       </nav>
     </div>
@@ -191,8 +190,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
           <p>Se torni alla home, perderai tutte le modifiche non salvate. Vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');close_css_window(); goToSection('MainMenu');">Procedi</button>
-          <button type="button" class="btn btn-primary" onclick="$('#SavePrompt').modal('hide');">Rimani</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');close_css_window(); goToSection('MainMenu');">Vai alla Home</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#SavePrompt').modal('hide');">Rimani</button>
         </div>
       </div>
     </div>
@@ -211,16 +210,20 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
           <p>Se torni alla griglia delle storie, perderai tutte le modifiche non salvate. Vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">Procedi</button>
-          <button type="button" class="btn btn-primary" onclick="$('#back_modal').modal('hide');">Rimani</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">Vai alla Home</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');">Rimani</button>
         </div>
       </div>
     </div>
   </div>
 
+
   <!-- MENU PRINCIPALE -->
   <main role="main" class="btn-group-vertical inner cover mx-auto EditorSection" id="MainMenu">
-    <h1 class="cover-heading SectionTitle">Benvenuto nello Story Editor!</h1>
+    <div class="cover-heading SectionTitle">
+      <img class="mb-3" src="../images/logo.png" alt="logo">
+      <h1>Benvenuto nello Story Editor!</h1>
+    </div>
     <p class="lead mb-5 SectionHeader">Grazie a questo ambiente sarai in grado di creare una nuova storia, modificarne una già esistente, oppure gestire tutta la tua raccolta.</p>
     <div class="btn-group-vertical">
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('STORY',true);" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
@@ -257,8 +260,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
     <h3>Accessibilità</h3>
     <p class="text-justify">
-      Spuntando la relativa opzione, nel file di gioco vengono inseriti i dati che, automaticamente, permetteranno all'applicazione player di segnalare al giocatore che la partita è accessibile. L'unica ulteriore differenza con la modalità non accessibile è l'obbligo di inserimento delle descrizioni testuali per le immagini, che saranno quindi necessarie per pubblicare la storia in questione.<br>
-      Per rendere la storia completamente e realmente accessibile a giocatori disabili è anche necessario progettare il tutto tenendo conto delle problematiche che affliggono gli studenti affetti da queste patologie:</p>
+      Può verificarsi il caso in cui la storia debba poter essere giocata anche da bambini con particolari disabilità. Con l'editor è possibile specificare per quali categorie di disabilità il gioco è accessibile. In tal modo, l'applicazione player sarà in grado di comunicare se e per quali categorie l'applicazione risulta accessibile. Si tenga presente delle seguenti tipologie di disabilità:
+    </p>
     <ul class="text-left">
       <li>Visive: disabilità visive tra cui cecità, ipovisione e problemi nella distinzione dei colori.</li>
       <li>Motorie: difficoltà o impossibilità di usare le mani, inclusi tremori, lentezza muscolare, non completa padronanza della mobilità fine, ecc.</li>
@@ -267,7 +270,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <li>Cognitive e intellettive: disabilità dello sviluppo, difficoltà di apprendimento (dislessia, discalculia, ecc.) E disabilità cognitive (sindrome di Down, Alzheimer) di varie origini, che causano effetti negativi su memoria, attenzione, sviluppo, capacità logiche e di problem solving, etc.</li>
     </ul>
     <p class="text-justify">
-      L'applicazione è in grado di controllare solamente la presenza delle descrizioni per ogni immagine. Spetta quindi all'autore, nel caso abbia scelto l'opzione <em>Accessibile</em>, il compito di assicurarsi che la storia sia giocabile da tutti gli studenti.
+      L'applicazione è in grado di controllare solamente la presenza delle descrizioni per ogni immagine, richiesta per alcuni particolari categorie di disabilità. Ci si aspetta quindi buon senso da parte dell'autore, che ha il compito di assicurarsi che la storia sia giocabile da tutti gli studenti.
     </p>
     
     <h3>Gestione delle fasi di gioco</h3>
@@ -324,6 +327,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     <h3>Galleria di immagini</h3>
     <p class="text-justify">Grazie a questa schermata potrai creare e modificare una gallery costituita da una o più immagini. Per ogni immagine è presente un campo testo nel quale inserire l'apposita descrizione del file. Questa caratteristica è necessaria per creare una storia accessibile ed è ovviamente richiesta per permetterne la pubblicazione.</p>
 
+    <h3>Video</h3>
+    <p class="text-justify">In questa sezione è possibile allegare, alla rispettiva parte di attività, un video di YouTube. Per aggiungerlo basterà avere sottomano la relativa pagina di YouTube, cliccare sul tasto si <em>share</em> e sulla rispettiva obzione di <em>embedding</em>. Il sito ti darà automaticamente il codice HTML da aggiungere alla storia.</p>
+
     <h2><strong>Grafica</strong></h2>
     <p class="text-justify">
       Per la modifica del CSS è presente un apposito editor, con relativa guida. La personalizzazione della grafica non è fondamentale per la realizzazione della storia, ma è consigliata a tutti gli autori con esperirenza nella scrittura di stylesheet CSS.
@@ -377,28 +383,28 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',true);"><i class="fab fa-accessible-icon"></i></button>
       <button class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',false);"><i class="fas fa-times"></i></button>
 
-      <div class="">
-        <div class="custom-control custom-checkbox">
+      <ul class="mt-3">
+        <li class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="WA_visual">
           <label class="custom-control-label" for="WA_visual">visive</label>
-        </div>
-        <div class="custom-control custom-checkbox">
+        </li>
+        <li class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="WA_motor">
           <label class="custom-control-label" for="WA_motor">motorie</label>
-        </div>
-        <div class="custom-control custom-checkbox">
+        </li>
+        <li class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="WA_hearing">
           <label class="custom-control-label" for="WA_hearing">uditive</label>
-        </div>
-        <div class="custom-control custom-checkbox">
+        </li>
+        <li class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="WA_convulsions">
           <label class="custom-control-label" for="WA_convulsions">epilessia/convulsioni</label>
-        </div>
-        <div class="custom-control custom-checkbox">
+        </li>
+        <li class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="WA_cognitive">
           <label class="custom-control-label" for="WA_cognitive">cognitive/intellettive</label>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
     
     <div class="p-3 Save-Cancel">
@@ -941,66 +947,76 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- HELP BUTTON -->
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
 
+
+  <!-- SCHERMATA DEL QRCODE -->
   <main role="main" class="inner cover EditorSection " id="final_section">
     <p>SHOW QR CODE HERE</p>
     <p id="story_id_p"></p>
     <button class="btn btn-lg btn-primary" id="final_button" >Clicca per proseguire</button>
   </main>
 
+
+  <!-- SCHERMATA DI SCELTA STORIA -->
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">
     <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-    <div class="text-center rounded info-section">
+    <div class="text-center rounded mt-5 info-section">
       <p class="m-3">Qui sotto puoi visualizzare l'elenco delle storie salvate su server ma non pubblicate. Clicca su una storia per editarla.</p>
     </div>
     <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="ChooseStoryToEdit_div_error" role="alert">
       <i class="fas fa-exclamation"></i><p ></p>
     </div>
-    <div class="CardGrid " id="StoriesGrid" >
-    </div>
+
+    <div class="CardGrid " id="StoriesGrid" ></div>
   </main>
+
+
+  <!-- SCHERMATA DELLE STORIE PUBBLICATE -->
   <main style="flex-grow: 1; min-width: 100%;" role="main" class="inner cover EditorSection " id="Explorer">
     <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
       <i class="fas fa-home fa-2x"></i>
     </a>
-      <style>
-        .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    
-    grid-gap: 20px;
-}
-.grido {
-  display: grid;
-  grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
-}
 
-      </style>
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+      }
+      .grido {
+        display: grid;
+        grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
+      }
+    </style>
 
-<div class="text-center rounded info-section">
-  <p class="m-3">Trascina ogni card per regolare la pubblicazione della rispettiva storia o per spostarla nel cestino. Clicca su <strong>Vai!</strong> per sapere se le operazioni effettuate sono andate a buon fine.</p>
-</div>
-  <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="Explorer_div_error" role="alert">
-    <i class="fas fa-exclamation"></i><p  ></p>
-  </div>
-  <div class="grido">
-  <div class="mb-1" >Cestino</div>
-  <div id="trash_can" style="min-width: 20%;" class=" container-fluid border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"> 
-  </div>
-  <div class="mb-1" > <span style="width: 50% ;float: left; text-align: center;">Storie pubblicabili</span> <span style="width: 50%; text-align: center; float: right;">Storie pubblicate</span></div>
-  <div class="grid-container mb-3">
-    <div id="publishableContainer" class="container-fluid border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">   
-    </div>             
-    <div id="publishedContainer" class="container-fluid border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');">          
+    <div class="text-center rounded mt-5 mb-5 info-section">
+      <p class="m-3">Trascina ogni card per regolare la pubblicazione della rispettiva storia o per spostarla nel cestino. Clicca su <strong>Vai!</strong> per sapere se le operazioni effettuate sono andate a buon fine.</p>
     </div>
-  </div>
-  <div ><button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button></div>
-  <div  class="mt-3" >Area di feedback</div>
-  <div id="feedback_div" style="width: 100%; text-align: left;" class="container-fluid border border-white rounded" >
-  </div>
-  </div>  
-  </main> 
+    <div style="display:none;" class="col-xs-12 alert alert-danger text-justify error_div" id="Explorer_div_error" role="alert">
+      <i class="fas fa-exclamation"></i><p></p>
+    </div>
+
+    <div class="grido">
+      <div class="mb-1" >Cestino</div>
+      <div id="trash_can" style="min-width: 20%;" class=" container-fluid border border-white rounded mb-3 "   ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"></div>
+
+      <div class="mb-1" >
+        <span style="width: 50% ;float: left; text-align: center;">Storie pubblicabili</span>
+        <span style="width: 50%; text-align: center; float: right;">Storie pubblicate</span>
+      </div>
+      <div class="grid-container mb-3">
+        <div id="publishableContainer" class="container-fluid border border-white rounded"  ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"></div>             
+        <div id="publishedContainer" class="container-fluid border border-white rounded" ondragover="allowDrop(event)" ondrop="drop(event)" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="this.classList.remove('border-primary');this.classList.add('border-white');"></div>
+      </div>
+
+      <div class="mt-3"><button class="btn btn-lg btn-primary" onclick="explorer_calls()" >Vai!</button></div>
+      <div  class="mt-3" >Area di feedback</div>
+      <div id="feedback_div" style="width: 100%; text-align: left;" class="container-fluid border border-white rounded" ></div>
+    </div>
+  </main>
+
+  
   <footer class="mastfoot mt-auto">
     <div class="inner small">
       <p> a cura di <a href="../about/team.html" target="_blank">studenti</a> dell'<a href="https://www.unibo.it/it">Alma Mater Studiorum</a>, 2020 </p>

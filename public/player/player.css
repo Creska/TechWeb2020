@@ -250,31 +250,22 @@ body {
     z-index: 0;
 }
 
-#Logo-Info {
-    background-image: url(../images/info.png);
-    background-color: white;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-color: black;
-    border-radius: 15px;
-    border-style: solid;
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    top: 5px;
-    right: 5px;
-}
-.modal-title{
-    font-size: 25px;
+#info-title{
+    margin-top: 20px;
+    font-size: 30px;
     font-family: 'Times New Roman', Times, serif;
     font-style: oblique;
     font-weight: bolder;
     color: cornflowerblue;
 }
-.modal-body{
+#info-body{
     margin-right: 10px;
     margin-left: 10px;
+    font-size: 20px;
+    font-weight: lighter;
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+    color: darkslategray;
 }
 
 .StoryTitle{
@@ -365,35 +356,84 @@ body {
     padding: 5px;
     position: relative;
 }
+#ButtonToTop{
+    position: fixed;
+    right: 10px;
+    bottom: 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    background-image: url(../images/scroll.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    box-shadow: 0 0 10px rgb(0, 10, 20);
+    z-index: 100;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+#ButtonToTop:active{
+    background-color: rgba(255, 255, 240, 0.8);
+}
 .page-footer{
     padding: 10px;
     background-color: rgba(180, 190, 195, 0.8);
+    position: relative;
 }
+#Open{
+    font-size: 50px;
+    color: white;
+    margin-bottom: 10px;
+}
+
 #chat-room{
+    width: 300px;
+    height: 200px;
     text-align: center;
     font-size: medium;
     padding: 10px;
-    border: medium double blue;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 255, 0.2);
+    border: medium double grey;
+    border-radius: 5px;
+    background-color: rgba(43, 43, 49, 0.5);
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    z-index: 10;
+    padding: 10px;
+    margin-bottom: 50px;
+    margin-right: 10px;
 }
-#message{
-    font-size: 20px;
-    border: 2px solid blue;
+#chat-room input{
+    width: 100%;
+    padding: 15px;
+    border: 1px solid rgb(0, 0, 0);
     border-radius: 10px;
-    width: fit-content;
-    height: 50px;
+    border: none;
+    background: #f1f1f1;
+    resize: none;
+    min-height: 100px;
 }
 #Send{
     margin: 10px;
     font-size: 16px;
-    color: rgb(7, 3, 230);
-    background-color: rgba(0, 0, 255, 0.2); 
-    border: 2px solid rgb(7, 3, 230);
+    font-weight: bolder;
+    color: rgb(50, 50, 50);
+    background-color: rgba(255, 255, 255, 0.8); 
+    border: 2px solid rgb(22, 22, 22);
     border-radius: 10px;
+    z-index: 100;
 }
 #Send:hover{
-    background-color:rgb(7, 3, 230);
-    border: 2px solid rgba(0, 0, 255, 0.2);
-    color: white;
+    background-color:rgb(100, 100, 100);
+    border: 2px solid whitesmoke;
+    color: rgb(255, 255, 255);
+}
+#Close{
+    float: right;
+    margin-right: 5px;
+    margin-top: 3px;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 0.8);
 }

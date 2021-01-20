@@ -6,7 +6,7 @@ var storia11_14 = {
 	single_device: 1,
 	quests: [
         {
-            quest_title:"Prologo",
+            quest_title:"Un Risveglio sereno.",
             quest_ID:"",
             activities:[
                 {
@@ -65,8 +65,24 @@ var storia11_14 = {
                             content: `
                                 Il colpo non è andato a segno ma le conseguenze sono gravi, dato che quattro guardie sono state uccise, a quanto pare grazie all’uso di armi silenziate. 
                                 Come mostrano le telecamere di sorveglianza, il gruppo si muoveva in modo astuto e pianificato per poi, all’improvviso, optare per la ritirata. 
-                                Forse a causa di qualcosa andato storto nel piano, i criminali hanno preferito salvare la pelle e dileguarsi nella notte. La parte più assurda di tutta la faccenda però è il messaggio mail arrivato sui computer del museo mezz’ora dopo la fuga.`
-                        },
+                                Forse a causa di qualcosa andato storto nel piano, i criminali hanno preferito salvare la pelle e dileguarsi nella notte. 
+                                La parte più assurda di tutta la faccenda però è il messaggio mail arrivato sui computer del museo mezz’ora dopo la fuga.`
+                        }],
+                    activity_type: 'READING',
+                    answer_field: {},
+                    answer_outcome: [{
+                        response: 'default',
+                        nextquest: 0,
+                        nextactivity: 2,
+                        score:""
+                    }],
+                    ASK_EVAL: 0,
+                    GET_CHRONO: 0,
+                    expected_time: 30000,
+                    FINAL: 0,     
+                },
+                {
+                    activity_text:[   
                         {
                             type:"text",
                             content: `
@@ -92,7 +108,7 @@ var storia11_14 = {
             ]
         },
         {
-            quest_title: "First quest",
+            quest_title: "Un ritorno ai banchi di scuola.",
             quest_ID:"",
             activities:[
                 {
@@ -242,7 +258,7 @@ var storia11_14 = {
             ],
         },
         {
-            quest_title: "Second quest",
+            quest_title: "La verità viene a galla.",
             quest_ID:"",
             activities:[
                 {
@@ -279,12 +295,29 @@ var storia11_14 = {
                     FINAL: 0            
                 },
                 {
-                    activity_text:[{
-                        type:"text",
-                        content:`
-                            In questo tumultuoso periodo la penisola italiana era profondamente divisa tra ducati, come quelli di Milano e dei Savoia, lo stato della Chiesa e i domini spagnoli. 
-                            In campo artistico, il periodo viene detto “Rinascimento”, e fu teatro di grandi cambiamenti, tra cui la nascita dell’Umanesimo, ovvero una corrente letteraria volta alla riscoperta dei classici latini.`
-                    },
+                    activity_text:[
+                        {
+                            type:"text",
+                            content:`
+                                In questo tumultuoso periodo la penisola italiana era profondamente divisa tra ducati, come quelli di Milano e dei Savoia, lo stato della Chiesa e i domini spagnoli. 
+                                In campo artistico, il periodo viene detto “Rinascimento”, e fu teatro di grandi cambiamenti, tra cui la nascita dell’Umanesimo, ovvero una corrente letteraria volta alla riscoperta dei classici latini.`
+                        }
+                    ],
+                    activity_type: 'READING',
+                    answer_field: {},
+                    answer_outcome: [{
+                        response: 'default',
+                        nextquest: 0,
+                        nextactivity: 2,
+                        score:""
+                    }],
+                    ASK_EVAL: 0,
+                    GET_CHRONO: 0,
+                    expected_time: 30000,
+                    FINAL: 0,     
+                },
+                {
+                    activity_text:[
                     {
                         type:"text",
                         content:`
@@ -317,9 +350,9 @@ var storia11_14 = {
                         score:""
                     },
                     {
-                        response: 'default',
-                        nextquest: 0,
-                        nextactivity: 1, 
+                        response: '',
+                        nextquest: 1,
+                        nextactivity: 0, 
                         score:""
                     }],
                     ASK_EVAL: 0,
@@ -330,7 +363,7 @@ var storia11_14 = {
             ]
         },
         {
-            quest_title: "Third quest",
+            quest_title: "Il mondo buio di un artista.",
             quest_ID: "",
             activities:[
                 {
@@ -383,8 +416,8 @@ var storia11_14 = {
                     answer_field: {},
                     answer_outcome: [{
                         response: 'default',
-                        nextquest: 1,
-                        nextactivity: 0,
+                        nextquest: 0,
+                        nextactivity: 2,
                         score:""
                     }],
                     ASK_EVAL: 0,
@@ -399,7 +432,11 @@ var storia11_14 = {
                             Caravaggio decide di fuggire il più lontano possibile dallo Stato Papale. 
                             Prima trova protezione a Napoli e, dopo 2 anni, approda a Malta. 
                             Qui però incappa in un’altra rissa, dove ferisce un membro dell’ordine cavalleresco in cui si era arruolato. 
-                            Braccato dagli amici del ferito, decide di scappare in Sicilia – dal suo amico ed ex-modello Mario Minniti - e, successivamente, di nuovo a Napoli. 
+                            Braccato dagli amici del ferito, decide di scappare in Sicilia – dal suo amico ed ex-modello Mario Minniti - e, successivamente, di nuovo a Napoli.`
+                    },
+                    {
+                        type:"text",
+                        content: `
                             Nella città campana viene tuttavia raggiunto dai sicari e ferito gravemente al volto. 
                             È il 1910 e l’artista, seppur distrutto, continua a lavorare ad una grande quantità di opere. 
                             In molte di queste è tuttavia riscontrabile un importante dettaglio.`
@@ -412,14 +449,14 @@ var storia11_14 = {
                     },
                     answer_outcome: [{
                         response: 'Decapitazione',
-                        nextquest: 1,
-                        nextactivity: 0, 
+                        nextquest: 0,
+                        nextactivity: 3, 
                         score:""
                     },
                     {
                         response: 'default',
                         nextquest: 0,
-                        nextactivity: 1, 
+                        nextactivity: 3, 
                         score:""
                     }],
                     ASK_EVAL: 0,
@@ -434,6 +471,11 @@ var storia11_14 = {
                             Molte di queste opere, tra cui la famosa “Medusa” esposta proprio qui agli Uffizi, presentano esplicite scene di decapitazione. 
                             È quindi chiaro come la condanna a morte abbia terribilmente lasciato un segno nell’anima dell’artista, facendolo vivere nella paura e nello sconforto. 
                             Questa deduzione ti fa comprendere che, molto probabilmente, la pista che stai seguendo è quella giusta.`
+                    }, 
+                    {
+                        type: "gallery",
+                        content: ['<img style="padding-bottom: 15px;" src="../images/medusa.jpg" alt="La foto mostra la opera "Medusa"">', 
+                                  '<img style="padding-bottom: 15px;" src="../images/analisi_medusa.jpg" alt="La foto mostra il terrore nella opera "Medusa"">']
                     }],
                     activity_type: 'READING',
                     answer_field: {},
@@ -451,7 +493,7 @@ var storia11_14 = {
             ]
         },
         {
-            quest_title: "Fourth quest",
+            quest_title: "Il tappo della bottiglia.",
             quest_ID:"",
             activities:[
                 {
@@ -536,7 +578,7 @@ var storia11_14 = {
             ],
         },
         {
-			quest_title: "Final quest",
+			quest_title: "Dove tutto sembrava impossibile.",
 			quest_ID: "",
 			activities: [
 				{

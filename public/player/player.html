@@ -17,6 +17,8 @@
                 crossorigin="anonymous"></script>
         <script src="player.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <!--Script per icone-->
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
         <!--Script per le animazioni del testo-->
         <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
         
@@ -55,13 +57,9 @@
             <nav>
                 <ul class=" nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-disabled="true">
+                        <a class="nav-link" aria-disabled="true">
                             <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
                         </a>
-                    </li>
-                    <li>
-                        <button id="Logo-Info" data-toggle=modal data-target=#Info>
-                        </button>
                     </li>
                 </ul>
             </nav>
@@ -72,50 +70,63 @@
             
             <div id="AccessibilityMsg" role="alert"></div>
 
-            <div id="test"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
+            <div id="test" style="margin-bottom: 10px;"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
                 <button onclick="test_story('a');">7-10</button>
                 <button onclick="test_story('b');">11-14</button>
                 <button onclick="test_story('c');">15-18</button>
             </div>
-
-
-            <!-- Modal -->
-            <div class="modal fade" id=Info role=dialog>
-                <div class="modal-dialog modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <p class="modal-title">Informazioni</p>
-                        </div>
-                        <div class="modal-body>">
-                            <p style="padding-top: 10px; margin-left: 10px; margin-right: 10px;">Saranno narrate delle storie, all'interno delle quali vi sono da svolgere varie attività, come:</p>
-                            <ul style="text-align: left;">
-                                <li>
-                                    Domande a scelta multipla;
-                                </li>
-                                <li>
-                                    Domande aperte a risposta breve;
-                                </li>
-                                <li>
-                                    Domande aperte a risposta univoca.
-                                </li>
-                            </ul>
-                            <p>Per proseguire nella narrazione premere il pulsante con scritto "PROSEGUI"</p>
-                            <img src="../images/prosegui.png" alt="pulsante del prosegui" style="width: 200px; height: 50px; padding-bottom: 10px;">
-                            <p>Alla fine della storia, quando avrete svolto tutte le attività vi sarà attribuito un punteggio.</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
+            
+            <div class="card" >
+                <div class="card-header" id="info-title">
+                    Informazioni
                 </div>
-            </div>
+                <div class="card-body" id="info-body">
+                  <blockquote class="blockquote">
+                    <p style="padding-top: 10px; margin-left: 10px; margin-right: 10px;">Saranno narrate delle storie e per apprendere meglio quello che racconta la storia sono proposte delle attività, come:</p>
+                    <div align="center">
+                        <ul style="text-align: left;">
+                            <li class="DomandaMultipla">
+                                Domande a scelta multipla;<br>
+                                <img src="../images/domanda_multipla.png" alt="domanda a scelta multipla" style="width: 300px; height: 175px; padding-bottom: 10px;">
+                            </li>
+                            <li class="DomandaNumerica">
+                                Domande aperte a risposta numerica;<br>
+                                <img src="../images/numero.png" alt="domanda a risposta numerica" style="width: 300px; height: 150px; padding-bottom: 10px;">
+                            </li>
+                            <li class="DomandaAperta">
+                                Domande aperte a risposta univoca.<br>
+                                <img src="../images/domanda_aperta.png" alt="domanda aperta" style="width: 300px; height: 150px; padding-bottom: 10px;">
+                            </li>
+                        </ul>
+                    </div>
+                    <p>Per proseguire la narrazione in fondo alla pagina vi è un pulsante con la scritta "PROSEGUI" che permette al lettore di continuare la narrazione nel momento in cui viene premuto.</p>
+                    <img class="Prosegui" src="../images/prosegui.png" alt="pulsante del prosegui" style="width: 300px; height: 75px; padding-bottom: 10px;">
+                    <p>Al termine della narrazione, invece del pulsante "PROSEGUI", vi è un pulsante denominato "CHIUDI" che permette di uscire dalla storia.</p>
+                    <img class="Chiudi" src="../images/chiudi.png" alt="pulsante del chiudi" style="width: 250px; height: 75px; padding-bottom: 10px;">
+                    <p>Prima che la narrazione venga chiusa, viene attribuito al lettore un punteggio in base alle risposte date. La risposta viene valutata in base a quanto si è appreso durante la lettura della storia.</p>
+                  </blockquote>
+                </div>
+                <div class="card-footer text-muted" id="info-footer">
+                    - Ora non ti resta che iniziare il gioco -
+                </div>
+              </div>
+
+              <script>
+                    ScrollReveal().reveal('.DomandaMultipla', { origin: 'left', duration: 1500, distance: '100px', interval:200, delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.DomandaNumerica', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.DomandaAperta', { origin: 'left', distance: '100px', interval:800, delay: 700, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.Prosegui', { origin: 'left', distance: '100px', interval:1100, delay: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.Chiudi', { origin: 'left', distance: '100px', interval:1400, delay: 1300, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+              </script>
         </main>
 
         <template id="MainContainer">
             <nav>
-                <ul class="nav justify-content-center">
+                <ul class=" nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-disabled="false">Punteggio</a>
+                        <a class="nav-link" aria-disabled="true">
+                            <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -125,26 +136,50 @@
                 <div class="Quest">
                     <h5 class="QuestTitle"></h5>
                 </div>
+
             </main>
+            <button id="ButtonToTop"></button>
+            
+            <script>
+                
+                //script per bottone che scrolla la pagina in alto
+                const ButtonToTop = document.querySelector("#ButtonToTop");
+
+                ButtonToTop.addEventListener("click", function () {
+                    
+                    $("html, body").animate({ scrollTop: 110}, "slow");
+
+                });
+            </script>
+
+            
+
         </template>
 
-        <footer class="page-footer">
-            <div class="container-fluid text-center chat">
-                <div id='chat-room'>
-                    <h4 style="color: rgb(7, 3, 230);" aria-level="2">Chat</h4>
-                    <form action="">
-                        <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio"><br>
-                        <button id="Send">Invia</button>
-                    </form>
+        <footer class="page-footer text-center">
 
-                    <h5 id="chat-history">Cronologia</h5>
-                    <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
-                    all'inizio di ogni attività la cronologia si svuota -->
+            <div>
+                <i class='far fa-comment-dots' id="Open" onclick='openForm()'></i>
+            </div>
+            <div id='chat-room' class="chat-popup">
+                <h4 style="color: rgb(0,0,0);" aria-level="2">Chat
+                <i id="Close" data-bs-dismiss="modal" aria-label="Close" onclick='closeForm()' class="far fa-times-circle" ></i></h4>
+                <form action="">
+                    <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
+                    <button id="Send">Invia</button>
+                </form>
+            </div>
+
+            <div>
+                <h5 id="chat-history" >Cronologia</h5>
+                <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
+                all'inizio di ogni attività la cronologia si svuota -->
+                <div id="list">
                     <ul>
-                        <li><q class="player-msg">aaaaaaaaaaa</q></li>
-                        <li><q class="valuator-msg">bbbbbbbbbbb</q></li>
-                        <li><q class="player-msg">cccccccccccc</q></li>
-                        <li> <q class="valuator-msg">dddddddddd</q></li>
+                        <li><q id="player-msg">aaaaaaaaaaa</q></li>
+                        <li><q id="valuator-msg">bbbbbbbbbbb</q></li>
+                        <li><q id="player-msg">cccccccccccc</q></li>
+                        <li> <q id="valuator-msg">dddddddddd</q></li>
                     </ul>
                 </div>
             </div>
@@ -152,9 +187,22 @@
             <div id="chat-test">
                 
             </div>
+
+            <script>
+                //apertura e chiusura della chat
+                function openForm() {
+                    document.getElementById("chat-room").style.display = "block";
+                }
+                
+                function closeForm() {
+                    document.getElementById("chat-room").style.display = "none";
+                }
+                //animazione della chat
+                ScrollReveal().reveal('#Open', { origin: 'bottom', distance:'1000px', duration: 1500, easing: 'cubic-bezier(.215, .61, .355, 1)'})
+            </script>
+                
         </footer>
     </body>
 
-    <script>ScrollReveal().reveal('.chat', { origin: 'bottom', distance:'1000px', duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)'})</script>
 
 </html>

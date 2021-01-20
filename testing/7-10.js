@@ -6,8 +6,8 @@ var storia7_10 = {
 	single_device: 1,
 	quests: [
         {
-            quest_title: "Prologo",
-            quest_ID: 69420,
+            quest_title: "L'avvenimento dell'anno.",
+            quest_ID: "",
             activities: [
                 {
                     activity_text: [
@@ -20,16 +20,12 @@ var storia7_10 = {
                         },
                         {
                             type: "gallery",
-                            content: ['<img src="../images/mummia.jpg" width="300px" height="400" alt="La foto mostra una mummia">']
-                        },
-                        {
-                            type: "text",
-                            content: `Cosa sono le mummie?`
+                            content: ['<img src="../images/mummia.jpg" alt="La foto mostra una mummia">', '<img src="../images/volto_mummia.jpg" alt="La foto mostra il volto di una mummia">']
                         }
                     ],
 					activity_type: 'ANSWER',
 					answer_field: {
-						description: "Inserisci la risposta corretta:",
+						description: "Cosa sono le mummie?",
 						type: "text",
 						options: []
 					},
@@ -41,20 +37,20 @@ var storia7_10 = {
                         score: ""
 					},
 					{
-						response: "default",
-						nextquest: 0,
-                        nextactivity: 1,
+						response: "",
+						nextquest: 1,
+                        nextactivity: 0,
                         score: ""
 					}],
-					ASK_EVAL: 1,
-					GET_CHRONO: 1,
+					ASK_EVAL: 0,
+					GET_CHRONO: 0,
 					expected_time: 18000,
 					FINAL: 0
                 },
             ],
         },
         {
-            quest_title: "First quest",
+            quest_title: "Fatto con il cuore.",
             quest_ID:"",
             activities:[
                 {
@@ -64,7 +60,15 @@ var storia7_10 = {
                             content: `
                                 Finalmente entrate in una delle sale più importanti del museo, quella delle mummie e dei sarcofaghi. 
                                 I sarcofaghi sono una delle caratteristiche più famose della cultura egizia. 
-                                Questi artefatti erano fabbricati in legno, terracotta o pietra ed erano decorati con grandi pitture. 
+                                Questi artefatti erano fabbricati in legno, terracotta o pietra ed erano decorati con grandi pitture.`
+                        },
+                        {
+                            type: "gallery",
+                            content: ['<img src="../images/legno.jpg" style="margin-bottom: 10px;" alt="La foto mostra un sarcofago in legno">', '<img src="../images/terracotta.jpg" style="margin-bottom: 10px;" alt="La foto mostra un sarcofago in terracotta">', '<img src="../images/pietra.jpg" style="margin-bottom: 10px;" alt="La foto mostra un sarcofago in pietra">']
+                        },
+                        {
+                            type: "text",
+                            content: `
                                 Il motivo per cui venivano costruiti i sarcofaghi era quello di dare alla salma una sorta di armatura elegante con cui poteva presentarsi nell’aldilà.`
                         }
                     ],
@@ -88,6 +92,10 @@ var storia7_10 = {
                                 Il processo di mummificazione è molto lungo. Il corpo del defunto viene portato a dei sacerdoti esperti che lo preparano per il funerale. 
                                 Una delle cose più complesse della preparazione è la rimozione degli organi interni, che sono poi inseriti in alcuni vasi detti “canopi”. 
                                 Tutti quelli più importanti vengono rimossi: polmoni, cervello, fegato, ecc.`
+                        }, 
+                        {
+                            type: "gallery",
+                            content: ['<img src="../images/imbalsamazione.jpg" alt="La foto mostra il processo di mummificazione">', '<img src="../images/mummificazione.jpg" alt="La foto mostra il processo di mummificazione">']
                         }],
 					activity_type: 'ANSWER',
 					answer_field: {
@@ -104,13 +112,13 @@ var storia7_10 = {
                     }],
                     answer_outcome:
 					[{
-						response: 'default',
+						response: '',
 						nextquest: 0,
-                        nextactivity: 1,
+                        nextactivity: 2,
                         score: ""
 					}],
-					ASK_EVAL: 1,
-					GET_CHRONO: 1,
+					ASK_EVAL: 0,
+					GET_CHRONO: 0,
 					expected_time: 15000,
 					FINAL: 0
                 },
@@ -144,7 +152,7 @@ var storia7_10 = {
                 
         },
         {
-            quest_title: "Secondo quest",
+            quest_title: "Una strana confusione.",
             quest_ID:"",
             activities:[
                 {
@@ -153,15 +161,21 @@ var storia7_10 = {
                             type: "text",
                             content: `
                                 Molte persone sono radunate in un particolare punto di una delle sale dedicate alle mummie. 
-                                Riuscite a trovare un po’ di spazio per poter vedere qual è l’attrazione. 
-                                Scoprite che il bersaglio di tutti i curiosi è proprio la teca della nuova mummia. 
+                                Riuscite a trovare un po’ di spazio per poter vedere qual è l’attrazione.`
+                        }, 
+                        {
+                            type: "text",
+                            content: `Scoprite che il bersaglio di tutti i curiosi è proprio la teca della nuova mummia. 
                                 Accanto alla teca c’è un cartello con una grande foto del ritrovamento. 
-                                Il corpo sembra essere stato conservato benissimo, e infatti appare grande come una persona normale. 
+                                Il corpo sembra essere stato conservato benissimo, e infatti appare grande come una persona normale. `
+                        },
+                        {
+                            type: "text",
+                            content: `
                                 Sotto alla foto, c’è scritto che la mummia è stata trovata in una importante ricerca, avvenuta tra le rovine della città che un tempo si chiamava Babilonia. 
                                 Il testo dice anche che questa spedizione archeologica fa parte di uno speciale progetto portato avanti in Mesopotamia.
                                 Il testo vi lascia perplessi, come se ci fosse qualcosa di impreciso.`
-                        }
-                    ],
+                        }],
                     activity_type: 'ANSWER',
                     answer_field: {
                         description: "Riesci a dire di cosa si tratta?",
@@ -201,6 +215,10 @@ var storia7_10 = {
                             Ed è quindi impossibile che una persona, così importante da essere mummificata, abbia avuto la sua tomba a Babilonia. 
                             Inoltre, in quelle regioni non sono mai state trovate le rovine delle tipiche piramidi egiziane. 
                             Decidete quindi, appena possibile, di fare qualche domanda al direttore del museo.`
+                    },
+                    {
+                        type: "gallery",
+                        content: ['<img src="../images/mesapotamia.png" alt="La foto mostra la cartina della mesopotamia">', '<img src="../images/mesopotamia_oggi.png" alt="La foto mostra la cartina della mesopotamia ad oggi">']
                     }],
                     activity_type: 'READING',
                     answer_field: {},
@@ -217,7 +235,7 @@ var storia7_10 = {
             ],
         },
         {
-            quest_title: "Third quest",
+            quest_title: "Tutto è possibile.",
             quest_ID: "",
             activities: [
                 {
@@ -236,8 +254,8 @@ var storia7_10 = {
                     },
                     answer_outcome:[{
                             response: 'Assolutamente impossibile',
-                            nextquest: 1,
-                            nextactivity: 0,
+                            nextquest: 0,
+                            nextactivity: 1,
                             score: ""
                         },
                         {
@@ -280,6 +298,12 @@ var storia7_10 = {
                             nextquest: 1,
                             nextactivity: 0,
                             score: ""
+                    },
+                    {
+                        response: '',
+                        nextquest: 1,
+                        nextactivity: 0,
+                        score: ""
                     }],
                     ASK_EVAL: 0,
                     GET_CHRONO: 0,
@@ -289,7 +313,7 @@ var storia7_10 = {
             ],
         },
         {
-            quest_title: "Fourth quest",
+            quest_title: "Strano destino.",
             quest_ID: "",
             activities:[
                 {
@@ -297,7 +321,11 @@ var storia7_10 = {
                         type:"text",
                         content: `
                             Arrivati verso l’uscita del museo, la mummia schizza fuori dalle porte e sale sul sedile posteriore di una macchina. 
-                            Il veicolo, appena accolto lo strano passeggero, parte a gran velocità, seminandovi. 
+                            Il veicolo, appena accolto lo strano passeggero, parte a gran velocità, seminandovi. `
+                    },
+                    {
+                        type:"text",
+                        content: `
                             Nel frattempo, i membri del personale del museo cercano di calmare la situazione e dicono ai visitatori che possono continuare la loro visita, e che penseranno loro a indagare. 
                             Dopo pochi secondi, vi raggiunge il direttore del museo, che vi chiede cosa stia succedendo. 
                             Appena saputa la notizia, l’uomo rimane incredulo e dice “Avverto i miei colleghi e cercheremo di fare qualcosa.”. `
@@ -310,20 +338,20 @@ var storia7_10 = {
 					},
 					answer_outcome:
 					[{
-						response: 'default',
+						response: '',
 						nextquest: 1,
                         nextactivity: 0,
                         score: ""
 					}],
-					ASK_EVAL: 1,
-					GET_CHRONO: 1,
+					ASK_EVAL: 0,
+					GET_CHRONO: 0,
 					expected_time: 15000,
 					FINAL: 0
                 },
             ],
         },
         {
-            quest_title:"Fifth quest",
+            quest_title:"Altezza è mezza bellezza.",
             quest_ID:"",
             activities:[
                 {
@@ -335,17 +363,21 @@ var storia7_10 = {
                             Avevano una forma regale, raffigurante il defunto con due scettri nelle mani. Sulla testa era raffigurato un grosso copricapo. 
                             In alcuni casi particolari, la mummia non era posta dentro un solo sarcofago, ma dentro una serie di due o più sarcofaghi. 
                             Questo veniva fatto per garantire una maggiore protezione al defunto.`
-                    }],
+                    }, 
+                    {
+                            type: "gallery",
+                            content: ['<img src="../images/sarcofago_oro.jpg" alt="La foto mostra un sarcofago elegante">', '<img src="../images/strati.jpg" alt="La foto mostra la stratificazione di un sarcofago">']
+                        }],
                     activity_type: 'READING',
                     answer_field: {},
                     answer_outcome: [{
-                        response: 'default',
+                        response: '',
                         nextquest: 0,
                         nextactivity: 1,
                         score: ""
                     }],
                     ASK_EVAL: 0,
-                    GET_CHRONO: 1,
+                    GET_CHRONO: 0,
                     expected_time: 30000,
                     FINAL: 0,            
                 },
@@ -364,20 +396,20 @@ var storia7_10 = {
                     },
                     answer_outcome:[{
                             response: 'Gli egizi erano normalmente più bassi rispetto all’uomo moderno',
-                            nextquest: 1,
-                            nextactivity: 0,
+                            nextquest: 0,
+                            nextactivity: 2,
                             score: ""
                         },
                         {
                             response: 'La rimozione degli organi faceva sì che il corpo perdesse volume, e quindi diventasse più basso',
                             nextquest: 0,
-                            nextactivity: 1,
+                            nextactivity: 2,
                             score: ""
                         },
                         {
-                            response: 'default',
+                            response: '',
                             nextquest: 0,
-                            nextactivity: 1,
+                            nextactivity: 2,
                             score: ""
                     }],
                     ASK_EVAL: 0,
@@ -406,7 +438,7 @@ var storia7_10 = {
             ],
         },
         {
-            quest_title: "Sixth quest",
+            quest_title: "La calma è la vitù dei forti.",
             quest_ID:"",
             activities:[
                 {
@@ -425,13 +457,13 @@ var storia7_10 = {
 					},
 					answer_outcome:
 					[{
-						response: 'default',
+						response: '',
 						nextquest: 0,
                         nextactivity: 1,
                         score: ""
 					}],
-					ASK_EVAL: 1,
-					GET_CHRONO: 1,
+					ASK_EVAL: 0,
+					GET_CHRONO: 0,
 					expected_time: 15000,
 					FINAL: 0
                 },
@@ -451,19 +483,19 @@ var storia7_10 = {
                                 'Il cartello ed i suoi errori potrebbero essere collegati a tutta questa faccenda']
                     },
                     answer_outcome: [{
-                        response: 'default',
+                        response: '',
                         nextquest: 1,
                         nextactivity: 0,
                         score: ""
                     }],
                     ASK_EVAL: 0,
-                    GET_CHRONO: 1,
+                    GET_CHRONO: 0,
                     expected_time: 30000
                 },
             ],
         },
 		{
-			quest_title: "Final quest",
+			quest_title: "Ecco il segreto.",
 			quest_ID: "",
 			activities: [
 				{

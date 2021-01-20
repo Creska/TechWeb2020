@@ -49,7 +49,8 @@ $(function () {
 
 
 	socket.on('valuator-message', (message) => {
-		//TODO rendering the valuator message
+		if ( message )
+			$( "#chat-test" ).append( "<p>" + message + "</p>" ); // test
 	})
 
 

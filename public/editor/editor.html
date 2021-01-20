@@ -531,7 +531,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
-      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('SetAnswerOutcome')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
+      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
         <i class="fas fa-route"></i>      
       </button>
     </div>
@@ -750,6 +750,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
 
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
+  <!--
   <main class="inner cover EditorSection" id="SetAnswerOutcome">
     <script>
       // attiva/disattiva i number input in base alla spunta sulla checkbox di passaggio alla quest successiva
@@ -805,6 +806,57 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
           <td></td>
         </tr>
       </table>
+      
+      <div id="AddOutcomeWidget" class="mb-3 mt-5">
+        <p>Aggiungi outcome:</p>
+        <br><button class="btn btn-primary mt-3" onclick="addOutcome();">Aggiungi</button>
+      </div>
+    </div>
+
+    <div class="p-3 Save-Cancel">
+      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveOutcomes();">Salva</button>
+      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
+    </div>
+  </main>
+  -->
+
+
+  <!-- NUOVA SCHERMATA MODIFICA OUTCOMES -->
+  <main class="inner cover EditorSection" id="OutcomesSection">
+    <header>
+      <small></small>
+      <h1 class="cover-heading SectionTitle">Sistema di outcomes</h1>
+    </header>
+    <p class="lead mb-5 SectionHeader">
+      Qui potrai regolare tutti gli outcomes dell'attività selezionata.
+    </p>
+
+    <div class="alertlist"></div>
+
+    <div class="mt-5" id="ReadingActivity">
+      <h4 class="mb-3">Programmazione attività</h4>
+
+      <div class="w-100 mt-3 OutcomesTable">
+        <div class="outcome-entry">
+          <p class="outcome-answer"><em>default</em></p>
+          <input class="outcome-score" type="number" placeholder="0">
+          <select class="outcome-next-quest-index"></select>
+          <select class="outcome-next-activity-index"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5" id="AnswerActivity">
+      <h4>Programmazione attività</h4>
+
+      <div class="w-100 mt-3 OutcomesTable">
+        <div class="outcome-entry">
+          <p class="outcome-answer"><em>default</em></p>
+          <input class="outcome-score" type="number" placeholder="0">
+          <select class="outcome-next-quest-index"></select>
+          <select class="outcome-next-activity-index"></select>
+        </div>
+      </div>
       
       <div id="AddOutcomeWidget" class="mb-3 mt-5">
         <p>Aggiungi outcome:</p>

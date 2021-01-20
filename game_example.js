@@ -33,7 +33,7 @@ game_example = {
 					answer_outcome: [
 						{
 							response: "", // possibile risposta
-							nextquest: false, // indica se conduce alla prossima quest
+							nextquest: "",
 							nextactivity: "", // indica l'attività a cui conduce
 							score: "" // punteggio relativo a questa specifica attività - va sommato al totale; se è vuoto viene considerato uguale a zero
 						}

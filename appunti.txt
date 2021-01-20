@@ -1,11 +1,14 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Creazione degli id per quest e storia e generazione qrcode
-    * Finire di sistemare le funzioni di passaggio per navbar e main menu
-    * [WIP] Sistemare l'associazione tra quest e id CSS - non funzionerebbe nel caso di randomizzazione - aggiungere un metodo. Altrimenti andrebbe ripensata l'intera personalizzazione del CSS
-    * Sistemazione grafica generale e cleanup (solo se rimane tempo)
+    * Completare rifacimento del sistema di outcomes
+    * Sistemare l'help e la descrizione riguardo a come funziona il sistema per classi
+    * [WIP] Creazione degli id per quest
+    * Generazione qrcode
+    * [WAITING] Modificare editor CSS - usare ID quest
+    * Aggiungere le cose nuove nell'help
 * PLAYER
     * Aggiungere video
+    * Adattarlo ai nuovi cambiamenti effettuati nell'editor
     * Inserire placeholder nelle cartelle
     * [WAITING] Sistemare grafica
     * [WAITING] Chiamate AJAX
@@ -13,7 +16,7 @@ BUG E PROBLEMI DA CORREGGERE
         * invio stats a fine attività
         * invio stats ogni 5s
     * [WAITING] Sistemare roba di accessibilità
-    * [WAITING] Sistemare la scelta degli id delle quest in caso la storia sia per classe
+    * [WAITING] Modificare CSS - usare ID quest
     * [WAITING] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * STORIE DI PROVA
     * Completare

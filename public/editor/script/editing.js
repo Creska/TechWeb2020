@@ -150,7 +150,12 @@ function save_title( which ) {
 		options: []
 	  },
 		  right_answer: "",
-		  answer_outcome: [],
+		  answer_outcome: [{
+			  response: "default",
+			  nextquest: "",
+			  nextactivity: "",
+			  score: ""
+		  }],
 		  ASK_EVAL: 0,
 		  GET_CHRONO: 0,
 	  expected_time: "",
@@ -179,6 +184,7 @@ function back() {
 			break;
 	  	case "EditAnswerField":
 	  	case "SetAnswerOutcome":
+		case "OutcomesSection":
 			goToSection( "EditActivity" );
 			break;
 	  	case "EditText":
@@ -333,6 +339,9 @@ function goToSection(where) {
   
 		  loadEditOutcomeSection();
 		  break;
+		case "OutcomesSection":
+			loadOutcomesSection();
+			break;
 		case "ChooseStoryToEdit":
 		  getStories("ChooseStoryToEdit"); 
 		  break;
@@ -781,6 +790,91 @@ function loadEditOutcomeSection() {
 };
 
 
+
+function loadOutcomesSection() {
+	let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+	if ( activity.activity_type == "READING" ) {
+		if ( activity.answer_outcome.length > 1 ) {
+			handleError();
+			return;
+		}
+
+		$( "#ReadingActivity .outcome-score" ).val( activity.answer_outcome.score );
+		loadStageSelector( $( "#ReadingActivity .outcome-next-quest-index" ) );
+		$( "#ReadingActivity .outcome-next-quest-index option" ).eq( activity.answer_outcome.nextquest ).prop( "selected", true );
+		loadStageSelector( $( "#ReadingActivity .outcome-next-activity-index" ) );
+		$( "#ReadingActivity .outcome-next-activity-index option" ).val( activity.answer_outcome.nextactivity ).prop( "selected", true );
+
+		$( "#ReadingActivity" ).css( "display", true );
+		$( "#AnswerActivity" ).css( "display", false );
+	}
+	else {
+		$( "#AnswerActivity .OutcomesTable .outcome-entry:not(:first-child)" ).remove();
+
+		for ( i = 1; i < activity.answer_outcome.length; i++ ) {
+			addOutcome( activity.answer_outcome[i].response );
+		}
+
+		for ( j = 0; j < activity.answer_outcome.length; j++ ) {
+			$( "#AnswerActivity .outcome-score" ).eq(j).val( activity.answer_outcome[j].score );
+			loadStageSelector( $( "#AnswerActivity .outcome-next-activity-index" ).eq(j) );
+			$( "#AnswerActivity .outcome-next-quest-index" ).eq(j).find( "option" ).eq( activity.answer_outcome[j].nextquest ).prop( "selected", true );
+			loadStageSelector( $( "#AnswerActivity .outcome-next-activity-index" ).eq(j) );
+			$( "#AnswerActivity .outcome-next-activity-index" ).eq(j).find( "option" ).eq( activity.answer_outcome[j].nextactivity ).prop( "selected", true );
+		}
+
+		$( "#AnswerActivity" ).css( "display", true );
+		$( "#ReadingActivity" ).css( "display", false );
+
+		loadOutcomeWidget();
+	}
+};
+
+
+function loadOutcomeWidget() {
+	CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
+	$( "#AddOutcomeWidget .OutcomeInput" ).remove();
+	if ( $( "#SetAnswerOutcome .alert-danger" ).length < 1 ) {
+		if ( CurrentStage.answer_field.type == "checklist" ) {
+			$( "#AddOutcomeWidget > p" ).after( $( "<ul class='border border-light rounded p-3 OutcomeInput'></ul>" ) );
+			let newli;
+
+			$.each( CurrentStage.answer_field.options, function(index, value) {
+				newli = $( "<li class='form-check'></li>" );
+				newli.append( $( "<input/>",
+					{
+						class: "form-check-input",
+						type: "radio",
+						name: "radio-checklist",
+						id: "opt" + index
+					}));
+				newli.append( $( "<label/>",
+					{
+						class: "form-check-label",
+						for: "opt" + index,
+						text: value
+					}));
+				$( "#AddOutcomeWidget ul" ).append( newli );
+			});
+		}
+		else {
+			$( "#AddOutcomeWidget > p" ).after( $( "<input/>", 
+			{
+				class: "OutcomeInput",
+				type: CurrentStage.answer_field.type
+			}));
+		}
+
+		$( "#AddOutcomeWidget" ).toggle(true);
+	}
+	else {
+		$( "#AddOutcomeWidget" ).toggle(false);
+	}
+};
+
+
 /**
  * @param label
  * Aggiunge un outcome alla tabella. In fase di loading dei salvataggi del JSON, all'argomento 'label' corrisponde la risposta settata per quel particolare outcome
@@ -796,28 +890,76 @@ function addOutcome( label ) {
 	}
 
 	if ( label && label != "default" ) {
-		let newtr = $( "<tr/>" );
-  		newtr.append( $.parseHTML( "<td>" + label + "</td>" ) );
-  		newtr.append( $.parseHTML( '<td><input type="checkbox"></td>' ) );
-  		newtr.append( ( $( "<input/>",
-  		{
+		let newentry = $( "<div class='outcome-entry'></div>" );
+		newentry.append( $( "<p/>", 
+		{
+			class: "outcome-answer",
+			text: label
+		}));
+		newentry.append( $( "<input/>", 
+		{
 			type: "number",
-			class: "NextActivityInput",
-			placeholder: 0,
-			size: 6,
-    		min: 0
-		})).wrap( "<td></td>" ).parent());
-		newtr.append( ( $( "<input/>",
-  		{
-			type: "number",
-			class: "ScoreInput",
-			placeholder: 0,
-			size: 6
-		})).wrap( "<td></td>" ).parent());
-  		newtr.append( $.parseHTML( `<td><a class='badge badge-danger ml-3' href='#' onclick='$(this).parent().parent().remove(); return false;'><i class='fas fa-minus'></i></a></td>` ) );
-  		$( "#AnswerActivity .OutcomesTable" ).append( newtr );
+			class: "outcome-score",
+			placeholder: "0"
+		}));
+		newentry.append( loadQuestSelector( $( "<select/>", { class: "outcome-next-quest-index" })));
+		newentry.append( $( "<select/>", { class: "outcome-next-activity-index" }));
 	}
 };
+
+
+function loadStageSelector( sel ) {
+	sel.empty();
+
+	if ( sel.hasClass( "outcome-next-quest-index" ) ) {
+		$.each( CurrentWork.quests, function( q_i, quest ) {
+			sel.append( $( "<option/>" ), 
+			{
+				value: q_i,
+				text: quest.quest_title
+			});
+		});
+	}
+	else if ( sel.hasClass( "outcome-next-activity-index" ) ) {
+		if ( sel.parent().find( "option:selected" ).length ) {
+			for ( i = 0; i < CurrentWork.quests[sel.parent().find( "option:selected" ).val()].activities.length; i++ ) {
+				sel.append( $( "<option/>", 
+				{
+					value: i,
+					text: "Attività" + i
+				}));
+			}
+		}
+	}
+
+	return sel;
+};
+
+
+
+function saveOutcomesSection() {
+	let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+	activity.answer_outcome = [];
+	let section;
+
+	if ( activity.activity_type == "READING" )
+		section = $( "#ReadingActivity" );
+	else
+		section = $( "#AnswerActivity" );
+
+	section.find( ".outcome-entry" ).each( function( this ) {
+		activity.answer_outcome.push({
+			response: $(this).find( ".outcome-answer" ).text(),
+			nextquest: ( $(this).find( ".outcome-next-quest-index option:selected" ).length ? $(this).find( ".outcome-next-quest-index option:selected" ) : null ),
+			nextactivity: ( $(this).find( ".outcome-next-activity-index option:selected" ).length ? $(this).find( ".outcome-next-activity-index option:selected" ) : null ),
+			score: $(this).find( ".outcome-score" ).val()
+		});
+	});
+
+	// console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome); // debugging
+	back();
+};
+
 
 
 /**

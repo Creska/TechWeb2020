@@ -1,5 +1,4 @@
 var colors = [ "primary", "secondary", "warning", "success", "danger", "info" ];
-
 /* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
 var CurrentNavStatus = {
 	Section: "MainMenu",
@@ -450,6 +449,12 @@ function MainMenu( action, is_new ) {
 
 function Navbar( option ) {
   switch ( option ) {
+    case "Graph":
+      if(CurrentNavStatus.Section != "Graph"){
+        create_graph();
+        goToSection("Graph");
+      }
+      break;
     case "Save":
       start_saving();
       break;

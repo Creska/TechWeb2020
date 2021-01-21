@@ -120,7 +120,6 @@ function openCard( card ) {
         else if (CurrentNavStatus.Section == "EditQuest")
           goToSection("EditActivity");
         else if (CurrentNavStatus.Section == "EditActivity") {
-          console.log("roba: ", card.innerText )
           switch( card.innerText ) {
             case "GALLERY":
               goToSection("EditGallery");
@@ -151,8 +150,7 @@ function openCard( card ) {
  */
 function create_card(titolo,subtitle) {
   let current_grid = $( "#" + CurrentNavStatus.Section + " .CardGrid" ).attr( "id" );
-  let color;
-  let bg_color = "";
+  let bg_color;
   switch ( current_grid ) {
     case "QuestsGrid":
       $("#NewQuestWidget").addClass("invisible");
@@ -160,20 +158,19 @@ function create_card(titolo,subtitle) {
       titolo = titolo.replace(/(<([^>]+)>)/gi, "").trim();
       if ( titolo == "" )
         titolo = "<i>QuestSenzaNome" + ( CurrentWork.quests.length - 1 ) + "</i>";
-      color = "bg-"+ colors[CurrentWork.quests.length % 6];
+      bg_color = "rgb("+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+")";
       break;
     case "ActivitiesGrid":
       titolo = "Attività" + ( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length - 1 );
-      color = "bg-"+ colors[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length % 6];
+      bg_color = "rgb("+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+")";
       break;
     case "ParagraphsGrid":
-      if ( titolo == "GALLERY" ) color = "bg-"+colors[0];
-      else if ( titolo == "VIDEO" ) color = "bg-" + colors[5];
-      else color = "bg-"+ colors[1];
+      if ( titolo == "GALLERY" ) bg_color = "#0275d8";
+      else if ( titolo == "VIDEO" ) bg_color = "#5bc0de";
+      else bg_color = "#A9A9A9";
       break;
     case "StoriesGrid":
-      color = "";
-      bg_color = "background-color: rgb(82, 7, 105);";
+      bg_color = "rgb(82, 7, 105)";
       break;
     default:
       handleError();
@@ -181,8 +178,8 @@ function create_card(titolo,subtitle) {
   
   let card = $("<div/>",
     {
-      "style": bg_color,
-      "class": "card " + color,
+      "style": "background-color:"+bg_color+";",
+      "class": "card ",
       onclick: "openCard( this )"
     });
   card.append( $("<div class='card-body text-center'></div>") );
@@ -364,11 +361,11 @@ function cancel_em(obj) {
     $(grid).find(".card").each( function() {
       if ( $(this).css("animation-name") == "swashOut" )
         $(this).remove();
-      else
-        $(this).attr("style", "");
+      else 
+        $(this).css("animationName","initial" );
+        //$(this).attr("style", "");
     });
   };
-
 
   /**
  * Salva la griglia di cards della sezione corrente

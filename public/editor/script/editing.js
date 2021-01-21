@@ -1,5 +1,5 @@
 var gm_b = [ false, false, false ]; // se gm_b[0] è true --> #gm0 è selezionato 
-
+var before_section; //to know where to go from graph section
 /* ------------------------- */
 
 /**
@@ -171,6 +171,9 @@ function save_title( which ) {
 */
 function back() {
 	switch ( CurrentNavStatus.Section ) {
+		case "Graph":
+			goToSection( before_section );
+			break;
 	  	case "ChooseGameMode":
 			goToSection( "EditStory" );
 			break;
@@ -228,6 +231,9 @@ function goToSection(where) {
 	  change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
   
 	  switch ( where ) {
+		case "Graph":
+		  before_section = CurrentNavStatus.Section;
+		  break;
 		case "MainMenu":
 		  break;
 		case "EditStory":
@@ -937,7 +943,7 @@ function loadStageSelector( sel ) {
 
 
 
-function saveOutcomesSection() {
+/*function saveOutcomesSection() {
 	let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 	activity.answer_outcome = [];
 	let section;
@@ -958,7 +964,7 @@ function saveOutcomesSection() {
 
 	// console.log(CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome); // debugging
 	back();
-};
+};*/
 
 
 

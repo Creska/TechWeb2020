@@ -186,7 +186,7 @@ function create_card(titolo,subtitle) {
   card.children().first().append( $( "<p class='card-title'><strong>" + titolo + "</strong></p>" ) );
 
   if( subtitle ) 
-    card.children().append( $("<p class='card-subtitle mb-2'>" + subtitle + "</p>") );
+    card.children().append( $("<p class='card-subtitle mb-2'>id: " + subtitle + "</p>") );
   // quando il deck attuale non esiste o è vuoto, crea un nuovo deck e lo mette come ultimo figlio della griglia
   if ( $("#"+current_grid+" > div:last-child").children().length == 3 || $("#"+current_grid).children().length == 0 )
     $("#"+current_grid).append('<div class="card-deck mb-2" ></div>');
@@ -203,7 +203,7 @@ function create_stories_grid(array) {
   for(i=0;i<array.length;i++){
     if(!array[i].title)
       array[i].title = "senza titolo";
-    create_card(array[i].title,"id: "+array[i].id);
+    create_card(array[i].title,array[i].id);
   }
 };
   

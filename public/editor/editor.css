@@ -166,6 +166,8 @@ main {
   display: none;
 }
 
+/*
+
 .OutcomesTable {
   table-layout: fixed;
   width: 100%;
@@ -190,6 +192,7 @@ main {
   border-right-style: solid;
   border-color: grey;
 }
+*/
 
 #EditText textarea {
   width: 100%; /* sovrascrive il numero di colonne */

@@ -116,7 +116,6 @@ function save_title( which ) {
 	  ActivityGrids: [],
 	  ParagraphGrids: []
 	};
-  
 	CSSdata = {
 	  sheet: "",
 	  valid: true
@@ -130,18 +129,48 @@ function save_title( which ) {
   function initQuest() {
 	  let EmptyQuest = {	
 		  quest_title: "",
+		  quest_id: get_new_id("quest"),
 		  activities: []
 	};
   
 	  return EmptyQuest;
   };
   
-  
+  function get_new_id(which) {
+	let id;
+	let not_unique = false;
+	switch (which) {
+		case "quest":
+			do {
+				id = "Q"+ Math.floor(Math.random() * 1000).toString();//generate number from 0 to 999 
+				for(i=0;i <CurrentWork.quests.length;i++ ){
+					if(CurrentWork.quests[i].quest_id == id) {
+						not_unique = true;
+						break;
+					}
+				}
+			}while(not_unique);
+			break;
+		case "activity":
+			do {
+				id = CurrentWork.quests[CurrentNavStatus.QuestN].quest_id+"A"+Math.floor(Math.random() * 1000).toString();//generate number from 0 to 999 
+				for(i=0;i <CurrentWork.quests[CurrentNavStatus.QuestN].activities.length;i++ ){
+					if(CurrentWork.quests[CurrentNavStatus.QuestN].activities[i].activity_id == id) {
+						not_unique = true;
+						break;
+					}
+				}
+			}while(not_unique);
+			break;
+	}
+	return id;
+}
   /**
    * Inizializza un oggetto attività vuoto per il JSON
    */
   function initActivity() {
 	  let EmptyActivity = {
+	  activity_id: get_new_id("activity"),
 	  activity_text: [],
 	  activity_type: "ANSWER",
 		  answer_field: {

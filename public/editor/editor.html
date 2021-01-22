@@ -479,7 +479,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       </div>
       <input type="text" class="form-control col-sm-5 " placeholder="Titolo della quest">
         <div class="input-group-append">
-          <button class="btn btn-sm btn-primary" type="button" onclick='create_stuff("quest");create_card( $("#NewQuestWidget input").val() );$("#NewQuestWidget").addClass("invisible");'>Aggiungi</button>
+          <button class="btn btn-sm btn-primary" type="button" onclick='create_stuff("quest");create_card( $("#NewQuestWidget input").val(), CurrentWork.quests[CurrentWork.quests.length -1].quest_id );$("#NewQuestWidget").addClass("invisible");'>Aggiungi</button>
 
           <button class="btn btn-sm btn-danger" type="button" onclick="$('#NewQuestWidget input').val('');$('#NewQuestWidget').addClass('invisible');">Annulla</button>
         </div>
@@ -514,7 +514,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary mb-3 rounded SwapBtn" onclick="swap_mode()" data-toggle="tooltip" data-placement="left" title="Swap mode">
         <i class="fas fa-people-carry"></i>
       </button>
-      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("activity");create_card("");' data-toggle="tooltip" data-placement="top" title="Crea una nuova attività">
+      <button id="q_new_button" class="btn btn-lg btn-secondary mb-3 mr-2 ml-2 rounded" onclick='create_stuff("activity");create_card("",CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentWork.quests[CurrentNavStatus.QuestN].activities.length-1].activity_id );' data-toggle="tooltip" data-placement="top" title="Crea una nuova attività">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-lg btn-secondary mb-3 rounded CancelBtn" onclick="cancel_mode()" data-toggle="tooltip" data-placement="right" title="Cancel mode">

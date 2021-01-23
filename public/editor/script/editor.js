@@ -51,6 +51,16 @@ function handleError() {
   window.alert( "ERRORE !\nPer evitare eventuali rallentamenti del broswer, si consiglia di chiudere o ricaricare la pagina." );
 };
 
+function duplicate_story() {
+  $.ajax({
+    url: '/editor/duplicate',
+    type: 'POST',
+    data: {story_id: CurrentWork.story_ID},
+    success: function (data) {
+      CurrentWork.story_ID = data;
+    }
+  });
+}
 
 function getStories(caller) {
   $.get("/editor/getStories?section="+caller, function(data, status){

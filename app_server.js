@@ -2,12 +2,12 @@ const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
 const formidableMiddleware = require('express-formidable');//formData parsing
-app.use("/editor/saveStory",formidableMiddleware({maxFieldsSize: 50 * 1024 * 1024,maxFileSize: 500 * 1024 * 1024, uploadDir: 'temp'},[ {
+app.use("/editor/saveStory", formidableMiddleware({ maxFieldsSize: 50 * 1024 * 1024, maxFileSize: 500 * 1024 * 1024, uploadDir: 'temp' }, [{
     event: 'error',
-    action: function (req, res, next, err) { 
+    action: function (req, res, next, err) {
         res.status(500).send();
     }
-}])); 
+}]));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static('public')) //this makes the content of the 'public' folder available for static loading. This is needed since the player loads .css and .js files
@@ -231,9 +231,9 @@ io.on('connection', (socket) => {
         //handling input validation to the valuator
         socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
     })
-    socket.on('validate-input-valuator', (nextQuest, number, score, socketID) => {
+    socket.on('validate-input-valuator', (nextQuest, nextActivity, score, socketID) => {
         //input validation was handled, sending the result back
-        socket.to(socketID).emit('input-valued', nextQuest, number, score);
+        socket.to(socketID).emit('input-valued', nextQuest, nextActivity, score);
     })
 })
 app.get('/player', function (req, res) {
@@ -317,10 +317,6 @@ app.post('/player/playersActivities', function (req, res) {
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
     var activity = req.body;
-    // var story_ID = activity.QuestID;
-    // var quest_index = activity.quest_index;
-    // var activity_index = activity.activity_index;
-    // var time_elapsed = activity.time_elapsed;
     var questID = activity.QuestID;
     var activity = activity.ActivityN;
     var time_elapsed = activity.time_elapsed;
@@ -389,6 +385,38 @@ app.get('/player/loadJSON', function (req, res) {
     else {
         return res.status(200).send(JSON.stringify(storysent))
     }
+})
+
+app.post('/editor/duplicate', function (req, res) {
+    console.log("duplicate request received.");
+    let story_id = req.body.story_id;
+    let path = storyPath(story_id);
+    if (path == '404') {
+        console.log("An error occurred while duplicating the story " + story_id + ", it doesn't exist");
+        return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
+    }
+    let new_id = UNF();
+    fs.copyFile(path, unpubpath + '/' + new_id, (err) => {
+        if (err) {
+            console.log("An error occurred while duplicating the story " + story_id);
+            return res.status(500).send(JSON.stringify(err)).end()
+        }
+        fs.readFile(unpubpath + '/' + new_id + '/' + 'story.json', (err, data) => {
+            if (err) {
+                console.log("An error occurred while reading the story.json of the new duplicate story " + story_id);
+                return res.status(500).send(JSON.stringify(err)).end()
+            }
+            let temp = JSON.parse(data);
+            temp.story_ID = new_id;
+            fs.writeFile(unpubpath + '/' + new_id + '/' + 'story.json', JSON.stringify(temp), 'utf8', (err) => {
+                if (err) {
+                    console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to change his story id");
+                    return res.status(500).send(JSON.stringify(err)).end()
+                }
+                return res.status(200).end();
+            })
+        })
+    })
 })
 
 app.get('/editor/getStories', function (req, res) {
@@ -566,31 +594,31 @@ app.post('/editor/saveStory', function (req, res) {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
         }
     }
-    
-    for( key in req.files ) {
-        console.log("path: ",req.files[key].path)
+
+    for (key in req.files) {
+        console.log("path: ", req.files[key].path)
         try {
-            if( fs.existsSync(req.files[key].path) ){
+            if (fs.existsSync(req.files[key].path)) {
                 let file_name = req.files[key].name;
                 /*if (duplicate_check.includes(file_name)) {
                     file_name = file_name + UNF();
                     console.log("file_name: ",file_name)
                 }
                 duplicate_check.push(file.name);*/
-                fs.renameSync(req.files[key].path, story_path + story_id + '/' +file_name); 
+                fs.renameSync(req.files[key].path, story_path + story_id + '/' + file_name);
                 let coordinates = media_map[key];
                 if (coordinates) {
-                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].src = '/player/stories/' + path_piece + '/'+ story_id + '/' + file_name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
-                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].isFile= false;
+                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].src = '/player/stories/' + path_piece + '/' + story_id + '/' + file_name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
+                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].isFile = false;
                 }
             }
-            else{
-                console.log("file ",req.files[key].name+" not found in project temp directory")
+            else {
+                console.log("file ", req.files[key].name + " not found in project temp directory")
                 file_errors.push({ name: req.files[key].name });
             }
         }
-        catch (err) { 
-            console.log("error with file: ",req.files[key].name, err)
+        catch (err) {
+            console.log("error with file: ", req.files[key].name, err)
             file_errors.push({ name: req.files[key].name });
         }
     }
@@ -601,7 +629,7 @@ app.post('/editor/saveStory', function (req, res) {
         css_error = true;
     }
     else {
-       console.log("css saved successfully")      
+        console.log("css saved successfully")
     }
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;

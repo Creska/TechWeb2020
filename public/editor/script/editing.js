@@ -180,9 +180,8 @@ function save_title( which ) {
 	  },
 		  right_answer: "",
 		  answer_outcome: [{
-			  response: "default",
-			  nextquest: "default",
-			  nextactivity: "default",
+			  condition: null,
+			  next_activity_id: "",
 			  score: null
 		  }],
 		  ASK_EVAL: 0,
@@ -215,7 +214,6 @@ function back() {
 			CurrentNavStatus.ActivityN = -1;
 			break;
 	  	case "EditAnswerField":
-	  	case "SetAnswerOutcome":
 		case "OutcomesSection":
 			goToSection( "EditActivity" );
 			break;
@@ -369,12 +367,9 @@ function goToSection(where) {
   
 		  loadEditAnswerFieldSection();
 		  break;
-		case "SetAnswerOutcome":
-		  $( "#SetAnswerOutcome header small" ).html( $( "#EditActivity header small" ).html() );
-  
-		  loadEditOutcomeSection();
-		  break;
 		case "OutcomesSection":
+			$( "#OutcomesSection header small" ).html( $( "#EditActivity header small" ).html() );
+
 			loadOutcomesSection();
 			break;
 		case "ChooseStoryToEdit":
@@ -547,9 +542,8 @@ function setActivityType() {
 		case "ActivityType0":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "ANSWER" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-					response: "default",
-					nextquest: "default",
-					nextactivity: "default",
+					condition: null,
+					next_activity_id: "",
 					score: null
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "ANSWER";
@@ -560,9 +554,8 @@ function setActivityType() {
 		case "ActivityType1":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "READING" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-					response: "default",
-					nextquest: "default",
-					nextactivity: "default",
+					condition: null,
+					next_activity_id: "",
 					score: null
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
@@ -576,7 +569,12 @@ function setActivityType() {
 				// segna tutte le altre attività come non finali
 				CurrentWork.quests.forEach( function( q, i ) {
 					q.activities.forEach( function( a, j ) {
-				  		a.FINAL = false;
+						a.FINAL = false;
+						a.answer_outcome = [{
+							condition: null,
+							next_activity_id: "",
+							score: null
+						}];
 					});
 			  	});
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
@@ -717,9 +715,8 @@ function saveAnswerFieldSettings() {
 
 		if ( new_type.attr("id") != CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type )
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-				response: "default",
-				nextquest: "default",
-				nextactivity: "default",
+				condition: null,
+				next_activity_id: "",
 				score: null
 			}];
 	}
@@ -812,26 +809,6 @@ function displayMediaPreview( media, mediatype ) {
 	}
 	else if ( mediatype == "video" ) {
 		$( "#yt-video" ).html( media );
-
-		/*
-		if ( media.isFile ) {
-			$( "#VideoPreview video" ).toggle(false);
-			$( "#Video_Empty" ).toggle(false);
-
-			$( "#Video_IsLoaded p" ).eq( 1 ).html( media.src.name );
-			$( "#Video_IsLoaded" ).toggle(true);
-		}
-		else {
-			$( "#Video_IsLoaded" ).toggle(false);
-			$( "#Video_Empty" ).toggle(false);
-
-			$( "#VideoPreview video source" ).attr( "src", media.src );
-			$( "#VideoPreview video source" ).attr( "type", "video/" + getFileExtension( media.src ) );
-			$( "#VideoPreview video" ).toggle(true);
-		}
-
-		$( "#VideoDescr" ).val( media.alt );
-		*/
 	}
 };
 
@@ -935,21 +912,11 @@ function loadVideoSection() {
 	}
 	else {
 		$( "#yt-video" ).html( "<div class='video-placeholder'>Nessun video selezionato</div>" );
-
-		/*
-		$( "#Video_IsLoaded" ).toggle(false);
-		$( "#VideoPreview video" ).toggle(false);
-		*/
 	}
 };
 
 
 function saveVideoSection() {
-	/*
-	if ( MediaBuffer.length )
-		MediaBuffer[0].alt = $( "#VideoDescr" ).val().replace(/(<([^>]+)>)/gi, "");
-	*/
-	
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;
 
 	back();

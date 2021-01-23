@@ -1,17 +1,23 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Completare rifacimento del sistema di outcomes
-    * Sistemare l'help e la descrizione riguardo a come funziona il sistema per classi
-    * [WIP] Creazione degli id per quest
-    * Generazione qrcode
-    * [WAITING] Modificare editor CSS - usare ID quest
-    * Aggiungere le cose nuove nell'help
+    * Completare rifacimento del sistema di outcomes. RICORDARE:
+        * pulsanti sezione EditActivity
+        * isPublishable
+        * aggiungere next_quest_id negli outcome
+    * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
+        * sistema per classi
+        * id quest e attività
+        * grafo
+        * sistema outcomes
+        * qrcode
+    * Aggiornare editor CSS - usare ID quest
+    * [WIP] Generazione qrcode
 * PLAYER
     * Aggiungere video
     * Adattarlo ai nuovi cambiamenti effettuati nell'editor
     * Inserire placeholder nelle cartelle
     * [WAITING] Sistemare grafica
-    * [WAITING] Chiamate AJAX
+    * Chiamate AJAX
         * caricamento (va inserita anche la divisione in gruppi)
         * invio stats a fine attività
         * invio stats ogni 5s

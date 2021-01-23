@@ -413,7 +413,7 @@ app.post('/editor/duplicate', function (req, res) {
                     console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to change his story id");
                     return res.status(500).send(JSON.stringify(err)).end()
                 }
-                return res.status(200).end();
+                return res.status(200).send(JSON.stringify(new_id)).end();
             })
         })
     })

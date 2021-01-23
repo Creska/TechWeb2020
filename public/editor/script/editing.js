@@ -215,7 +215,6 @@ function back() {
 			CurrentNavStatus.ActivityN = -1;
 			break;
 	  	case "EditAnswerField":
-	  	case "SetAnswerOutcome":
 		case "OutcomesSection":
 			goToSection( "EditActivity" );
 			break;
@@ -369,12 +368,9 @@ function goToSection(where) {
   
 		  loadEditAnswerFieldSection();
 		  break;
-		case "SetAnswerOutcome":
-		  $( "#SetAnswerOutcome header small" ).html( $( "#EditActivity header small" ).html() );
-  
-		  loadEditOutcomeSection();
-		  break;
 		case "OutcomesSection":
+			$( "#OutcomesSection header small" ).html( $( "#EditActivity header small" ).html() );
+
 			loadOutcomesSection();
 			break;
 		case "ChooseStoryToEdit":
@@ -812,26 +808,6 @@ function displayMediaPreview( media, mediatype ) {
 	}
 	else if ( mediatype == "video" ) {
 		$( "#yt-video" ).html( media );
-
-		/*
-		if ( media.isFile ) {
-			$( "#VideoPreview video" ).toggle(false);
-			$( "#Video_Empty" ).toggle(false);
-
-			$( "#Video_IsLoaded p" ).eq( 1 ).html( media.src.name );
-			$( "#Video_IsLoaded" ).toggle(true);
-		}
-		else {
-			$( "#Video_IsLoaded" ).toggle(false);
-			$( "#Video_Empty" ).toggle(false);
-
-			$( "#VideoPreview video source" ).attr( "src", media.src );
-			$( "#VideoPreview video source" ).attr( "type", "video/" + getFileExtension( media.src ) );
-			$( "#VideoPreview video" ).toggle(true);
-		}
-
-		$( "#VideoDescr" ).val( media.alt );
-		*/
 	}
 };
 
@@ -935,21 +911,11 @@ function loadVideoSection() {
 	}
 	else {
 		$( "#yt-video" ).html( "<div class='video-placeholder'>Nessun video selezionato</div>" );
-
-		/*
-		$( "#Video_IsLoaded" ).toggle(false);
-		$( "#VideoPreview video" ).toggle(false);
-		*/
 	}
 };
 
 
 function saveVideoSection() {
-	/*
-	if ( MediaBuffer.length )
-		MediaBuffer[0].alt = $( "#VideoDescr" ).val().replace(/(<([^>]+)>)/gi, "");
-	*/
-	
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;
 
 	back();

@@ -767,78 +767,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
 
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
-  <!--
-  <main class="inner cover EditorSection" id="SetAnswerOutcome">
-    <script>
-      // attiva/disattiva i number input in base alla spunta sulla checkbox di passaggio alla quest successiva
-      $(document).on( "click", ".OutcomesTable input[type='checkbox']", function() {
-        if ( $(this).prop("checked") )
-          $($(this).parent().next().children().first()).attr("disabled", true);
-        else
-          $($(this).parent().next().children().first()).attr("disabled", false);
-      });
-    </script>
-    
-    <header>
-      <small></small>
-      <h1 class="cover-heading SectionTitle">Sistema di outcomes</h1>
-    </header>
-    <p class="lead mb-5 SectionHeader">
-      Qui potrai regolare tutti gli outcomes dell'attività selezionata.
-    </p>
-
-    <div class="mt-5" id="ReadingActivity">
-      <h4 class="mb-3">Programmazione attività</h4>
-      <table class="w-100 mt-3 OutcomesTable">
-        <tr class="mb-2">
-      		<th>Risposta</th>
-      		<th>Passa alla quest successiva</th>
-      		<th>Passa ad attività specifica</th>
-        </tr>
-        <tr>
-          <td><em>Sola lettura</em></td>
-          <td><input type="checkbox"></td>
-          <td><input type="number" placeholder="0" size="6" min="0"></td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="mt-5" id="AnswerActivity">
-
-      <h4>Programmazione attività</h4>
-
-      <table class="w-100 mt-3 OutcomesTable">
-        <tr class="mb-2">
-      		<th>Risposta</th>
-      		<th>Passa alla quest successiva</th>
-          <th>Passa ad attività specifica</th>
-          <th>Punteggio</th>
-          <th>Rimuovi</th>
-        </tr>
-        <tr>
-          <td><em>default</em></td>
-          <td><input type="checkbox"></td>
-          <td><input type="number" class="NextActivityInput" placeholder="0" size="6" min="0"></td>
-          <td><input type="number" class="ScoreInput" placeholder="0" size="6"></td>
-          <td></td>
-        </tr>
-      </table>
-      
-      <div id="AddOutcomeWidget" class="mb-3 mt-5">
-        <p>Aggiungi outcome:</p>
-        <br><button class="btn btn-primary mt-3" onclick="addOutcome();">Aggiungi</button>
-      </div>
-    </div>
-
-    <div class="p-3 Save-Cancel">
-      <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveOutcomes();">Salva</button>
-      <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
-    </div>
-  </main>
-  -->
-
-
-  <!-- NUOVA SCHERMATA MODIFICA OUTCOMES -->
   <main class="inner cover EditorSection" id="OutcomesSection">
     <header>
       <small></small>
@@ -911,8 +839,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
   <!-- SCHERMATA DI MODIFICA GALLERY -->
   <main class="inner cover EditorSection" id="EditGallery">
-    
-
     <header>
       <small></small>
       <h1 class="cover-heading SectionTitle">Galleria di immagini</h1>
@@ -956,32 +882,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       Aggiungi l'embed di un video di YouTube.
     </p>
 
-    <!--
-    <div id="VideoPreview">
-      <div id="Video_IsLoaded">
-        <p>file caricato</p>
-        <p></p>
-      </div>
-
-      <div id="Video_Empty"></div>
-
-      <video controls>
-        <source src="" type="">
-      </video>
-    </div>
-
-    <textarea id="VideoDescr" placeholder="Descrizione"></textarea>
-    -->
-
     <div id="yt-video" class="text-center"></div>
 
     <div class="p-3 m-3">
-      <!--
-      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="$('#UploadVid').trigger('click');" data-toggle="tooltip" data-placement="left" title="Upload">
-        <i class="fas fa-upload"></i>
-      </button>
-      <input type="file" id="UploadVid" style="display:none;">
-      -->
       <button class="btn btn-secondary rounded mr-1" onclick="$('#YTLink').removeClass('invisible');" data-toggle="tooltip" data-placement="left" title="Aggiungi un embed da YouTube">
         Embed
       </button>
@@ -1003,15 +906,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-success mb-3 mr-2 ml-2 rounded" onclick="saveVideoSection();">Salva</button>
         <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick="back();">Annulla</button>
     </div>
-
-    <!--
-    <script>
-      /* abilita l'upload dei file */
-	    document.getElementById("UploadVid").addEventListener("change", function(event) {
-        uploadMedia( event.target.files );
-      });
-    </script>
-    -->
   </main>
 
 

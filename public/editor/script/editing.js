@@ -181,9 +181,9 @@ function save_title( which ) {
 		  right_answer: "",
 		  answer_outcome: [{
 			  response: "default",
-			  nextquest: "",
-			  nextactivity: "",
-			  score: ""
+			  nextquest: "default",
+			  nextactivity: "default",
+			  score: null
 		  }],
 		  ASK_EVAL: 0,
 		  GET_CHRONO: 0,
@@ -546,7 +546,12 @@ function setActivityType() {
 	switch ( $( "#ChooseActivityType input[type=radio]:checked" ).attr("id") ) {
 		case "ActivityType0":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "ANSWER" ) {
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
+					response: "default",
+					nextquest: "default",
+					nextactivity: "default",
+					score: null
+				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "ANSWER";
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
 				$( "#EditActivity .p-3" ).first().find( "button:not(:first-child)" ).attr( "disabled", false );
@@ -554,7 +559,12 @@ function setActivityType() {
 			break;
 		case "ActivityType1":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "READING" ) {
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
+				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
+					response: "default",
+					nextquest: "default",
+					nextactivity: "default",
+					score: null
+				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
 				$( "#EditActivity .p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
@@ -706,7 +716,12 @@ function saveAnswerFieldSettings() {
 		}
 
 		if ( new_type.attr("id") != CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type )
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
+			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
+				response: "default",
+				nextquest: "default",
+				nextactivity: "default",
+				score: null
+			}];
 	}
 	
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = $( "#AnswerTimer" ).val() * 60000;

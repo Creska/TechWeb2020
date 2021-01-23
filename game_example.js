@@ -16,8 +16,10 @@ game_example = {
 	quests: [
 		{	
 			quest_title: "",
+			quest_id: "",
 			activities: [
 				{
+					activity_id: "",
 					activity_text: [
 						{
 							type: "", // può essere "text", "gallery" o "video"
@@ -33,9 +35,9 @@ game_example = {
 					answer_outcome: [
 						{
 							response: "", // possibile risposta
-							nextquest: "",
-							nextactivity: "", // indica l'attività a cui conduce
-							score: "" // punteggio relativo a questa specifica attività - va sommato al totale; se è vuoto viene considerato uguale a zero
+							nextquest: "default",
+							nextactivity: "default", // indica l'attività a cui conduce
+							score: null // punteggio relativo a questa specifica attività - va sommato al totale; se è vuoto viene considerato uguale a zero
 						}
 					],
 					ASK_EVAL: false, // flag che indica se c'è necessità di valutazione umana per la risposta

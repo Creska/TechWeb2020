@@ -180,9 +180,8 @@ function save_title( which ) {
 	  },
 		  right_answer: "",
 		  answer_outcome: [{
-			  response: "default",
-			  nextquest: "default",
-			  nextactivity: "default",
+			  condition: null,
+			  next_activity_id: "",
 			  score: null
 		  }],
 		  ASK_EVAL: 0,
@@ -543,9 +542,8 @@ function setActivityType() {
 		case "ActivityType0":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "ANSWER" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-					response: "default",
-					nextquest: "default",
-					nextactivity: "default",
+					condition: null,
+					next_activity_id: "",
 					score: null
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "ANSWER";
@@ -556,9 +554,8 @@ function setActivityType() {
 		case "ActivityType1":
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "READING" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-					response: "default",
-					nextquest: "default",
-					nextactivity: "default",
+					condition: null,
+					next_activity_id: "",
 					score: null
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
@@ -572,7 +569,12 @@ function setActivityType() {
 				// segna tutte le altre attività come non finali
 				CurrentWork.quests.forEach( function( q, i ) {
 					q.activities.forEach( function( a, j ) {
-				  		a.FINAL = false;
+						a.FINAL = false;
+						a.answer_outcome = [{
+							condition: null,
+							next_activity_id: "",
+							score: null
+						}];
 					});
 			  	});
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
@@ -713,9 +715,8 @@ function saveAnswerFieldSettings() {
 
 		if ( new_type.attr("id") != CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type )
 			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-				response: "default",
-				nextquest: "default",
-				nextactivity: "default",
+				condition: null,
+				next_activity_id: "",
 				score: null
 			}];
 	}

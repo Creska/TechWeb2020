@@ -548,8 +548,11 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="right" title="Modifica collegamento ad attività successiva">
+        <i class="fas fa-road"></i>
+      </button>
       <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
-        <i class="fas fa-route"></i>      
+        <i class="fas fa-route"></i>
       </button>
     </div>
 
@@ -573,6 +576,19 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         </label>
       </div>
       <button class="btn btn-primary mt-2" onclick="setActivityType();">Salva</button>
+    </div>
+
+    <div id="MainOutcomeWidget" class="w-100 p-3">
+      <input type="number" id="main-outcome-score" placeholder="0">
+      <ul id="main-outcome-questlist"></ul>
+      <ul id="main-outcome-activitylist"></ul>
+      <button class="btn btn-primary mt-2" onclick="saveMainOutcome();">Salva</button>
+
+      <script>
+        $( "#main-outcome-questlist" ).on( "change", "input", function() {
+          loadActivityList();
+        });
+      </script>
     </div>
 
     <div class="text-center rounded info-section m-3">
@@ -785,16 +801,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         <th>Punteggio</th>
       	<th>Quest successiva</th>
         <th>Attività successiva</th>
-        <th>Modifica</th>
         <th>Elimina</th>
-      </tr>
-      <tr>
-        <td>default</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>edit</td>
-        <td>canc</td>
       </tr>
     </table>
       
@@ -803,7 +810,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <input type="number" id="outcome-score" placeholder="0">
       <ul id="outcome-questlist"></ul>
       <ul id="outcome-activitylist"></ul>
-      <button class="btn btn-success mt-3" onclick="updateOutcome();">Salva</button>
+      <button class="btn btn-success mt-3" onclick="addOutcome();">Aggiungi</button>
       <button class="btn btn-danger mt-3" onclick="">boh</button>
     </div>
 
@@ -813,7 +820,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     </div>
 
     <script>
-      $( "#outcome-questlist" ).on( "change", "input", function() {loadActivityList()} );
+      $( "#outcome-questlist" ).on( "change", "input", function() {
+        loadActivityList()
+      });
     </script>
   </main>
 

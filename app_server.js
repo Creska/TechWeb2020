@@ -390,16 +390,15 @@ app.get('/player/loadJSON', function (req, res) {
 app.post('/editor/duplicate', function (req, res) {
     console.log("duplicate request received.");
     let story_id = req.body.story_id;
-    console.log("story_id", story_id)
     let path = storyPath(story_id);
     if (path == '404') {
-        console.log("An error occurred while duplicating the story 404" + story_id + ", it doesn't exist");
+        console.log("An error occurred while duplicating the story " + story_id + ", it doesn't exist");
         return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
     }
     let new_id = UNF();
     fs.copyFile(path, unpubpath + new_id, (err) => {
         if (err) {
-            console.log("An error occurred while duplicating the story copy" + story_id);
+            console.log("An error occurred while duplicating the story ",err);
             return res.status(500).send(JSON.stringify(err)).end()
         }
         fs.readFile(unpubpath + new_id + '/' + 'story.json', (err, data) => {

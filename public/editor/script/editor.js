@@ -166,11 +166,26 @@ function saveStory(publish) {
         $("#story_id_p").append(list);
         $("#story_id_p").append("Se vuoi puoi provare ad aggiungerli in un secondo momento.");
       }
+      qr(data.story_id);
       goToSection("final_section");
       $('#success_modal').modal('show');
     }
   });
   }
+}
+
+function qr(id){//'domain/player?story='+id
+  QRCode.toCanvas(document.getElementById('qr_canvas'), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', function (error) {
+  if (error) { 
+    console.error(error)
+  //premi tasto per rigenerare altrimenti il link è...
+  alert("errore nella generazione del qr code, l'url della storia è: https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  }
+  else {
+    console.log('success!');
+    //pulsant per salvare la storia
+  }
+})
 }
 
 function getStory(id) {

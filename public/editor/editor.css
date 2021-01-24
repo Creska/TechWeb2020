@@ -141,7 +141,7 @@ main {
   border-style: none;
 }
 
-#ChooseActivityType {
+#ChooseActivityType, #MainOutcomeWidget {
   display: none;
 }
 

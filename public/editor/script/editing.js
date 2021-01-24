@@ -310,19 +310,21 @@ function goToSection(where) {
 		  $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-title strong" ).eq(CurrentNavStatus.ActivityN).html() );
 		  $( "#EditActivity header h1" ).html( "Attività" );
   
-		  /* sistemazione dei pulsanti */
+		  /* sistemazione pulsanti e widgets */
 		  $( "#ChooseActivityType" ).css( "display", "none" );
+		  $( "#MainOutcomeWidget" ).css( "display", "none" );
+
 		  let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 		  if ( activity.activity_type == "READING" ) {
-			$( "#EditActivity .p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
+			$( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(2n)" ).attr( "disabled", true );
   
 			if ( activity.FINAL )
-			  $( "#EditActivity .p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", true );
+			  $( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(3)" ).attr( "disabled", true );
 			else
-			  $( "#EditActivity .p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", false );
+			  $( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(3)" ).attr( "disabled", false );
 		  }
 		  else {
-			$( "#EditActivity .p-3" ).first().find( "button" ).attr( "disabled", false );
+			$( "#EditActivity .p-3" ).first().find( ".btn-secondary" ).attr( "disabled", false );
 		  }
 	  
 		  //carica la griglia dei paragrafi/immagini/gallerie
@@ -548,7 +550,7 @@ function setActivityType() {
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "ANSWER";
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
-				$( "#EditActivity .p-3" ).first().find( "button:not(:first-child)" ).attr( "disabled", false );
+				$( "#EditActivity .p-3" ).first().find( ".btn-secondary" ).attr( "disabled", false );
 			}
 			break;
 		case "ActivityType1":
@@ -560,8 +562,8 @@ function setActivityType() {
 				}];
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
-				$( "#EditActivity .p-3" ).first().find( "button:nth-child(2)" ).attr( "disabled", true );
-				$( "#EditActivity .p-3" ).first().find( "button:nth-child(3)" ).attr( "disabled", false );
+				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(2n)" ).attr( "disabled", true );
+				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(3)" ).attr( "disabled", false );
 			}
 			break;
 		case "ActivityType2":
@@ -580,41 +582,12 @@ function setActivityType() {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = true;
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
-				$( "#EditActivity .p-3" ).first().find( "button:not(:first-child)" ).attr( "disabled", true );
+				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:not(:first-child)" ).attr( "disabled", true );
 			}
 	}
 
 	$( "#ChooseActivityType" ).fadeOut();
 };
-
-
-  /**
- * Marca l'attività corrente come "finale" o viceversa, a seconda dello stato attuale.
- */
-function setFinalActivity() {
-	let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
-  
-	if ( CurrentStage.FINAL == 0 ) {
-	  change_color_option( "#FinalStageBtn", "btn-secondary", "btn-success" );
-	  $("#FinalStageBtn").next().attr( "disabled", true );
-	  $("#FinalStageBtn").next().next().attr( "disabled", true );
-  
-	  // segna tutte le altre attività come non finali
-	  CurrentWork.quests.forEach( function( q, i ) {
-		q.activities.forEach( function( a, j ) {
-		  a.FINAL = 0;
-		});
-	  });
-  
-	  CurrentStage.FINAL = 1;
-	}
-	else {
-	  change_color_option( "#FinalStageBtn", "btn-success", "btn-secondary" );
-	  $("#FinalStageBtn").next().attr( "disabled", false );
-	  $("#FinalStageBtn").next().next().attr( "disabled", false );
-	  CurrentStage.FINAL = 0;
-	}
-  };
 
 
 /**
@@ -712,13 +685,6 @@ function saveAnswerFieldSettings() {
 			case "QuestionType_Time":
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type = "time";
 		}
-
-		if ( new_type.attr("id") != CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_field.type )
-			CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
-				condition: null,
-				next_activity_id: "",
-				score: null
-			}];
 	}
 	
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].expected_time = $( "#AnswerTimer" ).val() * 60000;

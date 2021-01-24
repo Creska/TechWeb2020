@@ -15,9 +15,9 @@ function openMainOutcomeWidget() {
 
     let questli;
     $.each( CurrentWork.quests, function( q_i, q ) {
-        questli = $( "<li/>" );
-        questli.append( $( "<input type='radio' name='main-questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
-        questli.append( $( "<label/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
+        questli = $( "<li class='form-check'/>" );
+        questli.append( $( "<input type='radio' class='form-check-input' name='main-questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
+        questli.append( $( "<label class='form-check-label'/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
         $( "#main-outcome-questlist" ).append( questli );
     });
 
@@ -27,8 +27,8 @@ function openMainOutcomeWidget() {
         questmap[q.quest_id] = q_i;
     });
 
-    if ( activity.answer_outcome[0].next_activity_id ) {
-        $( "#main-outcome-questlist input[value=" + activity.answer_outcome[0].next_activity_id.substring(0,4) + "]" ).prop( "checked", true );
+    if ( activity.answer_outcome[0].next_quest_id ) {
+        $( "#main-outcome-questlist input[value=" + activity.answer_outcome[0].next_quest_id + "]" ).prop( "checked", true );
     }
 
     loadActivityList();
@@ -57,9 +57,9 @@ function loadActivityList() {
 
     let newli;
     $.each( CurrentWork.quests[questmap[alist.prev().find( "input:checked" ).val()]].activities, function( a_i, a) {
-        newli = $( "<li/>" );
-        newli.append( $( "<input type='radio' name='activitylist'>" ).val( a.activity_id ).attr( "id", a.activity_id ) );
-        newli.append( $( "<label/>" ).attr( "for", a.activity_id ).text( a.activity_id ) );
+        newli = $( "<li class='form-check'/>" );
+        newli.append( $( "<input type='radio' class='form-check-input' name='activitylist'>" ).val( a.activity_id ).attr( "id", a.activity_id ) );
+        newli.append( $( "<label class='form-check-label'/>" ).attr( "for", a.activity_id ).text( a.activity_id ) );
         alist.append( newli );
     });  
 };
@@ -68,6 +68,8 @@ function loadActivityList() {
 function saveMainOutcome() {
     if ( $( "#main-outcome-activitylist input:checked" ).length > 0 ) {
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].score = $( "#main-outcome-score" ).val();
+
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].next_quest_id = $( "#main-outcome-questlist input:checked" ).val();
 
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].next_activity_id = $( "#main-outcome-activitylist input:checked" ).val();
 
@@ -108,12 +110,12 @@ function loadOutcomesSection() {
     });
 
     let outcome_entry;
-    $.each( activity.activity_outcome, function(i, obj) {
-        if ( i > 0 ) {
+    $.each( activity.answer_outcome, function(i, obj) {
+        if ( obj.condition != null ) {
             outcome_entry = $( "<tr/>" );
             outcome_entry.append( $( "<td/>" ).text( obj.condition ) );
             outcome_entry.append( $( "<td/>" ).text( obj.score ) );
-            outcome_entry.append( $( "<td/>" ).text( obj.next_activity_id.substring(0,4) + " (" + questmap[obj.next_activity_id.substring(0,4)].quest_title + ")" ) );
+            outcome_entry.append( $( "<td/>" ).text( obj.next_quest_id + " (" + ( questmap[obj.next_quest_id].quest_title || "" ) + ")" ) );
             outcome_entry.append( $( "<td/>" ).text( obj.next_activity_id ) );
             outcome_entry.append( $( "<td/>" ).html( $( "<button class='btn btn-sm btn-danger' onclick='$(this).parent().parent().remove();'/>" ).html( "<i class='fas fa-minus'></i>" ) ) );
             $( "#OutcomesTable" ).append( outcome_entry );
@@ -131,7 +133,7 @@ function loadOutcomeWidget() {
     $( "#outcome-answerfield" ).remove();
     
     if ( CurrentStage.answer_field.type == "checklist" ) {
-        $( "#AddOutcomeWidget" ).prepend( $( "<ul id='outcome-answerfield'/ul>" ) );
+        $( "#AddOutcomeWidget p" ).after( $( "<ul id='outcome-answerfield' class='border border-light rounded p-3'/ul>" ) );
         
         let newli;
         $.each( CurrentStage.answer_field.options, function(index, value) {
@@ -154,9 +156,10 @@ function loadOutcomeWidget() {
         });
     }
     else {
-        $( "#AddOutcomeWidget" ).prepend( $( "<input/>", 
+        $( "#AddOutcomeWidget p" ).after( $( "<input/>", 
         {
             id: "outcome-answerfield",
+            class: "m-3",
             type: CurrentStage.answer_field.type
         }));
     }
@@ -165,9 +168,9 @@ function loadOutcomeWidget() {
     let questli;
     $( "#outcome-questlist" ).empty();
     $.each( CurrentWork.quests, function( q_i, q ) {
-        questli = $( "<li/>" );
-        questli.append( $( "<input type='radio' name='questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
-        questli.append( $( "<label/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
+        questli = $( "<li class='form-check'/>" );
+        questli.append( $( "<input type='radio' class='form-check-input' name='questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
+        questli.append( $( "<label class='form-check-label'/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
         $( "#outcome-questlist" ).append( questli );
     });
     
@@ -247,9 +250,10 @@ function saveOutcomesSection() {
 
     $.each( $( "#OutcomesTable tr:not(:first-child)" ), function( i, row ) {
         activity.answer_outcome.push({
-            condition: row.children().eq(0).text(),
-            next_activity_id: row.children().eq(3).text(),
-            score: row.children().eq(1).text()
+            condition: $(row).children().eq(0).text(),
+            next_quest_id: $(row).children().eq(2).text().substring(0,4),
+            next_activity_id: $(row).children().eq(3).text(),
+            score: $(row).children().eq(1).text()
         })
     })
 

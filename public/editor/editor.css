@@ -145,7 +145,7 @@ main {
   display: none;
 }
 
-#Access ul, #ChecklistPreview ul, #AddOutcomeWidget ul {
+#Access ul, #ChecklistPreview ul, #AddOutcomeWidget ul, #main-outcome-questlist, #main-outcome-activitylist, #AddOutcomeWidget ul {
   list-style-type: none;
   padding-left: 0;
   margin: auto;
@@ -166,33 +166,29 @@ main {
   display: none;
 }
 
-/*
-
-.OutcomesTable {
+#OutcomesTable {
+  background-color: #666;
   table-layout: fixed;
   width: 100%;
 }
 
-.OutcomesTable tr:not(:last-child) {
+#OutcomesTable tr:not(:last-child) {
   border-bottom-width: thin;
   border-bottom-style: solid;
   border-bottom-color: grey;
 }
 
-.OutcomesTable th, .OutcomesTable td {
-  max-width: 20%;
+#OutcomesTable th, #OutcomesTable td {
   overflow: hidden;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: 10px 0px 10px 0px;
   word-wrap: break-word;
 }
 
-.OutcomesTable th:not(:last-child), .OutcomesTable td:not(:last-child) {
+#OutcomesTable th:not(:last-child), #OutcomesTable td:not(:last-child) {
   border-right-width: thin;
   border-right-style: solid;
   border-color: grey;
 }
-*/
 
 #EditText textarea {
   width: 100%; /* sovrascrive il numero di colonne */

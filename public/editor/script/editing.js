@@ -181,6 +181,7 @@ function save_title( which ) {
 		  right_answer: "",
 		  answer_outcome: [{
 			  condition: null,
+			  next_quest_id: "",
 			  next_activity_id: "",
 			  score: null
 		  }],
@@ -545,6 +546,7 @@ function setActivityType() {
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "ANSWER" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
 					condition: null,
+					next_quest_id: "",
 					next_activity_id: "",
 					score: null
 				}];
@@ -557,6 +559,7 @@ function setActivityType() {
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "READING" ) {
 				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
 					condition: null,
+					next_quest_id: "",
 					next_activity_id: "",
 					score: null
 				}];
@@ -574,6 +577,7 @@ function setActivityType() {
 						a.FINAL = false;
 						a.answer_outcome = [{
 							condition: null,
+							next_quest_id: "",
 							next_activity_id: "",
 							score: null
 						}];

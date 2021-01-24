@@ -389,22 +389,6 @@ function isPublishable( obj ) {
           res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Campo risposta incompleto o assente" );
         }
 
-        /* presenza e correttezza degli outcomes */
-        if ( a.ASK_EVAL < 1 && a.FINAL < 1 ) {
-          if ( a.answer_outcome.length < 1 ) {
-            res.ok = false;
-            res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Outcomes specificati in modo non corretto" );
-          }
-          else {
-            $.each( a.answer_outcome, function(outcome_index, outcome) {
-              if ( outcome.nextquest < 1 && outcome.nextactivity === "" ) {
-                res.ok = false;
-                res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Outcomes specificati in modo non corretto" );
-              }
-            });
-          }
-        }
-
         /* presenza del tempo previsto */
         if ( a.GET_CHRONO && a.expected_time < 60000 ) {
           res.ok = false;

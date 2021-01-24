@@ -1,6 +1,11 @@
 var questmap;
 
 function openMainOutcomeWidget() {
+    if ( $( "#MainOutcomeWidget" ).css( "display" ) != "none" ) {
+        $( "#MainOutcomeWidget" ).fadeOut();
+        return;
+    }
+    
     let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
     $( "#main-outcome-score" ).val( activity.answer_outcome[0].score );
@@ -10,9 +15,9 @@ function openMainOutcomeWidget() {
 
     let questli;
     $.each( CurrentWork.quests, function( q_i, q ) {
-        questli = $( "<li/>" );
-        questli.append( $( "<input type='radio' name='main-questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
-        questli.append( $( "<label/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
+        questli = $( "<li class='form-check'/>" );
+        questli.append( $( "<input type='radio' class='form-check-input' name='main-questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
+        questli.append( $( "<label class='form-check-label'/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
         $( "#main-outcome-questlist" ).append( questli );
     });
 
@@ -22,8 +27,8 @@ function openMainOutcomeWidget() {
         questmap[q.quest_id] = q_i;
     });
 
-    if ( activity.answer_outcome[0].next_activity_id ) {
-        $( "#main-outcome-questlist input[value=" + activity.answer_outcome[0].next_activity_id.substring(0,4) + "]" ).prop( "checked", true );
+    if ( activity.answer_outcome[0].next_quest_id ) {
+        $( "#main-outcome-questlist input[value=" + activity.answer_outcome[0].next_quest_id + "]" ).prop( "checked", true );
     }
 
     loadActivityList();
@@ -52,9 +57,9 @@ function loadActivityList() {
 
     let newli;
     $.each( CurrentWork.quests[questmap[alist.prev().find( "input:checked" ).val()]].activities, function( a_i, a) {
-        newli = $( "<li/>" );
-        newli.append( $( "<input type='radio' name='activitylist'>" ).val( a.activity_id ).attr( "id", a.activity_id ) );
-        newli.append( $( "<label/>" ).attr( "for", a.activity_id ).text( a.activity_id ) );
+        newli = $( "<li class='form-check'/>" );
+        newli.append( $( "<input type='radio' class='form-check-input' name='activitylist'>" ).val( a.activity_id ).attr( "id", a.activity_id ) );
+        newli.append( $( "<label class='form-check-label'/>" ).attr( "for", a.activity_id ).text( a.activity_id ) );
         alist.append( newli );
     });  
 };
@@ -62,6 +67,10 @@ function loadActivityList() {
 
 function saveMainOutcome() {
     if ( $( "#main-outcome-activitylist input:checked" ).length > 0 ) {
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].score = $( "#main-outcome-score" ).val();
+
+        CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].next_quest_id = $( "#main-outcome-questlist input:checked" ).val();
+
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].next_activity_id = $( "#main-outcome-activitylist input:checked" ).val();
 
         $( "#MainOutcomeWidget" ).fadeOut();
@@ -101,12 +110,12 @@ function loadOutcomesSection() {
     });
 
     let outcome_entry;
-    $.each( activity.activity_outcome, function(i, obj) {
-        if ( i > 0 ) {
+    $.each( activity.answer_outcome, function(i, obj) {
+        if ( obj.condition != null ) {
             outcome_entry = $( "<tr/>" );
             outcome_entry.append( $( "<td/>" ).text( obj.condition ) );
             outcome_entry.append( $( "<td/>" ).text( obj.score ) );
-            outcome_entry.append( $( "<td/>" ).text( obj.next_activity_id.substring(0,4) + " (" + questmap[obj.next_activity_id.substring(0,4)].quest_title + ")" ) );
+            outcome_entry.append( $( "<td/>" ).text( obj.next_quest_id + " (" + ( questmap[obj.next_quest_id].quest_title || "" ) + ")" ) );
             outcome_entry.append( $( "<td/>" ).text( obj.next_activity_id ) );
             outcome_entry.append( $( "<td/>" ).html( $( "<button class='btn btn-sm btn-danger' onclick='$(this).parent().parent().remove();'/>" ).html( "<i class='fas fa-minus'></i>" ) ) );
             $( "#OutcomesTable" ).append( outcome_entry );
@@ -118,29 +127,138 @@ function loadOutcomesSection() {
 
 
 function loadOutcomeWidget() {
-    /* costruisce campo risposta */
+    CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
-    /* costruisce lista quest */
-
-    /* costruisce lista attività */
+    /* loading dell'answer field */
+    $( "#outcome-answerfield" ).remove();
+    
+    if ( CurrentStage.answer_field.type == "checklist" ) {
+        $( "#AddOutcomeWidget p" ).after( $( "<ul id='outcome-answerfield' class='border border-light rounded p-3'/ul>" ) );
+        
+        let newli;
+        $.each( CurrentStage.answer_field.options, function(index, value) {
+            newli = $( "<li class='form-check'></li>" );
+            newli.append( $( "<input/>",
+                {
+                    class: "form-check-input",
+                    type: "radio",
+                    name: "radio-checklist",
+                    id: "opt" + index,
+                    value: value
+                }));
+            newli.append( $( "<label/>",
+                {
+                    class: "form-check-label",
+                    for: "opt" + index,
+                    text: value
+                }));
+            $( "#outcome-answerfield" ).append( newli );
+        });
+    }
+    else {
+        $( "#AddOutcomeWidget p" ).after( $( "<input/>", 
+        {
+            id: "outcome-answerfield",
+            class: "m-3",
+            type: CurrentStage.answer_field.type
+        }));
+    }
+    
+    /* loading delle liste di quest e attività */
+    let questli;
+    $( "#outcome-questlist" ).empty();
+    $.each( CurrentWork.quests, function( q_i, q ) {
+        questli = $( "<li class='form-check'/>" );
+        questli.append( $( "<input type='radio' class='form-check-input' name='questlist'>" ).val( q.quest_id ).attr( "id", q.quest_id ) );
+        questli.append( $( "<label class='form-check-label'/>" ).attr( "for", q.quest_id ).text( q.quest_id + " (" + q.quest_title + ")" ) );
+        $( "#outcome-questlist" ).append( questli );
+    });
+    
+        
+    $( "#outcome-activitylist" ).empty();
 };
 
 
-function addOutcome( obj ) {
-    /* ricava risposta */
+function addOutcome() {
+    /* ricava i dati dal widget */
+    let response;
+
+    if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "UL" ) {
+        if ( $( "#outcome-answerfield input:checked" ).length > 0 )
+            response = $( "#outcome-answerfield input:checked" ).val().trim().replace(/(<([^>]+)>)/gi, "");
+        else
+            return;
+    }
+    else if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "INPUT" ) {
+        response = $( "#outcome-answerfield" ).val().trim().replace(/(<([^>]+)>)/gi, "");
+
+        if ( response == null )
+            return;
+    }
+    else {
+        handleError();
+        return;
+    }
+
+    if ( response === "" )
+        return;
+
+    let nextquest, nextactivity;
+    if ( $( "#outcome-questlist input:checked" ).length > 0 )
+        nextquest = $( "#outcome-questlist input:checked" ).val();
+    else
+        return;
+
+    if ( $( "#outcome-activitylist input:checked" ).length > 0 )
+        nextactivity = $( "#outcome-activitylist input:checked" ).val();
+    else
+        return;
 
     /* aggiunge dati alla tabella */
+    newentry = $( "<tr/>" );
+    newentry.append( $( "<td/>" ).text( response ) );
+    newentry.append( $( "<td/>" ).text( $( "#outcome-score" ).val() ) );
+    newentry.append( $( "<td/>" ).text( nextquest ) );
+    newentry.append( $( "<td/>" ).text( nextactivity ) );
+    newentry.append( $( "<td/>" ).html( $( "<button class='btn btn-sm btn-danger' onclick='$(this).parent().parent().remove();'/>" ).html( "<i class='fas fa-minus'></i>" ) ) );
+    $( "#OutcomesTable" ).append( newentry );
 
-    /* resetta widget */
+    resetOutcomeWidget();
+};
+
+
+function resetOutcomeWidget() {
+    if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "UL" )
+        $( "#outcome-answerfield input" ).prop( "checked", false );
+    else if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "INPUT" )
+        $( "#outcome-answerfield" ).val( null );
+    else {
+        handleError();
+        return;
+    }
+
+    $( "#outcome-score" ).val( null );
+    $( "#outcome-questlist input" ).prop( "checked", false );
+    $( "#outcome-activitylist" ).empty();
 };
 
 
 function saveOutcomesSection() {
-    /* toglie tutti gli elementi dall'array di outcome - a parte il primo */
+    let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
-    /* pusha gli elementi */
+    activity.answer_outcome = [activity.answer_outcome[0]];
+
+    $.each( $( "#OutcomesTable tr:not(:first-child)" ), function( i, row ) {
+        activity.answer_outcome.push({
+            condition: $(row).children().eq(0).text(),
+            next_quest_id: $(row).children().eq(2).text().substring(0,4),
+            next_activity_id: $(row).children().eq(3).text(),
+            score: $(row).children().eq(1).text()
+        })
+    })
 
     /* meglio fare una pulizia */
 
+    console.log( activity.answer_outcome); // debugging
     back();
 };

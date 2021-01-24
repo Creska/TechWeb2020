@@ -1,9 +1,6 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Completare rifacimento del sistema di outcomes. RICORDARE:
-        * pulsanti sezione EditActivity
-        * isPublishable
-        * aggiungere next_quest_id negli outcome
+    * Breadcrumbs e titoli delle cards (anche in isPublishable)
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività

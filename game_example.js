@@ -35,6 +35,7 @@ game_example = {
 					answer_outcome: [
 						{
 							condition: "", // possibile risposta - nel main outcome ha valore null
+							next_quest_id: "",
 							next_activity_id: "", // indica l'attività a cui conduce
 							score: null // punteggio relativo a questa specifica attività - va sommato al totale; se è null viene considerato uguale a zero
 						}

@@ -545,18 +545,18 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary rounded" onclick="openActivityTypeWidget();" data-toggle="tooltip" data-placement="left" title="Scegli la tipologia di attività">
         <i class="fas fa-cog"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="bottom" title="Modifica il campo di risposta">
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="top" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="right" title="Modifica collegamento ad attività successiva">
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="top" title="Modifica l'outcome principali">
         <i class="fas fa-road"></i>
       </button>
-      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Modifica la progressione dell'attività">
+      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Aggiungi outcome per risposte specifiche">
         <i class="fas fa-route"></i>
       </button>
     </div>
 
-    <div id="ChooseActivityType" class="p-3">
+    <div id="ChooseActivityType" class="border border-primary rounded m-3 p-3">
       <div class="form-check">
         <input class="form-check-input" type="radio" name="ActivityType" id="ActivityType0">
         <label class="form-check-label" for="ActivityType0">
@@ -578,10 +578,15 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-primary mt-2" onclick="setActivityType();">Salva</button>
     </div>
 
-    <div id="MainOutcomeWidget" class="w-100 p-3">
-      <input type="number" id="main-outcome-score" placeholder="0">
-      <ul id="main-outcome-questlist"></ul>
-      <ul id="main-outcome-activitylist"></ul>
+    <div id="MainOutcomeWidget" class="border border-primary rounded m-3 p-3">
+      <p class="m-3">
+        Outcome principale: inserisci quest e attività successiva (obbligatorie) e punteggio (facoltativo).
+      </p>
+      <input type="number" id="main-outcome-score" class="m-3" placeholder="0">
+      <div class="d-flex justify-content-center">
+        <ul id="main-outcome-questlist" class="border border-light rounded p-3 m-3"></ul>
+        <ul id="main-outcome-activitylist" class="border border-light rounded p-3 m-3"></ul>
+      </div>
       <button class="btn btn-primary mt-2" onclick="saveMainOutcome();">Salva</button>
 
       <script>
@@ -593,8 +598,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
     <div class="text-center rounded info-section m-3">
       <p class="mt-3">Marcando questa attività come finale, un'eventuale altra attività segnata come tale verrà riportata alla tipologia di sola lettura.</p>
-      <p>Eventuali file omonimi caricati verranno contrassegnati con un indice, come già viene fatto dai moderni sistemi operativi.</p>
-      <p class="mt-3">L'inserimento di media comporta l'aumento di dimensione del file della storia. Può quindi essere necessario un breve tempo di attesa prima che il salvataggio sia completo.</p>
+      <p><strong>Attenzione</strong>: quando cambi tipologia di attività, tutti gli outcome salvati (compreso quello principale) verranno cancellati.</p>
+      <p class="mt-3">L'inserimento di media comporta l'aumento di dimensione del file della storia. Può quindi essere necessario un breve tempo di attesa prima che il salvataggio sia completo. Eventuali file omonimi caricati verranno contrassegnati con un indice, come già viene fatto dai moderni sistemi operativi.</p>
     </div>
 
     <div id="q_buttons_div" class="p-3">
@@ -794,9 +799,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
     <div class="alertlist"></div>
 
-    <h4 class="mb-3">Programmazione attività</h4>
-    <table class="w-100 mt-3" id="OutcomesTable">
-      <tr class="mb-2">
+    <h4>Programmazione attività</h4>
+    <table class="w-100 mt-3 mb-5" id="OutcomesTable">
+      <tr>
         <th>Risposta</th>
         <th>Punteggio</th>
       	<th>Quest successiva</th>
@@ -805,13 +810,20 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       </tr>
     </table>
       
-    <h4 class="mt-5">Aggiungi outcome</h4>
-    <div id="AddOutcomeWidget" class="mb-3 mt-5">
-      <input type="number" id="outcome-score" placeholder="0">
-      <ul id="outcome-questlist"></ul>
-      <ul id="outcome-activitylist"></ul>
-      <button class="btn btn-success mt-3" onclick="addOutcome();">Aggiungi</button>
-      <button class="btn btn-danger mt-3" onclick="">boh</button>
+    <h4>Aggiungi outcome</h4>
+    <div id="AddOutcomeWidget" class="border border-primary rounded mt-3 mb-3">
+      <p class="m-3">
+        Outcome specifico: inserisci quest e attività successiva (obbligatorie) e punteggio (facoltativo).
+      </p>
+      <input type="number" class="m-3" id="outcome-score" placeholder="0">
+      <div class="d-flex justify-content-center">
+        <ul id="outcome-questlist" class="border border-light rounded p-3 m-3"></ul>
+        <ul id="outcome-activitylist" class="border border-light rounded p-3 m-3"></ul>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-success mt-3" onclick="addOutcome();">Aggiungi</button>
+        <button class="btn btn-danger mt-3" onclick="resetOutcomeWidget();"><i class="fas fa-undo-alt"></i></button>
+      </div>
     </div>
 
     <div class="p-3 Save-Cancel">

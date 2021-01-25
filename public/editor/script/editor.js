@@ -343,12 +343,12 @@ function isPublishable( obj ) {
   $.each( obj.quests, function(q_index, q) {
     if ( q.quest_title === "" ) {
       res.ok = false;
-      res.errors.push( "Quest n." + q_index + ": Titolo mancante" );
+      res.errors.push( "Quest " + q.quest_id + " - Titolo mancante" );
     }
 
     if ( q.activities.length < 3 ) {
       res.ok = false;
-      res.errors.push( "Quest n." + q_index + ": Numero di attività insufficiente" );
+      res.errors.push( "Quest " + q.quest_id + " - Numero di attività insufficiente" );
     }
 
     /* controlli sulle attività */
@@ -357,7 +357,7 @@ function isPublishable( obj ) {
       /* presenza del testo */
       if ( a.activity_text.length < 1 ) {
         res.ok = false;
-        res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Testo mancante" );
+        res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Testo mancante" );
       }
 
       /* presenza delle descrizioni delle immagini */
@@ -367,7 +367,7 @@ function isPublishable( obj ) {
             $.each( p.content, function(image_index, image) {
               if ( image.alt == "" || image.alt === undefined ) {
                 res.ok = false;
-                res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Mancano alcune descrizioni delle immagini" );
+                res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Mancano alcune descrizioni delle immagini" );
                 return false;
               }
             });
@@ -380,19 +380,19 @@ function isPublishable( obj ) {
         /* presenza del testo della domanda */
         if ( a.answer_field.description === "" ) {
           res.ok = false;
-          res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Testo della domanda mancante" );
+          res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Testo della domanda mancante" );
         }
 
         /* presenza e correttezza del campo risposta */
         if ( a.answer_field.type === "" || ( a.answer_field.type == "checklist" && a.answer_field.options.length < 1 ) ) {
           res.ok = false;
-          res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Campo risposta incompleto o assente" );
+          res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Campo risposta incompleto o assente" );
         }
 
         /* presenza del tempo previsto */
         if ( a.GET_CHRONO && a.expected_time < 60000 ) {
           res.ok = false;
-          res.errors.push( "Quest n." + q_index + ", Attività n." + a_index + ": Tempo previsto non specificato" );
+          res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Tempo previsto non specificato" );
         }
       }
       

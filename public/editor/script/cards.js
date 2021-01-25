@@ -157,11 +157,11 @@ function create_card(titolo,subtitle) {
       $("#NewQuestWidget input").val("");
       titolo = titolo.replace(/(<([^>]+)>)/gi, "").trim();
       if ( titolo == "" )
-        titolo = "<i>QuestSenzaNome" + ( CurrentWork.quests.length - 1 ) + "</i>";
+        titolo = "<i>QuestSenzaNome</i>";
       bg_color = "rgb("+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+")";
       break;
     case "ActivitiesGrid":
-      titolo = "Attività" + ( CurrentWork.quests[CurrentNavStatus.QuestN].activities.length - 1 );
+      titolo = "Attività";
       bg_color = "rgb("+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+","+Math.floor(Math.random() * 256)+")";
       break;
     case "ParagraphsGrid":

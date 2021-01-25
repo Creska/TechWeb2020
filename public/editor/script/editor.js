@@ -498,6 +498,7 @@ function change_navbar(how) {
       $("#delete_nav").css("display","inherit");
       $("#duplicate_nav").css("display","inherit");
       $("#final_button").attr("onclick","goToSection('ChooseStoryToEdit')");
+      $("#qr_div").css("display","none");
       break;   
     case "hide":
       //edit fields shown
@@ -505,6 +506,7 @@ function change_navbar(how) {
       $("#delete_nav").css("display","none");
       $("#duplicate_nav").css("display","none");
       $("#final_button").attr("onclick","goToSection('MainMenu')");
+      $("#qr_div").css("display","inherit");
       break;
   }
 }

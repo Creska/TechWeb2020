@@ -1,6 +1,5 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Breadcrumbs e titoli delle cards (anche in isPublishable)
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività

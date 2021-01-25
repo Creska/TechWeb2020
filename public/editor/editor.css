@@ -24,8 +24,12 @@ body, .cover-container {
   }
 }
 
-.masthead {
+.masthead, #breadcrumbs {
   display: none;
+}
+
+.breadcrumb {
+  background-color: #333;
 }
 
 main {

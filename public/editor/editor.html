@@ -180,6 +180,12 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     </div>
   </header>
 
+  <nav id="breadcrumbs" aria-label="breadcrumb">
+    <ol class="breadcrumb mt-3">
+      <li class="breadcrumb-item" aria-current="page"></li>
+    </ol>
+  </nav>
+
 
   <!-- WIDGET DI PROMPT SALVATAGGIO -->
   <div class="modal fade" id="SavePrompt" tabindex="-1" role="dialog" aria-hidden="true">
@@ -345,7 +351,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCELTA DI MODALITA' DI GIOCO -->
   <main class="inner cover mx-auto EditorSection" id="ChooseGameMode">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Modalità di gioco</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -417,6 +422,9 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-secondary mb-3 mr-2 ml-2 rounded" onclick=back();>Annulla</button>
     </div>
   </main>
+
+
+  <!-- GRAFO -->
   <main role="main" class="inner cover EditorSection" id="Graph">
     <style type="text/css">
       #mynetwork {
@@ -431,10 +439,11 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <i class="fas fa-long-arrow-alt-left fa-2x mr-3 ml-3"></i>
     </button>
   </main>
+
+
   <!-- GESTIONE DEL TITOLO DELLA STORIA E DELL'INSIEME DI QUEST -->
   <main role="main" class="inner cover EditorSection" id="EditStory">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Storia</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -493,7 +502,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI EDITING DELLA QUEST -->
   <main class="inner cover EditorSection" id="EditQuest">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Quest</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -534,7 +542,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI EDITING DELLE ATTIVITA' -->
   <main class="inner cover EditorSection" id="EditActivity">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Attività</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -632,7 +639,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI MODIFICA CAMPO RISPOSTA -->
   <main class="inner cover EditorSection" id="EditAnswerField">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Campo risposta</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -790,7 +796,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA PER LA MODIFICA DELLA PROGRESSIONE DELL'ATTIVITA' -->
   <main class="inner cover EditorSection" id="OutcomesSection">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Sistema di outcomes</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -842,7 +847,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI MODIFICA TESTO -->
   <main class="inner cover EditorSection" id="EditText">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Paragrafo di testo</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -861,7 +865,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI MODIFICA GALLERY -->
   <main class="inner cover EditorSection" id="EditGallery">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Galleria di immagini</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -896,7 +899,6 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- SCHERMATA DI AGGIUNTA VIDEO -->
   <main class="inner cover EditorSection" id="VideoSection">
     <header>
-      <small></small>
       <h1 class="cover-heading SectionTitle">Video</h1>
     </header>
     <p class="lead mb-5 SectionHeader">
@@ -932,6 +934,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
 
   <!-- HELP BUTTON -->
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
+
+  
   <!-- SCHERMATA DEL QRCODE -->
   <main role="main" class="inner cover EditorSection " id="final_section">
     <p id="story_id_p"></p> 

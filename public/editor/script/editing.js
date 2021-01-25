@@ -13,10 +13,7 @@ function save_title( which ) {
 		title = $( '#StoryTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
 		CurrentWork.story_title = title;
   
-		if ( title )
-		  $( "#EditStory header small" ).html( title );
-		else
-		  $( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
+		breadcrumbs();
   
 		change_color_option( "#SaveStoryTitle", "btn-primary", "btn-success" );
 		$( "#SaveStoryTitle" ).text( "Salvato!" );
@@ -24,28 +21,21 @@ function save_title( which ) {
 	  case "quest":
 		if (CurrentNavStatus.QuestN < 0) {
 		  title = $("#NewQuestWidget input").val().trim().replace(/(<([^>]+)>)/gi, "");
-		  if ( title ) {
-			/* un titolo di default è già presente nel nuovo elemento quest
-			quindi viene aggiunto un nuovo titolo solo se l'utente ne ha inserito uno */
-			CurrentWork.quests[CurrentWork.quests.length - 1].quest_title = title;
-		  }
+		  CurrentWork.quests[CurrentWork.quests.length - 1].quest_title = title;
 		}
 		else {
 		  title = $( '#QuestTitleInput' ).val().trim().replace(/(<([^>]+)>)/gi, "");
+
+		  CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
+		  breadcrumbs();
   
-		  // aggiorna il nome della card e il titolo della sezione
-		  if ( title ) {
+		  // aggiorna il nome della card
+		  if ( title )
 			$( "#QuestsGrid .card-title strong" ).eq( CurrentNavStatus.QuestN ).html( title );
-			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + title );
-		  }
-		  else {
-			$( "#QuestsGrid .card-title strong" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
-			$( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + "<em>QuestSenzaNome" + CurrentNavStatus.QuestN + "</em>" );
-		  }
+		  else
+			$( "#QuestsGrid .card-title strong" ).eq( CurrentNavStatus.QuestN ).html( "<em>QuestSenzaNome</em>" );
   
 		  CurrentWork.QuestGrid = $( "#QuestsGrid" ).html();
-  
-		  CurrentWork.quests[CurrentNavStatus.QuestN].quest_title = title;
   
 		  change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
 		  $( "#SaveQuestTitle" ).text( "Salvato!" );
@@ -232,7 +222,6 @@ function back() {
 * @param where
 * Porta alla sezione specificata, facendo tutti i caricamenti necessari
 */
-  
 function goToSection(where) {
 	/* esegue eventuali reset, che non dovrebbero essere necessari
 	mode = "default";
@@ -263,13 +252,11 @@ function goToSection(where) {
 		  before_section = CurrentNavStatus.Section;
 		  break;
 		case "MainMenu":
+			$( "#breadcrumbs" ).fadeOut();
 		  break;
 		case "EditStory":
 		  $('.masthead').fadeIn();
-		  if ( CurrentWork.story_title )
-			$( "#EditStory header small" ).html( CurrentWork.story_title );
-		  else
-			$( "#EditStory header small" ).html( "<em>StoriaSenzaNome</em>" );
+		  $( "#breadcrumbs" ).fadeIn();
   
 		  $( "#ErrorList" ).empty();
 		  $( "#StoryTitleInput" ).val( CurrentWork.story_title );
@@ -279,7 +266,6 @@ function goToSection(where) {
 		  $( "#QuestsGrid" ).html( String(CurrentWork.QuestGrid) );
 		  break;
 		case "ChooseGameMode":
-		  $( "#ChooseGameMode header small" ).html( $( "#EditStory header small" ).html() );
 		  loadGameModeSection();
 		  break;
 		case "EditQuest":
@@ -290,8 +276,6 @@ function goToSection(where) {
 				return;
 			}
 		  }
-  
-		  $( "#EditQuest header small" ).html( $( "#EditStory header small" ).html() + " · " + $( "#EditStory .card-title strong" ).eq(CurrentNavStatus.QuestN).html() );
   
 		  $( "#QuestTitleInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].quest_title );
 		  change_color_option( "#SaveQuestTitle", "btn-primary", "btn-success" );
@@ -307,9 +291,6 @@ function goToSection(where) {
 				return;
 			}
 		  }
-		  
-		  $( "#EditActivity header small" ).html( $( "#EditQuest header small" ).html() + " · " + $( "#EditQuest .card-title strong" ).eq(CurrentNavStatus.ActivityN).html() );
-		  $( "#EditActivity header h1" ).html( "Attività" );
   
 		  /* sistemazione pulsanti e widgets */
 		  $( "#ChooseActivityType" ).css( "display", "none" );
@@ -338,9 +319,6 @@ function goToSection(where) {
 			return;
 		  }
   
-		  // per forza di cose, il titolo di questa e delle successive tre sezioni è uguale a quello di EditActivity
-		  $( "#EditText header small" ).html( $( "#EditActivity header small" ).html() );
-  
 		  $( "#TextParInput" ).val( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content );
 		  break;
 		case "EditGallery":
@@ -349,8 +327,6 @@ function goToSection(where) {
 			handleError();
 			return;
 		  }
-  
-		  $( "#EditGallery header small" ).html( $( "#EditActivity header small" ).html() );
   
 		  loadEditGallerySection();
 		  break;
@@ -361,18 +337,12 @@ function goToSection(where) {
 				return;
 			}
 
-			$( "#VideoSection header small" ).html( $( "#EditActivity header small" ).html() );
-
 			loadVideoSection();
 			break;
 		case "EditAnswerField":
-		  $( "#EditAnswerField header small" ).html( $( "#EditActivity header small" ).html() );
-  
 		  loadEditAnswerFieldSection();
 		  break;
 		case "OutcomesSection":
-			$( "#OutcomesSection header small" ).html( $( "#EditActivity header small" ).html() );
-
 			loadOutcomesSection();
 			break;
 		case "ChooseStoryToEdit":
@@ -388,11 +358,48 @@ function goToSection(where) {
 	  }
 	  
 	  CurrentNavStatus.Section = where;
+	  breadcrumbs();
 	  $("#"+where).fadeIn();
 	  
 	});
 };
-  
+
+
+function breadcrumbs() {
+	switch ( CurrentNavStatus.Section ) {
+		case "EditStory":
+		case "ChooseGameMode":
+			$( "#breadcrumbs ol li:not(:first-child)" ).remove();
+
+			if ( CurrentWork.story_title )
+				$( "#breadcrumbs ol li" ).first().text( CurrentWork.story_title );
+			else
+				$( "#breadcrumbs ol li" ).first().html( "<em>StoriaSenzaNome</em>" );
+			break;
+		case "EditQuest":
+			let quest = CurrentWork.quests[CurrentNavStatus.QuestN]
+			$( "#breadcrumbs ol li:not(:first-child)" ).remove();
+
+			if ( quest.quest_title )
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( quest.quest_title + " - " + quest.quest_id ) );
+			else
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( "<em>QuestSenzaNome</em>" + "&nbsp;- " + quest.quest_id ) );
+			break;
+		case "EditActivity":
+		case "EditAnswerField":
+		case "OutcomesSection":
+			let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+			$( "#breadcrumbs ol li:nth-child(n+3)" ).remove();
+			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "Attività - " + activity.activity_id ) );
+			break;
+		case "EditText":
+		case "EditGallery":
+		case "VideoSection":
+			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "Sezione attività " + CurrentNavStatus.TextPartN ) );
+	}
+};
+
+
 /**
 * Mostra/nasconde la guida
 */

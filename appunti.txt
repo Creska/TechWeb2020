@@ -1,13 +1,16 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
+    * Minor bugs:
+        * è capitato un quest ID di solo due caratteri
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività
         * grafo
         * sistema outcomes
         * qrcode
+    * Aggiungere labels per widget degli outcomes
     * Aggiornare editor CSS - usare ID quest
-    * [WIP] Generazione qrcode
+    * Aggiungere tasti per accedere direttamente ai qrcodes
 * PLAYER
     * Aggiungere video
     * Adattarlo ai nuovi cambiamenti effettuati nell'editor

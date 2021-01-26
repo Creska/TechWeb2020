@@ -226,6 +226,7 @@ function goToSection(where) {
 	/* esegue eventuali reset, che non dovrebbero essere necessari
 	mode = "default";
 	first_selected_stage = "";*/
+
 	switch ( CurrentNavStatus.Section ) {
 	  case "MainMenu":
 		change_navbar("hide");//i'm coming from home so i have to hide extra navbar stuff
@@ -238,12 +239,18 @@ function goToSection(where) {
 	  case "EditActivity":
 		stopAnimation( "#" + CurrentNavStatus.Section + " .CardGrid" );
 	}
+
 	if( where == "EditStory")//make sure error div is not shown, it can't be done after fadeout
 		$("#EditStory_div_error").css("display", "none");
-	if( where == "MainMenu" || where == "final_section" || where == "ChooseStoryToEdit")
-	  $('.masthead').fadeOut();
+	
+	if( where == "MainMenu" || where == "final_section" || where == "ChooseStoryToEdit") {
+		$('.masthead').fadeOut();
+		$( "#breadcrumbs" ).fadeOut();
+	}
+	  
 	/* cambia sezione */
-	$("#"+CurrentNavStatus.Section).fadeOut( function() {
+
+	$( "#" + CurrentNavStatus.Section ).fadeOut( function() {
 	  change_color_option(".SwapBtn", "btn-primary", "btn-secondary");
 	  change_color_option(".CancelBtn", "btn-primary", "btn-secondary");
   

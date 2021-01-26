@@ -555,10 +555,10 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="top" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="top" title="Modifica l'outcome principali">
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="top" title="Aggiungi/modifica l'outcome principale">
         <i class="fas fa-road"></i>
       </button>
-      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Aggiungi outcome per risposte specifiche">
+      <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Aggiungi outcomes per risposte specifiche">
         <i class="fas fa-route"></i>
       </button>
     </div>
@@ -594,7 +594,8 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         <ul id="main-outcome-questlist" class="border border-light rounded p-3 m-3"></ul>
         <ul id="main-outcome-activitylist" class="border border-light rounded p-3 m-3"></ul>
       </div>
-      <button class="btn btn-primary mt-2" onclick="saveMainOutcome();">Salva</button>
+      <button class="btn btn-primary mr-2 mt-2" onclick="saveMainOutcome();">Salva</button>
+      <button class="btn btn-danger mt-2" onclick="deleteMainOutcome();">Rimuovi outcome principale</button>
 
       <script>
         $( "#main-outcome-questlist" ).on( "change", "input", function() {
@@ -826,7 +827,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
         <ul id="outcome-activitylist" class="border border-light rounded p-3 m-3"></ul>
       </div>
       <div class="m-3">
-        <button class="btn btn-success mt-3" onclick="addOutcome();">Aggiungi</button>
+        <button class="btn btn-success mr-2 mt-3" onclick="addOutcome();">Aggiungi</button>
         <button class="btn btn-danger mt-3" onclick="resetOutcomeWidget();"><i class="fas fa-undo-alt"></i></button>
       </div>
     </div>

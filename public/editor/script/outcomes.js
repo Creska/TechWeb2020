@@ -78,6 +78,18 @@ function saveMainOutcome() {
 };
 
 
+function deleteMainOutcome() {
+    CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0] = {
+        condition: null,
+        next_quest_id: "",
+        next_activity_id: "",
+        score: null
+    };
+
+    $( "#MainOutcomeWidget" ).fadeOut();
+};
+
+
 function loadOutcomesSection() {
     let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
@@ -123,6 +135,7 @@ function loadOutcomesSection() {
     });
 
     loadOutcomeWidget();
+    resetOutcomeWidget();
 };
 
 
@@ -216,7 +229,7 @@ function addOutcome() {
 
     /* aggiunge dati alla tabella */
     newentry = $( "<tr/>" );
-    newentry.append( $( "<td/>" ).text( response ) );
+    newentry.append( $( "<td/>" ).text( response.toLowerCase() ) );
     newentry.append( $( "<td/>" ).text( $( "#outcome-score" ).val() ) );
     newentry.append( $( "<td/>" ).text( nextquest ) );
     newentry.append( $( "<td/>" ).text( nextactivity ) );

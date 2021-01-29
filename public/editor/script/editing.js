@@ -168,7 +168,6 @@ function save_title( which ) {
 		type: "",
 		options: []
 	  },
-		  right_answer: "",
 		  answer_outcome: [{
 			  condition: null,
 			  next_quest_id: "",
@@ -388,21 +387,21 @@ function breadcrumbs() {
 			$( "#breadcrumbs ol li:not(:first-child)" ).remove();
 
 			if ( quest.quest_title )
-				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( quest.quest_title + " - " + quest.quest_id ) );
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( quest.quest_title + " - (" + quest.quest_id + ")" ) );
 			else
-				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( "<em>QuestSenzaNome</em>" + "&nbsp;- " + quest.quest_id ) );
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( "<em>QuestSenzaNome</em>" + "&nbsp;- (" + quest.quest_id + ")" ) );
 			break;
 		case "EditActivity":
 		case "EditAnswerField":
 		case "OutcomesSection":
 			let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 			$( "#breadcrumbs ol li:nth-child(n+3)" ).remove();
-			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "Attività - " + activity.activity_id ) );
+			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "Attività " + activity.activity_id ) );
 			break;
 		case "EditText":
 		case "EditGallery":
 		case "VideoSection":
-			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "Sezione attività " + CurrentNavStatus.TextPartN ) );
+			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "parte " + CurrentNavStatus.TextPartN ) );
 	}
 };
 
@@ -647,7 +646,7 @@ function loadEditAnswerFieldSection() {
 			$( "#ChecklistPreview" ).toggle(false);
 	}
 
-	$("InsertAnswerFieldDescription").val( activity.answer_field.description );
+	$( "#InsertAnswerFieldDescription" ).val( activity.answer_field.description );
 
 	$( "#AnswerTimer" ).val( activity.expected_time / 60000 );
 	$( "#AnswerScore" ).val( activity.answer_score );

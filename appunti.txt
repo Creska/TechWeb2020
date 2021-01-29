@@ -1,7 +1,6 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-        * è capitato un quest ID di solo due caratteri
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività

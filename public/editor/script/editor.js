@@ -346,7 +346,7 @@ function isPublishable( obj ) {
       res.errors.push( "Quest " + q.quest_id + " - Titolo mancante" );
     }
 
-    if ( q.activities.length < 3 ) {
+    if ( q.activities.length < 1 ) {
       res.ok = false;
       res.errors.push( "Quest " + q.quest_id + " - Numero di attività insufficiente" );
     }

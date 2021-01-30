@@ -97,7 +97,7 @@ function validate_css() {
 
 
 /**
- * Salva il CSS scritto, inviandolo all'editor principale tramite canale apposito
+ * Salva il CSS scritto, inviandolo all'editor principale tramite canale apposito. Chiude la finestra al termine dell'operazione
  */
 function saveCSS() {
     validate_css();
@@ -109,8 +109,10 @@ function saveCSS() {
             valid: !( $( "#csserror .validation-error" ).length )
         }
     }, "*");
-    $('#saveicon').toggle(true);
-}
+    
+    window.onbeforeunload = null;
+    window.close();
+};
 
 
 var test_stylesheet = `@charset "UTF-8";

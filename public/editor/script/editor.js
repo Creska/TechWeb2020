@@ -89,7 +89,7 @@ cazzatine varie
   -Make code polite and modular
   */
 function start_saving() {
-  close_css_window();
+  // close_css_window(); --> l'ho spostato nel chiamante navbar()
   CurrentWork.publishable = isPublishable(CurrentWork); 
   if(CurrentWork.publishable.ok)
     $("#publish_directly").modal("show");
@@ -435,83 +435,4 @@ function set_default_story_settings() {
   first_selected_card_index = -1;
   selected_card = "";
   CardClickDisabled = false;
-  b = [0, 0, 0, 0, 0, 0, 0];//this feels outdated
-}
-/* --------------------- WIP --------------------------- */
-function MainMenu( action, is_new ) {
-  switch ( action ) {
-    case "STORY":
-      set_default_story_settings();
-      if( is_new )
-        initStory();
-      goToSection('EditStory');
-      break;
-    case "CHOOSESTORY":
-      /* DA FINIRE */
-      goToSection('ChooseStoryToEdit');
-      break;
-    case "EXPLORER":
-      /* DA FINIRE */
-      goToSection('Explorer');
-      break;
-  }
 };
-
-
-
-function Navbar( option ) {
-  switch ( option ) {
-    case "Graph":
-      if(CurrentNavStatus.Section != "Graph"){
-        create_graph();
-        goToSection("Graph");
-      }
-      break;
-    case "Save":
-      start_saving();
-      break;
-    case "CSSEditor":
-      CSS_Editor_Window = window.open( "../css_editor/css_editor.html", "tab" );
-      break;
-    case "Preview":
-      /* TODO - interfacciare col json */
-      Preview_Window = window.open( "../player/player.html", "tab" );
-      break;
-    case "Home":
-      $( "#SavePrompt" ).modal( "toggle" );
-      break;
-    case "ChooseStoryToEdit":
-      $( "#back_modal" ).modal( "toggle" );
-      break;
-  }
-
-  //$( "#PromptSave" ).modal("show");
-
-  //$( "#PromptSave .button[data-dismiss=modal]" ).on( "click",  function() {})
-}
-
-function change_navbar(how) {
-  switch (how) {
-    case "show":
-      //edit fields noned
-      $("#back_nav").css("display","inherit");
-      $("#delete_nav").css("display","inherit");
-      $("#duplicate_nav").css("display","inherit");
-      $("#final_button").attr("onclick","goToSection('ChooseStoryToEdit')");
-      $("#qr_div").css("display","none");
-      break;   
-    case "hide":
-      //edit fields shown
-      $("#back_nav").css("display","none");
-      $("#delete_nav").css("display","none");
-      $("#duplicate_nav").css("display","none");
-      $("#final_button").attr("onclick","goToSection('MainMenu')");
-      $("#qr_div").css("display","inherit");
-      break;
-  }
-}
-
-function close_css_window() {
-  if ( CSS_Editor_Window )
-    CSS_Editor_Window.close();
-}

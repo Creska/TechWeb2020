@@ -12,6 +12,7 @@
   <script src="script/editor.js"></script>
   <script src="animations.js"></script>
   <script src="script/editing.js"></script>
+  <script src="script/navigation.js"></script>
   <script src="script/cards.js"></script>
   <script src="script/outcomes.js"></script>
   <script src="script/qrcode.min.js"></script>
@@ -32,10 +33,13 @@
 
         switch ( e.data.event_type ) {
           case "ready":
-            CSS_Editor_Window.postMessage( CSSdata.sheet, "*" );
+            CSS_Editor_Window.postMessage({
+              event_type: "load",
+              content: CSSdata.sheet }, "*" );
             break;
           case "save":
             CSSdata = e.data.content;
+            CSS_Editor_Window = null;
             break;
         }
       });
@@ -94,7 +98,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <div class="modal fade" id="success_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered"  role="document">
       <div class="modal-content" style="background-color: transparent; border: none;"> 
-        <img " src="https://media.tenor.com/images/3bbce2cb1273c684b61268ea1af472e3/tenor.gif" />                
+        <img src="https://media.tenor.com/images/3bbce2cb1273c684b61268ea1af472e3/tenor.gif" />                
         <div id="success_text" class="modal-body" >
         L'operazione è riuscita!
           <div id="success_id_text" style="display:none" ></div>
@@ -221,7 +225,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
           <p>Se torni alla griglia delle storie, perderai tutte le modifiche non salvate. Vuoi procedere comunque?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">Vai alla Home</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');close_css_window(); goToSection('ChooseStoryToEdit');">Vai alla lista di storie</button>
           <button type="button" class="btn btn-secondary" onclick="$('#back_modal').modal('hide');">Rimani</button>
         </div>
       </div>
@@ -949,14 +953,15 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     <div id="qr_success" >
       <canvas id="qr_canvas"></canvas><br>
       <a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download" download><i class="fa fa-download"></i></a>
-    </div></div>
-    <button class="btn btn-lg btn-primary" id="final_button" >Clicca per proseguire</button>
+    </div>
+    <button class="btn btn-lg btn-primary" id="final_button" onclick="goToSection('ChooseStoryToEdit');">Clicca per proseguire</button>
   </main>
 <script>var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
       var dataURL = document.getElementById('qr_canvas').toDataURL('image/png');
       button.href = dataURL;
   });</script>
+
 
   <!-- SCHERMATA DI SCELTA STORIA -->
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">

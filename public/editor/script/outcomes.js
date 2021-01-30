@@ -127,7 +127,7 @@ function loadOutcomesSection() {
             outcome_entry = $( "<tr/>" );
             outcome_entry.append( $( "<td/>" ).text( obj.condition ) );
             outcome_entry.append( $( "<td/>" ).text( obj.score ) );
-            outcome_entry.append( $( "<td/>" ).text( obj.next_quest_id + " (" + ( questmap[obj.next_quest_id].quest_title || "" ) + ")" ) );
+            outcome_entry.append( $( "<td/>" ).text( obj.next_quest_id ) );
             outcome_entry.append( $( "<td/>" ).text( obj.next_activity_id ) );
             outcome_entry.append( $( "<td/>" ).html( $( "<button class='btn btn-sm btn-danger' onclick='$(this).parent().parent().remove();'/>" ).html( "<i class='fas fa-minus'></i>" ) ) );
             $( "#OutcomesTable" ).append( outcome_entry );
@@ -264,7 +264,7 @@ function saveOutcomesSection() {
     $.each( $( "#OutcomesTable tr:not(:first-child)" ), function( i, row ) {
         activity.answer_outcome.push({
             condition: $(row).children().eq(0).text(),
-            next_quest_id: $(row).children().eq(2).text().substring(0,4),
+            next_quest_id: $(row).children().eq(2).text(),
             next_activity_id: $(row).children().eq(3).text(),
             score: $(row).children().eq(1).text()
         })

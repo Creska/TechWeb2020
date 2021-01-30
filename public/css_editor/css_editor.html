@@ -42,23 +42,28 @@
                     return;
                 }*/
 
-                console.log(e.data); // debugging
+                if ( e.data.event_type == "load" ) {
+                    console.log(e.data); // debugging
 
-                $("#css-editor").empty();
-                css_editor = CodeMirror(document.querySelector('#css-editor'), {
-                    lineNumbers: true,
-                    tabSize: 50,
-                    value: e.data,
-                    theme: 'monokai',
-                    mode: 'css',
-                    gutters: ["CodeMirror-lint-markers"],
-                    lint: true
-                });
+                    $("#css-editor").empty();
+                    css_editor = CodeMirror(document.querySelector('#css-editor'), {
+                        lineNumbers: true,
+                        tabSize: 50,
+                        value: e.data.content,
+                        theme: 'monokai',
+                        mode: 'css',
+                        gutters: ["CodeMirror-lint-markers"],
+                        lint: true
+                    });
 
-                // width and height manip
-                css_editor.setSize(null, "auto");
+                    // width and height manip
+                    css_editor.setSize(null, "auto");
 
-                validate_css();
+                    validate_css();
+                }
+                else if ( e.data.event_type == "close" ) {
+                    saveCSS();
+                }
             });
         };
 

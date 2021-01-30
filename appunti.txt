@@ -1,7 +1,6 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-        * All'apertura di una storia il CurrentWork si aggiorna male
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività
@@ -11,6 +10,7 @@ BUG E PROBLEMI DA CORREGGERE
     * Aggiungere labels per widget degli outcomes
     * Aggiornare editor CSS - usare ID quest
     * Aggiungere tasti per accedere direttamente ai qrcodes
+    * Apertura della preview
 * PLAYER
     * Aggiungere video
     * Adattarlo ai nuovi cambiamenti effettuati nell'editor
@@ -25,6 +25,17 @@ BUG E PROBLEMI DA CORREGGERE
     * [WAITING] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * STORIE DI PROVA
     * Completare
+
+APPUNTI SU NAV
+* schema:
+    --> MainMenu: (PROMPT) disattivare navbar e breadcrumbs
+    --> ChooseStoryToEdit: (PROMPT) disattivare navbar e breadcrumbs; fare getstories
+    --> EditStory: se la storia è nuova, disattivare i tre buttons della navbar e fare initStory; altrimenti attivare i buttons e caricare il CurrentWork giusto; attivare navbar e breadcrumbs
+    --> sezioni di editing: fermare animazioni cards
+    --> Explorer: disattivare navbar e breadcrumbs; fare appositi caricamenti
+    --> final_section: (SALVARE CSS) disattivare navbar e breadcrumbs
+    RESET da fare sempre:
+        * gli stessi di set_default_story_settings
 
 APPUNTI su roba da fare:
 * al salvataggio bisogna inviare un array di oggetti. per ogni file un oggetto: {namestring, is_story_json, buffer}

@@ -1,6 +1,7 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
+        * All'apertura di una storia il CurrentWork si aggiorna male
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività

@@ -378,18 +378,18 @@ function breadcrumbs() {
 			$( "#breadcrumbs ol li:not(:first-child)" ).remove();
 
 			if ( CurrentWork.story_title )
-				$( "#breadcrumbs ol li" ).first().text( CurrentWork.story_title );
+				$( "#breadcrumbs ol li" ).first().html( CurrentWork.story_title + "&nbsp;" + "(" + CurrentWork.story_ID + ")" );
 			else
-				$( "#breadcrumbs ol li" ).first().html( "<em>StoriaSenzaNome</em>" );
+				$( "#breadcrumbs ol li" ).first().html( "<em>StoriaSenzaNome</em>" + "&nbsp;" + "(" + CurrentWork.story_ID + ")" );
 			break;
 		case "EditQuest":
 			let quest = CurrentWork.quests[CurrentNavStatus.QuestN]
 			$( "#breadcrumbs ol li:not(:first-child)" ).remove();
 
 			if ( quest.quest_title )
-				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( quest.quest_title + " - (" + quest.quest_id + ")" ) );
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( quest.quest_title + "&nbsp;" + "(" + quest.quest_id + ")" ) );
 			else
-				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( "<em>QuestSenzaNome</em>" + "&nbsp;- (" + quest.quest_id + ")" ) );
+				$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).html( "<em>QuestSenzaNome</em>" + "&nbsp;" + "(" + quest.quest_id + ")" ) );
 			break;
 		case "EditActivity":
 		case "EditAnswerField":

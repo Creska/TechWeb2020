@@ -118,13 +118,13 @@ var storia11_14 = {
                             content: `
                                 Il movente del colpo sembrerebbe essere a tutti gli effetti un tentativo di impossessarsi delle opere appartenute ad uno degli artisti. 
                                 E dietro tutto questo dovrebbe esserci un discendente dell’autore, che parla addirittura di ingiustizie subite da esso. 
-                                L’analisi dei video ti porta a stilare una lista dei probabili autori bersaglio del furto. 
+                                L’analisi dei video ti porta a stilare una lista dei probabili autori bersaglio del furto. Precisamente, i quattro nomi sono: Leonardo da Vinci, Raffaello, Caravaggio e Sandro Botticelli.
                                 Decidi brevemente di ripassare quel poco che sai sul vero nome di battesimo di essi. `
                         }
                     ],
                     activity_type: 'ANSWER',
                     answer_field: {
-                        description: "Quanti autori, di quelli citati in precedenza, sono conosciuto con un soprannome o con uno pseudonimo?",
+                        description: "Quanti autori, di quelli citati in precedenza, sono conosciuti con un soprannome o con uno pseudonimo?",
                         type: "number",
                         options: []
                     },
@@ -369,7 +369,7 @@ var storia11_14 = {
                 {
                     activity_text:[{
                         type: "text",
-                        content:`Decidi quindi di prendere un PC e iniziare una ricerca su internet perché sei sicuro di avere una pista interessante.`
+                        content:`Continuando a leggere il pannello, scopri che questo particolare dipinto fu commissionato all’artista proprio per decorare una chiesa, nel momento in cui il Caravaggio abitava a Roma. È quindi ovvio pensare allo sdegno che l’opera causò alla sua rivelazione, avvenuta presumibilmente nel 1600. Nel Medioevo le figure religiose erano molto spesso protagoniste di opere d’arte, ma conservavano comunque un aspetto elegante e divino. L’immagine ha ovviamente fatto scalpore per l’ambientazione che rasentava la blasfemia. Questo evento, unito alla reputazione che la gente aveva di Caravaggio, un assiduo frequentatore di locali malfamati, fece sicuramente in modo che egli venisse mal visto in città. Decidi quindi di prendere un PC e iniziare una ricerca su internet perché sei sicuro di avere una pista interessante.`
                     },
                     {
                         type: "text",
@@ -438,8 +438,12 @@ var storia11_14 = {
                         type:"text",
                         content: `
                             Nella città campana viene tuttavia raggiunto dai sicari e ferito gravemente al volto. 
-                            È il 1910 e l’artista, seppur distrutto, continua a lavorare ad una grande quantità di opere. 
+                            È il 1610 e l’artista, seppur distrutto, continua a lavorare ad una grande quantità di opere. 
                             In molte di queste è tuttavia riscontrabile un importante dettaglio.`
+                    },
+                    {
+                        type: "gallery",
+                        content: ['dipinti raffiguranti decapitazioni, completati dopo il 1609']
                     }],
                     activity_type: 'ANSWER',
                     answer_field: {
@@ -468,14 +472,9 @@ var storia11_14 = {
                     activity_text:[{
                         type:"text",
                         content: `
-                            Molte di queste opere, tra cui la famosa “Medusa” esposta proprio qui agli Uffizi, presentano esplicite scene di decapitazione. 
+                            Molte di queste opere presentano esplicite scene di decapitazione. 
                             È quindi chiaro come la condanna a morte abbia terribilmente lasciato un segno nell’anima dell’artista, facendolo vivere nella paura e nello sconforto. 
                             Questa deduzione ti fa comprendere che, molto probabilmente, la pista che stai seguendo è quella giusta.`
-                    }, 
-                    {
-                        type: "gallery",
-                        content: ['<img style="padding-bottom: 15px;" src="../images/medusa.jpg" alt="La foto mostra la opera "Medusa"">', 
-                                  '<img style="padding-bottom: 15px;" src="../images/analisi_medusa.jpg" alt="La foto mostra il terrore nella opera "Medusa"">']
                     }],
                     activity_type: 'READING',
                     answer_field: {},

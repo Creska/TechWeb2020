@@ -1,128 +1,130 @@
-Museo egizi (fascia di età: 7-10 anni) - CLASSE
-Quest0 - Prologo
+### Museo egizi (fascia di età: 7-10 anni) - CLASSE
+
+## Quest 0
 Fate parte di un piccolo gruppo di giornalisti inviati al Museo Egizio di Torino per documentare la celebrazione dei 200 anni dall’apertura. Per l’occasione, il direttore del museo ha annunciato alcuni festeggiamenti speciali, e molti turisi sono arrivati all’interno dell’edificio. Inoltre, da quel che avete capito, sarà mostrata per la prima volta al pubblico una mummia ritrovata in tempi recenti.
 Per iniziare a scrivere la cronaca della giornata, decidete di partire proprio dalla classica storia delle mummie.
 [consiglio: leggere i cartelli] Domanda aperta: cosa sono le mummie?
-Quest1
-Attività 0
+
+## Quest1
+# Attività 0
 Finalmente entrate in una delle sale più importanti del museo, quella delle mummie e dei sarcofaghi. I sarcofaghi sono una delle caratteristiche più famose della cultura egizia. Questi artefatti erano fabbricati in legno, terracotta o pietra ed erano decorati con grandi pitture. Il motivo per cui venivano costruiti i sarcofaghi era quello di dare alla salma una sorta di armatura elegante con cui poteva presentarsi nell’aldilà.
-Attività 1
+# Attività 1
 Il processo di mummificazione è molto lungo. Il corpo del defunto viene portato a dei sacerdoti esperti che lo preparano per il funerale. Una delle cose più complesse della preparazione è la rimozione degli organi interni, che sono poi inseriti in alcuni vasi detti “canopi”. Tutti quelli più importanti vengono rimossi: polmoni, cervello, fegato, ecc.
 [domanda]: L’unico organo che viene lasciato è il cuore. Riesci a dire il perché ?
-Attività 2
+# Attività 2
 Il cuore veniva lasciato all’interno del corpo per un importante motivo. Al suo arrivo nell’aldilà, il defunto veniva giudicato da Osiride, il dio del regno dei morti. I giudici valutavano la bontà del defunto controllando il peso dell’anima. Se l’anima risultava più pesante di una piuma, l’uomo sarebbe stato divorato da un mostro. Se invece era più leggera, il defunto poteva procedere nel paradiso. Nell’antichità, come anche oggi, l’anima era rappresentata dal cuore. Ecco quindi il perché questo organo veniva lasciato all’interno del corpo.
-Quest 2
-Attività 0
+
+## Quest 2
+# Attività 0
 Molte persone sono radunate in un particolare punto di una delle sale dedicate alle mummie. Riuscite a trovare un po’ di spazio per poter vedere qual è l’attrazione. Scoprite che il bersaglio di tutti i curiosi è proprio la teca della nuova mummia. Accanto alla teca c’è un cartello con una grande foto del ritrovamento. Il corpo sembra essere stato conservato benissimo, e infatti appare grande come una persona normale. Sotto alla foto, c’è scritto che la mummia è stata trovata in una importante ricerca, avvenuta tra le rovine della città che un tempo si chiamava Babilonia. Il testo dice anche che questa spedizione archeologica fa parte di uno speciale progetto portato avanti in Mesopotamia. Il testo vi lascia perplessi, come si ci fosse qualcosa di impreciso. Riesci a dire di cosa si tratta?
     • Babilonia non si trovava in Mesopotamia - 0 punti
     • I regni degli antichi egizi non si espansero fino in Mesopotamia - 5 punti
-Attività 1
+# Attività 1
 Il testo del cartello era piuttosto strano. La civiltà egizia infatti non ha mai vissuto in Mesopotamia. Questa regione dell’Asia era stata popolata da altre comunità, come quella dei Sumeri. Ed è quindi impossibile che una persona, così importante da essere mummificata, abbia avuto la sua tomba a Babilonia. Inoltre, in quelle regioni non sono mai state trovate le rovine delle tipiche piramidi egiziane. Decidete quindi, appena possibile, di fare qualche domanda al direttore del museo.
-Quest 3
-Attività 0
+
+## Quest 3
+# Attività 0
 Si sentono dei rumori improvvisi provenire dalla teca della nuova mummia arrivata al museo. Di sfuggita, riuscite a vedere la mummia che, con strani movimenti, apre la teca e spinge via gli spettatori vicini. Decidete di inseguirla, anche se siete piuttosto stupiti da ciò che sta accadendo. È possibile che una mummia prenda vita?
     • Assolutamente impossibile - 15 pti
     • E’ possibile, ma solamente in casi veramente particolari e improbabili - 0 pti
-Attività 1 – solo per chi ha sbagliato la precedente
+# Attività 1 – solo per chi ha sbagliato la precedente
 Lo strano personaggio è molto veloce a correre e faticate a stargli dietro. Mentre cercate di farvi strada tra tutte le persone che non capiscono cosa sta succedendo, iniziate a farvi alcune domande. Siete certi che nessuno abbia imitato quella che tutti pensavano fosse una mummia?
     • Sì - 0 pti
     • No - 3 pti
-Attività 2
+# Attività 2
 Arrivati verso l’uscita del museo, la mummia schizza fuori dalle porte e sale sul sedile posteriore di una macchina. Il veicolo, appena accolto lo strano passeggero, parte a gran velocità, seminandovi. Nel frattempo, i membri del personale del museo cercano di calmare la situazione e dicono ai visitatori che possono continuare la loro visita, e che penseranno loro a indagare. Dopo pochi secondi vi raggiunge il direttore del museo, che vi chiede cosa stia succedendo. Appena saputa la notizia, l’uomo rimane incredulo e dice “Avverto i miei colleghi e cercheremo di fare qualcosa.”. Avete notato qualcosa di strano nel comportamento del direttore e dei gestori del museo?
 -testo
-Quest 4
-Attività 0
+
+## Quest 4
+# Attività 0
 In una grande sala sono esposte alcune delle attrazioni più famose delle onoranze funebri: i sarcofaghi. Queste speciali bare erano dipinte e decorate in modo estremamente elegante. Avevano una forma regale, raffigurante il defunto con due scettri nelle mani. Sulla testa era raffigurato un grosso copricapo. In alcuni casi particolari, la mummia non era posta dentro un solo sarcofago, ma dentro una serie di due o più sarcofaghi. Questo veniva fatto per garantire una maggiore protezione al defunto.
-Attività 1
+# Attività 1
 Ciò che notate subito è il fatto che tutti i sarcofaghi sembrano piuttosto bassi rispetto a voi. Mettendovi nei panni di un qualsiasi defunto, non avreste mai avuto spazio per entrare nella bara. Questo quindi vi fa pensare a due motivi:
     • Gli egizi erano normalmente più bassi rispetto all’uomo moderno - 15 pti
     • La rimozione degli organi faceva sì che il corpo perdesse volume, e quindi diventasse più basso - 0 pti
-Attività 2
+# Attività 2
 Su un pannello leggete che nella prima fase del periodo dinastico (2925-2575 a.C.), l’altezza media degli egizi era di 161cm. Erano quindi un po’ più bassi rispetto all’uomo moderno. E questo spiega il perché i sarcofaghi sembrano essere troppo bassi rispetto alla vostra altezza.
 
-Quest 5
-Attività 0
+## Quest 5
+# Attività 0
 Finalmente riuscite ad incontrare il direttore del museo. Non ha un aspetto tranquillo, ma non sembra neanche preoccupato. Vi siete fatti alcune idee sull’accaduto e decidete quindi di dire la vostra su quanto appena successo. - testo
-Attività 1 – solo per chi ha dato una risposta troppo corta alla prima attività
+# Attività 1 – solo per chi ha dato una risposta troppo corta alla prima attività
 I vostri dubbi sono piuttosto concreti. Quella mummia non era una vera mummia, ma probabilmente un uomo travestito. Ma quale di questi è stato il motivo principale che ve lo ha fatto capire?
     • E’ impossibile che si siano conservati tutti e quattro gli arti. Una situazione del genere è rara - 0 pti
     • Una vera mummia non conserva polmoni, cervello ed altri organi vitali - 15 pti
     • Il cartello ed i suoi errori potrebbero essere collegati a tutta questa faccenda - 10 pti
     • La mummia sembrava troppo alta - 15 pti
-Attività 2
+# Attività 2
 Il direttore del museo sorride e si mette a ridere. Si congratula con voi per essere riusciti a capire che il tutto si trattasse di uno scherzo. E annuncia: “Per i festeggiamenti avevo promesso delle sorprese speciali. E quindi ho deciso di organizzare questa sorpresa, facendo credere a tutti per un istante che una mummia prendesse vita. Ovviamente quella non era una vera mummia, ma un attore travestito. Questa scena non servirà solo per celebrare il nostro importante anniversario, ma servirà anche a farci pubblicità!”.
 La cosa è piuttosto comoda per voi, e già vi immaginate i titoli da dare ai racconti che scriverete. Il giorno dopo, in tante edicole sarebbero comparsi giornali che in copertina recheranno la notizia di una mummia che prende vita.
 
 ----------------------
 
-Museo d’arte (fascia di età: 11 – 14 anni)
-Quest 0 – L’inizio
-Attività 0
+### Museo d’arte (fascia di età: 11 – 14 anni)
+
+## Quest 0
+# Attività 0
 Sei un investigatore dei servizi segreti italiani, famoso per le tue indagini che, seppur molto particolari, portano velocemente ad una soluzione. In questo periodo però sei tranquillo perché è periodo di ferie e ti trovi in viaggio, più precisamente a Firenze. Alle 4:00 di mattina, mentre stai dormendo in albergo, arriva però una chiamata d’urgenza. Il tuo maggiore ti chiede un aiuto eccezionale e ti manda alla Galleria degli Uffizi, che, pochi minuti prima, ha subito un grosso tentativo di furto.
 La Galleria degli Uffizi è un grande palazzo di proprietà dello Stato Italiano. Ospita un elevato numero di pezzi d’arte di grandissima importanza. Le più famose sono certamente le pitture, tra cui opere di Leonardo Da Vinci, Botticelli e Piero Della Francesca.
 Sai qualcosa di questi artisti? - domanda aperta
-Attività 1
+# Attività 1
 Appena arrivato sul posto rimani stupito perché la situazione sembra molto più grave del previsto. Oltre ad automobili dei carabinieri sono infatti presenti anche delle ambulanze. I militari ed il personale del museo ti accolgono rigraziandoti e iniziano subito a spiegarti nel dettaglio l’accaduto. Il colpo non è andato a segno ma le conseguenze sono gravi, dato che quattro guardie sono state uccise, a quanto pare grazie all’uso di armi silenziate. Come mostrano le telecamere di sorveglianza, il gruppo si muoveva in modo astuto e pianificato per poi, all’improvviso, optare per la ritirata. Forse a causa di qualcosa andato storto nel piano, i criminali hanno preferito salvare la pelle e dileguarsi nella notte. La parte più assurda di tutta la faccenda però è il messaggio mail arrivato sui computer del museo mezz’ora dopo la fuga.
 “La storica vendetta non è purtroppo andata a buon fine. Tuttavia i cadaveri che abbiamo lasciato dovrebbero essere un messaggio importante per la gente. Una lezione meritata per esservi impossessati delle opere di un grande artista, che sarebbero dovute rimanere alla sua famiglia. Le ingiustizie e le vessazioni subite da Lui in vita non dovranno rimanere impunite. Torneremo.”
-Quest 1
-Attività 0
-Il movente del colpo sembrerebbe essere a tutti gli effetti un tentativo di impossessarsi delle opere appartenute ad uno degli artisti. E dietro tutto questo dovrebbe esserci un discendente dell’autore, che parla addirittura di ingiustizie subite da esso. L’analisi dei video ti porta a stilare una lista dei probabili autori bersaglio del furto. Decidi brevemente di ripassare quel poco che sai sul vero nome di battesimo di essi. Quale di questi autori è conosciuto con un soprannome o con uno pseudonimo?
-    • Leonardo da Vinci
-    • Raffaello
-    • Caravaggio
-    • Sandro Botticelli
-Attività 1
-Molti degli artisti che conosciamo oggigiorno sono diventati famosi con quello che, in realtà, non era il loro vero nome. Dei quattro artisti della tua lista, ben due sono conosciuti con un soprannome particolare. Caravaggio, infatti anche noto come “Il Caravaggio”, nacque Michelangelo Morisi ma, negli anni a venire, fu sempre indicato con il nome del feudo dove ha vissuto per un periodo importante. “Sandro Botticelli” invece era un vero e proprio pseudonimo, composto dal nome di battesimo e dal soprannome del fratello di colui che si chiamava in realtà Alessandro di Mariano di Vanni Filipepi. Per istinto provi a concentrarti su questi due autori, il cui nome ha forse contribuito a perdere, negli anni, la cronaca delle loro vicende famigliari. Sarebbe però troppo complicato contattare chi di mestiere per far analizzare tutti gli alberi genealogici e chissà quanti documenti. Decidi quindi di procedere a modo tuo, girando per il museo e approfondendo la storia di questi due importanti artisti, alla ricerca di un qualche elemento utile ricollegabile al misterioso messaggio mail.
-Quest 2
-Attività 0
+
+## Quest 1
+# Attività 0
+Il movente del colpo sembrerebbe essere a tutti gli effetti un tentativo di impossessarsi delle opere appartenute ad uno degli artisti. E dietro tutto questo dovrebbe esserci un discendente dell’autore, che parla addirittura di ingiustizie subite da esso. L’analisi dei video ti porta a stilare una lista dei probabili autori bersaglio del furto. Decidi brevemente di ripassare quel poco che sai sul vero nome di battesimo di essi. Precisamente, i quattro nomi sono: Leonardo da Vinci, Raffaello, Caravaggio e Sandro Botticelli. Quanti autori, di quelli citati in precedenza, sono conosciuti con un soprannome o con uno pseudonimo? 
+- input numero - 5 pti per la risposta giusta (2)
+# Attività 1
+Tanti artisti, al tempo di codesti, si appropriavano di un soprannome o di uno pseudonimo. Il denominarsi con un nome diverso dal proprio consisteva in una forma di tutela per la propria persona e soprattutto per le persone care all'artista. Quale tra queste coppie di autori sono conosciuto con un soprannome o con uno pseudonimo?
+- input checklist - 5 pti per la risposta giusta
+# Attività 2
+Per quanto possa sembrare bizzarro e strano, i due artisti con un nome d'arte sono loro: Caravaggio e Sandro Botticelli.
+Caravaggio, infatti anche noto come “Il Caravaggio”, nacque Michelangelo Morisi ma, negli anni a venire, fu sempre indicato con il nome del feudo dove ha vissuto per un periodo importante.
+ “Sandro Botticelli” invece era un vero e proprio pseudonimo, composto dal nome di battesimo e dal soprannome del fratello di colui che si chiamava in realtà Alessandro di Mariano di Vanni Filipepi.
+
+## Quest 2
+# Attività 0
+Per istinto provi a concentrarti su questi due autori, il cui nome ha forse contribuito a perdere, negli anni, la cronaca delle loro vicende famigliari. Sarebbe però troppo complicato contattare chi di mestiere per far analizzare tutti gli alberi genealogici e chissà quanti documenti. Decidi quindi di procedere a modo tuo, girando per il museo e approfondendo la storia di questi due importanti artisti, alla ricerca di un qualche elemento utile ricollegabile al misterioso messaggio mail.
 Botticelli nacque nel 1445 a Firenze, mentre Caravaggio nel 1571 a Milano. Entrambi gli autori vissero quindi nella prima parte dell’Età Moderna, l’era immediatamente successiva al Medioevo. Ricordi quale importante evento viene usato per indicare la fine del periodo medioevale ? - domanda aperta
-Attività 1
+# Attività 1
 In questo tumultuoso periodo la penisola italiana era profondamente divisa tra ducati, come quelli di Milano e dei Savoia, lo stato della Chiesa e i domini spagnoli. In campo artistico, il periodo viene detto “Rinascimento”, e fu teatro di grandi cambiamenti, tra cui la nascita dell’Umanesimo, ovvero una corrente letteraria volta alla riscoperta dei classici latini.
+# Attività 2
 Mentre rimugini sul contesto storico che potrebbe essere legato al movente dei criminali, continui distrattamente a guardare tutti i pannelli che raccontano la storia degli artisti. Una delle figure, all’improvviso, cattura la tua attenzione. Il dipinto in questione è la “Vocazione di San Matteo” di Caravaggio. La figura rappresentata è infatti estremamente buia, e nel cartello di fianco è scritto chiaramente che i soggetti della scena sono Cristo e gli apostoli. Capisci subito che quest’opera va approfondita. Per quale motivo?
     • Al tempo la religione era un argomento molto controverso ed era rischioso provare a trattarla in opere artistiche
-    • L’immagine sacra di Cristo e dei suoi apostoli all’interno di un locale dall’aspetto sinistro poteva risultare blasfema
-Attività 2
+    • L’immagine sacra di Cristo e dei suoi apostoli all’interno di un locale dall’aspetto sinistro poteva risultare blasfema - 10 pti
+
+## Quest 3
+# Attività 0
 Continuando a leggere il pannello, scopri che questo particolare dipinto fu commissionato all’artista proprio per decorare una chiesa, nel momento in cui il Caravaggio abitava a Roma. È quindi ovvio pensare allo sdegno che l’opera causò alla sua rivelazione, avvenuta presumibilmente nel 1600. Nel Medioevo le figure religiose erano molto spesso protagoniste di opere d’arte, ma conservavano comunque un aspetto elegante e divino. L’immagine ha ovviamente fatto scalpore per l’ambientazione che rasentava la blasfemia. Questo evento, unito alla reputazione che la gente aveva di Caravaggio, un assiduo frequentatore di locali malfamati, fece sicuramente in modo che egli venisse mal visto in città.
 Decidi quindi di prendere un PC e iniziare una ricerca su internet perché sei sicuro di avere una pista interessante.
-Quest 3
-Attività 0
 Dopo solamente un paio di minuti scopri altri interessanti dettagli. L’artista, nel 1606, ha infatti svelato una nuova opera, titolata “La morte della Vergine” e commissionata da un membro dell’istituzione papale. Noti subito alcuni particolari che questo dipinto ha in comune con quello visto precedentemente? - domanda aperta
-Attività 1
+# Attività 1
 La nuova opera è molto simile alla “Vocazione” per quanto riguarda la poca illuminazione ed il generale senso di inquietudine. Ma non fu questa la causa dell’eccezionale rifiuto da parte del committente. Caravaggio venne infatti accusato di aver dato alla Vergine le sembianze di una prostituta trovata annegata nel Tevere poco tempo prima.
 La reputazione dell’artista era già in bilico quando, nello stesso anno, arrivò il fattaccio. Durante una rissa, Caravaggio uccide uno dei litiganti e viene quindi condannato a morte per decapitazione.
-Attività 2
-Caravaggio decide di fuggire il più lontano possibile dallo Stato Papale. Prima trova protezione a Napoli e, dopo 2 anni, approda a Malta. Qui però incappa in un’altra rissa, dove ferisce un membro dell’ordine cavalleresco in cui si era arruolato. Braccato dagli amici del ferito, decide di scappare in Sicilia – dal suo amico ed ex-modello Mario Minniti - e, successivamente, di nuovo a Napoli. Nella città campana viene tuttavia raggiunto dai sicari e ferito gravemente al volto. È il 1910 e l’artista, seppur distrutto, continua a lavorare ad una grande quantità di opere. In molte di queste è tuttavia riscontrabile un importante dettaglio. Riesci a notarlo? -domanda aperta – inserire varie immagini tra cui quella di Medusa
-Attività 3
-Molte di queste opere, tra cui la famosa “Medusa” esposta proprio qui agli Uffizi, presentano esplicite scene di decapitazione. È quindi chiaro come la condanna a morte abbia terribilmente lasciato un segno nell’anima dell’artista, facendolo vivere nella paura e nello sconforto. Questa deduzione ti fa comprendere che, molto probabilmente, la pista che stai seguendo è quella giusta.
-Quest 4
-Attività 0
+# Attività 2
+Caravaggio decide di fuggire il più lontano possibile dallo Stato Papale. Prima trova protezione a Napoli e, dopo 2 anni, approda a Malta. Qui però incappa in un’altra rissa, dove ferisce un membro dell’ordine cavalleresco in cui si era arruolato. Braccato dagli amici del ferito, decide di scappare in Sicilia – dal suo amico ed ex-modello Mario Minniti - e, successivamente, di nuovo a Napoli. Nella città campana viene tuttavia raggiunto dai sicari e ferito gravemente al volto. È il 1610 e l’artista, seppur distrutto, continua a lavorare ad una grande quantità di opere. In molte di queste è tuttavia riscontrabile un importante dettaglio. Riesci a notarlo? -domanda aperta – inserire varie immagini dipinte dopo il 1609
+# Attività 3
+Molte di queste opere presentano esplicite scene di decapitazione. È quindi chiaro come la condanna a morte abbia terribilmente lasciato un segno nell’anima dell’artista, facendolo vivere nella paura e nello sconforto. Questa deduzione ti fa comprendere che, molto probabilmente, la pista che stai seguendo è quella giusta.
+
+## Quest 4
+# Attività 0
 Sei sicuro di essere arrivato ad un punto sicuro dell’indagine e decidi quindi di avvisare i tuoi superiori che è possibile proseguire con le operazioni. Il mandante del crimine potrebbe infatti essere non solo un discendente di Caravaggio, ma anche un discendente di un caro amico dell’artista. Il tuo obiettivo è infatti quello di indagare sulle parentele dei contatti più stretti che il pittore ha avuto durante i suoi viaggi. Su quale dei seguenti luoghi chiave hai più speranze?
     • Roma
     • Milano
     • Malta
-    • Sicilia
+    • Sicilia - 10 pti
     • Napoli
-Attività 1
-Gli storici e biografi contattati per rianalizzare la storia del Caravaggio si sono concentrati alla fine su due opzioni: Roma e la Sicilia. Alcuni mesi dopo l’inizio dell’indagine, in seguito ai sopralluoghi in entrambe le località, viene arrestato un discendente di Minniti nei dintorni di Palermo. L’ex modello, e, secondo molti, l’ex-amante, di Caravaggio si era infatti stabilito e sposato nell’isola, dove poi ha accolto l’artista per proteggerlo. Una serie di interrogatori porterà poi alla condanna definitiva e, quindi, alla soluzione del grande tentativo di furto agli Uffizi.
----------
-Questa storia è ambientata alla galleria degli uffizi, museo d’arte situato in piazza della signoria a Firenze. Al suo interno si possono ammirare svariate opere d’arte, come la nascita di Venere di Botticelli o il Bacco di Caravaggio, e sculture, come la Venere de’ Medici.  
-Per questo motivo l’edificio risulta essere sempre molto affollato di turisti e visitatori provenienti da tutto il mondo. In particolare, la galleria è meta di molte scolaresche, in quanto gli alunni sono tenuti a studiare gran parte delle opere d’arte contenute al suo interno e di conseguenze le vanno ad ammirare. 
-Quest’oggi una scolaresca in gita si prepara a vedere rappresentato il quadro che è stato studiato prima della visita nei libri di storia dell’arte: I duchi di Urbino Federico da Montefeltro e Battista Sforza” di Piero della Francesca. 
-Gli studenti iniziano la visita. Si è scelto di non noleggiare una guida, ma sarà il professore stesso ad illustrare ai ragazzi il percorso del museo e a descrivere loro i quadri. In questo modo saranno in grado di prestare particolare attenzione a ciò che può aiutare nello studio, tralasciando gli aspetti di importanza minore. 
-Questo sarà il compito del professore e suo sarà il compito di guidare i ragazzi alla scoperta delle bellezze italiane rendendosi conto che visitando un museo di questo tipo porta alla scoperta di qualcosa rilevante anche per la cultura dello studente e non solo per interesse scolastico. 
-Andando avanti nel percorso i ragazzi giungono finalmente nella stanza dove dovrebbe essere rappresentato il quadro per il quale sono stati portati in quella specifica galleria d’arte: “I duchi di Urbino Federico da Montefeltro e Battista Sforza” di Piero della Francesca. 
-Arrivati nella sala, però, risulta esserci grande caos e neanche l’ombra del quadro: è stato effettuato un furto. Il professore avverte il personale del museo, il quale non si da una spiegazione di come sia potuto succedere in quanto vi risiede sempre un guardiano affianco a tale quadro. 
-A questo punto il personale insieme alla scolaresca escono dalla sala per chiamare la vigilanza e testimoniare, se serve, anche se non sono stati testimoni di niente dato che al loro arrivo nella sala il quadro non c’era già più, ma per togliere il sospetto nato dal personale del museo. 
-Il mistero si infittisce quando si scopre una vittima, il guardiano della sala dedicata al quadro che ha subito il furto. Lo si trova nella stanza riservata al personale accanto alla posizione del quadro. 
-La vigilanza a questo punto avverte le forze dell’ordine che non esitano ad arrivare in pochi minuti. La polizia insieme ai militari iniziano le indagini, rilevando poco dopo impronte sul corpo ormai deceduto del guardiano. 
-La prima ipotesi per questo omicidio è la seguente: il guardiano si era accorto del tentato furto e il ladro o i ladri lo hanno colpito. Nel frattempo, altri ispettori, arrivati poco dopo, iniziano ad interrogare la scolaresca. Non rilevando nessuna informazione particolarmente utile fanno uscire dalla galleria d’arte. 
-Il personale invita a tornare un’altra volta per terminare la visita, in quanto la situazione è diventata critica e non ci sono ulteriori tracce per scoprire l’arcano. Così che la polizia chiede di chiudere le porte del museo, rimborsando i visitatori del biglietto pagato e non usufruito. 
-A porte chiuse si iniziano ad interrogare uno ad uno il personale del museo in servizio nel momento in cui si è scoperto il furto e la vittima. Vi è un sospettato, forse complice di quanto accaduto o addirittura l’omicida del guardiano. 
-Giunti forse a una conclusione, la vittima è stata portata via per poi essere sottoposta ad una autopsia per poter rilevare ulteriori tracce per seguire la pista ormai certa. 
-Nel frattempo, i ris continuano a cercare tracce nella sala dove risiedeva il quadro. Tramite queste indagini sono state rinvenute prove schiaccianti di chi potrebbe essere il colpevole, ma si attende l’esito dell’esame richiesto sulla vittima. 
-Una volta arrivato l’esito del tanto atteso esame, si conferma che il piano del furto non è stato attuato da uno solo, ma piuttosto da una banda di criminali professionisti intenti a rubare non solo il quadro in questione, ma tutti quadri presenti nella sala. 
-Inoltre, si scopre che il sospettato, fermato in precedenza, è stato il fulcro di tutto il furto, in quanto è lui stesso che ha informato la banda per quando entrare in azione ed effettuare il furto, ma il collega, guardiano del quadro, si è intromesso per evitare l’accaduto e per questo la banda a proceduto ad ucciderlo brutalmente. 
-Solo dopo mesi dall’accaduto, si trova il quadro in uno dei tunnel sotterranei del museo. Da quel momento il caso è stato archiviato dato che la parte più importante è stata ritrovata. 
+# Attività 1
+Gli storici e biografi contattati per rianalizzare la storia del Caravaggio si sono concentrati alla fine su due opzioni: Roma e la Sicilia.
+
+## Quest 5
+# Attività 0
+Alcuni mesi dopo l’inizio dell’indagine, in seguito ai sopralluoghi in entrambe le località, viene arrestato un discendente di Minniti nei dintorni di Palermo. L’ex modello, e, secondo molti, l’ex-amante, di Caravaggio si era infatti stabilito e sposato nell’isola, dove poi ha accolto l’artista per proteggerlo. Una serie di interrogatori porterà poi alla condanna definitiva e, quindi, alla soluzione del grande tentativo di furto agli Uffizi.
+
+------------------------------------------
+
+
 Museo della scienza e della tecnologia Leonardo da Vinci (fascia di età: 15 – 18 anni)
 Ci troviamo a Milano all’interno del museo della scienza e della tecnologia Leonardo da Vinci. Siamo un gruppo di quattro studenti universitari di Bologna del corso di studi di Scienze dell’ingegneria informatica, ci troviamo a Milano per visitare la città, ma data la facoltà che stiamo facendo ne approfittiamo per visitare anche questo museo. 
 Questo museo consiste in un percorso guidato dove si possono esplorare svariate tecnologie inventate da Leonardo da Vinci, ma anche non direttamente da lui. Inoltre, si possono prenotare diversi laboratori da effettuare nel giorno della visita. 
@@ -145,23 +147,7 @@ A questo punto, gli altri studenti, spettatori di quanto stava accadendo, inizia
 Al suo ritorno, si trova dinanzi a sé uno scenario surreale. I suoi tre colleghi di corsi sono ridotti in cenere e del computer non c’è traccia. L’unica cosa sopravvissuta a questo esperimento è la ventola progettata dagli stessi studenti. 
 Il compagno scoppia in lacrime e preso dalla rabbia addossa la colpa al collaboratore del museo e verso la ventola che gli aveva procurato, dato che era l’unica superstite di quell’orrendo scenario. 
 L’assistente, rimasto calmo, cerca di tranquillizzare lo studente universitario e gli fa presente che nel questionario compilato in precedenza, era riportato il rischio di quanto accaduto. Per questo motivo, la responsabilità non spetta all’assistente. 
-Infine, lo studente sopravvissuto ha dovuto fare i conti con le responsabilità prese all’inizio di questo percorso, accettare quanto accaduto nel laboratorio e tornare in solitudine nella dimora in cui risiedeva a Bologna. 
-Domande prima storia:
-    1. È possibile che una mummia prenda vita?
-    2. Si è certo che nessuno abbia imitato quello che realmente c’era all’interno?
-        a. Se così fosse, dove è andata a finire la mummia che vi era mostrata?
-    3. Hai notato qualcosa di strano nel personale e nei visitatori?
-    4. Come si è comportato il gestore del museo?
-    5. Il papiro a cui si presta attenzione nella stanza precedente potrebbe centrare con l’accaduto della mummia?
-Domande seconda storia:
-    1. Siamo certi che il guardiano fosse veramente tale e non un componente della banda?
-    2. La polizia da cosa ha dedotto che fosse una banda in azione e non una singola persona?
-    3. I visitatori come mai sono stati mandati via e non interrogati?
-    4. La polizia veramente sta facendo le indagini come deve?
-    5. Siamo sicuri che tra i visitatori non ci fosse proprio nessuno che abbia visto?
-        a. Se sì, come può ritrovare questa persona la polizia?
-    6. Il quadro è stato realmente rubato o è stato solamente spostato in un'altra parte del museo?
-    7. Perché la polizia non ha dato la giustizia dovuta alla vittima?
+Infine, lo studente sopravvissuto ha dovuto fare i conti con le responsabilità prese all’inizio di questo percorso, accettare quanto accaduto nel laboratorio e tornare in solitudine nella dimora in cui risiedeva a Bologna.
 Domande terza storia:
     1. Quello progettato potrebbe essere una evoluzione futura utile al mondo informatico?
     2. Nel questionario compilato inizialmente c’era veramente il rischio di morte come dice l’assistente?

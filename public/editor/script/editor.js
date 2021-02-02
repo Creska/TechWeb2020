@@ -175,8 +175,8 @@ function saveStory(publish) {
   }
 }
 
-function qr(id){//'domain/player?story='+id
-  QRCode.toCanvas(document.getElementById('qr_canvas'), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', function (error) {
+function qr(id){
+  QRCode.toCanvas(document.getElementById('qr_canvas'), 'http://site192041.tw.cs.unibo.it/player?story='+id, function (error) {
   if (error) { 
     console.error(error)
   $("#qr_success").css("display","none");

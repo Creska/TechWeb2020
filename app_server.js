@@ -1,3 +1,4 @@
+process.chdir( __dirname );
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();

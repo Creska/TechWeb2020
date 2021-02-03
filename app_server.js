@@ -1,3 +1,4 @@
+process.chdir( __dirname );
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
@@ -819,8 +820,8 @@ app.get('/valuator/activeStoryName', function (req, res) {
     return res.status(200).send(JSON.stringify(story_name)).end();
 })
 
-http.listen(3000, () => {
-    console.log('Listening on *:3000');
+http.listen(8000, () => {
+    console.log('Listening on *:8000');
 });
 
 // app.listen(3000, function () {

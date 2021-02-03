@@ -13,6 +13,7 @@ game_example = {
 	story_ID: -1, // ID di identificazione univoca. Inizializzato a -1
 	game_mode: "", // indica la modalità di gioco (singolo, gruppo o classe)
 	players: 0, // numero di giocatori che avranno un device
+	show_score: true, // indica se il sistema di punteggio è attivo
 	quests: [
 		{	
 			quest_title: "",

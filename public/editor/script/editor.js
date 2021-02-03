@@ -329,6 +329,13 @@ function isPublishable( obj ) {
     res.errors.push( "Storia - Modalità di gioco non specificata" );
   }
 
+  if ( obj.players < 2 ) {
+    if ( obj.game_mode == "GROUP" || obj.game_mode == "CLASS" ) {
+      res.ok = false;
+      res.errors.push( "Storia - Numero di giocatori non specificato" );
+    }
+  }
+
   if ( CSSdata.valid == false ) {
     res.ok = false;
     res.errors.push( "Storia - CSS stylesheet non valido" );

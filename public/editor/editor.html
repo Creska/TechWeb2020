@@ -391,9 +391,14 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <p>Specifica il numero massimo di giocatori previsti per ogni gruppo:</p>
       <input type="number" placeholder="0" min="2" max="5">
     </div>
+
+    <div class="custom-control custom-switch border-top border-light p-5 mt-5">
+      <input type="checkbox" class="custom-control-input" id="show-score-switch">
+      <label class="custom-control-label" for="show-score-switch">Mostra il punteggio al giocatore</label>
+    </div>
     
-    <div class="mb-3" id="Access">
-      <p class="mt-5">Adesso scegli per quali tipologie di disabilità rendere la storia accessibile:</p>
+    <div class="border-top border-light p-5 mb-3" id="Access">
+      <p>Adesso scegli per quali tipologie di disabilità rendere la storia accessibile:</p>
       <button class="btn btn-secondary btn-lg mr-3 rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',true);"><i class="fab fa-accessible-icon"></i></button>
       <button class="btn btn-secondary btn-lg rounded-circle bg-secondary" onclick="$('#Access input[type=checkbox]').prop('checked',false);"><i class="fas fa-times"></i></button>
 

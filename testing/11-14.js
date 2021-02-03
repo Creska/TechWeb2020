@@ -37,10 +37,22 @@ var storia11_14 = {
                     activity_type: 'ANSWER',
                     answer_field: {
                         description: "Sai qualcosa di questi artisti? ",
-                        type: "text",
-                        options: []
+                        type: "checklist",
+                        options: ['si', 'no']
                     },
                     answer_outcome: [{
+                        response: 'Si',
+                        nextquest: 0,
+                        nextactivity: 1, 
+                        score:""
+                    },
+                    {
+                        response: 'No',
+                        nextquest: 0,
+                        nextactivity: 1, 
+                        score:""
+                    },
+                    {
                         response: 'default',
                         nextquest: 0,
                         nextactivity: 1, 

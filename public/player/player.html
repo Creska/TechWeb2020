@@ -83,26 +83,24 @@
                 <div class="card-body" id="info-body">
                   <blockquote class="blockquote">
                     <p style="padding-top: 10px; margin-left: 10px; margin-right: 10px;">Saranno narrate delle storie e per apprendere meglio quello che racconta la storia sono proposte delle attività, come:</p>
-                    <div align="center">
-                        <ul style="text-align: left;">
-                            <li class="DomandaMultipla">
-                                Domande a scelta multipla;<br>
-                                <img src="../images/domanda_multipla.png" alt="domanda a scelta multipla" style="width: 300px; height: 175px; padding-bottom: 10px;">
-                            </li>
-                            <li class="DomandaNumerica">
-                                Domande aperte a risposta numerica;<br>
-                                <img src="../images/numero.png" alt="domanda a risposta numerica" style="width: 300px; height: 150px; padding-bottom: 10px;">
-                            </li>
-                            <li class="DomandaAperta">
-                                Domande aperte a risposta univoca.<br>
-                                <img src="../images/domanda_aperta.png" alt="domanda aperta" style="width: 300px; height: 150px; padding-bottom: 10px;">
-                            </li>
-                        </ul>
-                    </div>
+                    <ul style="text-align: center;">
+                        <li class="DomandaMultipla" style="text-align: center;">
+                            Domande a scelta multipla;<br>
+                            <img src="../images/domanda_multipla.png" alt="domanda a scelta multipla" style="width: 250px; height: 150px; padding-bottom: 10px;">
+                        </li>
+                        <li class="DomandaNumerica">
+                            Domande aperte a risposta numerica;<br>
+                            <img src="../images/numero.png" alt="domanda a risposta numerica" style="width: 250px; height: 150px padding-bottom: 10px;">
+                        </li>
+                        <li class="DomandaAperta">
+                            Domande aperte a risposta univoca.<br>
+                            <img src="../images/domanda_aperta.png" alt="domanda aperta" style="width: 250px; height: 150px padding-bottom: 10px;">
+                        </li>
+                    </ul>
                     <p>Per proseguire la narrazione in fondo alla pagina vi è un pulsante con la scritta "PROSEGUI" che permette al lettore di continuare la narrazione nel momento in cui viene premuto.</p>
                     <img class="Prosegui" src="../images/prosegui.png" alt="pulsante del prosegui" style="width: 300px; height: 75px; padding-bottom: 10px;">
                     <p>Al termine della narrazione, invece del pulsante "PROSEGUI", vi è un pulsante denominato "CHIUDI" che permette di uscire dalla storia.</p>
-                    <img class="Chiudi" src="../images/chiudi.png" alt="pulsante del chiudi" style="width: 250px; height: 75px; padding-bottom: 10px;">
+                    <img class="Chiudi" src="../images/chiudi.png" alt="pulsante del chiudi" style="width: 275px; height: 75px; padding-bottom: 10px;">
                     <p>Prima che la narrazione venga chiusa, viene attribuito al lettore un punteggio in base alle risposte date. La risposta viene valutata in base a quanto si è appreso durante la lettura della storia.</p>
                   </blockquote>
                 </div>
@@ -112,7 +110,9 @@
               </div>
 
               <script>
-                    ScrollReveal().reveal('.DomandaMultipla', { origin: 'left', duration: 1500, distance: '100px', interval:200, delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.card-header', {origin: 'top', interval: 50, duration: 1500, distance: '100px', easing: 'cubic-bezier(.215, .61, .355, 1)' })
+                    ScrollReveal().reveal('.card-body', { origin: 'left', duration: 1500, distance: '100px', interval:200, delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                    ScrollReveal().reveal('.DomandaMultipla', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
                     ScrollReveal().reveal('.DomandaNumerica', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
                     ScrollReveal().reveal('.DomandaAperta', { origin: 'left', distance: '100px', interval:800, delay: 700, easing: 'cubic-bezier(.215, .61, .355, 1)' });
                     ScrollReveal().reveal('.Prosegui', { origin: 'left', distance: '100px', interval:1100, delay: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
@@ -133,7 +133,7 @@
             <!-- Main = Container di tutto ciò che fa parte del gioco -->
             <main id="Main" aria-relevant="additions text">
                 <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-                <div class="Quest">
+                <div class="Quest" >
                     <h5 class="QuestTitle"></h5>
                 </div>
 
@@ -164,31 +164,31 @@
             <div id='chat-room' class="chat-popup">
                 <h4 style="color: rgb(0,0,0);" aria-level="2">Chat
                 <i id="Close" data-bs-dismiss="modal" aria-label="Close" onclick='closeForm()' class="far fa-times-circle" ></i></h4>
-                <form action="">
-                    <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
-                    <button id="Send">Invia</button>
-                </form>
+                <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
+                <button id="Send">Invia</button>
             </div>
 
-            <div>
-                <h5 id="chat-history" >Cronologia</h5>
-                <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
-                all'inizio di ogni attività la cronologia si svuota -->
-                <div id="list">
-                    <ul>
-                        <li><q id="player-msg">aaaaaaaaaaa</q></li>
-                        <li><q id="valuator-msg">bbbbbbbbbbb</q></li>
-                        <li><q id="player-msg">cccccccccccc</q></li>
-                        <li> <q id="valuator-msg">dddddddddd</q></li>
-                    </ul>
+            <div class="container">
+                <button type="button" id="history" class="btn" data-toggle="collapse" data-target="#list" data-bs-placement="right">                
+                    <h5 id="chat-history">Cronologia</h5>
+                </button>
+                <div id="list" class="collapse" >
+                    <article id="player-msg">aaaaaaaaaaa</article>
+                    <article id="valuator-msg">bbbbbbbbbbb</article>
+                    <article id="player-msg">cccccccccccc</article>
+                    <article id="valuator-msg">dddddddddd</article>
                 </div>
             </div>
+
+                <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
+                all'inizio di ogni attività la cronologia si svuota -->
 
             <div id="chat-test">
                 
             </div>
 
             <script>
+
                 //apertura e chiusura della chat
                 function openForm() {
                     document.getElementById("chat-room").style.display = "block";
@@ -197,8 +197,6 @@
                 function closeForm() {
                     document.getElementById("chat-room").style.display = "none";
                 }
-                //animazione della chat
-                ScrollReveal().reveal('#Open', { origin: 'bottom', distance:'1000px', duration: 1500, easing: 'cubic-bezier(.215, .61, .355, 1)'})
             </script>
                 
         </footer>

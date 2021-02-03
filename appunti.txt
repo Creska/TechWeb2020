@@ -9,10 +9,10 @@ BUG E PROBLEMI DA CORREGGERE
         * qrcode
     * Aggiungere labels per widget degli outcomes
     * Aggiornare editor CSS - usare ID quest
+    * [WIP] Finire grafo
     * Aggiungere tasti per accedere direttamente ai qrcodes
     * Apertura della preview
 * PLAYER
-    * Aggiungere video
     * Adattarlo ai nuovi cambiamenti effettuati nell'editor
     * Inserire placeholder nelle cartelle
     * [WAITING] Sistemare grafica
@@ -21,7 +21,6 @@ BUG E PROBLEMI DA CORREGGERE
         * invio stats a fine attività
         * invio stats ogni 5s
     * [WAITING] Sistemare roba di accessibilità
-    * [WAITING] Modificare CSS - usare ID quest
     * [WAITING] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * STORIE DI PROVA
     * Completare

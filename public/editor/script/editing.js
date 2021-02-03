@@ -101,6 +101,7 @@ function save_title( which ) {
 	  story_title: "",
 	  game_mode: "",
 	  players: 0,
+	  show_score: true,
 	  quests: [],
 	  QuestGrid: "",
 	  ActivityGrids: [],
@@ -274,6 +275,8 @@ function loadGameModeSection() {
 			$( "#PlayersN input" ).val( "" );
 	}
 
+	$( "#show-score-switch" ).prop( "checked", CurrentWork.show_score );
+
 	for ( [key,value] of Object.entries( CurrentWork.accessibility ) ) {
 		$( "#" + String( key ) ).prop( "checked", value );
 	}
@@ -298,6 +301,8 @@ function saveGameModeSettings() {
 	}
 	else
 		CurrentWork.game_mode = "";
+
+	CurrentWork.show_score = $( "#show-score-switch" ).prop( "checked" );
 
 	$.each( $( "#Access input[type=checkbox]" ), function( i, val ) {
 		CurrentWork.accessibility[ $(val).attr("id") ] = $( val ).prop( "checked" );

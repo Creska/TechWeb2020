@@ -2,6 +2,7 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
+        * funzionamento della risposta che usa valutazione umana
         * sistema per classi
         * id quest e attività
         * grafo
@@ -13,17 +14,16 @@ BUG E PROBLEMI DA CORREGGERE
     * Aggiungere tasti per accedere direttamente ai qrcodes
     * Apertura della preview
 * PLAYER
-    * Adattarlo ai nuovi cambiamenti effettuati nell'editor
+    * [WIP] Adattarlo ai nuovi cambiamenti effettuati nell'editor
     * Inserire placeholder nelle cartelle
-    * [WAITING] Sistemare grafica
-    * Chiamate AJAX
+    * [WIP] Chiamate AJAX
         * caricamento (va inserita anche la divisione in gruppi)
         * invio stats a fine attività
         * invio stats ogni 5s
-    * [WAITING] Sistemare roba di accessibilità
-    * [WAITING] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
+    * [WIP] Sistemare roba di accessibilità
+    * [WIP] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
 * STORIE DI PROVA
-    * Completare
+    * [WIP] Completare
 
 APPUNTI SU NAV
 * schema:

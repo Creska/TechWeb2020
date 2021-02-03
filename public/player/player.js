@@ -3,21 +3,22 @@ var StoryObj; // QUESTA E' LA VARIABILE DELLA STORIA
 var socket; // contains the socket for this specific player
 
 var Status = {
-	QuestN: -1,
-	QuestID: -1, // l'ID è univoco per tutti i giocatori
-	ActivityN: -1,
+	QuestID: null,
+	ActivityID: null,
 	time_elapsed: 0, // tempo passato dall'inizio dell'attività corrente
-	TotalScore: 0,
-	ActivityRecap: {
-		TimeToAnswer: 0,
-		AlreadyHelped: 0,
-		ChatMessages: 0, // numero di messaggi inviati al valutatore durante l'attività
-		Score: 0
-	}
+	TotalScore: 0
+};
+
+var ActivityRecap = {
+	TimeToAnswer: null,
+	ChatMessages: null,
+	Score: null
 };
 
 var IntervalTimer;
 
+var questmap; // per ogni questID indica l'oggetto dell'array
+var activitymap; // per ogni activityID indica [oggetto dell'array, id della quest madre]
 
 
 
@@ -28,14 +29,16 @@ $(function () {
 		StoryObj = JSON.parse(data);
 		console.log(StoryObj); // debugging
 
-		// grafica - da sistemare appena possibile
-		$( "#StartScreen" ).prepend( $( "<h1 aria-level='1'>" + StoryObj.story_title + "</h1>" ) );
+		$( "body" ).children().first().after( $( "<h1/>", 
+		{
+			"class": ".StoryTitle",
+			role: "heading",
+			"aria-level": "2",
+			text: StoryObj.story_title
+		}));
 
-		if (StoryObj.ACCESSIBILITY)
-			$("#AccessibilityMsg").append($("<p>La storia è accessibile.</p>"));
-		else
-			$("#AccessibilityMsg").append($("<p>La storia purtroppo NON è accessibile.</p>"));
-	})
+		loadGame();
+	});
 
 	/* invio messaggio chat */
 	$('#chat-room form').on("submit", function (e) {
@@ -386,5 +389,151 @@ function checkAnswer() {
 			goToQuest( goto.q );
 		else
 			goToActivity( goto.a );
+	}
+};
+
+
+/* NUOVE FUNZIONI */
+
+/* da attivare all'apertura della finestra */
+function loadGame() {
+	buildMaps();
+	
+	showAccess();
+
+	let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
+	group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <em>" + StoryObj.groupID + "</em>" ) );
+	$( "#StartScreen" ).children().first().after( group_alert );
+};
+
+
+function startGame() {
+	goToActivity( StoryObj.quests[0].activities[0].activity_id );
+};
+
+
+/* mostra l'accessibilità - da attivare appena la finestra si apre */
+function showAccess() {
+	let alerts = [];
+
+	if ( StoryObj.accessibility.WA_visual )
+		alerts.append( "disabilità visive" );
+	
+	if ( StoryObj.accessibility.WA_motor )
+		alerts.append( "disabilità motorie" );
+
+	if ( StoryObj.accessibility.WA_hearing )
+		alerts.append( "disabilità uditive" );
+
+	if ( StoryObj.accessibility.WA_convulsions )
+		alerts.append( "problemi legati a convulsioni e/o epilessia" );
+	
+	if ( StoryObj.accessibility.WA_cognitive )
+		alerts.append( "disabilità cognitive" );
+
+	let accessibility_alert;
+	if ( alerts.length ) {
+		accessibility_alert = $( '<div class="alert alert-success accessibility-alert" role="alert"/>' );
+		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul></ul>" ) );
+		$.each( alerts, function( i, str ) {
+			accessibility_alert.find( "ul" ).append( $( "<li/>", { text: str } ) );
+		});
+	}
+	else {
+		accessibility_alert = $( '<div class="alert alert-danger accessibility-alert" role="alert"/>' );
+		accessibility_alert = $( '<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>' );
+	}
+
+	$( "#StartScreen" ).prepend( accessibility_alert );
+};
+
+
+/* crea la mappa delle quest e delle attività */
+function buildMaps() {
+	$.each( StoryObj.quests, function( qi, quest ) {
+		questmap[ quest.quest_id ] = quest;
+
+		$.each( StoryObj.quests[qi].activities, function( ai, activity ) {
+			activitymap[ activity.activity_id ] = [ activity, quest.quest_id ];
+		});
+	});
+};
+
+
+function goToActivity( aid ) {
+	/* invia recap attività precedente */
+
+	if ( aid == null || aid === "" || activitymap[ aid ] == undefined ) {
+		handleError();
+		return;
+	}
+
+	if ( Status.QuestID != activitymap[ aid ][1] ) {
+		goToQuest( activitymap[ aid ][1] ); // va alla nuova quest
+	}
+
+	/* crea l'attività nuova */
+
+	/* se c'è un'attività, la elimina */
+
+	/* appende l'alert */
+
+	/* appende l'attività */
+
+	/* fa partire i timer */
+};
+
+
+function goToQuest( qid ) {
+	if ( aid == null || qid === "" || questmap[ qid ] == undefined ) {
+		handleError();
+		return;
+	}
+
+	/* crea la nuova quest */
+
+	/* elimina la quest vecchia */
+
+	/* appende l'alert */
+
+	/* appende la quest */
+};
+
+
+function goToNextActivity() {
+	/* clear timer */
+	
+	let activity = activitymap[ Status.ActivityID ][0];
+
+	if ( activity.ASK_EVAL ) {
+		/* richiedi valutazione */
+		return;
+	}
+	
+	if ( activity.activity_type == "READING" ) {
+		if ( activity.answer_outcome.length ) {
+			/* incrementa punteggio */
+			/* vai ad attività specificata */
+		}
+		else {
+			/* cerca outcome */
+			/* vai ad attività specificata */
+		}
+	}
+	else {
+		let player_answer = getPlayerAnswer();
+
+		/* scansiona array */
+			/* if outcome specifico trovato */
+				/* update score */
+				/* vai ad attività specifica */
+				/* return */
+
+		/* c'è un main outcome */
+			/* update score */
+			/* vai ad attività specifica */
+		/* altrimenti */
+			/* cerca outcome */
+			/* vai ad attività specificata */
 	}
 };

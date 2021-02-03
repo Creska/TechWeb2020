@@ -1,40 +1,36 @@
-Roba da fare:
+Roba che manca da fare:
+
+* PLAYER (work in progress)
 
 * DIVISIONE IN GRUPPI
-    * Ogni x collegamenti (x = numero massimo di membri per gruppo), essi vengono messi in un gruppo identificato da un ID specifico, aggiunto nel JSON al momento dell'invio, tramite campo "groupID".
+    Ogni x collegamenti (x = numero massimo di membri per gruppo), essi vengono messi in un gruppo identificato da un ID specifico, aggiunto nel JSON al momento dell'invio, tramite campo "groupID".
 
-* INVIO STATS
-    * Il player tiene queste stats:
-        {
-            QuestN
-            QuestID
-            ActivityN
-            time_elapsed // tempo passato dall'inizio dell'attività
-            ActivityRecap:
-            {
-                TimeToAnswer // tempo completo impiegato per rispondere
-                AlreadyHelped // serve solo all'applicazione player
-                ChatMessages // numero di volte in cui la chat è stata usata durante l'attività corrente
-                Score // punteggio ottenuto tramite l'attività corrente
-            }
-        }
-    * Ogni 5 secondi vengono inviati i campi 2,3,4 delle stats
-    * Ad ogni completamento di un'attività viene inviato l'oggetto stats completo
+* INVIO STATS ogni 5s
+    Le stats inviate sono:
+        * ID della quest corrente
+        * ID dell'attività corrente
+        * tempo passato dall'inizio dell'attività corrente
+
+* INVIO RECAP DELL'ATTIVITA'
+    Ad ogni fine attività, vengono inviate le seguenti stats:
+        * ID della quest corrente
+        * ID dell'attività corrente
+        * tempo impiegato per rispondere
+        * numero di messaggi inviati al valutatore durante l'attività corrente
+        * punteggio ottenuto tramite l'attività corrente
 
 * VALUTAZIONE UMANA
-    * Obiettivo: il player deve inviare la risposta al valutatore. Ma cosa dovrebbe servire di ulteriore? Il numero dell'attività e l'ID della quest? Anche il testo dell'attività??
-    * Come ricezione, il player si aspetta una tripla <prossima_quest, prossima_attività, score> dove:
-        * prossima_quest --> flag che indica se si passa alla prossima quest
-        * prossima_attività --> indica il numero dell'attività a cui passare. viene ignorato se prossima_quest = true, dato che ogni quest viene iniziata dall'attività 0
+    * RICHIESTA: il player invia
+        * stringa che rappresenta la domanda
+        * stringa inserita come input di testo da parte del player (la risposta alla domanda)
+    * Come ricezione, il player si aspetta:
+        * ID dell'attività a cui andare
+        * punteggio (che può essere anche null)
 
-* MEDIA
-    * Basically bisognerebbe salvare immagini e video con un nome generato sul momento, in base ai media già salvati
-    * Per semplificare al massimo le cose, io salverei i files nell'oggetto della storia in questo modo:
-        {
-	        isFile: "", // indica se il campo src fa riferimento ad un file vero e proprio. in tal caso va salvato su server
-	        src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al file
-	        alt: ""
-        }
+* GRAFO (quasi finito)
 
-* SALVATAGGIO DEI FILES
-    * PROBLEMA: per come è stato pensato il CSS, in caso di randomizzazione delle quest, le regole di styling si scollegano dalle quest. Bisogna trovare una soluzione, anche brutta ma che funzioni
+* QRCODE: schermata dove reperire i qrcodes delle storie pubblicate
+
+* PREVIEW: apertura della finestra di preview. ora non funziona
+
+* STORIE DI PROVA: i copioni sono quasi finiti ma poi vanno rifatti tramite editor

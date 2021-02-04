@@ -108,291 +108,6 @@ function handleError() {
 };
 
 
-/**
-* Semplicemente avvia il gioco sostituendo alla schermata di benvenuto il container "Quest"
- */
-function startGame() {
-	$("#StartScreen").replaceWith(document.getElementById("MainContainer").content.cloneNode(true));
-	$("#Main").prepend($("<h1 aria-level='1' class='StoryTitle'>" + StoryObj.story_title + "</h1>"));
-	goToQuest(0);
-};
-
-
-/**
-* @param name
-* Assegna un ID ad alcuni particolari elementi, sulla base del numero di quest (ed eventualmente attività) di cui fanno parte. Utile esclusivamente per far funzionare le personalizzazioni CSS
-*/
-function assignID(name) {
-	if (name == "Quest") {
-		return (name + String(Status.QuestN));
-	}
-	else if (name == "Activity") {
-		return ("Quest" + String(Status.QuestN) + name + String(Status.ActivityN));
-	}
-	else return;
-};
-
-
-/**
-* @param quest_n
-* Carica a schermo la quest specificata. Svuota il container della quest e ci aggiunge il titolo nuovo. Poi carica la quest numero zero.
-*/
-function goToQuest(quest_n) {
-	Status.QuestN = quest_n;
-	Status.QuestID = StoryObj.quests[quest_n].quest_ID;
-
-	let NewQuest = $("<section class='Quest' aria-relevant='additions text'><p role='alert' aria-live='assertive' class='sr-only'>Nuova quest</p></section>");
-	NewQuest.attr("id", assignID("Quest"));
-	NewQuest.append($("<h3 aria-level='2' class='QuestTitle'>" + StoryObj.quests[quest_n].quest_title + "</h3>"));
-
-	$(".Quest").replaceWith(NewQuest);
-
-	goToActivity(0);
-};
-
-
-/**
-* @param activity_n
-* Carica a schermo l'attività specificata, inserendo il suo nodo come figlio del nodo Quest attivo.
-* Inserisce anche un pulsante per andare all'attività successiva
-*/
-function goToActivity(activity_n) {
-	Status.ActivityN = activity_n;
-
-	let NewActivity = $("<div/>",
-		{
-			"class": "Activity", // la documentazione richiede di usare i quote per la keyword class
-			id: assignID("Activity")
-		});
-
-	NewActivity.append($("<p role='alert' aria-live='assertive' class='sr-only'>Nuova attività</p>"));
-
-	NewActivityText = $("<div/>",
-		{
-			"class": "ActivityText"
-		});
-
-	$.each(StoryObj.quests[Status.QuestN].activities[Status.ActivityN].activity_text, function (index, value) {
-		addTextPart(NewActivityText, value, index);
-	});
-
-	NewActivity.append(NewActivityText);
-
-	if (StoryObj.quests[Status.QuestN].activities[activity_n].activity_type == 'ANSWER') {
-		let AF = $("<div class='AnswerField'></div>");
-		AF.append($("<p class='AnswerFieldDescription'>" + StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.description + "</p>"));
-
-		switch (StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.type) {
-			case 'checklist':
-				AF.append($("<ul class='AnswerInput'></ul>"));
-				let newli;
-
-				$.each(StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.options, function (index, value) {
-					newli = $("<li class='form-check'></li>");
-					newli.append($("<input/>",
-						{
-							class: "form-check-input",
-							type: "radio",
-							name: "radio-checklist",
-							id: "opt" + index
-						}));
-					newli.append($("<label/>",
-						{
-							class: "form-check-label",
-							for: "opt" + index,
-							text: value
-						}));
-					AF.find(".AnswerInput").append(newli);
-				});
-				break;
-			case 'text':
-				AF.append($("<input/>",
-					{
-						type: "text",
-						placeholder: "Risposta"
-					}));
-				break;
-			case 'number':
-				AF.append($("<input/>",
-					{
-						type: "number",
-						placeholder: "0"
-					}));
-				break;
-			case 'date':
-			case 'time':
-				AF.append($("<input/>", { type: StoryObj.quests[Status.QuestN].activities[activity_n].answer_field.type }));
-				break;
-			default:
-				handleError();
-		}
-
-		NewActivity.append(AF);
-	}
-
-	if (StoryObj.quests[Status.QuestN].activities[Status.ActivityN].FINAL)
-		NewActivity.append($("<div align='center'><button class='CloseGameBtn' onclick='window.close()'>CHIUDI</button></div>"));
-	else
-		NewActivity.append($("<div align='center'><button class='NextActivity' onclick='nextStage();'>PROSEGUI</button></div>"));
-
-	$(".Activity").remove();
-	$(".Quest").append(NewActivity);
-
-	Status.time_elapsed = 0;
-	Status.ActivityRecap.TimeToAnswer = 0;
-	Status.ActivityRecap.AlreadyHelped = 0;
-	Status.ActivityRecap.ChatMessages = 0;
-	Status.ActivityRecap.Score = 0;
-
-	IntervalTimer = setInterval(function () {
-		Status.time_elapsed += 5000;
-
-		if (StoryObj.quests[Status.QuestN].activities[Status.ActivityN].GET_CHRONO && !Status.ActivityRecap.AlreadyHelped &&
-			Status.time_elapsed > StoryObj.quests[Status.QuestN].activities[Status.ActivityN].expected_time) {
-			/* TODO - invia richiesta di aiuto */
-			Status.ActivityRecap.AlreadyHelped = true;
-			console.log("HELP"); // debugging
-		}
-	}, 5000);
-};
-
-
-/**
- * @param container --> puntatore al nodo che contiene tutto il testo dell'attività
- * @param node --> nodo da aggiungere al container
- * @param  {...any} other --> viene passato un indice per creare sul momento un id per la galleria
- * Aggiunge un nuovo pezzo al testo dell'attività (paragrafo di testo, immagine o galleria)
- */
-function addTextPart(container, node, ...other) {
-	if (node.type == "text") {
-		if (node.content) {
-			container.append($("<p/>",
-				{
-					class: "TextParagraph",
-					text: node.content
-				}));
-		}
-	}
-	else if (node.type == "gallery") {
-		if (node.content.length === 1) {
-			container.append($(node.content[0]).attr("class", "SingleImage"));
-		}
-		else if (node.content.length > 1) {
-			let newgallery = $(`
-			<div class="carousel slide ImageGallery" aria-label="Galleria di immagini" data-interval="false">
-				<div class="carousel-inner"></div>
-				<a class="carousel-control-prev" role="button" data-slide="prev">
-    				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    				<span class="sr-only">Immagine precedente</span>
-  				</a>
-  				<a class="carousel-control-next" role="button" data-slide="next">
-    				<span class="carousel-control-next-icon" aria-hidden="true"></span>
-    				<span class="sr-only">Immagine successiva</span>
-  				</a>
-			</div>`);
-
-			newgallery.attr("id", "gallery" + arguments[2]);
-			newgallery.find("a").attr("href", "#gallery" + arguments[2]);
-
-			let newimage;
-			$.each(node.content, function (index, value) {
-				newimage = $(value).attr("class", "d-block w-100");
-				if (index === 0)
-					newgallery.find(".carousel-inner").append(newimage.wrap("<div class='carousel-item active'></div>").parent());
-				else
-					newgallery.find(".carousel-inner").append(newimage.wrap("<div class='carousel-item'></div>").parent());
-			});
-			container.append(newgallery);
-		}
-	}
-};
-
-
-/**
- * Funzione che viene attivata cliccando il pulsante "Prosegui". Attiva il check della risposta oppure passa all'attività successiva, a seconda di come l'autore ha impostato. Invia anche lo status del player al valutatore
- */
-function nextStage() {
-	let CurrentStage = StoryObj.quests[Status.QuestN].activities[Status.ActivityN];
-
-	clearInterval(IntervalTimer);
-	Status.ActivityRecap.TimeToAnswer = Status.time_elapsed;
-
-	if (CurrentStage.activity_type == 'ANSWER')
-		checkAnswer();
-	else if (CurrentStage.activity_type == 'READING') {
-		if (CurrentStage.answer_outcome[0].nextquest)
-			goToQuest(Status.QuestN + 1);
-		else
-			goToActivity(CurrentStage.answer_outcome[0].nextactivity);
-	}
-};
-
-
-/**
- * In base alla risposta data, invia il giocatore all'attività rispettiva.
- * Nel caso si necessiti valutazione umana, la procedura attiva una chiamata al server.
- */
-function checkAnswer() {
-	let CurrentActivity = StoryObj.quests[Status.QuestN].activities[Status.ActivityN];
-
-	let PlayerAnswer = "";
-
-	if (CurrentActivity.answer_field.type == 'checklist') {
-		$(".AnswerField input").each(function () {
-			if ($(this).prop("checked")) PlayerAnswer = $(this).next().text();
-		});
-	}
-	else
-		PlayerAnswer = $(".AnswerField").find("input").first().val();
-
-
-	if (CurrentActivity.ASK_EVAL) {
-		validateInput( PlayerAnswer );
-	}
-	else {
-		let default_index;
-		let goto = {
-			q: -1,
-			a: -1
-		};
-
-		$.each(CurrentActivity.answer_outcome, function (index, value) {
-			if (value.response == PlayerAnswer) {
-				if (value.nextquest)
-					goto.q = Status.QuestN + 1;
-				else
-					goto.a = value.nextactivity;
-
-				Status.ActivityRecap.Score += parseInt(value.score) || 0;
-				return false;
-			}
-
-			if (value.response == "default")
-				default_index = index;
-
-			if ((index == CurrentActivity.answer_outcome.length - 1) && (value.response != PlayerAnswer)) {
-				if (CurrentActivity.answer_outcome[default_index].nextquest)
-					goto.q = Status.QuestN;
-				else
-					goto.a = CurrentActivity.answer_outcome[default_index].nextactivity;
-
-				Status.ActivityRecap.Score += parseInt(CurrentActivity.answer_outcome[default_index].score) || 0;
-				return false;
-			}
-		});
-
-		Status.TotalScore += Status.ActivityRecap.Score;
-
-		/* TODO - invia status */
-
-		if ( goto.q >= 0 )
-			goToQuest( goto.q );
-		else
-			goToActivity( goto.a );
-	}
-};
-
-
 /* NUOVE FUNZIONI */
 
 /* da attivare all'apertura della finestra */
@@ -408,6 +123,7 @@ function loadGame() {
 
 
 function startGame() {
+	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
 	goToActivity( StoryObj.quests[0].activities[0].activity_id );
 };
 
@@ -472,15 +188,46 @@ function goToActivity( aid ) {
 		goToQuest( activitymap[ aid ][1] ); // va alla nuova quest
 	}
 
-	/* crea l'attività nuova */
+	Status.ActivityID = aid;
 
-	/* se c'è un'attività, la elimina */
+	let newactivity = $( "<div/>", {
+		"class": "Activity",
+		id: aid
+	});
 
-	/* appende l'alert */
+	newactivity.append( $( "<div class='ActivityText'/>" ) );
+	writeActivityText( newactivity.find( ".ActivityText" ) );
 
-	/* appende l'attività */
+	if ( activitymap[ aid ][0].activity_type == "READING" ) {
+		if ( activitymap[ aid ][0].FINAL ) {
+			/* appendi bottone di chiusura */
+		}
+		else {
+			/* appendi bottone prosegui */
+		}
+	}
+	else {
+		buildAnswerField( newactivity );
+		/* appendi bottone prosegui */
+	}
 
-	/* fa partire i timer */
+	$( "#Main .Activity" ).remove();
+	$( "#Main .Quest .sr-only" ).remove();
+
+	$( "#Main .Quest" ).append( $( "<div/>", {
+		role: "alert",
+		"aria-live": "assertive",
+		"class": "sr-only",
+		text: "nuova attività"
+	}));
+
+	$( "#Main .Quest" ).append( newactivity );
+
+	IntervalTimer = setInterval(function () {
+		Status.time_elapsed += 5000;
+
+		/* invia stats */
+	}, 5000);
 };
 
 
@@ -490,18 +237,37 @@ function goToQuest( qid ) {
 		return;
 	}
 
-	/* crea la nuova quest */
+	Status.QuestID = qid;
 
-	/* elimina la quest vecchia */
+	let newquest = $( "<section/>", {
+		"class": "Quest",
+		id: qid,
+		"aria-relevant": "additions text"
+	});
 
-	/* appende l'alert */
+	newquest.append( $( "<h2/>", {
+		"class": "QuestTitle",
+		"aria-level": "3",
+		text: questmap[ qid ].quest_title 
+	}));
 
-	/* appende la quest */
+	$( "#Main .Quest" ).remove();
+	$( "#Main .sr-only" ).remove();
+
+	$( "#Main" ).append( $( "<div/>", {
+		role: "alert",
+		"aria-live": "assertive",
+		"class": "sr-only",
+		text: "nuova quest"
+	}));
+
+	$( "#Main" ).append( newquest );
 };
 
 
 function goToNextActivity() {
 	/* clear timer */
+	/* clear history */
 	
 	let activity = activitymap[ Status.ActivityID ][0];
 
@@ -536,4 +302,77 @@ function goToNextActivity() {
 			/* cerca outcome */
 			/* vai ad attività specificata */
 	}
+};
+
+
+function writeActivityText( container ) {
+	let activity = activitymap[ Status.ActivityID ][0];
+
+	$.each( activity.activity_text, function( i, node ) {
+		if ( node.type == "text" ) {
+			container.append( $( "<p/>", {
+				"class": "TextPar",
+				text: node.content
+			}));
+		}
+		else if ( node.type == "gallery" ) {
+			let newgallery = $( `
+			<div class="carousel slide ImageGallery" aria-label="Galleria di immagini" data-interval="false">
+				<div class="carousel-inner"></div>
+				<a class="carousel-control-prev" role="button" data-slide="prev">
+    				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine precedente</span>
+  				</a>
+  				<a class="carousel-control-next" role="button" data-slide="next">
+    				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+    				<span class="sr-only">Immagine successiva</span>
+  				</a>
+			</div>` );
+
+			newgallery.attr( "id", "gallery" + i );
+			newgallery.find( "a" ).attr( "href", "#gallery" + i );
+
+			let newimage;
+			$.each( node.content, function( pic_i, pic ) {
+				if ( pic_i === 0 )
+					newimage = $( "<div class='carousel-item active'/>" );
+				else
+					newimage = $( "<div class='carousel-item'/>" );
+				
+				newimage.append( $( "<img/>", {
+					"class": "d-block w-100",
+					alt: pic.alt,
+					src: pic.src
+				}));
+
+				newimage.append( $( "<p/>", {
+					"aria-hidden": "true",
+					text: pic.alt
+				}));
+
+				newgallery.children().first().append( newimage );
+			});
+
+			container.append( newgallery );
+		}
+		else if ( node.type == "video" ) {
+			container.append( $( node.content ) );
+		}
+	});
+};
+
+
+function buildAnswerField( container ) {
+	let activity = activitymap[ Status.ActivityID ][0];
+
+	/* creare domanda */
+
+	if ( activity.ASK_EVAL ) {
+		/* crea un campo testo */
+	}
+	else {
+		/* crea l'input field */
+	}
+
+	/* appendi la roba */
 };

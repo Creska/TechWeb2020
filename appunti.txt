@@ -1,7 +1,10 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-    * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
+        * Editor: manca il ToLowerCase nel salvataggio delle opzioni-risposta
+        * probabilmente gli outcome non vengono salvati correttamente (nella storia pubblicata è rimasto tutto in default)
+        * probabilmente vanno tolti gli input data e ora
+    * [WAITING] Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * funzionamento della risposta che usa valutazione umana
         * sistema per classi
         * id quest e attività
@@ -14,16 +17,16 @@ BUG E PROBLEMI DA CORREGGERE
     * Aggiungere tasti per accedere direttamente ai qrcodes
     * Apertura della preview
 * PLAYER
-    * [WIP] Adattarlo ai nuovi cambiamenti effettuati nell'editor
     * Inserire placeholder nelle cartelle
     * [WIP] Chiamate AJAX
-        * caricamento (va inserita anche la divisione in gruppi)
         * invio stats a fine attività
         * invio stats ogni 5s
-    * [WIP] Sistemare roba di accessibilità
-    * [WIP] Aggiungere una funzione che segnali allo screenreader se bisogna ripetere l'attività corrente o se è una nuova attività
+    * Sistemare accessibilità
+    * Sistemare grafica
+    * Aggiungere schermata di errore
 * STORIE DI PROVA
-    * [WIP] Completare
+    * [WIP] Completare copioni
+    * [WAITING] Rifare storie con editor
 
 APPUNTI SU NAV
 * schema:

@@ -10,15 +10,15 @@ var Status = {
 };
 
 var ActivityRecap = {
-	TimeToAnswer: null,
-	ChatMessages: null,
-	Score: null
+	TimeToAnswer: 0,
+	ChatMessages: 0,
+	Score: 0
 };
 
 var IntervalTimer;
 
-var questmap; // per ogni questID indica l'oggetto dell'array
-var activitymap; // per ogni activityID indica [oggetto dell'array, id della quest madre]
+var questmap; // per ogni questID indica [oggetto dell'array, indice all'interno di esso]
+var activitymap; // per ogni activityID indica [oggetto dell'array, id della quest madre, indice all'interno dell'array]
 
 
 
@@ -29,32 +29,17 @@ $(function () {
 		StoryObj = JSON.parse(data);
 		console.log(StoryObj); // debugging
 
-		$( "body" ).children().first().after( $( "<h1/>", 
-		{
-			"class": ".StoryTitle",
-			role: "heading",
-			"aria-level": "2",
-			text: StoryObj.story_title
-		}));
-
 		loadGame();
 	});
 
-	/* invio messaggio chat */
-	$('#chat-room form').on("submit", function (e) {
-		e.preventDefault();
-		//client can't route the rooms: only the server can. I need to send the data there
-		socket.emit('chat-message', $('#message').val(), socket.id);
-		$('#message').val('');
-		Status.ChatMessages += 1;
-		return false;
-	})
-
-
 	socket.on('valuator-message', (message) => {
-		if ( message )
-			$( "#chat-test" ).append( "<p>" + message + "</p>" ); // test
-	})
+		if ( message ) {
+			$( "#list" ).append( $( "<blockquote/>", {
+				"class": "valuator-msg",
+				text: msg
+			}));
+		}
+	});
 
 
 	socket.on('input-valued', (nextQuest, activity_n, score) => {
@@ -112,12 +97,20 @@ function handleError() {
 
 /* da attivare all'apertura della finestra */
 function loadGame() {
+	$( "body" ).children().first().after( $( "<h1/>", 
+		{
+			"class": "StoryTitle",
+			role: "heading",
+			"aria-level": "2",
+			text: StoryObj.story_title
+		}));
+
 	buildMaps();
 	
 	showAccess();
 
 	let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
-	group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <em>" + StoryObj.groupID + "</em>" ) );
+	group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>" ) );
 	$( "#StartScreen" ).children().first().after( group_alert );
 };
 
@@ -133,19 +126,19 @@ function showAccess() {
 	let alerts = [];
 
 	if ( StoryObj.accessibility.WA_visual )
-		alerts.append( "disabilità visive" );
+		alerts.push( "disabilità visive" );
 	
 	if ( StoryObj.accessibility.WA_motor )
-		alerts.append( "disabilità motorie" );
+		alerts.push( "disabilità motorie" );
 
 	if ( StoryObj.accessibility.WA_hearing )
-		alerts.append( "disabilità uditive" );
+		alerts.push( "disabilità uditive" );
 
 	if ( StoryObj.accessibility.WA_convulsions )
-		alerts.append( "problemi legati a convulsioni e/o epilessia" );
+		alerts.push( "problemi legati a convulsioni e/o epilessia" );
 	
 	if ( StoryObj.accessibility.WA_cognitive )
-		alerts.append( "disabilità cognitive" );
+		alerts.push( "disabilità cognitive" );
 
 	let accessibility_alert;
 	if ( alerts.length ) {
@@ -166,18 +159,21 @@ function showAccess() {
 
 /* crea la mappa delle quest e delle attività */
 function buildMaps() {
+	questmap = new Map();
+	activitymap = new Map();
+
 	$.each( StoryObj.quests, function( qi, quest ) {
-		questmap[ quest.quest_id ] = quest;
+		questmap[ quest.quest_id ] = [ quest, qi ];
 
 		$.each( StoryObj.quests[qi].activities, function( ai, activity ) {
-			activitymap[ activity.activity_id ] = [ activity, quest.quest_id ];
+			activitymap[ activity.activity_id ] = [ activity, quest.quest_id, ai ];
 		});
 	});
 };
 
 
 function goToActivity( aid ) {
-	/* invia recap attività precedente */
+	/* TODO invia recap attività precedente */
 
 	if ( aid == null || aid === "" || activitymap[ aid ] == undefined ) {
 		handleError();
@@ -192,7 +188,8 @@ function goToActivity( aid ) {
 
 	let newactivity = $( "<div/>", {
 		"class": "Activity",
-		id: aid
+		id: aid,
+		style: "display:none;"
 	});
 
 	newactivity.append( $( "<div class='ActivityText'/>" ) );
@@ -200,39 +197,61 @@ function goToActivity( aid ) {
 
 	if ( activitymap[ aid ][0].activity_type == "READING" ) {
 		if ( activitymap[ aid ][0].FINAL ) {
-			/* appendi bottone di chiusura */
+			newactivity.append( $( "<button/>", {
+				"class": "CloseGameBtn",
+				onclick: "endGame();",
+				text: "CHIUDI"
+			}));
 		}
 		else {
-			/* appendi bottone prosegui */
+			newactivity.append( $( "<button/>", {
+				"class": "NextActivity",
+				onclick: "goToNextActivity();",
+				text: "PROSEGUI"
+			}));
 		}
 	}
 	else {
 		buildAnswerField( newactivity );
-		/* appendi bottone prosegui */
+		newactivity.append( $( "<button/>", {
+			"class": "NextActivity",
+			onclick: "goToNextActivity();",
+			text: "PROSEGUI"
+		}));
 	}
 
 	$( "#Main .Activity" ).remove();
 	$( "#Main .Quest .sr-only" ).remove();
 
+	/* appende l'attività e resetta tutto ciò che va resettato */
 	$( "#Main .Quest" ).append( $( "<div/>", {
 		role: "alert",
 		"aria-live": "assertive",
 		"class": "sr-only",
 		text: "nuova attività"
 	}));
-
 	$( "#Main .Quest" ).append( newactivity );
+	$( "#Main .Activity" ).fadeIn( "slow" );
 
+	$( "#list" ).empty();
+	Status.time_elapsed = 0;
+	ActivityRecap = {
+		TimeToAnswer: 0,
+		ChatMessages: 0,
+		Score: 0
+	};
+	
 	IntervalTimer = setInterval(function () {
 		Status.time_elapsed += 5000;
+		ActivityRecap.TimeToAnswer += 5000;
 
-		/* invia stats */
+		/* TODO invia stats */
 	}, 5000);
 };
 
 
 function goToQuest( qid ) {
-	if ( aid == null || qid === "" || questmap[ qid ] == undefined ) {
+	if ( qid == null || qid === "" || questmap[ qid ] == undefined ) {
 		handleError();
 		return;
 	}
@@ -242,13 +261,14 @@ function goToQuest( qid ) {
 	let newquest = $( "<section/>", {
 		"class": "Quest",
 		id: qid,
-		"aria-relevant": "additions text"
+		"aria-relevant": "additions text",
+		style: "display:none;"
 	});
 
 	newquest.append( $( "<h2/>", {
 		"class": "QuestTitle",
 		"aria-level": "3",
-		text: questmap[ qid ].quest_title 
+		text: questmap[ qid ][0].quest_title 
 	}));
 
 	$( "#Main .Quest" ).remove();
@@ -260,48 +280,77 @@ function goToQuest( qid ) {
 		"class": "sr-only",
 		text: "nuova quest"
 	}));
-
 	$( "#Main" ).append( newquest );
+	$( "#Main .Quest" ).fadeIn( "slow" );
 };
 
 
 function goToNextActivity() {
-	/* clear timer */
-	/* clear history */
-	
+	clearInterval( IntervalTimer );
+
 	let activity = activitymap[ Status.ActivityID ][0];
 
 	if ( activity.ASK_EVAL ) {
-		/* richiedi valutazione */
+		$( ".NextActivity" ).attr( "disabled", true );
+		$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>' );
+		
+		goToActivity( nextStageInOrder() ); // debugging
+		/* TODO richiedi valutazione */
 		return;
 	}
 	
 	if ( activity.activity_type == "READING" ) {
-		if ( activity.answer_outcome.length ) {
-			/* incrementa punteggio */
-			/* vai ad attività specificata */
+		if ( activity.answer_outcome[0].next_activity_id ) {
+			ActivityRecap.Score = activity.answer_outcome[0].score;
+			Status.TotalScore += ActivityRecap.Score;
+
+			goToActivity( activity.answer_outcome[0].next_activity_id );
 		}
 		else {
-			/* cerca outcome */
-			/* vai ad attività specificata */
+			goToActivity( nextStageInOrder() );
 		}
 	}
 	else {
 		let player_answer = getPlayerAnswer();
+		$.each( activity.answer_outcome, function( i, outcome ) {
+			if ( i > 0 ) {
+				if ( outcome.condition.toLowerCase() == player_answer ) {
+					ActivityRecap.Score = outcome.score;
+					Status.TotalScore += ActivityRecap.Score;
 
-		/* scansiona array */
-			/* if outcome specifico trovato */
-				/* update score */
-				/* vai ad attività specifica */
-				/* return */
+					goToActivity( outcome.next_activity_id );
+					return;
+				}
+			}	
+		});
 
-		/* c'è un main outcome */
-			/* update score */
-			/* vai ad attività specifica */
-		/* altrimenti */
-			/* cerca outcome */
-			/* vai ad attività specificata */
+		if ( activity.answer_outcome[0].next_activity_id ) {
+			ActivityRecap.Score = activity.answer_outcome[0].score;
+			Status.TotalScore += ActivityRecap.Score;
+
+			goToActivity( activity.answer_outcome[0].next_activity_id );
+		}
+		else {
+			goToActivity( nextStageInOrder() );
+		}
 	}
+};
+
+
+function nextStageInOrder() {
+	/* se questa attività NON è l'ultima di questa quest, conduce all'attività successiva */
+	/* altrimenti, conduce alla quest successiva, sempre che la quest in corso non sia l'ultima */
+
+	if ( activitymap[ Status.ActivityID ][2] < questmap[ Status.QuestID ][0].activities.length - 1 ) {
+		return StoryObj.quests[ questmap[ Status.QuestID ][1] ].activities[ activitymap[ Status.ActivityID ][2] + 1 ].activity_id;
+	}
+	else {
+		if ( questmap[ Status.QuestID ][1] < StoryObj.quests.length - 1  ) {
+			return StoryObj.quests[ questmap[ Status.QuestID ][1] + 1 ].activities[0].activity_id;
+		}
+	}
+
+	return null;
 };
 
 
@@ -339,6 +388,8 @@ function writeActivityText( container ) {
 				else
 					newimage = $( "<div class='carousel-item'/>" );
 				
+				pic.src = pic.src.replace( "unpublished", "published" ); // debugging
+
 				newimage.append( $( "<img/>", {
 					"class": "d-block w-100",
 					alt: pic.alt,
@@ -365,14 +416,128 @@ function writeActivityText( container ) {
 function buildAnswerField( container ) {
 	let activity = activitymap[ Status.ActivityID ][0];
 
-	/* creare domanda */
+	let AF = $( "<div class='AnswerField'>" ); // su questo bisogna poi ragionarci nel caso dia fastidio all'accessibilità
+
+	AF.append( $( "<p/>", {
+		"class": "AnswerFieldDescription",
+		text: activity.answer_field.description
+	}));
 
 	if ( activity.ASK_EVAL ) {
-		/* crea un campo testo */
+		if ( activity.answer_field.type == "checklist" ) {
+			let optlist = $( "<ul class='AnswerFieldDescription'/>" );
+
+			$.each( activity.answer_field.options, function( i, opt ) {
+				optlist.append( $( "<li/>" ).text( opt ) );
+			});
+
+			AF.append( optlist );
+		}
+
+		AF.append( $( "<textarea/>", {
+			"class": "AnswerInput w-100",
+			placeholder: "Risposta"
+		}));
 	}
 	else {
-		/* crea l'input field */
+		let answerinput;
+
+		switch ( activity.answer_field.type ) {
+			case "checklist":
+				answerinput = $( "<ul class='AnswerInput'/>" );
+				let answeropt;
+
+				$.each( activity.answer_field.options, function( opt_i, opt ) {
+					answeropt = $( "<li class='form-check'/>" );
+					answeropt.append( $( "<input/>", {
+						"class": "form-check-input",
+						type: "radio",
+						name: "AnswerInputRadio",
+						id: "opt" + opt_i,
+						value: opt_i
+					}));
+					answeropt.append( $( "<label/>", {
+						"class": "form-check-label",
+						for: "opt" + opt_i,
+						text: opt
+					}));
+					answerinput.append( answeropt );
+				});
+				break;
+			case "text":
+				answerinput = $( "<textarea/>", {
+					"class": "AnswerInput w-100",
+					placeholder: "Risposta"
+				});
+				break;
+			case "number":
+				answerinput = $( "<input/>", {
+					"class": "AnswerInput",
+					type: "number",
+					placeholder: "0"
+				});
+				break;
+			case "date":
+			case "time":
+				answerinput = $( "<input/>", {
+					type: activity.answer_field.type
+				});
+				break;
+			default:
+				handleError();
+				return;
+		}
+
+		AF.append( answerinput );
 	}
 
-	/* appendi la roba */
+	container.append( AF );
+};
+
+
+function getPlayerAnswer() {
+	let field = activitymap[ Status.ActivityID ][0].answer_field;
+
+	if ( activitymap[ Status.ActivityID ][0].ASK_EVAL ) {
+		return $( ".AnswerField textarea" ).first().val().toLowerCase();
+	}
+
+	switch ( field.type ) {
+		case "checklist":
+			if ( $( ".AnswerInput input:checked" ).length ) {
+				return field.options[ $( ".AnswerInput input:checked" ).first().val() ];
+			}
+			break;
+		case "text":
+		case "number":
+		case "date":
+		case "time":
+			return $( ".AnswerInput" ).first().val().toLowerCase();
+	}
+
+	return null;
+};
+
+
+function sendMsg( msg ) {
+	if ( msg === "" )
+		return;
+	
+	//client can't route the rooms: only the server can. I need to send the data there
+	socket.emit( 'chat-message', msg, socket.id );
+
+	$( "#chat-room input" ).val( "" );
+	ActivityRecap.ChatMessages += 1;
+	$( "#list" ).append( $( "<blockquote/>", {
+		"class": "player-msg",
+		text: msg
+	}));
+};
+
+
+function endGame() {
+	clearInterval( IntervalTimer );
+	/* TODO invia recap */
+
+	window.close(); // TODO va inserita come callback - e comunque non funziona - trovare un altro metodo
 };

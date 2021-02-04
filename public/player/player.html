@@ -106,13 +106,7 @@
         <template id="MainContainer">
 
             <!-- Main = Container di tutto ciò che fa parte del gioco -->
-            <main id="Main" aria-relevant="additions text">
-                <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-                <div class="Quest" >
-                    <h5 class="QuestTitle"></h5>
-                </div>
-
-            </main>
+            <main id="Main" aria-relevant="additions text"></main>
 
             <button id="ButtonToTop"></button>
             
@@ -137,25 +131,17 @@
                 <h4 style="color: rgb(0,0,0);" aria-level="2">Chat
                 <i id="Close" data-bs-dismiss="modal" aria-label="Close" onclick='closeForm()' class="far fa-times-circle" ></i></h4>
                 <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
-                <button id="Send">Invia</button>
+                <button id="Send" onclick="sendMsg( $(this).prev().val() );">Invia</button>
             </div>
 
             <div class="container">
                 <button type="button" id="history" class="btn" data-toggle="collapse" data-target="#list" data-bs-placement="right">                
                     <h5 id="chat-history">Cronologia</h5>
                 </button>
-                <div id="list" class="collapse" >
-                    <article id="player-msg">aaaaaaaaaaa</article>
-                    <article id="valuator-msg">bbbbbbbbbbb</article>
-                    <article id="player-msg">cccccccccccc</article>
-                    <article id="valuator-msg">dddddddddd</article>
-                </div>
-            </div>
-
+                <div id="list" class="collapse" ></div>
                 <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
                 all'inizio di ogni attività la cronologia si svuota -->
-
-            <div id="chat-test"></div>
+            </div>
 
             <script>
 

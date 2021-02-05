@@ -42,35 +42,13 @@ $(function () {
 	});
 
 
-	socket.on('input-valued', (nextQuest, activity_n, score) => {
-		Status.TotalScore += score;
-		Status.ActivityRecap.Score += score;
-		
-		/* TODO - invio status */
+	socket.on('input-valued', (activity_id, score) => {
+		Status.TotalScore += parseInt(score) || 0;
+		Status.ActivityRecap.Score += parseInt(score) || 0;
 
-		if ( nextQuest )
-			goToQuest( Status.QuestN + 1 );
-		else ( nextQuest )
-			goToActivity( activity_n );
+		goToActivity( activity_id );
 	});
 });
-
-
-/* FUNZIONE USATA PER I TEST */
-function test_story(par) {
-	switch (par) {
-		case "a":
-			StoryObj = storia7_10;
-			break;
-		case "b":
-			StoryObj = storia11_14;
-			break;
-		case "c":
-			StoryObj = storia15_18;
-	}
-
-	startGame();
-}
 
 
 
@@ -78,9 +56,13 @@ function test_story(par) {
  * @param answer --> stringa corrispondente alla risposta
  * Renderizza un loading ed invia la richiesta di valutazione al Valuator
  */
-function validateInput( answer ) {
-	/* TODO - inserire il loading al posto della schermata della quest */
-	socket.emit('validate-input-player', StoryObj.quests[Status.QuestN].activities[Status.QuestN].answer_field, answer, socket.id);
+function validateInput( question, answer ) {
+	$( ".NextActivity" ).attr( "disabled", true );
+	$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>' );
+		
+	goToActivity( nextStageInOrder() ); // debugging
+
+	socket.emit( 'validate-input-player', question, answer, socket.id );
 };
 
 
@@ -89,7 +71,16 @@ function validateInput( answer ) {
 * in generale sarebbe meglio fermare l'applicazione e basta
 */
 function handleError() {
-	window.alert("!!! MAJOR ERROR !!!");
+	$( "footer" ).fadeOut();
+	$( "#Main" ).empty();
+
+	$( "#Main" ).append( $(`
+	<section role="alert" class="text-center">
+		<i class="fas fa-exclamation-circle fa-7x text-danger" aria-hidden="true"></i>
+		<p role="alert">
+			Qualcosa è andato storto! Il gioco putroppo non può essere proseguito. Non sarebbe dovuto succedere e ci scusiamo.
+		</p>
+	</select>`));
 };
 
 
@@ -112,6 +103,8 @@ function loadGame() {
 	let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
 	group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>" ) );
 	$( "#StartScreen" ).children().first().after( group_alert );
+
+	$( "#StartBtn" ).attr( "disabled", false );
 };
 
 
@@ -173,7 +166,7 @@ function buildMaps() {
 
 
 function goToActivity( aid ) {
-	/* TODO invia recap attività precedente */
+	sendActivityRecap();
 
 	if ( aid == null || aid === "" || activitymap[ aid ] == undefined ) {
 		handleError();
@@ -202,6 +195,8 @@ function goToActivity( aid ) {
 				onclick: "endGame();",
 				text: "CHIUDI"
 			}));
+
+			/* TODO - togli la chat */
 		}
 		else {
 			newactivity.append( $( "<button/>", {
@@ -245,7 +240,7 @@ function goToActivity( aid ) {
 		Status.time_elapsed += 5000;
 		ActivityRecap.TimeToAnswer += 5000;
 
-		/* TODO invia stats */
+		sendStatus();
 	}, 5000);
 };
 
@@ -291,17 +286,13 @@ function goToNextActivity() {
 	let activity = activitymap[ Status.ActivityID ][0];
 
 	if ( activity.ASK_EVAL ) {
-		$( ".NextActivity" ).attr( "disabled", true );
-		$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>' );
-		
-		goToActivity( nextStageInOrder() ); // debugging
-		/* TODO richiedi valutazione */
+		validateInput( $( ".AnswerFieldDescription" ).first().text(), getPlayerAnswer() );
 		return;
 	}
 	
 	if ( activity.activity_type == "READING" ) {
 		if ( activity.answer_outcome[0].next_activity_id ) {
-			ActivityRecap.Score = activity.answer_outcome[0].score;
+			ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
 			Status.TotalScore += ActivityRecap.Score;
 
 			goToActivity( activity.answer_outcome[0].next_activity_id );
@@ -315,7 +306,7 @@ function goToNextActivity() {
 		$.each( activity.answer_outcome, function( i, outcome ) {
 			if ( i > 0 ) {
 				if ( outcome.condition.toLowerCase() == player_answer ) {
-					ActivityRecap.Score = outcome.score;
+					ActivityRecap.Score = parseInt( outcome.score ) || 0;
 					Status.TotalScore += ActivityRecap.Score;
 
 					goToActivity( outcome.next_activity_id );
@@ -325,7 +316,7 @@ function goToNextActivity() {
 		});
 
 		if ( activity.answer_outcome[0].next_activity_id ) {
-			ActivityRecap.Score = activity.answer_outcome[0].score;
+			ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
 			Status.TotalScore += ActivityRecap.Score;
 
 			goToActivity( activity.answer_outcome[0].next_activity_id );
@@ -499,13 +490,13 @@ function getPlayerAnswer() {
 	let field = activitymap[ Status.ActivityID ][0].answer_field;
 
 	if ( activitymap[ Status.ActivityID ][0].ASK_EVAL ) {
-		return $( ".AnswerField textarea" ).first().val().toLowerCase();
+		return $( ".AnswerField textarea" ).first().val();
 	}
 
 	switch ( field.type ) {
 		case "checklist":
 			if ( $( ".AnswerInput input:checked" ).length ) {
-				return field.options[ $( ".AnswerInput input:checked" ).first().val() ];
+				return field.options[ $( ".AnswerInput input:checked" ).first().val() ].toLowerCase();
 			}
 			break;
 		case "text":
@@ -537,7 +528,43 @@ function sendMsg( msg ) {
 
 function endGame() {
 	clearInterval( IntervalTimer );
-	/* TODO invia recap */
+	sendActivityRecap();
 
-	window.close(); // TODO va inserita come callback - e comunque non funziona - trovare un altro metodo
+	/* TODO - porta ad una schermata finale */
+};
+
+
+function sendStatus() {
+	/*
+	$.ajax({
+		url: "/player/playersActivities",
+		type: "POST",
+		processData: false,
+		data: Status
+	});
+	*/
+
+	console.log( Status ); // debugging
+};
+
+
+function sendActivityRecap() {
+	let recap = {
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		TimeToAnswer: ActivityRecap.TimeToAnswer,
+		ChatMessages: ActivityRecap.ChatMessages,
+		Score: ActivityRecap.Score
+	};
+
+	/*
+	$.ajax({
+		url: "player/activityUpdate",
+		type: "POST",
+		processData: false,
+		data: recap
+	});
+	*/
+
+	console.log( recap ); // debugging
 };

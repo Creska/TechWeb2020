@@ -17,12 +17,8 @@ BUG E PROBLEMI DA CORREGGERE
     * Apertura della preview
 * PLAYER
     * Inserire placeholder nelle cartelle
-    * [WIP] Chiamate AJAX
-        * invio stats a fine attività
-        * invio stats ogni 5s
     * Sistemare accessibilità
     * Sistemare grafica
-    * Aggiungere schermata di errore
 * STORIE DI PROVA
     * [WIP] Completare copioni
     * [WAITING] Rifare storie con editor

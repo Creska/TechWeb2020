@@ -26,11 +26,6 @@
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="player.css">
 
-        <!-- TEST STUFF -->
-        <script src="test.js"></script>
-        <script src="../../testing/11-14.js"></script>
-        <script src="../../testing/7-10.js"></script>
-
         <title>Player</title>
     </head>
 
@@ -44,19 +39,13 @@
                 </li>
             </ul>
 
-            <div role="reading" aria-level="1" class="sr-only">M&M - Applicazione per giochi interattivi</div>
+            <div role="heading" aria-level="1" class="sr-only">M&M - Applicazione per giochi interattivi</div>
         </nav>
 
         <main id="StartScreen">
             <script>
                 ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
             </script>
-
-            <div id="test" style="display:none"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
-                <button onclick="test_story('a');">7-10</button>
-                <button onclick="test_story('b');">11-14</button>
-                <button onclick="test_story('c');">15-18</button>
-            </div>
             
             <div class="card" >
                 <div class="card-header" id="info-title">
@@ -89,7 +78,7 @@
                 <div class="card-footer text-muted" id="info-footer">
                     - Ora non ti resta che iniziare il gioco -
                 </div>
-                <button onclick="startGame();">START</button>
+                <button id="StartBtn" onclick="startGame();" disabled>START</button>
               </div>
 
               <script>

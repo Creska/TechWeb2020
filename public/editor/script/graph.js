@@ -3,9 +3,9 @@ var options = {
   layout:{
     randomSeed: "1",
     hierarchical: {
-      enabled:false,
-      direction: 'LR',        // UD, DU, LR, RL
-      sortMethod: 'directed',  // hubsize, directed
+      enabled: false,
+      direction: 'UD',        // UD, DU, LR, RL
+      sortMethod: 'hubsize',  // hubsize, directed
     }
 },
 interaction: {
@@ -16,15 +16,24 @@ edges:{
   arrows: 'to'
 },
 nodes: {
-  shape: "ellipse"
+  shape: "box"
+},
+physics: {
+  enabled: true,
+  solver: 'forceAtlas2Based'
 }
 };
 function create_nodes_structure() { 
    nodes = [];
   CurrentWork.quests.forEach( quest => {
-    quest.activities.forEach( activity => {
-      nodes.push( {id: activity.activity_id, label:activity.activity_id,cid: quest.quest_id} );
-    });
+    if( quest.activities.length == 0 ) { //the quest has no activities
+      nodes.push( {id: quest.quest_id+"Empty", label:"quest vuota",cid: quest.quest_id} );
+    }
+    else {
+      quest.activities.forEach( activity => {
+        nodes.push( {id: activity.activity_id, label:"attività:\n"+activity.activity_id,cid: quest.quest_id} );
+      });
+    }
   });
 return nodes;
 }
@@ -32,24 +41,38 @@ return nodes;
 function create_edges_structure() { 
    edges = [];
   CurrentWork.quests.forEach( (quest, q_index,quests) => {
-    quest.activities.forEach( (activity,a_index,activities) => {
+    if ( quest.activities.length == 0 ) { //current quest is empty
+      if( quests[q_index+1]) { //check next quest existence
+        if( quests[q_index+1].activities[0] ) //check next quest has an activity
+          edges.push( {from: quest.quest_id+"Empty", to: quests[q_index+1].activities[0].activity_id, label: "" } );
+        else { //next quest is empty
+          edges.push( {from: quest.quest_id+"Empty", to: quests[q_index+1].quest_id+"Empty", label: "" } );
+        }
+      }
+    }
+    else {
+    quest.activities.forEach( (activity,a_index,activities) => {  
       activity.answer_outcome.forEach( outcome => {
-        if( outcome.nextactivity == "default") { 
-          if( activities.length-1 == a_index ) {//i'm the last activity of the current 
-          //there must be an actual other quest and activity
-            if( quests[q_index+1] && quests[q_index+1].activities[0] )
-              edges.push( {from: activity.activity_id, to: quests[q_index+1].activities[0].activity_id } );
-          }
-          else { //push next activity in the same quest
-            if( activities[a_index+1] )
-              edges.push( {from: activity.activity_id, to: activities[a_index+1].activity_id } );;
+        let next = outcome.next_activity_id;
+        if( !outcome.condition ) { //default outcome
+          if( next == "" ) {
+            if( activities[a_index+1] ) {//there is a subsequent activity in the same quest
+              next = activities[a_index+1].activity_id;
+            }
+            else { //next is the first activity from the next quest
+              if( quests[q_index+1] ) {
+                if( quests[q_index+1].activities[0] )
+                  next = quests[q_index+1].activities[0].activity_id;
+                else //the next quest is empty
+                  next = quests[q_index+1].quest_id+"Empty";
+              }
+            }  
           }
         }
-        else {
-          edges.push( {from: activity.activity_id, to: outcome.nextactivity } );
-        }
+        edges.push( {from: activity.activity_id, to: next } );
       });        
     });
+    }
   });
   return edges;
 }
@@ -90,9 +113,9 @@ function clusterByCid() {
       clusterNodeProperties: {
         id: quest.quest_id,
         borderWidth: 3,
-        shape: "ellipse",
+        shape: "box",
         allowSingleNodeCluster: true,
-        label: quest.quest_id //,
+        label: quest.quest_title+"\n"+quest.quest_id //,
         //color: "red"
       },
     };
@@ -109,9 +132,9 @@ function cluster_graph() {
       clusterNodeProperties: {
         id: quest.quest_id,
         borderWidth: 3,
-        shape: "ellipse",
+        shape: "box",
         allowSingleNodeCluster: true,
-        label: "Quest: "+quest.quest_id
+        label: quest.quest_title+"\n"+quest.quest_id
       },
     };
     network.cluster(clusterOptionsByData);

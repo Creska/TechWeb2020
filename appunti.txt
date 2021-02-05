@@ -1,9 +1,7 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-        * Editor: manca il ToLowerCase nel salvataggio delle opzioni-risposta
-        * probabilmente gli outcome non vengono salvati correttamente (nella storia pubblicata è rimasto tutto in default)
-        * probabilmente vanno tolti gli input data e ora
+        * l'array di outcomes viene resettato in fase di pubblicazione
     * [WAITING] Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * funzionamento della risposta che usa valutazione umana
         * sistema per classi
@@ -11,6 +9,7 @@ BUG E PROBLEMI DA CORREGGERE
         * grafo
         * sistema outcomes
         * qrcode
+        * non ci sono più gli input data e ora
     * Aggiungere labels per widget degli outcomes
     * Aggiornare editor CSS - usare ID quest
     * [WIP] Finire grafo

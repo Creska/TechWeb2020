@@ -556,6 +556,7 @@ app.post('/editor/saveStory', function (req, res) {
     var story_id = story_json.story_ID;
     var story_path;
     var css_error = false;
+    var media_map = JSON.parse(req.fields.coordinates);
     console.log("saveStory request received.")
     console.log("published", published)
     if (stringToBool(published)) 
@@ -583,8 +584,13 @@ app.post('/editor/saveStory', function (req, res) {
                 let index =1;
                 let actual_file_name = file_name;
                 while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
-                    actual_file_name = file_name + "(" +index +")";
+                    actual_file_name = file_name.split(".")[0] + "(" +index +")";
                     index++;
+                }
+                if( actual_file_name != file_name ) {
+                    let coordinates = media_map[key];
+                    if( coordinates ) 
+                        story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].name = actual_file_name;
                 }
                 fs.renameSync(req.files[key].path, story_path + story_id + '/' + actual_file_name);
             }

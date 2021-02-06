@@ -100,7 +100,7 @@ function start_saving() {
 }
 function prepare_saveStory_stuff() { 
   let clean_cw = jQuery.extend(true, {}, CurrentWork);//deep copy CurrentWork
-  //let coordinates= {};
+  let coordinates= {};
   let media = {};
   let q=0;
   while(clean_cw.quests[q]){
@@ -115,7 +115,7 @@ function prepare_saveStory_stuff() {
               let key = "key"+q+a+at+c;
               console.log("key: ", key)
               media[key] = clean_cw.quests[q].activities[a].activity_text[at].content[c].src;
-              //coordinates[key] = [q,a,at,c];
+              coordinates[key] = [q,a,at,c];
               delete clean_cw.quests[q].activities[a].activity_text[at].content[c].src;             
               clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile = false;
             }          
@@ -128,7 +128,7 @@ function prepare_saveStory_stuff() {
     }
     q++;
   } 
-  return { clean_cw: clean_cw, media: media }; //coordinates: coordinates,
+  return { clean_cw: clean_cw, coordinates: coordinates, media: media }; 
 } 
 
 function get_media_path(name) {
@@ -140,7 +140,7 @@ function saveStory() {
   var formData = new FormData();
   formData.append("story_json", JSON.stringify(stuff.clean_cw) );//CurrentWork is expected to be stringified
   formData.append("story_css", JSON.stringify(CSSdata));
-  //formData.append("coordinates", JSON.stringify(stuff.coordinates));
+  formData.append("coordinates", JSON.stringify(stuff.coordinates));
   let dim=0;
   for( key in stuff.media ) {
     dim += stuff.media[key].size;

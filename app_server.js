@@ -548,6 +548,35 @@ app.get('/editor/getStory', function (req, res) {
     }
 })
 
+function clean_folder(json, folder) {
+    let json_media = [];
+    json.quests.forEach( quest => {
+        quest.activities.forEach( activity => {
+            activity.activity_text.forEach( a_text => {
+                if( a_text.type == "gallery" ) {
+                    a_text.content.forEach( content => {
+                        json_media.push(content.name);
+                    });
+                }
+            });
+        });
+    });
+    fs.readdir(folder, (err, files) => {
+        if(!err){ 
+            let diff = files.filter( x => !json_media.includes(x) );
+            diff.forEach( file => {
+                try {
+                if( !(file == "story.json" || file == "css.json") )
+                    fs.unlinkSync(folder+"/"+file);
+                    console.log("file ",file," deleted")
+                }
+                catch(err) { 
+                    console.log("something went wrong while deleting obsolete files",err)
+                }
+            });
+        }
+    });
+}
 
 app.post('/editor/saveStory', function (req, res) {
     var story_json = JSON.parse(req.fields.story_json);
@@ -576,6 +605,9 @@ app.post('/editor/saveStory', function (req, res) {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
         }
     }
+    if( story_json.story_ID ) {
+        clean_folder( story_json, story_path + story_json.story_ID );
+    }
     for (key in req.files) {
         console.log("path: ", req.files[key].path)
         try {
@@ -584,7 +616,7 @@ app.post('/editor/saveStory', function (req, res) {
                 let index =1;
                 let actual_file_name = file_name;
                 while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
-                    actual_file_name = file_name.split(".")[0] + "(" +index +")";
+                    actual_file_name = file_name.split(".")[0] + "(" +index +")" +file_name.split(".")[1];
                     index++;
                 }
                 if( actual_file_name != file_name ) {

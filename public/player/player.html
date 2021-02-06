@@ -21,60 +21,31 @@
         <script src='https://kit.fontawesome.com/a076d05399.js'></script>
         <!--Script per le animazioni del testo-->
         <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
-        
-        <!--Script js per generare bar code-->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script type="text/javascript">
-            function generateBarCode()
-            {
-            var nric = $('#text').val();
-            var url = 'https://api.qrserver.com/v1/create-qr-code/?data=' + nric + '&amp;size=50x50';
-            $('#barcode').attr('src', url);
-            }
-        </script>
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="player.css">
 
-        <!-- TEST STUFF -->
-        <script src="test.js"></script>
-        <script src="../../testing/11-14.js"></script>
-        <script src="../../testing/7-10.js"></script>
-
         <title>Player</title>
     </head>
 
-
-
     <body>
+        <nav>
+            <ul class=" nav justify-content-center" aria-hidden="true">
+                <li class="nav-item">
+                    <a class="nav-link" aria-disabled="true">
+                        <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
+                    </a>
+                </li>
+            </ul>
 
-        
-  
-        
+            <div role="heading" aria-level="1" class="sr-only">M&M - Applicazione per giochi interattivi</div>
+        </nav>
 
         <main id="StartScreen">
-            <nav>
-                <ul class=" nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-disabled="true">
-                            <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-    
             <script>
                 ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
             </script>
-            
-            <div id="AccessibilityMsg" role="alert"></div>
-
-            <div id="test" style="margin-bottom: 10px;"> <!-- questa sezione è solo per il testing; per renderla invisibile basta mettere "display:none" nel css-->
-                <button onclick="test_story('a');">7-10</button>
-                <button onclick="test_story('b');">11-14</button>
-                <button onclick="test_story('c');">15-18</button>
-            </div>
             
             <div class="card" >
                 <div class="card-header" id="info-title">
@@ -90,11 +61,11 @@
                         </li>
                         <li class="DomandaNumerica">
                             Domande aperte a risposta numerica;<br>
-                            <img src="../images/numero.png" alt="domanda a risposta numerica" style="width: 250px; height: 150px padding-bottom: 10px;">
+                            <img src="../images/numero.png" alt="domanda a risposta numerica" style="width: 250px; height: 150px; padding-bottom: 10px;">
                         </li>
                         <li class="DomandaAperta">
                             Domande aperte a risposta univoca.<br>
-                            <img src="../images/domanda_aperta.png" alt="domanda aperta" style="width: 250px; height: 150px padding-bottom: 10px;">
+                            <img src="../images/domanda_aperta.png" alt="domanda aperta" style="width: 250px; height: 150px; padding-bottom: 10px;">
                         </li>
                     </ul>
                     <p>Per proseguire la narrazione in fondo alla pagina vi è un pulsante con la scritta "PROSEGUI" che permette al lettore di continuare la narrazione nel momento in cui viene premuto.</p>
@@ -107,6 +78,7 @@
                 <div class="card-footer text-muted" id="info-footer">
                     - Ora non ti resta che iniziare il gioco -
                 </div>
+                <button id="StartBtn" onclick="startGame();" disabled>START</button>
               </div>
 
               <script>
@@ -121,27 +93,13 @@
         </main>
 
         <template id="MainContainer">
-            <nav>
-                <ul class=" nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-disabled="true">
-                            <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- Main = Container di tutto ciò che fa parte del gioco -->
-            <main id="Main" aria-relevant="additions text">
-                <!-- Quest = contiene il titolo della quest e il container dell'attività -->
-                <div class="Quest" >
-                    <h5 class="QuestTitle"></h5>
-                </div>
 
-            </main>
+            <!-- Main = Container di tutto ciò che fa parte del gioco -->
+            <main id="Main" aria-relevant="additions text"></main>
+
             <button id="ButtonToTop"></button>
             
             <script>
-                
                 //script per bottone che scrolla la pagina in alto
                 const ButtonToTop = document.querySelector("#ButtonToTop");
 
@@ -151,9 +109,6 @@
 
                 });
             </script>
-
-            
-
         </template>
 
         <footer class="page-footer text-center">
@@ -165,26 +120,16 @@
                 <h4 style="color: rgb(0,0,0);" aria-level="2">Chat
                 <i id="Close" data-bs-dismiss="modal" aria-label="Close" onclick='closeForm()' class="far fa-times-circle" ></i></h4>
                 <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
-                <button id="Send">Invia</button>
+                <button id="Send" onclick="sendMsg( $(this).prev().val() );">Invia</button>
             </div>
 
             <div class="container">
                 <button type="button" id="history" class="btn" data-toggle="collapse" data-target="#list" data-bs-placement="right">                
                     <h5 id="chat-history">Cronologia</h5>
                 </button>
-                <div id="list" class="collapse" >
-                    <article id="player-msg">aaaaaaaaaaa</article>
-                    <article id="valuator-msg">bbbbbbbbbbb</article>
-                    <article id="player-msg">cccccccccccc</article>
-                    <article id="valuator-msg">dddddddddd</article>
-                </div>
-            </div>
-
+                <div id="list" class="collapse" ></div>
                 <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
                 all'inizio di ogni attività la cronologia si svuota -->
-
-            <div id="chat-test">
-                
             </div>
 
             <script>

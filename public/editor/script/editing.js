@@ -102,6 +102,8 @@ function save_title( which ) {
 	  game_mode: "",
 	  players: 0,
 	  show_score: true,
+	  publishable: false,
+	  published: false,
 	  quests: [],
 	  QuestGrid: "",
 	  ActivityGrids: [],
@@ -524,6 +526,7 @@ function uploadMedia( list ) {
 						MediaBuffer.push({
 							isFile: true,
 							src: media,
+							name: media.name,
 							alt: ""
 						});
 						displayMediaPreview( MediaBuffer[MediaBuffer.length - 1], "gallery" );
@@ -562,7 +565,7 @@ function displayMediaPreview( media, mediatype ) {
 			});
 		}
 		else {
-			newpreview.attr( "src", media.src );
+			newpreview.attr( "src", get_media_path(media.name) );
 		}
 		
 		let newrow = $( "<div class='row'></div>" )

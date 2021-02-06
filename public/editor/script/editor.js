@@ -95,12 +95,12 @@ function start_saving() {
     $("#publish_directly").modal("show");
   else {
     //CurrentWork.publishable.ok = true;//for testing purposes
-    saveStory(false);
+    saveStory();
   }
 }
 function prepare_saveStory_stuff() { 
   let clean_cw = jQuery.extend(true, {}, CurrentWork);//deep copy CurrentWork
-  let coordinates= {};
+  //let coordinates= {};
   let media = {};
   let q=0;
   while(clean_cw.quests[q]){
@@ -115,8 +115,8 @@ function prepare_saveStory_stuff() {
               let key = "key"+q+a+at+c;
               console.log("key: ", key)
               media[key] = clean_cw.quests[q].activities[a].activity_text[at].content[c].src;
-              coordinates[key] = [q,a,at,c];
-              clean_cw.quests[q].activities[a].activity_text[at].content[c].src = "";             
+              //coordinates[key] = [q,a,at,c];
+              delete clean_cw.quests[q].activities[a].activity_text[at].content[c].src;             
               clean_cw.quests[q].activities[a].activity_text[at].content[c].isFile = false;
             }          
             c++;
@@ -128,16 +128,19 @@ function prepare_saveStory_stuff() {
     }
     q++;
   } 
-  return { clean_cw: clean_cw, coordinates: coordinates, media: media };
+  return { clean_cw: clean_cw, media: media }; //coordinates: coordinates,
 } 
 
-function saveStory(publish) {
+function get_media_path(name) {
+  return "/player/stories/" +(CurrentWork.published?"published":"unpublished")+"/"+CurrentWork.story_ID+"/"+name;
+}
+
+function saveStory() {
   let stuff = prepare_saveStory_stuff();
   var formData = new FormData();
   formData.append("story_json", JSON.stringify(stuff.clean_cw) );//CurrentWork is expected to be stringified
   formData.append("story_css", JSON.stringify(CSSdata));
-  formData.append("published", publish);
-  formData.append("coordinates", JSON.stringify(stuff.coordinates));
+  //formData.append("coordinates", JSON.stringify(stuff.coordinates));
   let dim=0;
   for( key in stuff.media ) {
     dim += stuff.media[key].size;
@@ -292,14 +295,14 @@ function gather_ids() {
     let cards = deck.children;
     for (let card of cards) {
       if( card.id.slice(0,4) == "shed"  )
-        ids_to_pub_unpub.push( get_id_subtitle(card) );
+        ids_to_pub_unpub.push( { id: get_id_subtitle(card), published: true } );
     }
   })
   $("#publishedContainer").children().each( (index,deck) => {
     let cards = deck.children;
     for (let card of cards) {
       if( card.id.slice(0,4) == "able"  )
-        ids_to_pub_unpub.push( get_id_subtitle(card) );
+        ids_to_pub_unpub.push( { id: get_id_subtitle(card) } );
     }
   })
   return { delete_array:ids_to_delete, pub_unpub_array: ids_to_pub_unpub };

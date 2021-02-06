@@ -110,19 +110,6 @@ function storyPath(id) {
         return '404'
     }
 }
-
-function storyFolder(id) {
-    if (fs.existsSync(pubpath + id)) {
-        return 'pubpath'
-    }
-    else if (fs.existsSync(unpubpath + id)) {
-        return 'unpubpath'
-    }
-    else {
-        return '404'
-    }
-}
-
 // function removePlayer(id) {
 //by passing the socket id, this specific player will be removed from the story he's playing
 // player_count--;
@@ -564,24 +551,17 @@ app.get('/editor/getStory', function (req, res) {
 
 app.post('/editor/saveStory', function (req, res) {
     var story_json = JSON.parse(req.fields.story_json);
-    var published = req.fields.published;
+    var published = story_json.published;
     var file_errors = [];
     var story_id = story_json.story_ID;
     var story_path;
     var css_error = false;
-    var duplicate_check = [];
-    var path_piece;
-    var media_map = JSON.parse(req.fields.coordinates);
     console.log("saveStory request received.")
     console.log("published", published)
-    if (stringToBool(published)) {
-        path_piece = 'published';
+    if (stringToBool(published)) 
         story_path = pubpath;
-    }
-    else {
-        path_piece = 'unpublished';
+    else 
         story_path = unpubpath;
-    }
     let path = storyPath(story_json.story_ID)
     if (path == '404') {//id is undefined i.e. the story is new
         console.log("Creating the directory for the new story.")
@@ -595,23 +575,18 @@ app.post('/editor/saveStory', function (req, res) {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
         }
     }
-
     for (key in req.files) {
         console.log("path: ", req.files[key].path)
         try {
             if (fs.existsSync(req.files[key].path)) {
                 let file_name = req.files[key].name;
-                /*if (duplicate_check.includes(file_name)) {
-                    file_name = file_name + UNF();
-                    console.log("file_name: ",file_name)
+                let index =1;
+                let actual_file_name = file_name;
+                while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
+                    actual_file_name = file_name + "(" +index +")";
+                    index++;
                 }
-                duplicate_check.push(file.name);*/
-                fs.renameSync(req.files[key].path, story_path + story_id + '/' + file_name);
-                let coordinates = media_map[key];
-                if (coordinates) {
-                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].src = '/player/stories/' + path_piece + '/' + story_id + '/' + file_name;//the first slash is to make the path relative to the server's root directory, otherwise it won't work 
-                    story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].isFile = false;
-                }
+                fs.renameSync(req.files[key].path, story_path + story_id + '/' + actual_file_name);
             }
             else {
                 console.log("file ", req.files[key].name + " not found in project temp directory")
@@ -700,45 +675,47 @@ app.post('/editor/publisher', function (req, res) {
     var story_ids = req.body.story_ids;
     var promises = [];
     if (story_ids != undefined) {
-        var s = 200;
+        var s = 500;
         story_ids.forEach((story_id, index, arr) => {
-            let path = storyFolder(story_id);
-            if (path == 'pubpath') {
-                promises.push(new Promise((resolve, reject) => {
-                    fs.rename(pubpath + story_id, unpubpath + story_id, (err) => {
+            let from = unpubpath, to = pubpath, ita="pubblicata", pub = true; 
+            if( story_id.published ) {
+                ita ="ritirata";
+                from = pubpath;
+                to = unpubpath;
+                pub = false;
+            }
+            promises.push(new Promise((resolve, reject) => {
+                console.log("published ", story_id.published )
+                fs.rename(from + story_id.id, to + story_id.id, (err) => {
                         if (err) {
-                            console.log("An error occurred inside /editor/publisher while unpublishing " + story_id + ": " + err)
-                            fb.msgs.push({ msg: "Errore nel ritiro della storia " + story_id + ".", successful: false });
-                            s = 500;
+                            console.log("An error occurred inside /editor/publisher while moving " + story_id.id + ": " + err)
+                            fb.msgs.push({ msg: "Errore: la storia " + story_id.id + " non è stata "+ita+".", successful: false });
                         }
                         else {
-                            console.log('The story ' + story_id + 'was unpublished.');
-                            //console.log("pre push: ",fb)
-                            fb.msgs.push({ msg: "La storia " + story_id + " è stata ritirata.", successful: true });
-                            //console.log("post push: ",fb)                 
+                            let data = fs.readFileSync(to + story_id.id+ "/story.json");
+                            if(data) {
+                                let work = JSON.parse(data);
+                                work.published = pub;
+                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),"utf-8")
+                                if(!w_err) {
+                                    console.log('The story ' + story_id.id + 'was moved.');
+                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+".", successful: true });             
+                                    s = 200;
+                                }
+                                else {
+                                    console.log('The story ' + story_id.id + 'was moved but json was not updated due to json read error.');
+                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });             
+                                }
+                            }
+                            else {
+                                    console.log('The story ' + story_id.id + 'was moved but json was not updated due to json write error.');
+                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });             
+                            }
                         }
                         resolve();
                     })
                 })
                 );
-            }
-            else if (path == 'unpubpath') {
-                promises.push(new Promise((resolve, reject) => {
-                    fs.rename(unpubpath + story_id, pubpath + story_id, (err) => {
-                        if (err) {
-                            console.log("An error occurred inside /editor/publisher while publishing " + story_name + ": " + err)
-                            fb.msgs.push({ msg: "Errore nella pubblicazione di " + story_id + ".", successful: false });
-                            s = 500;
-                        }
-                        else {
-                            console.log('The story ' + story_id + 'was published.');
-                            fb.msgs.push({ msg: "La storia " + story_id + " è stata pubblicata.", successful: true });
-                        }
-                        resolve();
-                    })
-                })
-                );
-            }
         })
         Promise.all(promises).then(() => {
             return res.status(s).send(JSON.stringify(fb)).end();

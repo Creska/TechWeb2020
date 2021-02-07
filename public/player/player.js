@@ -84,25 +84,25 @@ function handleError() {
 };
 
 
-/* NUOVE FUNZIONI */
-
 /* da attivare all'apertura della finestra */
 function loadGame() {
-	$( "body" ).children().first().after( $( "<h1/>", 
-		{
-			"class": "StoryTitle",
-			role: "heading",
-			"aria-level": "2",
-			text: StoryObj.story_title
-		}));
-
 	buildMaps();
 	
 	showAccess();
 
-	let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
-	group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>" ) );
-	$( "#StartScreen" ).children().first().after( group_alert );
+	if ( StoryObj.game_mode == "CLASS" ) {
+		let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
+		group_alert.append( $( "<i/>", {
+			"class": "fas fa-info-circle fa-2x p-2",
+			"aria-hidden": "true"
+		}));
+		group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>" ) );
+		$( "#StartScreen" ).children().first().after( group_alert );
+	}
+	
+	if ( StoryObj.testing ) {
+		$( "#Open" ).attr( "onclick", "" ); // disabilita la chat
+	}
 
 	$( "#StartBtn" ).attr( "disabled", false );
 };
@@ -110,6 +110,14 @@ function loadGame() {
 
 function startGame() {
 	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
+
+	$( "#Main" ).before( $( "<h1/>", {
+		"class": "p-2 StoryTitle",
+		role: "heading",
+		"aria-level": "1",
+		text: StoryObj.story_title
+	}));
+
 	goToActivity( StoryObj.quests[0].activities[0].activity_id );
 };
 
@@ -136,6 +144,10 @@ function showAccess() {
 	let accessibility_alert;
 	if ( alerts.length ) {
 		accessibility_alert = $( '<div class="alert alert-success accessibility-alert" role="alert"/>' );
+		accessibility_alert.append( $( "<i/>", {
+			"class": "fas fa-check-circle fa-2x p-2",
+			"aria-hidden": "true"
+		}));
 		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul></ul>" ) );
 		$.each( alerts, function( i, str ) {
 			accessibility_alert.find( "ul" ).append( $( "<li/>", { text: str } ) );
@@ -143,6 +155,10 @@ function showAccess() {
 	}
 	else {
 		accessibility_alert = $( '<div class="alert alert-danger accessibility-alert" role="alert"/>' );
+		accessibility_alert.append( $( "<i/>", {
+			"class": "fas fa-times-circle fa-2x p-2",
+			"aria-hidden": "true"
+		}));
 		accessibility_alert = $( '<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>' );
 	}
 
@@ -188,31 +204,40 @@ function goToActivity( aid ) {
 	newactivity.append( $( "<div class='ActivityText'/>" ) );
 	writeActivityText( newactivity.find( ".ActivityText" ) );
 
-	if ( activitymap[ aid ][0].activity_type == "READING" ) {
-		if ( activitymap[ aid ][0].FINAL ) {
-			newactivity.append( $( "<button/>", {
-				"class": "CloseGameBtn",
-				onclick: "endGame();",
-				text: "CHIUDI"
-			}));
-
-			/* TODO - togli la chat */
+	if ( StoryObj.testing ) {
+		newactivity.append( $( "<button/>", {
+			"class": "NextActivity",
+			onclick: "goToActivity( nextStageInOrder() );",
+			text: "PROSSIMA IN ORDINE NUMERICO"
+		}));
+	}
+	else {
+		if ( activitymap[ aid ][0].activity_type == "READING" ) {
+			if ( activitymap[ aid ][0].FINAL ) {
+				newactivity.append( $( "<button/>", {
+					"class": "CloseGameBtn",
+					onclick: "endGame();",
+					text: "FINE"
+				}));
+	
+				/* TODO - togli la chat */
+			}
+			else {
+				newactivity.append( $( "<button/>", {
+					"class": "NextActivity",
+					onclick: "goToNextActivity();",
+					text: "PROSEGUI"
+				}));
+			}
 		}
 		else {
+			buildAnswerField( newactivity );
 			newactivity.append( $( "<button/>", {
 				"class": "NextActivity",
 				onclick: "goToNextActivity();",
 				text: "PROSEGUI"
 			}));
 		}
-	}
-	else {
-		buildAnswerField( newactivity );
-		newactivity.append( $( "<button/>", {
-			"class": "NextActivity",
-			onclick: "goToNextActivity();",
-			text: "PROSEGUI"
-		}));
 	}
 
 	$( "#Main .Activity" ).remove();
@@ -389,6 +414,7 @@ function writeActivityText( container ) {
 
 				newimage.append( $( "<p/>", {
 					"aria-hidden": "true",
+					"class": "p-1",
 					text: pic.alt
 				}));
 
@@ -414,73 +440,55 @@ function buildAnswerField( container ) {
 		text: activity.answer_field.description
 	}));
 
-	if ( activity.ASK_EVAL ) {
-		if ( activity.answer_field.type == "checklist" ) {
-			let optlist = $( "<ul class='AnswerFieldDescription'/>" );
+	let answerinput;
 
-			$.each( activity.answer_field.options, function( i, opt ) {
-				optlist.append( $( "<li/>" ).text( opt ) );
+	switch ( activity.answer_field.type ) {
+		case "checklist":
+			answerinput = $( "<ul class='AnswerInput'/>" );
+			let answeropt;
+
+			$.each( activity.answer_field.options, function( opt_i, opt ) {
+				answeropt = $( "<li class='form-check'/>" );
+				answeropt.append( $( "<input/>", {
+					"class": "form-check-input",
+					type: "radio",
+					name: "AnswerInputRadio",
+					id: "opt" + opt_i,
+					value: opt_i
+				}));
+				answeropt.append( $( "<label/>", {
+					"class": "form-check-label",
+					for: "opt" + opt_i,
+					text: opt
+				}));
+				answerinput.append( answeropt );
 			});
-
-			AF.append( optlist );
-		}
-
-		AF.append( $( "<textarea/>", {
-			"class": "AnswerInput w-100",
-			placeholder: "Risposta"
-		}));
+			break;
+		case "text":
+			answerinput = $( "<textarea/>", {
+				"class": "AnswerInput w-100",
+				placeholder: "Risposta"
+			});
+			break;
+		case "number":
+			answerinput = $( "<input/>", {
+				"class": "AnswerInput",
+				type: "number",
+				placeholder: "0"
+			});
+			break;
+		case "date":
+		case "time":
+			answerinput = $( "<input/>", {
+				type: activity.answer_field.type
+			});
+			break;
+		default:
+			handleError();
+			return;
 	}
-	else {
-		let answerinput;
 
-		switch ( activity.answer_field.type ) {
-			case "checklist":
-				answerinput = $( "<ul class='AnswerInput'/>" );
-				let answeropt;
-
-				$.each( activity.answer_field.options, function( opt_i, opt ) {
-					answeropt = $( "<li class='form-check'/>" );
-					answeropt.append( $( "<input/>", {
-						"class": "form-check-input",
-						type: "radio",
-						name: "AnswerInputRadio",
-						id: "opt" + opt_i,
-						value: opt_i
-					}));
-					answeropt.append( $( "<label/>", {
-						"class": "form-check-label",
-						for: "opt" + opt_i,
-						text: opt
-					}));
-					answerinput.append( answeropt );
-				});
-				break;
-			case "text":
-				answerinput = $( "<textarea/>", {
-					"class": "AnswerInput w-100",
-					placeholder: "Risposta"
-				});
-				break;
-			case "number":
-				answerinput = $( "<input/>", {
-					"class": "AnswerInput",
-					type: "number",
-					placeholder: "0"
-				});
-				break;
-			case "date":
-			case "time":
-				answerinput = $( "<input/>", {
-					type: activity.answer_field.type
-				});
-				break;
-			default:
-				handleError();
-				return;
-		}
-
-		AF.append( answerinput );
-	}
+	AF.append( answerinput );
 
 	container.append( AF );
 };
@@ -488,10 +496,6 @@ function buildAnswerField( container ) {
 
 function getPlayerAnswer() {
 	let field = activitymap[ Status.ActivityID ][0].answer_field;
-
-	if ( activitymap[ Status.ActivityID ][0].ASK_EVAL ) {
-		return $( ".AnswerField textarea" ).first().val();
-	}
 
 	switch ( field.type ) {
 		case "checklist":

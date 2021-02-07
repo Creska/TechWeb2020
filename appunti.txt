@@ -2,8 +2,9 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
         * l'array di outcomes viene resettato in fase di pubblicazione
+        * fare in modo che per le storie pubblicate eìle immagini vengano cercate in published
+        * fare in modo cheil mainoutcomewidget si chiuda quando viene aperto quello della tipologia di attività
     * [WAITING] Aggiornare l'help riguardo a tutti i cambiamenti fatti:
-        * funzionamento della risposta che usa valutazione umana
         * sistema per classi
         * id quest e attività
         * grafo
@@ -22,6 +23,8 @@ BUG E PROBLEMI DA CORREGGERE
 * STORIE DI PROVA
     * [WIP] Completare copioni
     * [WAITING] Rifare storie con editor
+* TUTTO
+    * Cambiare campo src dei media in name
 
 APPUNTI SU NAV
 * schema:

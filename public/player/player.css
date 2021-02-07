@@ -1,8 +1,11 @@
-#StartScreen{
+#StartScreen {
+    align-items: center;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.8);
 }
-nav {
+#appbanner {
+    align-items: center;
+    text-align: center;
     background-color: rgba(97, 97, 97, 0.6);
     color: rgba(255, 255, 255);
     font-family: fantasy;
@@ -67,10 +70,17 @@ nav {
 }
 
 .StoryTitle{
+    background-color: rgba(97, 97, 97, 0.6);
+    text-align: center;
+    margin: 0;
     text-shadow: 2px -1px #000000, -2px 1px #000000;            
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     z-index: 10;
     position: relative;
+}
+
+.alert {
+    margin: 0;
 }
 
 .Quest {
@@ -88,9 +98,13 @@ nav {
     z-index: 1;
     position: relative;
 }
+
+.Activity {
+    text-align: center;
+}
+
 .ActivityText{
     background-color: rgba(255, 255, 255, 0.7);
-    text-align: left justify;
     padding: 5px;
     color: rgb(0, 10, 20);
     border-style: groove;
@@ -101,6 +115,11 @@ nav {
     z-index: 1;
     position: relative;
 }
+
+.ActivityText p {
+    text-align: justify;
+}
+
 .AnswerField{
     background-image: url(../images/domanda.jpg);
     background-size: cover;
@@ -118,7 +137,19 @@ nav {
     z-index: 1;
     position: relative;
 }
-.NextActivity{
+
+.AnswerField .form-check {
+    display: flex;
+    text-align: center;
+}
+
+.AnswerField .form-check-input, .AnswerField .form-check-label {
+    height: 100%;
+    margin-top: 0;
+    vertical-align: middle;
+}
+
+#StartBtn, .NextActivity, .CloseGameBtn{
     align-content: center;
     text-align: center;
     width: 200px;
@@ -130,28 +161,12 @@ nav {
     z-index: 1;
     position: relative;
 }
-.NextActivity:hover{
+#StartBtn:hover, .NextActivity:hover, .CloseGameBtn:hover {
     background-color: rgba(0, 0, 0, 0.8);
     color: whitesmoke;
     border-color: rgba(0, 0, 0, 0.8);
 }
-.CloseGameBtn{
-    align-content: center;
-    text-align: center;
-    width: 200px;
-    background-color: rgba(25, 1, 130, 0.8);
-    color: white;
-    border: 2px solid rgb(255, 255, 255, 0.5);
-    border-radius: 5px;
-    margin-bottom: 20px;
-    z-index: 1;
-    position: relative;
-}
-.CloseGameBtn:hover{
-    background-color: rgba(0, 0, 0, 0.8);
-    color: whitesmoke;
-    border-color: rgba(0, 0, 0, 0.8);
-}
+
 .accessibility-alert {
     padding: 5px;
     position: relative;

@@ -376,13 +376,13 @@ function writeActivityText( container ) {
 	$.each( activity.activity_text, function( i, node ) {
 		if ( node.type == "text" ) {
 			container.append( $( "<p/>", {
-				"class": "TextPar",
+				"class": "p-3 TextPar",
 				text: node.content
 			}));
 		}
 		else if ( node.type == "gallery" ) {
 			let newgallery = $( `
-			<div class="carousel slide ImageGallery" aria-label="Galleria di immagini" data-interval="false">
+			<div class="carousel slide p-3 ImageGallery" aria-label="Galleria di immagini" data-interval="false">
 				<div class="carousel-inner"></div>
 				<a class="carousel-control-prev" role="button" data-slide="prev">
     				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -412,9 +412,12 @@ function writeActivityText( container ) {
 					src: pic.src
 				}));
 
-				newimage.append( $( "<p/>", {
-					"aria-hidden": "true",
-					"class": "p-1",
+				newimage.append( $( "<div/>", {
+					"class": "carousel-caption", // le classi d-none e d-md-block fanno scomparire le captions su schermi piccoli
+					"aria-hidden": "true"
+				}));
+
+				newimage.find( ".carousel-caption" ).append( $( "<p/>", {
 					text: pic.alt
 				}));
 

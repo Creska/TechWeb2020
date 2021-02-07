@@ -1,12 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-        <!--Luca: lasciate la versione uncompressed di jquery. La slim manca di tutte le operazioni AJAX-->
         <script src="https://code.jquery.com/jquery-3.5.1.js"
                 integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -30,26 +27,20 @@
     </head>
 
     <body>
-        <nav>
-            <ul class=" nav justify-content-center" aria-hidden="true">
-                <li class="nav-item">
-                    <a class="nav-link" aria-disabled="true">
-                        <img id="logo" class="logo" src="../images/logo.png" alt="M & M App Logo"></img>
-                    </a>
-                </li>
-            </ul>
+        <div id="appbanner" aria-hidden="true">
+            <img id="logo" class="logo" src="../images/logo.png" alt="M&M App Logo">
+        </div>
 
-            <div role="heading" aria-level="1" class="sr-only">M&M - Applicazione per giochi interattivi</div>
-        </nav>
+        <div role="banner" class="sr-only">M&M - Applicazione per giochi interattivi</div>
 
         <main id="StartScreen">
             <script>
                 ScrollReveal().reveal('.logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
             </script>
             
-            <div class="card" >
+            <div class="card text-center">
                 <div class="card-header" id="info-title">
-                    Informazioni
+                    Tutorial
                 </div>
                 <div class="card-body" id="info-body">
                   <blockquote class="blockquote">
@@ -76,20 +67,20 @@
                   </blockquote>
                 </div>
                 <div class="card-footer text-muted" id="info-footer">
-                    - Ora non ti resta che iniziare il gioco -
+                    <p>- Ora non ti resta che iniziare il gioco -</p>
+                    <button id="StartBtn" onclick="startGame();" disabled>START</button>
                 </div>
-                <button id="StartBtn" onclick="startGame();" disabled>START</button>
-              </div>
+            </div>
 
-              <script>
-                    ScrollReveal().reveal('.card-header', {origin: 'top', interval: 50, duration: 1500, distance: '100px', easing: 'cubic-bezier(.215, .61, .355, 1)' })
-                    ScrollReveal().reveal('.card-body', { origin: 'left', duration: 1500, distance: '100px', interval:200, delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-                    ScrollReveal().reveal('.DomandaMultipla', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-                    ScrollReveal().reveal('.DomandaNumerica', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-                    ScrollReveal().reveal('.DomandaAperta', { origin: 'left', distance: '100px', interval:800, delay: 700, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-                    ScrollReveal().reveal('.Prosegui', { origin: 'left', distance: '100px', interval:1100, delay: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-                    ScrollReveal().reveal('.Chiudi', { origin: 'left', distance: '100px', interval:1400, delay: 1300, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-              </script>
+            <script>
+                ScrollReveal().reveal('.card-header', {origin: 'top', interval: 50, duration: 1500, distance: '100px', easing: 'cubic-bezier(.215, .61, .355, 1)' })
+                ScrollReveal().reveal('.card-body', { origin: 'left', duration: 1500, distance: '100px', interval:200, delay: 100, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                ScrollReveal().reveal('.DomandaMultipla', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                ScrollReveal().reveal('.DomandaNumerica', { origin: 'left', distance: '100px', interval: 500, delay: 400, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                ScrollReveal().reveal('.DomandaAperta', { origin: 'left', distance: '100px', interval:800, delay: 700, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                ScrollReveal().reveal('.Prosegui', { origin: 'left', distance: '100px', interval:1100, delay: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+                ScrollReveal().reveal('.Chiudi', { origin: 'left', distance: '100px', interval:1400, delay: 1300, easing: 'cubic-bezier(.215, .61, .355, 1)' });
+            </script>
         </main>
 
         <template id="MainContainer">
@@ -97,7 +88,7 @@
             <!-- Main = Container di tutto ciò che fa parte del gioco -->
             <main id="Main" aria-relevant="additions text"></main>
 
-            <button id="ButtonToTop"></button>
+            <button id="ButtonToTop" aria-hidden="true"></button>
             
             <script>
                 //script per bottone che scrolla la pagina in alto
@@ -116,7 +107,7 @@
             <div>
                 <i class='far fa-comment-dots' id="Open" onclick='openForm()'></i>
             </div>
-            <div id='chat-room' class="chat-popup">
+            <div id='chat-room' class="chat-popup" role="dialog">
                 <h4 style="color: rgb(0,0,0);" aria-level="2">Chat
                 <i id="Close" data-bs-dismiss="modal" aria-label="Close" onclick='closeForm()' class="far fa-times-circle" ></i></h4>
                 <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">

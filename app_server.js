@@ -358,7 +358,7 @@ app.get('/player/loadJSON', function (req, res) {
             console.log("player count is 1")
             groupstory = JSON.parse(JSON.stringify(storysent))//try used to clone an object without reference;
             groupstory.groupID = group;
-            shuffle(groupstory.quests)
+            //shuffle(groupstory.quests)
 
         }
         if (player_per_group_count > storysent.players) {
@@ -366,7 +366,7 @@ app.get('/player/loadJSON', function (req, res) {
             player_per_group_count = 1;
             group++;
             groupstory.groupID = group;
-            shuffle(groupstory.quests)
+            //shuffle(groupstory.quests)
         }
         return res.status(200).send(JSON.stringify(groupstory))
     }

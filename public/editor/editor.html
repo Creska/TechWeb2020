@@ -149,7 +149,25 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
     </div>
   </div>
 
-
+  <div class="modal fade" id="duplicate_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Attenzione</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>La storia è stata duplicata con successo, il suo id è: </p>
+        <span id="dup_text"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="$('#duplicate_modal').modal('hide'); ">ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- SEZIONI EDITOR -->
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 

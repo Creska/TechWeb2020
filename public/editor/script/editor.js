@@ -57,7 +57,11 @@ function duplicate_story() {
     type: 'POST',
     data: {story_id: CurrentWork.story_ID},
     success: function (data) {
-      CurrentWork.story_ID = data;
+      $('#dup_text').text(data);
+      $('#duplicate_modal').modal('show');
+    },
+    error: function (err) {
+      $('#fail_modal').modal('show');
     }
   });
 }

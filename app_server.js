@@ -15,6 +15,7 @@ app.use(express.static('public')) //this makes the content of the 'public' folde
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const fs = require('fs');
+const fs_extra = require('fs-extra'); 
 const cheerio = require('cheerio')
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
@@ -384,16 +385,14 @@ app.post('/editor/duplicate', function (req, res) {
         return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
     }
     let new_id = UNF();
-    fs.copyFile(path, unpubpath + new_id, (err) => {
-        if (err) {
-            console.log("An error occurred while duplicating the story ",err);
-            return res.status(500).send(JSON.stringify(err)).end()
-        }
+    if (fs.mkdirSync(unpubpath + new_id) != undefined) {
+        console.log("An error occurred inside /editor/duplicate while creating the directory for the duplicated story: " + err);
+        return res.status(500).send(JSON.stringify(err)).end();
+    }
+    else {
+      fs_extra.copy(path, unpubpath + new_id).then( () => {
         fs.readFile(unpubpath + new_id + '/' + 'story.json', (err, data) => {
-            if (err) {
-                console.log("An error occurred while reading the story.json of the new duplicate story " + story_id);
-                return res.status(500).send(JSON.stringify(err)).end()
-            }
+          if(data) { 
             let temp = JSON.parse(data);
             temp.story_ID = new_id;
             fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), 'utf8', (err) => {
@@ -401,10 +400,23 @@ app.post('/editor/duplicate', function (req, res) {
                     console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to change his story id");
                     return res.status(500).send(JSON.stringify(err)).end()
                 }
-                return res.status(200).send(JSON.stringify(new_id)).end();
+                else {
+                    console.log("story duplicated successfully with the id ", new_id)
+                    return res.status(200).send(JSON.stringify(new_id)).end();
+                }
             })
+          }
+          else {
+            console.log("An error occurred while reading the story.json of the new duplicate story " + story_id + " to change his story id");
+            return res.status(500).send(JSON.stringify(err)).end()
+          }
         })
-    })
+        }).catch( err => {
+        console.log("An error occurred while duplicating the story ",err);
+        return res.status(500).send(JSON.stringify(err)).end()
+        }
+      );
+    }
 })
 
 app.get('/editor/getStories', function (req, res) {
@@ -616,7 +628,7 @@ app.post('/editor/saveStory', function (req, res) {
                 let index =1;
                 let actual_file_name = file_name;
                 while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
-                    actual_file_name = file_name.split(".")[0] + "(" +index +")" +file_name.split(".")[1];
+                    actual_file_name = file_name.split(".")[0] + "(" +index +")." +file_name.split(".")[1];
                     index++;
                 }
                 if( actual_file_name != file_name ) {

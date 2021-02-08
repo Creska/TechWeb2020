@@ -35,9 +35,8 @@ $(function () {
 	socket.on('valuator-message', (message) => {
 		if ( message ) {
 			$( "#list" ).append( $( "<blockquote/>", {
-				"class": "valuator-msg",
-				text: msg
-			}));
+				"class": "valuator-msg"
+			}).html( "<span class='sr-only'>Risposta del valutatore:</span>" + message ));
 		}
 	});
 
@@ -114,6 +113,7 @@ function startGame() {
 	$( "#Main" ).before( $( "<h1/>", {
 		"class": "p-2 StoryTitle",
 		role: "heading",
+		"aria-live": "assertive",
 		"aria-level": "1",
 		text: StoryObj.story_title
 	}));
@@ -148,7 +148,7 @@ function showAccess() {
 			"class": "fas fa-check-circle fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul></ul>" ) );
+		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>" ) );
 		$.each( alerts, function( i, str ) {
 			accessibility_alert.find( "ul" ).append( $( "<li/>", { text: str } ) );
 		});
@@ -287,7 +287,8 @@ function goToQuest( qid ) {
 
 	newquest.append( $( "<h2/>", {
 		"class": "QuestTitle",
-		"aria-level": "3",
+		"aria-live": "assertive",
+		"aria-level": "2",
 		text: questmap[ qid ][0].quest_title 
 	}));
 
@@ -440,6 +441,7 @@ function buildAnswerField( container ) {
 
 	AF.append( $( "<p/>", {
 		"class": "AnswerFieldDescription",
+		"aria-hidden": "true",
 		text: activity.answer_field.description
 	}));
 
@@ -447,7 +449,11 @@ function buildAnswerField( container ) {
 
 	switch ( activity.answer_field.type ) {
 		case "checklist":
-			answerinput = $( "<ul class='AnswerInput'/>" );
+			answerinput = $( "<ul/>", {
+				"class": "AnswerInput",
+				"aria-label": activity.answer_field.description,
+				"role": "list"
+			});
 			let answeropt;
 
 			$.each( activity.answer_field.options, function( opt_i, opt ) {
@@ -470,6 +476,7 @@ function buildAnswerField( container ) {
 		case "text":
 			answerinput = $( "<textarea/>", {
 				"class": "AnswerInput w-100",
+				"aria-label": activity.answer_field.description,
 				placeholder: "Risposta"
 			});
 			break;
@@ -477,13 +484,15 @@ function buildAnswerField( container ) {
 			answerinput = $( "<input/>", {
 				"class": "AnswerInput",
 				type: "number",
+				"aria-label": activity.answer_field.description,
 				placeholder: "0"
 			});
 			break;
 		case "date":
 		case "time":
 			answerinput = $( "<input/>", {
-				type: activity.answer_field.type
+				type: activity.answer_field.type,
+				"aria-label": activity.answer_field.description
 			});
 			break;
 		default:
@@ -526,10 +535,17 @@ function sendMsg( msg ) {
 
 	$( "#chat-room input" ).val( "" );
 	ActivityRecap.ChatMessages += 1;
-	$( "#list" ).append( $( "<blockquote/>", {
-		"class": "player-msg",
-		text: msg
-	}));
+	$( "#list" ).prepend( $( "<blockquote/>", {
+		"class": "player-msg"
+	}).html( "<span class='sr-only'>Messaggio inviato:</span>" + msg ));
+
+	//roba per debugging
+	setTimeout( function() {
+		$( "#list").collapse( "show" );
+$( "#list" ).prepend( $( "<blockquote/>", {
+		"class": "valuator-msg",
+	}).html( "<span class='sr-only'>Risposta del valutatore:</span>" + msg ));
+	}, 10000);
 };
 
 

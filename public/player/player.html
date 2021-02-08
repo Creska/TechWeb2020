@@ -43,25 +43,25 @@
                     Tutorial
                 </div>
                 <div class="card-body" id="info-body">
-                    <p style="padding-top: 10px; margin-left: 10px; margin-right: 10px;">Grazie a questa app, potrai giocare ad una storia già preparata. In molte attività ci sarà un esercizio finale, che ti permetterà di conquistare punti e risolvere un enigma. Gli esercizi possono essere:</p>
+                    <p class="p-3">Grazie a questa app, potrai giocare ad una storia già preparata. In molte attività ci sarà un esercizio finale, che ti permetterà di conquistare punti e risolvere un enigma. Gli esercizi possono essere:</p>
                     <ul style="text-align: center;">
                         <li>
                             Domande a scelta multipla con una sola risposta selezionabile;<br>
-                            <img id="DomandaMultipla" src="../images/domanda_multipla.png" alt="Le domande a scelta multipla hanno due o più risposte possibili. Scegli quella che ti sembra più giusta." style="width: 250px; height: 150px; padding-bottom: 10px;">
+                            <img class="p-2" id="DomandaMultipla" src="../images/domanda_multipla.png" alt="Le domande a scelta multipla hanno due o più risposte possibili. Scegli quella che ti sembra più giusta.">
                         </li>
                         <li>
                             Domande risposta numerica;<br>
-                            <img id="DomandaNumerica" src="../images/numero.png" alt="Per le domande numeriche, inserisci un numero tramite tastiera o utilizza le apposite frecce per aumentare o diminuire." style="width: 250px; height: 150px; padding-bottom: 10px;">
+                            <img class="p-2" id="DomandaNumerica" src="../images/domanda_numerica.png" alt="Per le domande numeriche, inserisci un numero tramite tastiera o utilizza le apposite frecce per aumentare o diminuire.">
                         </li>
                         <li>
                             Domande aperte.<br>
-                            <img id="DomandaAperta" src="../images/domanda_aperta.png" alt="Nelle domande aperte dovrai rispondere in modo classico, scrivendo ciò che ritieni corretto." style="width: 250px; height: 150px; padding-bottom: 10px;">
+                            <img class="p-2" id="DomandaAperta" src="../images/domanda_aperta.png" alt="Nelle domande aperte dovrai rispondere in modo classico, scrivendo ciò che ritieni corretto.">
                         </li>
                     </ul>
                     <p>Per proseguire la narrazione in fondo alla pagina vi è un pulsante con la scritta <em>PROSEGUI</em>. Cliccalo per passare all'attività seguente. Per alcune domande dovrai attendere che il Valutatore controlli la tua risposta: in questo caso vedrai apparire un segnale di attesa.</p>
-                    <img id="Prosegui" src="../images/prosegui.png" style="width: 300px; height: 75px; padding-bottom: 10px;" aria-hidden="true">
+                    <img class="p-2" id="Prosegui" src="../images/prosegui.png" aria-hidden="true">
                     <p>Al termine dell'ultima attività vi è un pulsante denominato <em>FINE</em>. Cliccalo per segnalare al valutatore la fine della partita e passare alla schermata finale.</p>
-                    <img id="Fine" src="../images/chiudi.png" style="width: 275px; height: 75px; padding-bottom: 10px;" aria-hidden="true">
+                    <img class="p-2" id="Fine" src="../images/fine.png" aria-hidden="true">
                     <p>Nella schermata finale potrai vedere il tuo punteggio, se il Valutatore te lo avrà abilitato.</p>
                 </div>
                 <div class="card-footer text-muted" id="info-footer">
@@ -102,6 +102,8 @@
 
         <footer class="page-footer text-center">
 
+            <h3 class="sr-only" aria-level="3">Chat room</h3>
+
             <button id="OpenChat" class="btn p-2" type="button" data-toggle="collapse" data-target="#chat-room" aria-expanded="false" aria-controls="chat-room">
                 <i class='far fa-comment-dots' aria-hidden="true"></i>
                 <span class="sr-only">Apri/chiudi chat</span>
@@ -113,10 +115,13 @@
             </div>
 
             <div class="m-3">
-                <button type="button" id="history" class="btn m-3" data-toggle="collapse" data-target="#list" aria-expanded="false" aria-controls="list">                
-                    <h5 id="chat-history">Cronologia chat</h5>
+                <!--
+                <button type="button" id="history" class="btn m-3" data-toggle="collapse" data-target="#list" aria-expanded="false" aria-controls="list">
+                    Chat stack
                 </button>
-                <div id="list" class="collapse" ></div>
+                -->
+                <h4 aria-level="4">Cronologia chat</h4>
+                <div id="list" role="log" aria-relevant="additions"></div>
                 <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
                 all'inizio di ogni attività la cronologia si svuota -->
             </div>

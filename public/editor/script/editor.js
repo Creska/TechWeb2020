@@ -73,8 +73,7 @@ function getStories(caller) {
     $(".error_div").css("display", "none");
     switch (caller) {
       case "ChooseStoryToEdit": 
-        //create_stories_grid(obj.stories);
-        create_Qrcodes_grid(obj.stories);
+        create_stories_grid(obj.stories);
         break;
       case "Explorer":
         create_Explorer_grids(obj.publishable,obj.published);
@@ -94,11 +93,31 @@ function create_Qrcodes_grid(stories) {
   $("#qrcodes_grid").empty();
   $("#qrcodes_grid").append('<div class="row mb-4"></div>');
   stories.forEach( story => {
-    let cell = $('<div class="col mr-3 bg-danger"></div>').text(story.id+"\n"+story.title);
-    if( $("#qrcodes_grid > div:nth-last-child(1)").children().length >= 4 )
+    let header = $("<div>"+story.title+"<br>"+story.id+"</div>");
+    let canvas = $('<canvas id="qr_canvas'+story.id+'"></canvas>');
+    let button = $('<a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download'+story.id+'" download><i class="fa fa-download"></i></a>');
+    button.on("click",function (e) {
+        var dataURL = document.getElementById('qr_canvas'+story.id).toDataURL('image/png');
+        document.getElementById('btn-download'+story.id).href = dataURL;
+    });
+    let qr_success = $('<div id="qr_success'+story.id+'"></div>');
+    qr_success.append(canvas);
+    qr_success.append("<br>");
+    qr_success.append(button);
+    let cell = $('<div class="col mr-3"></div>');
+    cell.append(header);
+    cell.append(qr_success);
+    if( $("#qrcodes_grid > div:nth-last-child(1)").children().length >= 3 )
       $("#qrcodes_grid").append('<div class="row mb-4"></div>');
     $("#qrcodes_grid > div:nth-last-child(1)").append(cell);
+    qr(story.id);
   });
+  if( $("#qrcodes_grid").children().length >1) {
+    while( $("#qrcodes_grid > div:nth-last-child(1)").children().length < 3) {
+      let col = $('<div class="col mr-3"></div>');
+      $("#qrcodes_grid > div:nth-last-child(1)").append(col);
+    }
+  }
 }
 
 function start_saving() {
@@ -192,24 +211,12 @@ function saveStory() {
 }
 
 function qr(id){
-
-  var button = document.getElementById('btn-download');
-  button.addEventListener('click', function (e) {
-      var dataURL = document.getElementById('qr_canvas').toDataURL('image/png');
-      button.href = dataURL;
-  });
-
-  QRCode.toCanvas(document.getElementById('qr_canvas'), 'http://site192041.tw.cs.unibo.it/player?story='+id, function (error) {
-  if (error) { 
-    console.error(error)
-  $("#qr_success").css("display","none");
-  $("#qr_error").css("display","block");
+  QRCode.toCanvas(document.getElementById('qr_canvas'+id), 'http://site192041.tw.cs.unibo.it/player?story='+id, function (error) {
+  if (error) {
+    $("#qr_success"+id).append("C'è stato un errore, in ogni caso l'url è: http://site192041.tw.cs.unibo.it/player?story="+id); 
+    $('#qr_canvas'+id).remove();
+    $('#btn-download'+id).remove();
   //in qr_error the url has to be written
-  }
-  else {
-    console.log('success!');
-    $("#qr_success").css("display","block");
-    $("#qr_error").css("display","none");
   }
 })
 }

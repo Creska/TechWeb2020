@@ -142,7 +142,7 @@ function goToSection(where) {
         nav_resets();
 	    switch ( where ) {
 			case "Qrcodes":
-				getStories("ChooseStoryToEdit");
+				getStories("Qrcodes");
 				break;
 		    case "Graph":
 		        before_section = CurrentNavStatus.Section;

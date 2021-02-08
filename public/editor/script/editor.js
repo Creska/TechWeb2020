@@ -73,12 +73,14 @@ function getStories(caller) {
     $(".error_div").css("display", "none");
     switch (caller) {
       case "ChooseStoryToEdit": 
-        create_stories_grid(obj.stories);
+        //create_stories_grid(obj.stories);
+        create_Qrcodes_grid(obj.stories);
         break;
       case "Explorer":
-
         create_Explorer_grids(obj.publishable,obj.published);
         break;
+      case "Qrcodes":
+        create_Qrcodes_grid(obj.stories);
     }
     if( obj && obj.error_msg ){
       $("#"+caller +"_div_error p").empty();
@@ -87,11 +89,18 @@ function getStories(caller) {
     }  
   });
 }
-/* 
-TO-DO list:
-cazzatine varie
-  -Make code polite and modular
-  */
+
+function create_Qrcodes_grid(stories) {
+  $("#qrcodes_grid").empty();
+  $("#qrcodes_grid").append('<div class="row mb-4"></div>');
+  stories.forEach( story => {
+    let cell = $('<div class="col mr-3 bg-danger"></div>').text(story.id+"\n"+story.title);
+    if( $("#qrcodes_grid > div:nth-last-child(1)").children().length >= 4 )
+      $("#qrcodes_grid").append('<div class="row mb-4"></div>');
+    $("#qrcodes_grid > div:nth-last-child(1)").append(cell);
+  });
+}
+
 function start_saving() {
   // close_css_window(); --> l'ho spostato nel chiamante navbar()
   CurrentWork.publishable = isPublishable(CurrentWork); 
@@ -183,6 +192,13 @@ function saveStory() {
 }
 
 function qr(id){
+
+  var button = document.getElementById('btn-download');
+  button.addEventListener('click', function (e) {
+      var dataURL = document.getElementById('qr_canvas').toDataURL('image/png');
+      button.href = dataURL;
+  });
+
   QRCode.toCanvas(document.getElementById('qr_canvas'), 'http://site192041.tw.cs.unibo.it/player?story='+id, function (error) {
   if (error) { 
     console.error(error)

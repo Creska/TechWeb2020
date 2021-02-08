@@ -14,6 +14,8 @@ function MainMenu( action, is_new ) {
             /* DA FINIRE */
             goToSection('Explorer');
             break;
+		case "QRCODE":
+			goToSection("Qrcodes");
     }
 };
   
@@ -130,8 +132,7 @@ function back() {
 			break;
 	}
 };
-  
-  
+
 /**
 * @param where
 * Porta alla sezione specificata, facendo tutti i caricamenti necessari
@@ -139,9 +140,10 @@ function back() {
 function goToSection(where) {
     $( "#" + CurrentNavStatus.Section ).fadeOut( function() {
         nav_resets();
-  
 	    switch ( where ) {
-
+			case "Qrcodes":
+				getStories("ChooseStoryToEdit");
+				break;
 		    case "Graph":
 		        before_section = CurrentNavStatus.Section;
                 break;

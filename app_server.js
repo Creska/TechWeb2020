@@ -516,6 +516,32 @@ app.get('/editor/getStories', function (req, res) {
             }
         });
     }
+    else if( section == 'Qrcodes') {
+        let stories = []; //returns an array of unpublished stories objects
+        fs.readdir( pubpath, (err, files) => {
+            if (err) {
+                console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
+                return res.status(500).send(JSON.stringify(err)).end();
+            }
+            else {
+                files.forEach(file => {
+                    try {
+                        let data = fs.readFileSync(pubpath + file + '/' + 'story.json');
+                        stories.push({ id: file, title: JSON.parse(data).story_title });
+                    }
+                    catch (err) {
+                        console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
+                        any_error = true;
+                    }
+                })
+            }
+            console.log("stories: ", stories)//this happens before the forEach for some reason
+           let error_msg;
+            if (any_error) //at least one story wasn't retrieved
+                error_msg = "Qualche storia non è stata reperita nel server.";
+            return res.status(200).send(JSON.stringify({ error_msg: error_msg, stories: stories })).end();
+        })
+    }
     else {
         console.log("An error accourred inside /editor/getStories, while retrieving stories: BAD REQUEST");
         return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "'section' parameter must be ChooseStoryToEdit or Explorer." })).end();

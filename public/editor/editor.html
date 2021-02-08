@@ -262,6 +262,7 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('STORY',true);" data-toggle="tooltip" data-placement="left" title="Crea una nuova storia"><i class="fas fa-plus"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('CHOOSESTORY');" data-toggle="tooltip" data-placement="right" title="Modifica una storia già esistente"><i class="fas fa-edit"></i></button>
       <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('EXPLORER');" data-toggle="tooltip" data-placement="left" title="Gestisci le storie salvate"><i class="fas fa-server"></i></button>
+      <button class="btn btn-lg btn-secondary mb-3 rounded" onclick="MainMenu('QRCODE');" data-toggle="tooltip" data-placement="right" title="Visualizza i qr code delle storie pubblicate"><i class="fas fa-mobile-alt"></i></button>
     </div>
   </main>
 
@@ -965,28 +966,37 @@ https://media.tenor.com/images/9145af6867f4df52aef49c6412ba7c6c/tenor.gif
   <!-- HELP BUTTON -->
   <button id="HelpBtn" class="btn btn-lg btn-primary rounded" onclick="showHelp();"><i class="fas fa-question"></i></button>
 
-  
+  <style>
+    #qrcode_section .col {
+      background-color: red;
+    }
+    #qrcode_section .row {
+      background-color: blue;
+    }
+  </style>
   <!-- SCHERMATA DEL QRCODE -->
+  <main role="main" class="inner cover EditorSection " id="Qrcodes">
+    <a href="javascript:goToSection('MainMenu')" data-toggle="tooltip" data-placement="bottom" title="Torna alla home">
+      <i class="fas fa-home fa-2x"></i>
+    </a>
+    <div id="qrcodes_grid" class=" mt-5" ></div>  
+        <!--        <p id="story_id_qr_p"></p> 
+        <div id="qr_div">  
+          <div id="qr_error" class="col-xs-12 alert alert-danger text-justify error_div" role="alert">
+            <i class="fas fa-exclamation"></i><p >Il qr code non è stato generato correttamente,
+              clicca <a href="javascript:qr(CurrentWork.story_ID)">qui</a>, altrimenti 
+              il link è: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+            </p>
+          </div>
+        <div id="qr_success" >
+          <canvas id="qr_canvas"></canvas><br>
+          <a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download" download><i class="fa fa-download"></i></a>
+        </div></div>-->  
+  </main>
   <main role="main" class="inner cover EditorSection " id="final_section">
     <p id="story_id_p"></p> 
-    <div id="qr_div">  <div id="qr_error" class="col-xs-12 alert alert-danger text-justify error_div" role="alert">
-        <i class="fas fa-exclamation"></i><p >Il qr code non è stato generato correttamente,
-          clicca <a href="javascript:qr(CurrentWork.story_ID)">qui</a>, altrimenti 
-          il link è: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        </p>
-      </div>
-    <div id="qr_success" >
-      <canvas id="qr_canvas"></canvas><br>
-      <a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download" download><i class="fa fa-download"></i></a>
-    </div>
     <button class="btn btn-lg btn-primary" id="final_button" onclick="goToSection('ChooseStoryToEdit');">Clicca per proseguire</button>
   </main>
-<script>var button = document.getElementById('btn-download');
-  button.addEventListener('click', function (e) {
-      var dataURL = document.getElementById('qr_canvas').toDataURL('image/png');
-      button.href = dataURL;
-  });</script>
-
 
   <!-- SCHERMATA DI SCELTA STORIA -->
   <main role="main" class="inner cover EditorSection" id="ChooseStoryToEdit">

@@ -95,7 +95,7 @@ function create_Qrcodes_grid(stories) {
   stories.forEach( story => {
     let header = $("<div>"+story.title+"<br>"+story.id+"</div>");
     let canvas = $('<canvas id="qr_canvas'+story.id+'"></canvas>');
-    let button = $('<a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download'+story.id+'" download><i class="fa fa-download"></i></a>');
+    let button = $('<a href="#" class="btn btn-lg btn-success mt-2 mb-2" id="btn-download'+story.id+'" download="'+story.title+'.png"><i class="fa fa-download"></i></a>');
     button.on("click",function (e) {
         var dataURL = document.getElementById('qr_canvas'+story.id).toDataURL('image/png');
         document.getElementById('btn-download'+story.id).href = dataURL;

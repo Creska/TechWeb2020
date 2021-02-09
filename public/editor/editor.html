@@ -938,7 +938,7 @@
           <p>La storia è pubblicabile. Vuoi pubblicarla già adesso o preferisci salvarla sul server e occupartene in un secondo momento?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#publish_directly').modal('hide');saveStory() ">Pubblica</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#publish_directly').modal('hide');CurrentWork.published=true;saveStory() ">Pubblica</button>
           <button type="button" class="btn btn-primary" onclick="$('#publish_directly').modal('hide');saveStory()">Salva</button>
         </div>
       </div>

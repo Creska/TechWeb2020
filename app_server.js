@@ -15,7 +15,8 @@ app.use(express.static('public')) //this makes the content of the 'public' folde
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const fs = require('fs');
-var ncp = require('ncp').ncp;
+const rmdir = require('rimraf');
+const ncp = require('ncp').ncp;
 const cheerio = require('cheerio')
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
@@ -698,7 +699,7 @@ app.post('/editor/deleteStory', function (req, res) {
             let path = storyPath(story_id);
             if (path != '404') {
                 promises.push(new Promise((resolve, reject) => {
-                    fs.rmdir(path, { recursive: true }, (err) => {
+                    rmdir(path, (err) => {
                         if (err) {
                             console.log("An error occurred inside /editor/deleteStory while removing " + story_id + ": " + err);
                             fb.msgs.push({ msg: "Errore nell'eliminazione di " + story_id + " è .", successful: false });

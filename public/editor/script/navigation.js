@@ -283,6 +283,7 @@ function goToSection(where) {
 
 			    $( ".masthead" ).fadeOut();
 			    $( "#breadcrumbs" ).fadeOut();
+				$("#feedback_div").empty();
 		        getStories("Explorer");
                 break;
             

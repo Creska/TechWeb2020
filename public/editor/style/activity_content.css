@@ -1,0 +1,76 @@
+#ChooseActivityType, #MainOutcomeWidget {
+  display: none;
+}
+
+#Access ul, #ChecklistPreview ul, #AddOutcomeWidget ul, #main-outcome-questlist, #main-outcome-activitylist, #AddOutcomeWidget ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: auto;
+  text-align: left;
+  width: 30%;
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#AnswerFieldSettings .col-1 {
+  display: flex;
+  align-items: center;
+}
+
+#ReadingActivity, #AnswerActivity {
+  display: none;
+}
+
+#OutcomesTable {
+  background-color: #666;
+  table-layout: fixed;
+  width: 100%;
+}
+
+#OutcomesTable tr:not(:last-child) {
+  border-bottom-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: grey;
+}
+
+#OutcomesTable th, #OutcomesTable td {
+  overflow: hidden;
+  padding: 10px 0px 10px 0px;
+  word-wrap: break-word;
+}
+
+#OutcomesTable th:not(:last-child), #OutcomesTable td:not(:last-child) {
+  border-right-width: thin;
+  border-right-style: solid;
+  border-color: grey;
+}
+
+#EditText textarea {
+  width: 100%; /* sovrascrive il numero di colonne */
+}
+
+#GalleryPreview {
+  margin: 10vh 0 10vh 0;
+  padding: 0;
+  width: 100%;
+}
+
+#GalleryPreview .row {
+  margin-top: 2.5vh;
+  width: 100%;
+}
+
+#GalleryPreview img {
+  width: 10vw;
+  height: auto;
+}
+
+.video-placeholder {
+  background-color: #666;
+  font-weight: bold;
+  margin: auto;
+  padding: 10% 0 10% 0;
+  text-transform: uppercase;
+}

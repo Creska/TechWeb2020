@@ -1,0 +1,123 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+.grido {
+  display: grid;
+  grid-template-rows: minmax(10px,auto) minmax(126px,auto) minmax(10px,auto) minmax(126px,auto) 1fr minmax(10px,auto) minmax(126px,auto);
+}
+
+#mynetwork {
+  width: 90vw;
+  height: 90vw;
+}
+
+.masthead, #breadcrumbs {
+  display: none;
+}
+
+.breadcrumb {
+  background-color: #333;
+}
+
+#MainMenu {
+  display: block;
+}
+
+#HelpBtn {
+  position: fixed;
+  bottom: 2.5%;
+  right: 2.5%;
+}
+
+#HelpBtn:hover {
+  bottom: 5%;
+  right: 5%;
+  transform: scale(2);
+}
+
+.SectionHeader {
+  text-align: justify;
+  text-align-last: center;
+}
+
+.alert {
+  line-height: 15pt;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  text-shadow: none;
+}
+
+.alert i, .alert p {
+  display: table-cell;
+  padding: 15px;
+}
+
+.alert i {
+  text-align: center;
+}
+
+.alert-warning {
+  color: rgb(65, 45, 2);
+  background-color: rgba(255, 208, 52, 0.5);
+  border-color: rgb(65, 45, 2);
+}
+
+.alert-danger {
+  color: rgb(216, 148, 154);
+  background-color: rgba(168, 54, 63, 0.5);
+  border-color: rgb(216, 148, 154);
+}
+
+.alert-success {
+  color: rgb(153, 230, 171);
+  background-color: rgb(26, 62, 41);
+  border-color: rgb(37, 90, 50);
+}
+
+.info-section {
+  border-style: solid;
+  border-width: thin;
+  color: rgb(142, 227, 241);
+  background-color: rgb(20, 59, 67);
+  border-color: rgb(142, 227, 241);
+}
+
+.BackBtn {
+  margin-top: 15vh;
+}
+
+.Save-Cancel {
+  margin-top: 10vh;
+}
+
+.CardGrid {
+  margin-top: 5vh;
+}
+
+.card:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.modal .close {
+  color: #fff;
+}
+
+.modal-header, .modal-footer {
+  border-color: #666;
+}
+
+#s_buttons_div button:first-child {
+  background-color: lightcoral;
+  border-color: lightcoral;
+}
+
+#PlayersN {
+  display: none;
+}
+
+#ChooseGameMode .rounded-circle {
+  border-style: none;
+}

@@ -1,20 +1,18 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-        * l'array di outcomes viene resettato in fase di pubblicazione
-        * fare in modo che per le storie pubblicate eìle immagini vengano cercate in published
-        * fare in modo che il mainoutcomewidget si chiuda quando viene aperto quello della tipologia di attività
-    * [WAITING] Aggiornare l'help riguardo a tutti i cambiamenti fatti:
+        * certe volte l'array di outcomes sembrerebbe essere resettato
+        * la pubblicazione anticipata non funziona
+        * Node does not exist. Clustering.js:728:14 quando clicco su un nodo quest
+    * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività
         * grafo
         * sistema outcomes
         * qrcode
         * non ci sono più gli input data e ora
+        * editor css
     * Aggiungere labels per widget degli outcomes
-    * Aggiornare editor CSS riguardo a tutti i cambiamenti fatti
-    * Cambiare campo src dei media in name
-    * [WIP] Aggiungere tasti per accedere direttamente ai qrcodes
     * [WIP] Apertura della preview
 * PLAYER
     * Inserire placeholder nelle cartelle

@@ -4,6 +4,7 @@ var MediaBuffer;
  */
 function openActivityTypeWidget() {
 	if ( $( "#ChooseActivityType" ).css( "display" ) == "none" ) {
+		$( "#MainOutcomeWidget" ).fadeOut();
 		if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type == "READING" ) {
 			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL )
 				$( "#ActivityType2" ).prop( "checked", true );

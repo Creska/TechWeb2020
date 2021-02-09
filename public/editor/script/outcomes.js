@@ -5,6 +5,8 @@ function openMainOutcomeWidget() {
         $( "#MainOutcomeWidget" ).fadeOut();
         return;
     }
+
+    $( "#ChooseActivityType" ).fadeOut();
     
     let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
@@ -37,6 +39,7 @@ function openMainOutcomeWidget() {
         $( "#main-outcome-activitylist input[value=" + activity.answer_outcome[0].next_activity_id + "]" ).prop( "checked", true );
     }
 
+    $( "#MainOutcomeWidget .incomplete-outcome" ).addClass( "invisible" );
     $( "#MainOutcomeWidget" ).fadeIn();
 };
 
@@ -74,6 +77,9 @@ function saveMainOutcome() {
         CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome[0].next_activity_id = $( "#main-outcome-activitylist input:checked" ).val();
 
         $( "#MainOutcomeWidget" ).fadeOut();
+    }
+    else {
+        $( "#MainOutcomeWidget .incomplete-outcome" ).removeClass( "invisible" );
     }
 };
 
@@ -140,7 +146,7 @@ function loadOutcomesSection() {
 
 
 function loadOutcomeWidget() {
-    CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+    let CurrentStage = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
 
     /* loading dell'answer field */
     $( "#outcome-answerfield" ).remove();
@@ -187,8 +193,9 @@ function loadOutcomeWidget() {
         $( "#outcome-questlist" ).append( questli );
     });
     
-        
     $( "#outcome-activitylist" ).empty();
+
+    $( "#AddOutcomeWidget .incomplete-outcome" ).addClass( "invisible" );
 };
 
 
@@ -199,33 +206,26 @@ function addOutcome() {
     if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "UL" ) {
         if ( $( "#outcome-answerfield input:checked" ).length > 0 )
             response = $( "#outcome-answerfield input:checked" ).val().trim().replace(/(<([^>]+)>)/gi, "");
-        else
+        else {
+            $( "#AddOutcomeWidget .incomplete-outcome" ).removeClass( "invisible" );
             return;
+        }
     }
     else if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "INPUT" ) {
         response = $( "#outcome-answerfield" ).val().trim().replace(/(<([^>]+)>)/gi, "");
-
-        if ( response == null )
-            return;
     }
     else {
         handleError();
         return;
     }
 
-    if ( response === "" )
+    if ( response === "" || response == null || $( "#outcome-questlist input:checked" ).length < 1 || $( "#outcome-activitylist input:checked" ).length < 1 ) {
+        $( "#AddOutcomeWidget .incomplete-outcome" ).removeClass( "invisible" );
         return;
+    }
 
-    let nextquest, nextactivity;
-    if ( $( "#outcome-questlist input:checked" ).length > 0 )
-        nextquest = $( "#outcome-questlist input:checked" ).val();
-    else
-        return;
-
-    if ( $( "#outcome-activitylist input:checked" ).length > 0 )
-        nextactivity = $( "#outcome-activitylist input:checked" ).val();
-    else
-        return;
+    let nextquest = $( "#outcome-questlist input:checked" ).val();
+    let nextactivity = $( "#outcome-activitylist input:checked" ).val();
 
     /* aggiunge dati alla tabella */
     newentry = $( "<tr/>" );
@@ -253,6 +253,7 @@ function resetOutcomeWidget() {
     $( "#outcome-score" ).val( null );
     $( "#outcome-questlist input" ).prop( "checked", false );
     $( "#outcome-activitylist" ).empty();
+    $( "#AddOutcomeWidget .incomplete-outcome" ).addClass( "invisible" );
 };
 
 

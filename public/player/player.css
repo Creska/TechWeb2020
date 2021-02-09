@@ -1,5 +1,28 @@
+@media (min-width: 700px) {
+    .accessibility-alert ul, #list {
+        width: 50%;
+    }
+
+
+}
+
 html, body {
     overflow-x: hidden;
+}
+
+body { /* questa roba prima era nel main */
+    background-image: url(../images/sfondo_player.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+
+    align-items: center;
+}
+
+#appbanner, main, footer { /* roba nuova */
+   margin: auto;
+    max-width: 42em;
 }
 
 #StartScreen {
@@ -24,12 +47,14 @@ html, body {
 
 #Main{
     color: aliceblue;
+    /*
     background-image: url(../images/sfondo_player.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
     margin-right: 10px;
+    */
     border: slategray;
     padding: 10px;
     width: 100%;
@@ -50,6 +75,24 @@ html, body {
     z-index: 0;
 }
 
+.alert ul, #info-body ul {
+    padding-left: 0;
+    margin: auto;
+    text-align: left;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.accessibility-alert li {
+    margin: 5px;
+}
+
+#info-body ul {
+    list-style-type: none;
+}
+
 #info-title{
     font-size: 30px;
     font-family: 'Times New Roman', Times, serif;
@@ -65,6 +108,10 @@ html, body {
     font-style: italic;
     font-family: 'Times New Roman', Times, serif;
     color: rgb(255, 255, 255);
+}
+#info-body img {
+    max-width: 100%;
+    height: auto;
 }
 #info-footer{
     font-size: large;
@@ -113,7 +160,7 @@ html, body {
     border-color: rgba(30, 143, 255, 0.5);
     border-radius: 5px;
     margin-bottom: 20px;
-    font-size: 20px;
+    font-size: 18px;
     z-index: 1;
     position: relative;
 }
@@ -169,9 +216,15 @@ html, body {
     border-color: rgba(0, 0, 0, 0.8);
 }
 
+.carousel-caption {
+    position: static;
+    color: black;
+    font-style: italic;
+}
+
 iframe {
-    width: 100%;
-    height: auto;
+    width: 80vw;
+    height: 80vw;
 }
 
 #ButtonToTop{
@@ -231,12 +284,6 @@ iframe {
     border: 2px solid whitesmoke;
     color: rgb(255, 255, 255);
 }
-/*#history{
-    margin-bottom: 10px;
-    background: rgba(100, 148, 237, 0.8);
-    color: whitesmoke;
-
-}*/
 #history{
     text-decoration: none;
     outline: none;
@@ -280,4 +327,8 @@ iframe {
     font-weight: lighter;
     font-size: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;    
+}
+
+#appbanner, footer { /* roba nuova */
+    background-color: lightslategray !important;
 }

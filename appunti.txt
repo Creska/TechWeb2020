@@ -18,14 +18,12 @@ BUG E PROBLEMI DA CORREGGERE
 * PLAYER
     * Inserire placeholder nelle cartelle
     * Finire grafica e accessibilità:
-        * screenshots del tutorial
-        * ul
-        * funzionalità assertive
-        * pulizia grafica
+        * chat
+        * loading della valutazione
+        * grafica generale
         * schermata finale e di errore
         * funzionalità per la preview
-        * dimensioni dei carousels --> forse è inevitabile
-        * dimensioni video youtube --> https://sites.google.com/pjrprojects.co.uk/newsitesguide/embedding-content/youtube
+        * dimensioni video youtube
 * STORIE DI PROVA
     * [WIP] Completare copioni
     * [WAITING] Rifare storie con editor

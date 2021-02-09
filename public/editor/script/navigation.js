@@ -1,3 +1,11 @@
+/* indica la sezione dell'editor dove l'utente si trova attualmente e la quest/attività su cui sta lavorando */
+var CurrentNavStatus = {
+	Section: "MainMenu",
+	QuestN: -1,
+  ActivityN: -1,
+  TextPartN: -1
+};
+
 function MainMenu( action, is_new ) {
     switch ( action ) {
         case "STORY":

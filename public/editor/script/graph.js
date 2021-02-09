@@ -7,24 +7,24 @@ var options = {
       direction: 'UD',        // UD, DU, LR, RL
       sortMethod: 'hubsize',  // hubsize, directed
     }
-},
-interaction: {
-      dragNodes: true,
-      dragView: false
   },
-edges:{
-  arrows: 'to'
-},
-nodes: {
-  shape: "box"
-},
-physics: {
-  enabled: true,
-  solver: 'forceAtlas2Based'
-}
+  interaction: {
+    dragNodes: true,
+    dragView: false
+  },
+  edges:{
+    arrows: 'to'
+  },
+  nodes: {
+    shape: "box"
+  },
+  physics: {
+    enabled: true,
+    solver: 'forceAtlas2Based'
+  }
 };
 function create_nodes_structure() { 
-   nodes = [];
+  let nodes = [];
   CurrentWork.quests.forEach( quest => {
     if( quest.activities.length == 0 ) { //the quest has no activities
       nodes.push( {id: quest.quest_id+"Empty", label:"quest vuota",cid: quest.quest_id} );
@@ -39,7 +39,7 @@ return nodes;
 }
 
 function create_edges_structure() { 
-   edges = [];
+  let edges = [];
   CurrentWork.quests.forEach( (quest, q_index,quests) => {
     if ( quest.activities.length == 0 ) { //current quest is empty
       if( quests[q_index+1]) { //check next quest existence
@@ -78,7 +78,6 @@ function create_edges_structure() {
 }
 
 function create_graph() {
-  //var network;
   var nodes = new vis.DataSet( create_nodes_structure() );
   // create an array with edges
   var edges = new vis.DataSet( create_edges_structure() );
@@ -115,8 +114,7 @@ function clusterByCid() {
         borderWidth: 3,
         shape: "box",
         allowSingleNodeCluster: true,
-        label: quest.quest_title+"\n"+quest.quest_id //,
-        //color: "red"
+        label: quest.quest_title+"\n"+quest.quest_id
       },
     };
     network.cluster(clusterOptionsByData);

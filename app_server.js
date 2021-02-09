@@ -423,34 +423,7 @@ app.get('/editor/getStories', function (req, res) {
     console.log("getStories request received.")
     var section = req.query.section;
     var any_error = false;
-    if (section == 'ChooseStoryToEdit') {
-        let stories = []; //returns an array of unpublished stories objects
-        fs.readdir(unpubpath, (err, files) => {
-            if (err) {
-                console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
-                return res.status(500).send(JSON.stringify(err)).end();
-            }
-            else {
-                files.forEach(file => {
-                    try {
-                        let data = fs.readFileSync(unpubpath + file + '/' + 'story.json');
-                        stories.push({ id: file, title: JSON.parse(data).story_title });
-                    }
-                    catch (err) {
-                        console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
-                        any_error = true;
-                        //return res.status(500).send(JSON.stringify(err)).end();
-                    }
-                })
-            }
-            console.log("stories: ", stories)//this happens before the forEach for some reason
-            let error_msg;
-            if (any_error) //at least one story wasn't retrieved
-                error_msg = "Qualche storia non è stata reperita nel server.";
-            return res.status(200).send(JSON.stringify({ error_msg: error_msg, stories: stories })).end();
-        })
-    }
-    else if (section == 'Explorer') {
+    if (section == 'Explorer') {
         let stories = {}; //returns an object of published stories and publishable ones
         let publishable = [];
         let published = [];
@@ -516,9 +489,12 @@ app.get('/editor/getStories', function (req, res) {
             }
         });
     }
-    else if( section == 'Qrcodes') {
+    else if( section == 'Qrcodes' || section == 'ChooseStoryToEdit' ) {
+        let folder = pubpath;
+        if( section == "ChooseStoryToEdit")
+            folder = unpubpath;
         let stories = []; //returns an array of unpublished stories objects
-        fs.readdir( pubpath, (err, files) => {
+        fs.readdir( folder, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
@@ -526,21 +502,21 @@ app.get('/editor/getStories', function (req, res) {
             else {
                 files.forEach(file => {
                     try {
-                        let data = fs.readFileSync(pubpath + file + '/' + 'story.json');
+                        let data = fs.readFileSync(folder + file + '/' + 'story.json');
                         stories.push({ id: file, title: JSON.parse(data).story_title });
                     }
                     catch (err) {
                         console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
-                        any_error = true;
+                        any_error = true; 
                     }
-                })
+                });
+                console.log("stories: ", stories)
+                let error_msg;
+                if (any_error) //at least one story wasn't retrieved
+                    error_msg = "Qualche storia non è stata reperita nel server.";
+                return res.status(200).send(JSON.stringify({ error_msg: error_msg, stories: stories })).end();
             }
-            console.log("stories: ", stories)//this happens before the forEach for some reason
-           let error_msg;
-            if (any_error) //at least one story wasn't retrieved
-                error_msg = "Qualche storia non è stata reperita nel server.";
-            return res.status(200).send(JSON.stringify({ error_msg: error_msg, stories: stories })).end();
-        })
+        });
     }
     else {
         console.log("An error accourred inside /editor/getStories, while retrieving stories: BAD REQUEST");
@@ -604,9 +580,10 @@ function clean_folder(json, folder) {
             let diff = files.filter( x => !json_media.includes(x) );
             diff.forEach( file => {
                 try {
-                if( !(file == "story.json" || file == "css.json") )
-                    fs.unlinkSync(folder+"/"+file);
-                    console.log("file ",file," deleted")
+                    if( !(file == "story.json" || file == "css.json") ){
+                        fs.unlinkSync(folder+"/"+file);
+                        console.log("file ",file," deleted")
+                    }
                 }
                 catch(err) { 
                     console.log("something went wrong while deleting obsolete files",err)
@@ -654,7 +631,8 @@ app.post('/editor/saveStory', function (req, res) {
                 let index =1;
                 let actual_file_name = file_name;
                 while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
-                    actual_file_name = file_name.split(".")[0] + "(" +index +")." +file_name.split(".")[1];
+                    let pos = file_name.lastIndexOf(".");
+                    actual_file_name = [file_name.slice(0,pos), "(" +index +")",file_name.slice(pos)].join('');
                     index++;
                 }
                 if( actual_file_name != file_name ) {
@@ -662,6 +640,7 @@ app.post('/editor/saveStory', function (req, res) {
                     if( coordinates ) 
                         story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].name = actual_file_name;
                 }
+                console.log("actual file name: ",actual_file_name)
                 fs.renameSync(req.files[key].path, story_path + story_id + '/' + actual_file_name);
             }
             else {
@@ -734,7 +713,6 @@ app.post('/editor/deleteStory', function (req, res) {
             }
         })
         Promise.all(promises).then(() => {
-            //console.log("pre return: ",fb)
             return res.status(s).send(JSON.stringify(fb)).end();
         })
     }
@@ -804,8 +782,6 @@ app.post('/editor/publisher', function (req, res) {
         return res.status(400).send(JSON.stringify(fb)).end();
     }
 })
-
-
 
 app.get('/valuator', function (req, res) {
     //reading valuator page

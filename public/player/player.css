@@ -2,42 +2,37 @@
     .accessibility-alert ul, #list {
         width: 50%;
     }
-
-
 }
 
 html, body {
     overflow-x: hidden;
 }
 
-body { /* questa roba prima era nel main */
+body {
     background-image: url(../images/sfondo_player.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
-
     align-items: center;
 }
 
-#appbanner, main, footer { /* roba nuova */
-   margin: auto;
-    max-width: 42em;
+.page-container {
+    margin: auto;
+    max-width: 50em;
 }
 
-#StartScreen {
-    align-items: center;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
+#appbanner, .StoryTitle, footer {
+    background-color: rgba(119, 136, 153, 0.9);
 }
+
 #appbanner {
-    align-items: center;
     text-align: center;
-    background-color: rgba(97, 97, 97, 0.6);
     color: rgba(255, 255, 255);
     font-family: fantasy;
     font-size: 20px;
 }
+
 #logo{
     width: 200px;
     height: auto;
@@ -45,34 +40,13 @@ body { /* questa roba prima era nel main */
     overflow: hidden;
 }
 
-#Main{
-    color: aliceblue;
-    /*
-    background-image: url(../images/sfondo_player.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    margin-right: 10px;
-    */
-    border: slategray;
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    position: relative;
+#StartScreen {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
 }
-#Main::after{
-    content: ' ';
-    display: block;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: #000000;
-    position: absolute;
-    display: block;
-    opacity: 0.5;
-    z-index: 0;
+
+.alert {
+    margin: 0;
 }
 
 .alert ul, #info-body ul {
@@ -83,10 +57,6 @@ body { /* questa roba prima era nel main */
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-.accessibility-alert li {
-    margin: 5px;
 }
 
 #info-body ul {
@@ -101,6 +71,7 @@ body { /* questa roba prima era nel main */
     color: cornflowerblue;
     background-color: rgba(169, 169, 169, 0.3);
 }
+
 #info-body{
     background: rgba(100, 148, 237, 0.8);
     font-size: 20px;
@@ -109,17 +80,37 @@ body { /* questa roba prima era nel main */
     font-family: 'Times New Roman', Times, serif;
     color: rgb(255, 255, 255);
 }
+
 #info-body img {
     max-width: 100%;
     height: auto;
 }
+
 #info-footer{
     font-size: large;
     letter-spacing: 2px;
 }
 
+#StartBtn, .NextActivity, .CloseGameBtn{
+    align-content: center;
+    text-align: center;
+    width: 200px;
+    background-color: rgba(25, 1, 130, 0.8);
+    color: white;
+    border: 2px solid rgb(255, 255, 255, 0.5);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
+}
+
+#StartBtn:hover, .NextActivity:hover, .CloseGameBtn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: whitesmoke;
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
 .StoryTitle{
-    background-color: rgba(97, 97, 97, 0.6);
     text-align: center;
     margin: 0;
     text-shadow: 2px -1px #000000, -2px 1px #000000;            
@@ -128,8 +119,26 @@ body { /* questa roba prima era nel main */
     position: relative;
 }
 
-.alert {
-    margin: 0;
+#Main{
+    color: aliceblue;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#Main::after{
+    content: ' ';
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    z-index: 0;
 }
 
 .Quest {
@@ -140,6 +149,7 @@ body { /* questa roba prima era nel main */
     z-index: 1;
     position: relative;
 }
+
 .QuestTitle{
     color: rgb(180, 200, 230);
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -152,7 +162,7 @@ body { /* questa roba prima era nel main */
     text-align: center;
 }
 
-.ActivityText{
+.ActivityText, #Error, #Finish {
     background-color: rgba(255, 255, 255, 0.7);
     padding: 5px;
     color: rgb(0, 10, 20);
@@ -196,35 +206,16 @@ body { /* questa roba prima era nel main */
     height: 100%;
     margin-top: 0;
     vertical-align: middle;
+    text-align: left;
+    word-wrap: break-word;
 }
 
-#StartBtn, .NextActivity, .CloseGameBtn{
-    align-content: center;
-    text-align: center;
-    width: 200px;
-    background-color: rgba(25, 1, 130, 0.8);
-    color: white;
-    border: 2px solid rgb(255, 255, 255, 0.5);
-    border-radius: 5px;
-    margin-bottom: 20px;
-    z-index: 1;
-    position: relative;
-}
-#StartBtn:hover, .NextActivity:hover, .CloseGameBtn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-    color: whitesmoke;
-    border-color: rgba(0, 0, 0, 0.8);
-}
+
 
 .carousel-caption {
     position: static;
     color: black;
     font-style: italic;
-}
-
-iframe {
-    width: 80vw;
-    height: 80vw;
 }
 
 #ButtonToTop{
@@ -244,14 +235,17 @@ iframe {
     outline: none;
     cursor: pointer;
 }
+
 #ButtonToTop:active{
     background-color: rgba(255, 255, 240, 0.8);
 }
-.page-footer{
+
+footer {
+    display: none;
     padding: 10px;
-    background-color:  rgba(97, 97, 97, 0.6);
     position: relative;
 }
+
 #OpenChat{
     font-size: 50px;
     color: white;
@@ -269,6 +263,7 @@ iframe {
     resize: none;
     min-height: 100px;
 }
+
 #Send{
     margin: 10px;
     font-size: 16px;
@@ -279,11 +274,13 @@ iframe {
     border-radius: 10px;
     z-index: 100;
 }
+
 #Send:hover{
     background-color:rgb(100, 100, 100);
     border: 2px solid whitesmoke;
     color: rgb(255, 255, 255);
 }
+
 #history{
     text-decoration: none;
     outline: none;
@@ -298,37 +295,35 @@ iframe {
     border-radius: 20px;
     transition: .5s;
   }
+
 #history:hover {
     background-position: right center;
 }
+
 #list{
     list-style-type: none;
-}
-.player-msg{
-    margin: 0;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-radius: 10px;
-    color: whitesmoke;
-    background-color: cornflowerblue;
-    background-size: contain;
-    font-weight: lighter;
-    font-size: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;    
-}
-.valuator-msg{
-    margin: 0;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-radius: 10px;
-    color: black;
-    background-color: cornsilk;
-    background-size: contain;
-    font-weight: lighter;
-    font-size: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;    
+    margin: auto;
 }
 
-#appbanner, footer { /* roba nuova */
-    background-color: lightslategray !important;
+.player-msg, .valuator-msg {
+    margin: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 10px;
+    background-size: contain;
+    font-weight: lighter;
+    font-size: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.player-msg{
+    color: whitesmoke;
+    background-color: cornflowerblue;
+    text-align: right;  
+}
+
+.valuator-msg{
+    color: black;
+    background-color: cornsilk;
+    text-align: left;
 }

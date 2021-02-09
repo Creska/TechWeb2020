@@ -34,9 +34,9 @@ $(function () {
 
 	socket.on('valuator-message', (message) => {
 		if ( message ) {
-			$( "#list" ).append( $( "<blockquote/>", {
-				"class": "valuator-msg"
-			}).html( "<span class='sr-only'>Risposta del valutatore:</span>" + message ));
+			$( "#list" ).prepend( $( "<blockquote/>", {
+				"class": "valuator-msg p-1",
+			}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message ));
 		}
 	});
 
@@ -57,9 +57,9 @@ $(function () {
  */
 function validateInput( question, answer ) {
 	$( ".NextActivity" ).attr( "disabled", true );
-	$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>' );
+	$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>' );
 		
-	goToActivity( nextStageInOrder() ); // debugging
+	/* goToActivity( nextStageInOrder() ); // debugging */
 
 	socket.emit( 'validate-input-player', question, answer, socket.id );
 };
@@ -73,13 +73,10 @@ function handleError() {
 	$( "footer" ).fadeOut();
 	$( "#Main" ).empty();
 
-	$( "#Main" ).append( $(`
-	<section role="alert" class="text-center">
-		<i class="fas fa-exclamation-circle fa-7x text-danger" aria-hidden="true"></i>
-		<p role="alert">
-			Qualcosa è andato storto! Il gioco putroppo non può essere proseguito. Non sarebbe dovuto succedere e ci scusiamo.
-		</p>
-	</select>`));
+	$( "footer" ).fadeOut( "slow" );
+
+	$( "#Main" ).replaceWith( document.getElementById( "ErrorContainer" ).content.cloneNode(true) );
+	$( "#Error" ).fadeIn( "slow" );
 };
 
 
@@ -89,7 +86,7 @@ function loadGame() {
 	
 	showAccess();
 
-	if ( StoryObj.game_mode == "CLASS" ) {
+	if ( StoryObj.game_mode == "CLASS" && ( StoryObj.testing == false || StoryObj.testing == undefined ) ) {
 		let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
 		group_alert.append( $( "<i/>", {
 			"class": "fas fa-info-circle fa-2x p-2",
@@ -150,7 +147,10 @@ function showAccess() {
 		}));
 		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>" ) );
 		$.each( alerts, function( i, str ) {
-			accessibility_alert.find( "ul" ).append( $( "<li/>", { text: str } ) );
+			accessibility_alert.find( "ul" ).append( $( "<li/>", {
+				"class": "m-1",
+				text: str
+			}));
 		});
 	}
 	else {
@@ -181,6 +181,11 @@ function buildMaps() {
 };
 
 
+function get_media_path( name ) {
+	return "/player/stories/" + ( StoryObj.testing ? "unpublished" : "published" ) + "/" + StoryObj.story_ID + "/" + name;
+};
+
+
 function goToActivity( aid ) {
 	sendActivityRecap();
 
@@ -208,7 +213,7 @@ function goToActivity( aid ) {
 		newactivity.append( $( "<button/>", {
 			"class": "NextActivity",
 			onclick: "goToActivity( nextStageInOrder() );",
-			text: "PROSSIMA IN ORDINE NUMERICO"
+			text: "PROSSIMA (PREVIEW)"
 		}));
 	}
 	else {
@@ -219,8 +224,6 @@ function goToActivity( aid ) {
 					onclick: "endGame();",
 					text: "FINE"
 				}));
-	
-				/* TODO - togli la chat */
 			}
 			else {
 				newactivity.append( $( "<button/>", {
@@ -404,13 +407,11 @@ function writeActivityText( container ) {
 					newimage = $( "<div class='carousel-item active'/>" );
 				else
 					newimage = $( "<div class='carousel-item'/>" );
-				
-				pic.src = pic.src.replace( "unpublished", "published" ); // debugging
 
 				newimage.append( $( "<img/>", {
 					"class": "d-block w-100",
 					alt: pic.alt,
-					src: pic.src
+					src: get_media_path( pic.name )
 				}));
 
 				newimage.append( $( "<div/>", {
@@ -437,7 +438,7 @@ function writeActivityText( container ) {
 function buildAnswerField( container ) {
 	let activity = activitymap[ Status.ActivityID ][0];
 
-	let AF = $( "<div class='AnswerField'>" ); // su questo bisogna poi ragionarci nel caso dia fastidio all'accessibilità
+	let AF = $( "<div class='AnswerField' aria-label='Esercizio'/>" );
 
 	AF.append( $( "<p/>", {
 		"class": "AnswerFieldDescription",
@@ -536,16 +537,17 @@ function sendMsg( msg ) {
 	$( "#chat-room input" ).val( "" );
 	ActivityRecap.ChatMessages += 1;
 	$( "#list" ).prepend( $( "<blockquote/>", {
-		"class": "player-msg"
-	}).html( "<span class='sr-only'>Messaggio inviato:</span>" + msg ));
+		"class": "player-msg p-1"
+	}).html( "<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>" ));
 
+	/*
 	//roba per debugging
 	setTimeout( function() {
-		$( "#list").collapse( "show" );
-$( "#list" ).prepend( $( "<blockquote/>", {
-		"class": "valuator-msg",
-	}).html( "<span class='sr-only'>Risposta del valutatore:</span>" + msg ));
+		$( "#list" ).prepend( $( "<blockquote/>", {
+			"class": "valuator-msg p-1",
+		}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + msg ));
 	}, 10000);
+	*/
 };
 
 
@@ -553,21 +555,29 @@ function endGame() {
 	clearInterval( IntervalTimer );
 	sendActivityRecap();
 
-	/* TODO - porta ad una schermata finale */
+	$( "footer" ).fadeOut( "slow" );
+	$( "#Main" ).replaceWith( document.getElementById( "FinishContainer" ).content.cloneNode(true) );
+
+	if ( StoryObj.show_score ) {
+		$( "#Finish .sr-only, #Finish p:nth-child(3)" ).html( "Congratulazioni!<br>Hai completato il gioco.<br>Numero di punti ottenuti: <em>" + ( parseInt(Status.TotalScore) || 0 )  + "</em>" );
+	}
+	else {
+		$( "#Finish .sr-only, #Finish p:nth-child(3)" ).html( "Congratulazioni!<br>Hai completato il gioco." );
+	}
+
+	$( "#Finish" ).fadeIn( "slow" );
 };
 
 
 function sendStatus() {
-	/*
 	$.ajax({
 		url: "/player/playersActivities",
 		type: "POST",
 		processData: false,
 		data: Status
 	});
-	*/
 
-	console.log( Status ); // debugging
+	/* console.log( Status ); // debugging */
 };
 
 
@@ -580,14 +590,12 @@ function sendActivityRecap() {
 		Score: ActivityRecap.Score
 	};
 
-	/*
 	$.ajax({
 		url: "player/activityUpdate",
 		type: "POST",
 		processData: false,
 		data: recap
 	});
-	*/
 
-	console.log( recap ); // debugging
+	/* console.log( recap ); // debugging */
 };

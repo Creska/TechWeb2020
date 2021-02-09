@@ -23,10 +23,11 @@
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="player.css">
 
-        <title>Player</title>
+        <title>M&M Player</title>
     </head>
 
     <body>
+    <div class="page-container">
         <div id="appbanner" aria-hidden="true">
             <img id="logo" class="p-2" src="../images/logo.png" alt="M&M App Logo">
         </div>
@@ -100,6 +101,37 @@
             </script>
         </template>
 
+        <template id="ErrorContainer">
+
+            <main id="Error" class="text-center" style="display: none;">
+                <p class="sr-only" role="alert" aria-live="assertive">
+                    Si è verificato un errore!
+                    Il gioco purtroppo non si può proseguire.
+                    Ci scusiamo, non sarebbe dovuto accadere.
+                </p>
+
+                <p class="p-3" aria-hidden="true">
+                    <i class="fas fa-exclamation-circle fa-7x text-danger"></i>
+                </p>
+                <p class="p-3" aria-hidden="true">
+                    Si è verificato un errore!<br>
+                    Il gioco purtroppo non si può proseguire.<br>
+                    Ci scusiamo, non sarebbe dovuto accadere.
+                </p>
+            </main>
+        </template>
+
+        <template id="FinishContainer" style="display: none;">
+            <main class="text-center" id="Finish">
+                <p class="sr-only" role="alert" aria-live="assertive"></p>
+
+                <p class="p-3" aria-hidden="true">
+                    <i class="fas fa-flag-checkered fa-7x text-success"></i>
+                </p>
+                <p class="p-3" aria-hidden="true"></p>
+            </main>
+        </template>
+
         <footer class="page-footer text-center">
 
             <h3 class="sr-only" aria-level="3">Chat room</h3>
@@ -121,12 +153,14 @@
                 </button>
                 -->
                 <h4 aria-level="4">Cronologia chat</h4>
+                <p class="p-3">Elenco dei messaggi scambiati col valutatore durante questa attività. In alto sono presenti i messaggi più recenti.</p>
                 <div id="list" role="log" aria-relevant="additions"></div>
                 <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore
                 all'inizio di ogni attività la cronologia si svuota -->
             </div>
 
         </footer>
+    </div>
     </body>
 
 

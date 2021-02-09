@@ -13,22 +13,14 @@ BUG E PROBLEMI DA CORREGGERE
         * non ci sono più gli input data e ora
     * Aggiungere labels per widget degli outcomes
     * Aggiornare editor CSS riguardo a tutti i cambiamenti fatti
+    * Cambiare campo src dei media in name
     * [WIP] Aggiungere tasti per accedere direttamente ai qrcodes
     * [WIP] Apertura della preview
 * PLAYER
     * Inserire placeholder nelle cartelle
-    * Finire grafica e accessibilità:
-        * chat
-        * loading della valutazione
-        * grafica generale
-        * schermata finale e di errore
-        * funzionalità per la preview
-        * dimensioni video youtube
 * STORIE DI PROVA
     * [WIP] Completare copioni
     * [WAITING] Rifare storie con editor
-* TUTTO
-    * Cambiare campo src dei media in name
 
 APPUNTI SU NAV
 * schema:

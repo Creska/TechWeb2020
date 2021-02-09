@@ -54,7 +54,8 @@ game_example = {
 // oggetto immagine
 media = {
 	isFile: "", // indica se bisogna salvare il file su server
-	src: "", // se l'immagine è salvata su server, corrisponde al path - altrimenti corrisponde al nome che il nuovo file ha all'interno della mappa
+	src: "", // corrisponde al binario del file - se isFile = true
+	name: "", // corrisponde al nome con cui il file è stato salvato su server
 	alt: ""
 }
 

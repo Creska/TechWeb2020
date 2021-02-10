@@ -1,3 +1,4 @@
+process.umask(0);
 process.chdir( __dirname );
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
@@ -89,7 +90,6 @@ function shuffle(array) {
     -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
 */
-function stringToBool(string) { return string === 'true' }
 
 function valuator_emit(method, socket, data) {
     //emits the event passed with the arg to the valuator
@@ -401,7 +401,7 @@ app.post('/editor/duplicate', function (req, res) {
                 if(data) { 
                     let temp = JSON.parse(data);
                     temp.story_ID = new_id;
-                    fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), 'utf8', (err) => {
+                    fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), {encoding: 'utf8', mode:0o777 }, (err) => {
                         if (err) {
                             console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to set it's story id")
                             return res.status(500).send(JSON.stringify(err)).end()
@@ -606,7 +606,7 @@ app.post('/editor/saveStory', function (req, res) {
     var media_map = JSON.parse(req.fields.coordinates);
     console.log("saveStory request received.")
     console.log("published", published)
-    if (stringToBool(published)) 
+    if (published) 
         story_path = pubpath;
     else 
         story_path = unpubpath;
@@ -657,7 +657,7 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     console.log("file checking and moving completed")
-    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, 'utf8');
+    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, {encoding: 'utf8', mode:0o777 });
     if (css_err != undefined) {
         console.log("error while css");
         css_error = true;
@@ -667,7 +667,7 @@ app.post('/editor/saveStory', function (req, res) {
     }
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;
-    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), 'utf8');
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), {encoding: 'utf8', mode:0o777 });
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
@@ -702,7 +702,7 @@ app.post('/editor/deleteStory', function (req, res) {
                     rmdir(path, (err) => {
                         if (err) {
                             console.log("An error occurred inside /editor/deleteStory while removing " + story_id + ": " + err);
-                            fb.msgs.push({ msg: "Errore nell'eliminazione di " + story_id + " è .", successful: false });
+                            fb.msgs.push({ msg: "Errore nell'eliminazione di " + story_id + ".", successful: false });
                             s = 500;
                         }
                         else {
@@ -749,11 +749,15 @@ app.post('/editor/publisher', function (req, res) {
                             fb.msgs.push({ msg: "Errore: la storia " + story_id.id + " non è stata "+ita+".", successful: false });
                         }
                         else {
-                            let data = fs.readFileSync(to + story_id.id+ "/story.json");
+                            try {
+                            var data = fs.readFileSync(to + story_id.id+ "/story.json");
+                            } catch(err) {
+                                console.log("error with sync reading json of story ",story_id.id)
+                            }
                             if(data) {
                                 let work = JSON.parse(data);
                                 work.published = pub;
-                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),"utf-8")
+                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),{encoding: 'utf8', mode:0o777 });
                                 if(!w_err) {
                                     console.log('The story ' + story_id.id + 'was moved.');
                                     fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+".", successful: true });             

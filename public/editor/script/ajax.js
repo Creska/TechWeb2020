@@ -4,7 +4,7 @@
       type: 'POST',
       data: {story_id: CurrentWork.story_ID},
       success: function (data) {
-        $('#dup_text').text(data);
+        $('#dup_text').text(JSON.parse(data));
         $('#duplicate_modal').modal('show');
       },
       error: function (err) {

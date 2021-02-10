@@ -1,9 +1,7 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Minor bugs:
-        * certe volte l'array di outcomes sembrerebbe essere resettato
         * la pubblicazione anticipata non funziona
-        * Node does not exist. Clustering.js:728:14 quando clicco su un nodo quest
     * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
         * sistema per classi
         * id quest e attività
@@ -16,6 +14,7 @@ BUG E PROBLEMI DA CORREGGERE
     * [WIP] Apertura della preview
 * PLAYER
     * Inserire placeholder nelle cartelle
+    * Non funziona il caricamento del CSS
 * STORIE DI PROVA
     * [WIP] Completare copioni
     * [WAITING] Rifare storie con editor
@@ -31,21 +30,6 @@ APPUNTI SU NAV
     RESET da fare sempre:
         * gli stessi di set_default_story_settings
 
-APPUNTI su roba da fare:
-* al salvataggio bisogna inviare un array di oggetti. per ogni file un oggetto: {namestring, is_story_json, buffer}
-* per inviare le stats "/player/activityUpdate"
-* ChatMessages e score per ogni attività ( quindi ad ogni attività viene resettato )
-* ogni volta che un'attività viene finita vengono inviate le stats
-* timer ogni 5s che fa una post dove passo: (QuestID, ActivityN, time_elapsed)
-* groupID per sapere il nome del gruppo
-
-ACESSIBILITA'
-* header: role='heading' aria-level=numero come nel tag
-
-
-
-
-APPUNTO IMPORTANTE PER window.close() --> https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome
 
 appunti:
 * get() --> utilizzato per la query

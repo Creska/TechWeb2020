@@ -268,7 +268,7 @@ function isPublishable( obj ) {
           }
   
           /* presenza e correttezza del campo risposta */
-          if ( a.answer_field.type === "" || ( a.answer_field.type == "checklist" && a.answer_field.options.length < 1 ) ) {
+          if ( a.answer_field.type === "" || ( a.answer_field.type == "checklist" && a.answer_field.options.length < 2 ) ) {
             res.ok = false;
             res.errors.push( "Quest " + q.quest_id + " - Attività " + a.activity_id + " - Campo risposta incompleto o assente" );
           }

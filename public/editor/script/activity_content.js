@@ -25,51 +25,61 @@ function openActivityTypeWidget() {
  * Imposta la tipologia di attività, in base alla scelta effettuata
  */
 function setActivityType() {
+	let activity = CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN];
+
 	switch ( $( "#ChooseActivityType input[type=radio]:checked" ).attr("id") ) {
 		case "ActivityType0":
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "ANSWER" ) {
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
+			if ( activity.activity_type != "ANSWER" ) {
+				activity.answer_outcome = [{
 					condition: null,
 					next_quest_id: "",
 					next_activity_id: "",
 					score: null
 				}];
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "ANSWER";
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
+				activity.activity_type = "ANSWER";
+				activity.FINAL = false;
 				$( "#EditActivity .p-3" ).first().find( ".btn-secondary" ).attr( "disabled", false );
 			}
 			break;
 		case "ActivityType1":
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type != "READING" ) {
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [{
+			if ( activity.activity_type != "READING" ) {
+				activity.answer_outcome = [{
 					condition: null,
 					next_quest_id: "",
 					next_activity_id: "",
 					score: null
 				}];
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = false;
+				activity.activity_type = "READING";
+				activity.FINAL = false;
 				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(2n)" ).attr( "disabled", true );
 				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:nth-child(3)" ).attr( "disabled", false );
 			}
 			break;
 		case "ActivityType2":
-			if ( CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL == false ) {
-				// segna tutte le altre attività come non finali
-				CurrentWork.quests.forEach( function( q, i ) {
-					q.activities.forEach( function( a, j ) {
-						a.FINAL = false;
-						a.answer_outcome = [{
-							condition: null,
-							next_quest_id: "",
-							next_activity_id: "",
-							score: null
-						}];
+			if ( activity.FINAL == false ) {
+				// c'era un'altra attività salvata come finale, la segna come non finale
+				$.each( CurrentWork.quests, function( q_i, q ) {
+					$.each( q.activities, function( a_i, a ) {
+						if ( a.FINAL ) {
+							a.FINAL = false;
+							a.answer_outcome = [{
+								condition: null,
+								next_quest_id: "",
+								next_activity_id: "",
+								score: null
+							}];
+						}
 					});
-			  	});
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_type = "READING";
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].FINAL = true;
-				CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].answer_outcome = [];
+				});
+
+				activity.activity_type = "READING";
+				activity.FINAL = true;
+				activity.answer_outcome = [{
+					condition: null,
+					next_quest_id: "",
+					next_activity_id: "",
+					score: null
+				}];
 				$( "#EditActivity .p-3" ).first().find( ".btn-secondary:not(:first-child)" ).attr( "disabled", true );
 			}
 	}

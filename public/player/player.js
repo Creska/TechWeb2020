@@ -142,7 +142,7 @@ function showAccess() {
 	if ( alerts.length ) {
 		accessibility_alert = $( '<div class="alert alert-success accessibility-alert" role="alert"/>' );
 		accessibility_alert.append( $( "<i/>", {
-			"class": "fas fa-check-circle fa-2x p-2",
+			"class": "fab fa-accessible-icon fa-2x p-2",
 			"aria-hidden": "true"
 		}));
 		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>" ) );
@@ -156,10 +156,10 @@ function showAccess() {
 	else {
 		accessibility_alert = $( '<div class="alert alert-danger accessibility-alert" role="alert"/>' );
 		accessibility_alert.append( $( "<i/>", {
-			"class": "fas fa-times-circle fa-2x p-2",
+			"class": "fab fa-accessible-icon fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		accessibility_alert = $( '<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>' );
+		accessibility_alert.append( $( '<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>' ) );
 	}
 
 	$( "#StartScreen" ).prepend( accessibility_alert );

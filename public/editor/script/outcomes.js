@@ -269,9 +269,7 @@ function saveOutcomesSection() {
             next_activity_id: $(row).children().eq(3).text(),
             score: $(row).children().eq(1).text()
         })
-    })
-
-    /* meglio fare una pulizia */
+    });
 
     console.log( activity.answer_outcome); // debugging
     back();

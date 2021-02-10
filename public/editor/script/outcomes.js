@@ -271,6 +271,5 @@ function saveOutcomesSection() {
         })
     });
 
-    console.log( activity.answer_outcome); // debugging
     back();
 };

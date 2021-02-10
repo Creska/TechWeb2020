@@ -1,7 +1,5 @@
 Roba che manca da fare:
 
-* PLAYER (work in progress)
-
 * DIVISIONE IN GRUPPI
     Ogni x collegamenti (x = numero massimo di membri per gruppo), essi vengono messi in un gruppo identificato da un ID specifico, aggiunto nel JSON al momento dell'invio, tramite campo "groupID".
 
@@ -26,10 +24,6 @@ Roba che manca da fare:
     * Come ricezione, il player si aspetta:
         * ID dell'attività a cui andare
         * punteggio (che può essere anche null)
-
-* GRAFO (quasi finito)
-
-* QRCODE: schermata dove reperire i qrcodes delle storie pubblicate
 
 * PREVIEW: apertura della finestra di preview. ora non funziona
 

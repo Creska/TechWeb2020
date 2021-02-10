@@ -27,7 +27,6 @@ $(function () {
 	socket = io.connect('', { query: "type=player" });
 	$.get("/player/loadJSON", function (data) {
 		StoryObj = JSON.parse(data);
-		console.log(StoryObj); // debugging
 
 		loadGame();
 	});
@@ -59,7 +58,10 @@ function validateInput( question, answer ) {
 	$( ".NextActivity" ).attr( "disabled", true );
 	$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>' );
 		
-	/* goToActivity( nextStageInOrder() ); // debugging */
+	/*
+	// roba per debugging
+	goToActivity( nextStageInOrder() );
+	*/
 
 	socket.emit( 'validate-input-player', question, answer, socket.id );
 };

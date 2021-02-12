@@ -266,8 +266,8 @@ function displayMediaPreview( media, mediatype ) {
 		
 		let newrow = $( "<div class='row'></div>" )
 		newrow.append( newpreview );
-		newrow.append( $( "<input type='text' placeholder='Descrizione'></input>"));
-		newrow.find( "input" ).val( media.alt );
+		newrow.append( $( "<textarea placeholder='Descrizione'></textarea>"));
+		newrow.find( "textarea" ).val( media.alt );
   		newrow.append( $( '<button class="btn btn-danger" onclick="removeMediaPreview( $(this) );"><i class="fas fa-minus"></i></button>' ));
   		newrow.children().wrap( "<div class='col-sm'></div>" );
   		$( "#GalleryPreview" ).append( newrow );
@@ -326,7 +326,7 @@ function loadEditGallerySection() {
  */
 function saveImageGallery() {
     $.each( MediaBuffer, function( i, val ) {
-		val.alt = $( "#GalleryPreview" ).find("input[type=text]").eq( i ).val().replace(/(<([^>]+)>)/gi, "");
+		val.alt = $( "#GalleryPreview textarea" ).eq( i ).val().replace(/(<([^>]+)>)/gi, "");
 	});
 
 	CurrentWork.quests[CurrentNavStatus.QuestN].activities[CurrentNavStatus.ActivityN].activity_text[CurrentNavStatus.TextPartN].content = MediaBuffer;

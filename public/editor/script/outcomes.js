@@ -175,12 +175,21 @@ function loadOutcomeWidget() {
         });
     }
     else {
-        $( "#AddOutcomeWidget p" ).after( $( "<input/>", 
+        let inputgroup = $( `
+            <div id="outcome-answerfield" class="input-group w-50 mx-auto mb-2" style="width:initial;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Risposta</span>
+                </div>
+            </div>
+        `);
+
+        inputgroup.append( $( "<input/>", 
         {
-            id: "outcome-answerfield",
-            class: "m-3",
+            class: "form-control",
             type: CurrentStage.answer_field.type
         }));
+
+        $( "#AddOutcomeWidget p" ).after( inputgroup );
     }
     
     /* loading delle liste di quest e attività */
@@ -211,8 +220,8 @@ function addOutcome() {
             return;
         }
     }
-    else if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "INPUT" ) {
-        response = $( "#outcome-answerfield" ).val().trim().replace(/(<([^>]+)>)/gi, "");
+    else if ( $( "#outcome-answerfield" ).hasClass( "input-group" ) ) {
+        response = $( "#outcome-answerfield input" ).val().trim().replace(/(<([^>]+)>)/gi, "");
     }
     else {
         handleError();
@@ -243,11 +252,8 @@ function addOutcome() {
 function resetOutcomeWidget() {
     if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "UL" )
         $( "#outcome-answerfield input" ).prop( "checked", false );
-    else if ( $( "#outcome-answerfield" ).prop( "tagName" ) == "INPUT" )
-        $( "#outcome-answerfield" ).val( null );
     else {
-        handleError();
-        return;
+        $( "#outcome-answerfield input" ).val( null );
     }
 
     $( "#outcome-score" ).val( null );

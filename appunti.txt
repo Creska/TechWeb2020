@@ -10,7 +10,6 @@ BUG E PROBLEMI DA CORREGGERE
         * qrcode
         * non ci sono più gli input data e ora
         * editor css
-    * Aggiungere labels per widget degli outcomes
     * [WIP] Apertura della preview
 * PLAYER
     * Inserire placeholder nelle cartelle

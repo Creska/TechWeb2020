@@ -401,7 +401,7 @@ app.post('/editor/duplicate', function (req, res) {
                 if(data) { 
                     let temp = JSON.parse(data);
                     temp.story_ID = new_id;
-                    fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), {encoding: 'utf8', mode:0o777 }, (err) => {
+                    fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), {encoding: 'utf8', mode:0o666 }, (err) => {
                         if (err) {
                             console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to set it's story id")
                             return res.status(500).send(JSON.stringify(err)).end()
@@ -657,7 +657,7 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     console.log("file checking and moving completed")
-    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, {encoding: 'utf8', mode:0o777 });
+    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, {encoding: 'utf8', mode:0o666 });
     if (css_err != undefined) {
         console.log("error while css");
         css_error = true;
@@ -667,7 +667,7 @@ app.post('/editor/saveStory', function (req, res) {
     }
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;
-    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), {encoding: 'utf8', mode:0o777 });
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), {encoding: 'utf8', mode:0o666 });
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
@@ -757,7 +757,7 @@ app.post('/editor/publisher', function (req, res) {
                             if(data) {
                                 let work = JSON.parse(data);
                                 work.published = pub;
-                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),{encoding: 'utf8', mode:0o777 });
+                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),{encoding: 'utf8', mode:0o666 });
                                 if(!w_err) {
                                     console.log('The story ' + story_id.id + 'was moved.');
                                     fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+".", successful: true });             

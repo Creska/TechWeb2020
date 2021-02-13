@@ -149,46 +149,52 @@
     </div>
 
     <div id="guide">
-        <h2>
+        <h1>
             Come funziona l'editing del CSS
-        </h2>
-        <ul>
-            <li>
-                L'organizzazione dello stylesheet si basa ovviamente sul sistema di tag HTML e di selettori del CSS. Se
-                ne consiglia quindi l'utilizzo esclusivamente agli utenti che abbiano una minima conoscenza di markup
-                per documenti web.
-            </li>
-            <li>
-                Il file CSS modificabile è totalmente facoltativo (e quindi vuoto), dato che il player è già provvisto
-                di un apposito stylesheet di default. Spetta quindi all'autore aggiungere tutte le regole desiderate.
-            </li>
-            <li>
-                Non vi è bisogno dell'utilizzo degli id. Per selezionare particolari elementi basterà concentrarsi sulle
-                classi e sul sistema di parentela dei selettori CSS.
-            </li>
-            <li>
-                Oltre, ovviamente, al gioco in generale, è possibile stilizzare una singola quest, attività,
-                sottosezione o elemento. In particolare, le classi built-in seguono questo schema:<br>
-                <code>
-                    <pre>
-                        [Body]
-                            StoryTitle <cite>/* titolo della storia */</cite>
-                            
-                            Quest0 <cite>/* container di tutti gli elementi figli della quest. Il numero si riferisce all'indice che questa quest ha nell'apposito array */</cite>
-                                Activity0 <cite>/* container di tutti gli elementi figli dell'attività. Il numero si riferisce all'indice che questa attività ha nell'apposito array */</cite>
-                                    ActivityText <cite>/* container dei paragrafi di testo, gallery ed immagini singole */</cite>
-                                        TextParagraph
-                                        ImageGallery
-                                        SingleImage
-                                    AnswerField <cite>/* container del campo di risposta */</cite>
-                                        AnswerFieldDescription <cite>/* eventuale breve indicazione/consiglio per il giocatore */</cite>
-                                        AnswerFieldInput <cite>/* campo risposta vero e proprio */</cite>
-                                    NextActivity <cite>/* pulsante da cliccare per andare all'attività successiva */</cite>
-                                    CloseGameBtn <cite>/* pulsante per chiudere il gioco - mostrato solo nell'ultima attività */</cite>
-                    </pre>
-                </code>
-            </li>
-        </ul>
+        </h1>
+
+        <p class="text-justify">
+            L'organizzazione dello stylesheet si basa ovviamente sul sistema di tag HTML e di selettori del CSS. Se ne consiglia quindi l'utilizzo esclusivamente agli utenti che abbiano una minima conoscenza di markup per documenti web.
+        </p>
+
+        <p class="text-justify">
+            Il file CSS modificabile è totalmente facoltativo (e quindi vuoto), dato che il player è già provvisto di un apposito stylesheet di default. Puoi aggiungere tutte le regole che desideri, e che si aggiungeranno automaticamente a quelle di default del <em>player</em>.
+        </p>
+
+        <p class="text-justify">
+            Per attribuire alcune regole ad una quest o ad una attività, ti basterà utilizzare il suo ID. Per poi selezionare particolari elementi di essa, è sufficiente utilizzare il sistema di parentela dei selettori CSS.
+        </p>
+
+        <p class="text-justify">
+            Gli elementi stilizzabili per ogni quest/attività sono quelli delle classi:
+        </p>
+
+        <code>
+            <pre>
+                StoryTitle /* titolo della storia */
+                
+                ActivityText /* container degli elementi del testo di ogni attività */
+                TextParagraph /* paragrafo di testo */
+                ImageGallery /* galleria di immagini */
+
+                AnswerField /* container dell'esercizio */
+                AnswerFieldDescription /* daomanda dell'esercizio */
+                AnswerInput /* campo di input della risposta. Può essere di tre tipi, a seconda della tipologia di domanda scelta: textarea (testo), input[type=number] (numero), ul (lista di opzioni) */
+
+                NextActivity /* pulsante da cliccare per andare all'attività successiva */
+                CloseGameBtn /* pulsante per chiudere il gioco - mostrato solo nell'ultima attività */
+            </pre>
+        </code>
+
+        <h2>Esempio</h2>
+        <p>Aggiungiamo uno sfondo "aquamarine" al primo paragrafo di testo dell'attività Q111A555:</p>
+        <code>
+            <pre>
+                #Q111A555 .TextParagraph:first-child {
+                    background-color: aquamarine;
+                }
+            </pre>
+        </code>
     </div>
 </body>
 

@@ -139,29 +139,42 @@
     <h1 class="over-heading SectionTitle">Guida</h1>
     <p class="lead mb-5 SectionHeader">Una breve panoramica del funzionamento di questa applicazione.</p>
 
-    <p class="text-justify">
-      Grazie allo Story Editor potrai creare e modificare le storie e gestirne la pubblicazione.<br>
-      Nei seguenti paragrafi potrai scoprire il funzionamento di ciascuna sezione di questa piattaforma.
-    </p>
-
-    <h2><strong>Le basi</strong></h2>
+    <h2 class="mt-5 text-info">Le basi</h2>
 
     <h3>Organizzazione del gioco</h3>
     <p class="text-justify">
-      Ogni gioco interattivo, chiamato <strong>story</strong> (o <strong>storia</strong>), è composto da due tipologie di tappe: <strong>quest</strong> e <strong>attività</strong>.<br>
-      Ciascuna <strong>quest</strong> è titolabile e rappresenta un numero arbitrario di <strong>attività</strong>, concatenate nell'ordine specificato dall'autore.
-      Ogni <em>attività</em> può essere di due tipologie differenti, ovvero <strong>interattiva</strong> o di <strong>sola lettura</strong>, ed è composta da paragrafi di testo ed immagini. In ogni gioco è necessario l'inserimento di una <em>attività finale</em>, ovvero la particolare tappa a cui tutti i possibili percorsi devono convergere. Spetta a te fare in modo che il finale della narrazione porti in ogni caso ad essa.<br>
-      Le <em>quest</em>, per convenzione, iniziano con l'<em>attività</em> numero 0 e proseguono secondo le direttive che darai nell'apposita sezione per la <strong>modifica degli outcomes</strong>. L'ordine con cui viene proseguita la <em>quest</em> dipende quindi dalle risposte che il giocatore inserirà quando richiesto, mentre il passaggio da una <em>quest</em> all'altra segue l'ordine con il quale esse sono state inserite all'interno della storia. La valutazione di ogni esercizio può essere eseguita automaticamente, seguendo quindi uno schema di risposte prestabilite dall'autore, oppure tramite l'invio di una richiesta di valutazione all'apposita applicazione.
+      Ogni gioco interattivo, chiamato <strong class="text-info">story</strong> (o <strong>storia</strong>), è composto da due tipologie di tappe: <strong class="text-info">quest</strong> e <strong class="text-info">attività</strong>.<br>
+      Ciascuna <strong>quest</strong> è titolabile ed è costituita da un numero arbitrario di <strong>attività</strong>.
+    </p>
+
+    <p class="text-justify">
+      Ogni quest ha un apposito ID, che ti permetterà di identificarla indipendentemente dal titolo che le vorrai dare.<br>
+      Anche ad ogni attività è assegnato automaticamente un ID. La seconda metà di esso fa riferimento alla quest madre.
+    </p>
+    
+    <p class="text-justify">
+      Il sistema di progressione delle quest e delle attività si basa strettamente sull'ordine che stabilisci posizionando le rispettive <em>cards</em> nelle schermate apposite. Il gioco parte automaticamente dalla prima attività della prima quest, e può terminare esclusivamente in una attività marcata come finale. Per alterare il normale ordine delle tappe potrai specificare, per ogni attività, la tappa successiva ed un eventuale punteggio. Puoi effettuare questa serie di modifiche lavorando con il <strong class="text-info">sistema di outcomes</strong>. Un outcome (trad. <em>esito</em>) rappresenta il modo in cui un'attività si conclude, ed è quindi costituito da:
+    </p>
+
+    <ul class="text-left">
+      <li>attività a cui il giocatore verrà condotto</li>
+      <li>punteggio (facoltativo)</li>
+    </ul>
+
+    <p class="text-justify">
+      In assenza di spefiche, l'<strong class="text-info">outcome di default</strong> di ogni attività corrisponde quindi all'attività successiva in ordine di posizionamento. Per modificarlo, ti basta aprire l'apposito widget, dove potrai anche inserire un punteggio.<br>
+      Per le attività interattive è anche possibile specificare un outcome associato a particolari input che il giocatore può inserire. Questi esiti particolari sono appunto detti <strong class="text-info">outcomes specifici</strong>, e verranno affiancati all'outcome di default.<br>
+      Per visualizzare il sistema di progressione che avrai creato, ti basterà accedere alla schermata del <strong>grafo</strong>.
     </p>
 
     <h3>Numero di giocatori</h3>
     <p class="text-justify">
-      Ogni gioco può essere progettato per uno specifico numero di giocatori. Oltre alla modalità <em>single player</em> vi è anche quella di gruppo, che prevede un numero di giocatori tra 2 e 5. Queste due modalità sono identiche in tutto, a parte il fatto che la seconda permetta appunto di far funzionare il gioco su un numero di dispositivi maggiore di uno. C'è poi una terza modalità, quella per le classi. Questa modalità consente al server di dividere una classe di massimo 25 membri in più gruppi con lo stesso numero di persone (specificato dall'utente). I gruppi vengono creati in base al momento in cui gli studenti scannerizzano il QRcode. In questa particolare mode, tutte le quest, con l'esclusione della prima e dell'ultima, vengono posizionate in ordine random, in modo da evitare assembramenti di studenti in una particolare area. Spetta quindi all'utente creare una storia le cui fasi possano essere affrontate in ordini diversi.</span>
+      Ogni gioco può essere progettato per uno specifico numero di giocatori. Oltre alla modalità <em>single player</em>, vi è anche quella di gruppo, che prevede un numero di massimo 5 giocatori. Queste due modalità sono identiche in tutto, a parte il fatto che la seconda permetta appunto di far funzionare il gioco su un numero di dispositivi maggiore di uno. C'è poi una terza modalità: quella per le classi. Questa modalità consente al server di dividere una classe di massimo 25 membri in più gruppi con lo stesso numero di persone (specificato dall'utente). I gruppi vengono creati in base al momento in cui gli studenti scannerizzano il QRcode. La divisione in gruppi permette poi, tramite l'applicazione <em>Valutatore</em>, di creare <strong class="text-info">recap e classifiche</strong>.
     </p>
 
     <h3>Accessibilità</h3>
     <p class="text-justify">
-      Può verificarsi il caso in cui la storia debba poter essere giocata anche da bambini con particolari disabilità. Con l'editor è possibile specificare per quali categorie di disabilità il gioco è accessibile. In tal modo, l'applicazione player sarà in grado di comunicare se e per quali categorie l'applicazione risulta accessibile. Si tenga presente delle seguenti tipologie di disabilità:
+      Può verificarsi il caso in cui la storia debba poter essere giocata anche da bambini con particolari disabilità. Tramite l'editor è possibile specificare per quali <strong class="text-info">categorie di disabilità</strong> il gioco è accessibile. In tal modo, l'applicazione player sarà in grado di comunicare se e per quali categorie l'applicazione risulta utilizzabile. Si tenga presente delle seguenti tipologie di disabilità:
     </p>
     <ul class="text-left">
       <li>Visive: disabilità visive tra cui cecità, ipovisione e problemi nella distinzione dei colori.</li>
@@ -173,56 +186,61 @@
     <p class="text-justify">
       L'applicazione è in grado di controllare solamente la presenza delle descrizioni per ogni immagine, richiesta per alcuni particolari categorie di disabilità. Ci si aspetta quindi buon senso da parte dell'autore, che ha il compito di assicurarsi che la storia sia giocabile da tutti gli studenti.
     </p>
-    
-    <h3>Gestione delle fasi di gioco</h3>
+
+    <h2 class="mt-5 text-info">Gestione delle storie</h2>
+
     <p class="text-justify">
-      Le liste di <em>quest</em>, <em>attività</em> e testi/immagini sono comodamente gestibili tramite un intuitivo sistema di cards. Potrai modificare il tuo lavoro in modo semplice e veloce anche grazie alle apposite modalità di <strong><em>swap</em></strong> e <strong><em>cancel</em></strong>. La prima ti permetterà di scambiare due cards, mentre la seconda di eliminare quella su cu hai cliccato due volte. Per attivare e disattivare ciascuna modalità ti basta cliccare sull'apposito pulsante.
+      Per tenere sotto controllo tutte le storie salvate e pubblicate ti basterà accedere alle apposite sezioni dal Menu principale
     </p>
 
-    <h2><strong>Gestione delle storie</strong></h2>
-    <h3>Salvataggio</h3>
+    <h3>Duplicazione e rimozione</h3>
     <p class="text-justify">
-      Per salvare e cancellare le storie sul server basterà utilizzare l'apposita sezione dell'editor, apribile direttamente dal Menu principale.
+      Aprendo una storia già salvata, potrai duplicarla o eliminarla tramite appositi pulsanti sulla navbar.
     </p>
 
     <h3>Pubblicazione</h3>
     <p class="text-justify">
-      Per rendere accessibile una storia all'applicazione player, e quindi creare l'apposito QRcode, basterà utilizzare la sezione relativa alla pubblicazione dei giochi. In fase di pubblicazione, un'apposita procedura automatica controllerà i requisiti fondamentali perché l'operazione vada a buon fine, e segnala eventuali errori. Ritirare una storia significa renderla non più giocabile dall'applicazione player.
-      In fase di pubblicazione di una storia verrà creato anche l'apposito QRcode.
+      Per rendere accessibile una storia all'applicazione player, e quindi creare l'apposito QRcode, ti basterà utilizzare la sezione relativa alla pubblicazione dei giochi. In fase di pubblicazione, un'apposita procedura automatica controllerà i requisiti fondamentali perché l'operazione vada a buon fine, e segnala eventuali errori. Ritirare una storia significa renderla non più giocabile dall'applicazione player.
+      In fase di pubblicazione di una storia verrà creato anche l'apposito <strong>QRcode</strong>. Ogni QRcode potrà poi essere visionato nell'apposita schermata, apribile dal Menu principale.
     </p>
 
-    <h2><strong>Modificare le storie</strong></h2>
+    <h2 class="mt-5 text-info">Modificare le storie</h2>
     <p class="text-justify">
       Qui puoi trovare la spiegazione di tutte le sezioni dell'editor, ognuna delle quali ti offrirà una specifica serie di funzionalità per creare un gioco.
     </p>
 
     <h3>Storia</h3>
-    <p class="text-justify">In questa sezione potrai gestire l'insieme delle <em>quest</em>, aggiungere il titolo della storia e accedere alla schermata per la modifica della <strong>modalità di gioco</strong></p>.
+    <p class="text-justify">In questa sezione potrai gestire l'insieme delle quest, aggiungere il titolo della storia e accedere alla schermata per la modifica della <strong>modalità di gioco</strong></p>.
 
     <h3>Modalità di gioco</h3>
     <p class="text-justify">Questa schermata ti permette di specificare il numero di players per cui la storia è pensata e decidere se rendere il gioco totalmente accessibile per alcune categorie di utenti con disabilità.</p>
+
+    <h3>Gestione delle fasi di gioco</h3>
+    <p class="text-justify">
+      Le liste di quest, attività e testi/immagini sono comodamente gestibili tramite un intuitivo sistema di cards. Potrai modificare il tuo lavoro in modo semplice e veloce anche grazie alle apposite modalità di <strong><em>swap</em></strong> e <strong><em>cancel</em></strong>. La prima ti permetterà di scambiare due cards, mentre la seconda di eliminare quella su cu hai cliccato due volte. Per attivare e disattivare ciascuna modalità ti basta cliccare sull'apposito pulsante.
+    </p>
 
     <h3>Quest</h3>
     <p class="text-justify">In questa sezione potrai gestire l'insieme delle <em>attività</em> e modificare il titolo che vuoi dare alla <em>quest</em> selezionata.</p>
 
     <h3>Attività</h3>
     <p class="text-justify">
-      In questa sezione puoi creare e modificare il testo dell'<em>attività</em>, aggiungendo paragrafi di testo e gallerie di una o più immagini. Questi elementi sono gestiti nello stesso modo che hai utilizzato per la lista di <em>quest</em> e <em>attività</em>. Da qui potrai inoltre accedere alle schermate relative al campo risposta e al sistema di <em>outcomes</em>. Non va trascurata la specificazione della tipologia: puoi scegliere tra <em>attività</em> interattiva, di sola lettura e <em>finale</em>. Quest'ultima funziona come una tappa di sola lettura, ma senza <em>outcomes</em>.
+      In questa sezione puoi creare e modificare il testo dell'attività, aggiungendo paragrafi di testo, video e gallerie di una o più immagini. Questi elementi sono gestiti nello stesso modo che hai utilizzato per la lista di quest e attività. Da qui potrai inoltre accedere alle schermate relative al campo risposta e al sistema di outcomes. Non trascurare la specificazione della <strong>tipologia</strong>: puoi scegliere tra attività interattiva, di sola lettura e finale. Quest'ultima funziona come una tappa di sola lettura, ma senza outcomes.
     </p>
 
     <h3>Campo risposta</h3>
     <p class="text-justify">
-      Grazie a questa schermata potrai scegliere tra diverse tipologie di campo risposta: testo, numero, lista di opzioni, orario e data. Tra gli opportuni settings, hai la possibilità di inserire il testo della domanda e specificare se sono presenti risposte prestabilite (e quindi un relativo sistema di <em>outcomes</em>) o se l'applicazione <em>player</em> dovrà richiedere l'apposita valutazione da parte del valutatore. Puoi anche specificare se associare al campo risposta un timer relativo al tempo entro cui si prevede venga attribuita una risposta. Allo scadere del tempo, viene segnalato al valutatore un momento di difficoltà, in modo del tutto trasparente al giocatore.
+      Grazie a questa schermata potrai scegliere tra tre diverse tipologie di campo risposta: <strong>testo, numero e lista di opzioni</strong>. Tra gli opportuni settings, hai la possibilità di inserire il testo della domanda e specificare se sono presenti risposte prestabilite (e quindi un relativo sistema di outcomes) o se l'applicazione player dovrà richiedere l'apposita valutazione da parte del valutatore. Puoi anche specificare se associare al campo risposta un <strong>help timer</strong> relativo al tempo entro cui si prevede venga attribuita una risposta. Allo scadere del tempo, viene segnalato al valutatore un momento di difficoltà, in modo del tutto trasparente al giocatore.
     </p>
 
     <h3>Sistema di outcomes</h3>
     <p class="text-justify">
-      Per <em>outcome</em> si intende una tripla [risposta - punteggio - prossima attività]. L'apposita sezione ti permette di specificare gli outcomes di ogni <em>attività</em> (esclusa ovviamente quella finale) e corrispondenti ad una risposta specifica o di default. Naturalmente vi sarà un unico outcome nelle <em>attività</em> di sola lettura.
+      Utilizza questa serie di opzioni per creare un outcome associato per ogni particolare risposta che il giocatore potrebbe dare.
     </p>
 
     <h3>Paragrafo di testo</h3>
     <p class="text-justify">
-      Questa sezione ti permetterà semplicemente di inserire un nuovo paragrafo di testo all'interno della narrazione di una specifica <em>attività</em>.
+      Questa sezione ti permetterà semplicemente di inserire un nuovo paragrafo di testo all'interno della narrazione di una specifica attività.
     </p>
 
     <h3>Galleria di immagini</h3>
@@ -231,7 +249,7 @@
     <h3>Video</h3>
     <p class="text-justify">In questa sezione è possibile allegare, alla rispettiva parte di attività, un video di YouTube. Per aggiungerlo basterà avere sottomano la relativa pagina di YouTube, cliccare sul tasto si <em>share</em> e sulla rispettiva obzione di <em>embedding</em>. Il sito ti darà automaticamente il codice HTML da aggiungere alla storia.</p>
 
-    <h2><strong>Grafica</strong></h2>
+    <h3>Grafica</h3>
     <p class="text-justify">
       Per la modifica del CSS è presente un apposito editor, con relativa guida. La personalizzazione della grafica non è fondamentale per la realizzazione della storia, ma è consigliata a tutti gli autori con esperirenza nella scrittura di stylesheet CSS.
     </p>
@@ -441,7 +459,7 @@
       <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="goToSection('EditAnswerField')" data-toggle="tooltip" data-placement="top" title="Modifica il campo di risposta">
         <i class="fas fa-tasks"></i>
       </button>
-      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="top" title="Aggiungi/modifica l'outcome principale">
+      <button class="btn btn-lg btn-secondary mr-2 ml-2 rounded" onclick="openMainOutcomeWidget();" data-toggle="tooltip" data-placement="top" title="Modifica l'outcome di default">
         <i class="fas fa-road"></i>
       </button>
       <button class="btn btn-lg btn-secondary rounded" onclick="goToSection('OutcomesSection')" data-toggle="tooltip" data-placement="right" title="Aggiungi outcomes per risposte specifiche">
@@ -487,7 +505,7 @@
       </div>
       <div class="incomplete-outcome text-danger">Outcome non valido!</div>
       <button class="btn btn-primary mr-2 mt-2" onclick="saveMainOutcome();">Salva</button>
-      <button class="btn btn-danger mt-2" onclick="deleteMainOutcome();">Reset outcome principale</button>
+      <button class="btn btn-danger mt-2" onclick="deleteMainOutcome();">Rimuovi outcome di default</button>
 
       <script>
         $( "#main-outcome-questlist" ).on( "change", "input", function() {
@@ -498,7 +516,7 @@
 
     <div class="text-center rounded info-section m-3">
       <p class="mt-3">Marcando questa attività come finale, un'eventuale altra attività segnata come tale verrà riportata alla tipologia di sola lettura.</p>
-      <p><strong>Attenzione</strong>: quando cambi tipologia di attività, tutti gli outcome salvati (compreso quello principale) verranno cancellati.</p>
+      <p><strong>Attenzione</strong>: quando cambi tipologia di attività, tutti gli outcome salvati (compreso quello di default) verranno cancellati.</p>
       <p class="mt-3">L'inserimento di media comporta l'aumento di dimensione del file della storia. Può quindi essere necessario un breve tempo di attesa prima che il salvataggio sia completo. Eventuali file omonimi caricati verranno contrassegnati con un indice, come già viene fatto dai moderni sistemi operativi.</p>
     </div>
 

@@ -1,18 +1,7 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Minor bugs:
-        * la pubblicazione anticipata non funziona
-    * Aggiornare l'help riguardo a tutti i cambiamenti fatti:
-        * sistema per classi
-        * id quest e attività
-        * grafo
-        * sistema outcomes
-        * qrcode
-        * non ci sono più gli input data e ora
-        * editor css
     * [WIP] Apertura della preview
 * PLAYER
-    * Inserire placeholder nelle cartelle
     * Non funziona il caricamento del CSS
 * STORIE DI PROVA
     * [WIP] Completare copioni

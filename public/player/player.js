@@ -577,7 +577,6 @@ function sendStatus() {
 	$.ajax({
 		url: "/player/playersActivities",
 		type: "POST",
-		processData: false,
 		data: Status
 	});
 
@@ -597,7 +596,6 @@ function sendActivityRecap() {
 	$.ajax({
 		url: "player/activityUpdate",
 		type: "POST",
-		processData: false,
 		data: recap
 	});
 

@@ -203,6 +203,7 @@ io.on('connection', (socket) => {
             })
         }
         if (player_count == 0) {
+            console.log("Deleting the storysent since there's no more players connected.")
             storysent = undefined;
             story_name = undefined;
         }

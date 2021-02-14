@@ -337,9 +337,6 @@ app.post('/player/playersActivities', function (req, res) {
             console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
         }
-        else {
-            console.log("All clear.");
-        }
     } else {
         console.log("/player/playersActivities BAD REQUEST, a parameter was not provided.")
         return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." })).end();

@@ -72,7 +72,6 @@ function validateInput( question, answer ) {
 * in generale sarebbe meglio fermare l'applicazione e basta
 */
 function handleError() {
-	$( "footer" ).fadeOut();
 	$( "#Main" ).empty();
 
 	$( "footer" ).fadeOut( "slow" );
@@ -118,6 +117,9 @@ function startGame() {
 	}));
 
 	goToActivity( StoryObj.quests[0].activities[0].activity_id );
+
+	if ( StoryObj.testing != true )
+		$( "footer" ).fadeIn( "slow" );
 };
 
 
@@ -579,7 +581,7 @@ function sendStatus() {
 		data: Status
 	});
 
-	/* console.log( Status ); // debugging */
+	// console.log( Status ); // debugging 
 };
 
 
@@ -599,5 +601,5 @@ function sendActivityRecap() {
 		data: recap
 	});
 
-	/* console.log( recap ); // debugging */
+	// console.log( recap ); // debugging
 };

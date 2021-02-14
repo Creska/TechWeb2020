@@ -316,19 +316,18 @@ app.post('/player/playersActivities', function (req, res) {
     var questID = activity.QuestID;
     var activityID = activity.ActivityID;
     var time_elapsed = activity.time_elapsed;
-    console.log(req.body)
     if (questID && activityID && time_elapsed) {
         // var maximum_time = storysent.game.quests[quest_index].activities[activity_index].expected_time;
         let temp_quest;
-        storysent.game.quests.forEach(quest => {
+        storysent.quests.forEach(quest => {
             if (quest.quest_id == questID) {
                 temp_quest = quest;
             }
         })
         let maximum_time;
-        quest.activities.forEach(activity => {
+        temp_quest.activities.forEach(activity => {
             if (activity.activity_id == activityID) {
-                maximum_time = expected_time;
+                maximum_time = activity.expected_time;
             }
         })
         if (maximum_time && time_elapsed > maximum_time) {
@@ -337,6 +336,9 @@ app.post('/player/playersActivities', function (req, res) {
             valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
             console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
+        }
+        else {
+            console.log("All clear.");
         }
     } else {
         console.log("/player/playersActivities BAD REQUEST, a parameter was not provided.")

@@ -100,7 +100,7 @@ function makeChatMessage(text, owner) {
     //owner is the socket ID
     if (owner == "self") {
         let message = `  
-        <div class="container-chat darker-chat">
+        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
   <p>`+ text + `</p>
   <span class="time-left-chat">`+ timeStamp() + `</span>
   </div>     
@@ -110,7 +110,7 @@ function makeChatMessage(text, owner) {
     }
     else {
         let message = `
-        <div class="container-chat">
+        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
   <p>`+ text + `</p>
   <span class="time-right-chat">`+ timeStamp() + `</span>
  </div>
@@ -139,9 +139,9 @@ function makeValuatorMessage(question, answer, socketID) {
 function makeContainer(id) {
     player_count++;
     players.set(id, player_count);
-    $('#chatrooms').append('<div id="' + id + '" class="chatroom" style="margin-right: 10px; margin-left: 10px"><h3>Player ' + player_count + '</h3></div>')
+    $('#chatrooms').append('<div id="' + id + '" class="chatroom" contenteditable="true" style="margin-right: 10px; margin-left: 10px"><h3>Player ' + player_count + '</h3></div>')
     let message = `  
-    <div class="container-chat darker-chat col-sm overflow-auto">
+    <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
 <p style="color: yellow">`+ 'System Message: User joined.' + `</p>
 </div>     
     `
@@ -187,9 +187,9 @@ $(function () {
         $('#message').val('');
         return false;
     })
-    socket.on('chat-message', (message, id) => {
-        //maybe adding chat ack
+    socket.on('chat-message', (id, message) => {
         console.log("Received a chat message from " + id + ": " + message);
+        makeChatMessage(message, id);
     })
     socket.on('player-warning', (data) => {
         makeWarningMessage(data.socketID, data.time);

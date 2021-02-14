@@ -214,7 +214,7 @@ io.on('connection', (socket) => {
         //sending the chat event to the valuator page
         if (valuatorID) {
             console.log("Sending the message to the valuator.")
-            valuator_emit('chat-message', socket, { message: message, id: id });
+            valuator_emit('chat-message', socket, message);
         }
         else {
             console.log("Valuator is offline, storing the message.")

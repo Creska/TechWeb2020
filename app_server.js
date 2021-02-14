@@ -623,6 +623,10 @@ app.post('/editor/saveStory', function (req, res) {
             console.log("The directory for the story " + story_json.story_title + " was created successfully.")
         }
     }
+    else {
+        if( path != story_path + story_id )
+            fs.renameSync(path, story_path + story_id);
+    }
     if( story_json.story_ID ) {
         clean_folder( story_json, story_path + story_json.story_ID );
     }

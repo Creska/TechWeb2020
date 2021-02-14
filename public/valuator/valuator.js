@@ -126,13 +126,15 @@ function makeChatMessage(text, owner) {
 }
 
 
-function makeWarningMessage(text) {
+function makeWarningMessage(socketID, time) {
     //TODO render chat message
+    //the idea is that there will be only one warning message at a time, rendered above all else
 }
 
-function makeValuatorMessage(text) {
+function makeValuatorMessage(question, answer, socketID) {
     //TODO render messages to be valued, they will be shown as special chat messages
 }
+
 
 function makeContainer(id) {
     player_count++;
@@ -148,6 +150,11 @@ function makeContainer(id) {
 
 function deleteContainer(id) {
     $('#' + id).fadeOut();
+}
+
+function valuateInput() {
+    //TODO still don't know where to get nextQuest, number and score
+    socket.emit('validate-input-valuator', nextQuest, number, score, socketID);
 }
 $(function () {
     var socket = io.connect('', { query: "type=valuator" });
@@ -184,6 +191,10 @@ $(function () {
         //maybe adding chat ack
         console.log("Received a chat message from " + id + ": " + message);
     })
+    socket.on('player-warning', (data) => {
+        makeWarningMessage(data.socketID, data.time);
+    })
+
     socket.on('user-joined', (id) => {
         console.log("User  " + id + " has joined.");
         //TODO creating a chat-room div for that room
@@ -200,6 +211,6 @@ $(function () {
         something to hold the values for this specific answer
         this fragment will execute valuateInput()
         */
-        socket.emit('validate-input-valuator', nextQuest, number, score, socketID);
+        makeValuatorMessage(question, answer, socketID);
     })
 })

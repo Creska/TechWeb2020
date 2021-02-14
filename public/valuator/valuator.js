@@ -126,8 +126,9 @@ function makeChatMessage(text, owner) {
 }
 
 
-function makeWarningMessage(text) {
+function makeWarningMessage(socketID, time) {
     //TODO render chat message
+    //the idea is that there will be only one warning message at a time, rendered above all else
 }
 
 function makeValuatorMessage(text) {
@@ -184,6 +185,10 @@ $(function () {
         //maybe adding chat ack
         console.log("Received a chat message from " + id + ": " + message);
     })
+    socket.on('player-warning', (data) => {
+        makeWarningMessage(data.socketID, data.time);
+    })
+
     socket.on('user-joined', (id) => {
         console.log("User  " + id + " has joined.");
         //TODO creating a chat-room div for that room

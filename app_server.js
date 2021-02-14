@@ -1,5 +1,5 @@
 process.umask(0);
-process.chdir( __dirname );
+process.chdir(__dirname);
 const express = require('express');
 var bodyParser = require('body-parser'); //parsing JSON requests in the body
 const app = express();
@@ -26,7 +26,7 @@ var player_data = new Map(); //stores some player data, need this to be able to 
 var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
 var story_name = undefined; //name of the story sent
 var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
-var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+//var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
 var player_count = 0; //players online
@@ -42,24 +42,24 @@ function UNF() {
     return id;
 }
 
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+// function shuffle(array) {
+//     var currentIndex = array.length, temporaryValue, randomIndex;
 
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
+//     // While there remain elements to shuffle...
+//     while (0 !== currentIndex) {
 
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
+//         // Pick a remaining element...
+//         randomIndex = Math.floor(Math.random() * currentIndex);
+//         currentIndex -= 1;
 
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
+//         // And swap it with the current element.
+//         temporaryValue = array[currentIndex];
+//         array[currentIndex] = array[randomIndex];
+//         array[randomIndex] = temporaryValue;
+//     }
 
-    return array;
-}
+//     return array;
+// }
 
 /*
     TEAMS
@@ -78,13 +78,13 @@ function shuffle(array) {
 => multiple stories handling?
 
     TODO
-=> removing the story once all sockets leave
-=> add a number for each group (groupID)
-=> check story coherence before writing them(coherence field inside the JSON)
-=> loadPlayer with specific JSON (?)
-=> randomize the order of missions before sending them back to the client
-=> warning about players stopped for too long on a game's specific phase
-=> test to-be-valuated handling
+=> DONE removing the story once all sockets leave
+=> DONE add a number for each group (groupID)
+=> DONE check story coherence before writing them(coherence field inside the JSON)
+=> DONE loadPlayer with specific JSON (?)
+=> NOT NEEDED ANYMORE randomize the order of missions before sending them back to the client
+=> DOING warning about players stopped for too long on a game's specific phase
+=> DOING test to-be-valuated handling
 => Return a JSON with the game summary, I think it'll have to contain:
     -Rankings
     -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
@@ -182,8 +182,9 @@ io.on('connection', (socket) => {
                 //A player is disconnected
                 //sending the disconnect event to the valuator so I can remove the chat
                 valuator_emit('user-left', socket);
+                player_count--;
                 //removes the player(socket) from the story he's in, also decreasing the number of players for that story
-                removePlayer(socket.id);
+                // removePlayer(socket.id);
             } else {
                 //A valuator is disconnected
                 valuatorID = undefined;
@@ -200,6 +201,10 @@ io.on('connection', (socket) => {
             storedJoins = storedJoins.filter((value) => {
                 return value != socket.id;
             })
+        }
+        if (player_count == 0) {
+            storysent = undefined;
+            story_name = undefined;
         }
     })
     socket.on('chat-message', (message, id) => {
@@ -308,16 +313,28 @@ app.post('/player/playersActivities', function (req, res) {
     */
     var activity = req.body;
     var questID = activity.QuestID;
-    var activity = activity.ActivityN;
+    var activityID = activity.ActivityID;
     var time_elapsed = activity.time_elapsed;
-    if (story_ID && activity_index && time_elapsed) {
-        var maximum_time = stories_map.get(story_ID).game.quests[quest_index].activities[activity_index].expected_time;
-        if (time_elapsed > maximum_time) {
+    console.log(req.body)
+    if (questID && activityID && time_elapsed) {
+        // var maximum_time = storysent.game.quests[quest_index].activities[activity_index].expected_time;
+        let temp_quest;
+        storysent.game.quests.forEach(quest => {
+            if (quest.quest_id == questID) {
+                temp_quest = quest;
+            }
+        })
+        let maximum_time;
+        quest.activities.forEach(activity => {
+            if (activity.activity_id == activityID) {
+                maximum_time = expected_time;
+            }
+        })
+        if (maximum_time && time_elapsed > maximum_time) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
-            // valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed });
-            // console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
-            // why the fuck did I do it this way?
+            valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
+            console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
         }
     } else {
@@ -352,19 +369,19 @@ app.get('/editor', function (req, res) {
 
 app.get('/player/loadJSON', function (req, res) {
     //loads the story being played, shuffling quests when needed
-    console.log(player_count)
-    console.log(player_per_group_count)
-    console.log(storysent.players)
+    // console.log(player_count)
+    // console.log(player_per_group_count)
+    // console.log(storysent.players)
     if (storysent.players != undefined) {
         if (player_count == 1) {
-            console.log("player count is 1")
-            groupstory = JSON.parse(JSON.stringify(storysent))//try used to clone an object without reference;
+            // console.log("player count is 1")
+            groupstory = JSON.parse(JSON.stringify(storysent))// used to clone an object without reference;
             groupstory.groupID = group;
             //shuffle(groupstory.quests)
 
         }
         if (player_per_group_count > storysent.players) {
-            console.log("limit exceeded")
+            // console.log("limit exceeded")
             player_per_group_count = 1;
             group++;
             groupstory.groupID = group;
@@ -391,34 +408,34 @@ app.post('/editor/duplicate', function (req, res) {
         return res.status(500).send(JSON.stringify(err)).end();
     }
     else {
-      ncp(path, unpubpath + new_id, err => {
-        if(err) {
-            console.log("An error occurred while duplicating the story ",err);
-            return res.status(500).send(JSON.stringify(err)).end()
-        }
-        else {
-            fs.readFile(unpubpath + new_id + '/' + 'story.json', (err, data) => {
-                if(data) { 
-                    let temp = JSON.parse(data);
-                    temp.story_ID = new_id;
-                    fs.writeFile(unpubpath  + new_id + '/' + 'story.json', JSON.stringify(temp), {encoding: 'utf8', mode:0o666 }, (err) => {
-                        if (err) {
-                            console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to set it's story id")
-                            return res.status(500).send(JSON.stringify(err)).end()
-                        }
-                        else {
-                            console.log("story duplicated successfully with the id ", new_id)
-                            return res.status(200).send(JSON.stringify(new_id)).end();
-                        }
-                    });
-                }
-                else {
-                    console.log("An error occurred while reading the story.json of the new duplicate story " + story_id + " to set it's story id");
-                    return res.status(500).send(JSON.stringify(err)).end()
-                }
-            });
-        }
-      });
+        ncp(path, unpubpath + new_id, err => {
+            if (err) {
+                console.log("An error occurred while duplicating the story ", err);
+                return res.status(500).send(JSON.stringify(err)).end()
+            }
+            else {
+                fs.readFile(unpubpath + new_id + '/' + 'story.json', (err, data) => {
+                    if (data) {
+                        let temp = JSON.parse(data);
+                        temp.story_ID = new_id;
+                        fs.writeFile(unpubpath + new_id + '/' + 'story.json', JSON.stringify(temp), { encoding: 'utf8', mode: 0o666 }, (err) => {
+                            if (err) {
+                                console.log("An error occurred while overwriting the story.json of the new duplicate story " + story_id + " to set it's story id")
+                                return res.status(500).send(JSON.stringify(err)).end()
+                            }
+                            else {
+                                console.log("story duplicated successfully with the id ", new_id)
+                                return res.status(200).send(JSON.stringify(new_id)).end();
+                            }
+                        });
+                    }
+                    else {
+                        console.log("An error occurred while reading the story.json of the new duplicate story " + story_id + " to set it's story id");
+                        return res.status(500).send(JSON.stringify(err)).end()
+                    }
+                });
+            }
+        });
     }
 })
 
@@ -492,12 +509,12 @@ app.get('/editor/getStories', function (req, res) {
             }
         });
     }
-    else if( section == 'Qrcodes' || section == 'ChooseStoryToEdit' ) {
+    else if (section == 'Qrcodes' || section == 'ChooseStoryToEdit') {
         let folder = pubpath;
-        if( section == "ChooseStoryToEdit")
+        if (section == "ChooseStoryToEdit")
             folder = unpubpath;
         let stories = []; //returns an array of unpublished stories objects
-        fs.readdir( folder, (err, files) => {
+        fs.readdir(folder, (err, files) => {
             if (err) {
                 console.log("An error accourred inside /editor/getStories, while retrieving all the unpublished stories: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
@@ -510,7 +527,7 @@ app.get('/editor/getStories', function (req, res) {
                     }
                     catch (err) {
                         console.log("An error accourred inside /editor/getStories, while reading the JSON file." + err);
-                        any_error = true; 
+                        any_error = true;
                     }
                 });
                 console.log("stories: ", stories)
@@ -567,11 +584,11 @@ app.get('/editor/getStory', function (req, res) {
 
 function clean_folder(json, folder) {
     let json_media = [];
-    json.quests.forEach( quest => {
-        quest.activities.forEach( activity => {
-            activity.activity_text.forEach( a_text => {
-                if( a_text.type == "gallery" ) {
-                    a_text.content.forEach( content => {
+    json.quests.forEach(quest => {
+        quest.activities.forEach(activity => {
+            activity.activity_text.forEach(a_text => {
+                if (a_text.type == "gallery") {
+                    a_text.content.forEach(content => {
                         json_media.push(content.name);
                     });
                 }
@@ -579,17 +596,17 @@ function clean_folder(json, folder) {
         });
     });
     fs.readdir(folder, (err, files) => {
-        if(!err){ 
-            let diff = files.filter( x => !json_media.includes(x) );
-            diff.forEach( file => {
+        if (!err) {
+            let diff = files.filter(x => !json_media.includes(x));
+            diff.forEach(file => {
                 try {
-                    if( !(file == "story.json" || file == "css.json") ){
-                        fs.unlinkSync(folder+"/"+file);
-                        console.log("file ",file," deleted")
+                    if (!(file == "story.json" || file == "css.json")) {
+                        fs.unlinkSync(folder + "/" + file);
+                        console.log("file ", file, " deleted")
                     }
                 }
-                catch(err) { 
-                    console.log("something went wrong while deleting obsolete files",err)
+                catch (err) {
+                    console.log("something went wrong while deleting obsolete files", err)
                 }
             });
         }
@@ -606,9 +623,9 @@ app.post('/editor/saveStory', function (req, res) {
     var media_map = JSON.parse(req.fields.coordinates);
     console.log("saveStory request received.")
     console.log("published", published)
-    if (published) 
+    if (published)
         story_path = pubpath;
-    else 
+    else
         story_path = unpubpath;
     let path = storyPath(story_json.story_ID)
     if (path == '404') {//id is undefined i.e. the story is new
@@ -624,30 +641,30 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     else {
-        if( path != story_path + story_id )
+        if (path != story_path + story_id)
             fs.renameSync(path, story_path + story_id);
     }
-    if( story_json.story_ID ) {
-        clean_folder( story_json, story_path + story_json.story_ID );
+    if (story_json.story_ID) {
+        clean_folder(story_json, story_path + story_json.story_ID);
     }
     for (key in req.files) {
         console.log("path: ", req.files[key].path)
         try {
             if (fs.existsSync(req.files[key].path)) {
                 let file_name = req.files[key].name;
-                let index =1;
+                let index = 1;
                 let actual_file_name = file_name;
-                while (fs.existsSync(story_path + story_id + '/' + actual_file_name) ) {
+                while (fs.existsSync(story_path + story_id + '/' + actual_file_name)) {
                     let pos = file_name.lastIndexOf(".");
-                    actual_file_name = [file_name.slice(0,pos), "(" +index +")",file_name.slice(pos)].join('');
+                    actual_file_name = [file_name.slice(0, pos), "(" + index + ")", file_name.slice(pos)].join('');
                     index++;
                 }
-                if( actual_file_name != file_name ) {
+                if (actual_file_name != file_name) {
                     let coordinates = media_map[key];
-                    if( coordinates ) 
+                    if (coordinates)
                         story_json.quests[coordinates[0]].activities[coordinates[1]].activity_text[coordinates[2]].content[coordinates[3]].name = actual_file_name;
                 }
-                console.log("actual file name: ",actual_file_name)
+                console.log("actual file name: ", actual_file_name)
                 fs.renameSync(req.files[key].path, story_path + story_id + '/' + actual_file_name);
             }
             else {
@@ -661,7 +678,7 @@ app.post('/editor/saveStory', function (req, res) {
         }
     }
     console.log("file checking and moving completed")
-    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, {encoding: 'utf8', mode:0o666 });
+    let css_err = fs.writeFileSync(story_path + story_id + '/css.json', req.fields.story_css, { encoding: 'utf8', mode: 0o666 });
     if (css_err != undefined) {
         console.log("error while css");
         css_error = true;
@@ -671,7 +688,7 @@ app.post('/editor/saveStory', function (req, res) {
     }
     //add id field and write story json inside story directory
     story_json.story_ID = story_id;
-    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), {encoding: 'utf8', mode:0o666 });
+    let err = fs.writeFileSync(story_path + story_id + '/story.json', JSON.stringify(story_json), { encoding: 'utf8', mode: 0o666 });
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
@@ -738,49 +755,49 @@ app.post('/editor/publisher', function (req, res) {
     if (story_ids != undefined) {
         var s = 500;
         story_ids.forEach((story_id, index, arr) => {
-            let from = unpubpath, to = pubpath, ita="pubblicata", pub = true; 
-            if( story_id.published ) {
-                ita ="ritirata";
+            let from = unpubpath, to = pubpath, ita = "pubblicata", pub = true;
+            if (story_id.published) {
+                ita = "ritirata";
                 from = pubpath;
                 to = unpubpath;
                 pub = false;
             }
             promises.push(new Promise((resolve, reject) => {
-                console.log("published ", story_id.published )
+                console.log("published ", story_id.published)
                 fs.rename(from + story_id.id, to + story_id.id, (err) => {
-                        if (err) {
-                            console.log("An error occurred inside /editor/publisher while moving " + story_id.id + ": " + err)
-                            fb.msgs.push({ msg: "Errore: la storia " + story_id.id + " non è stata "+ita+".", successful: false });
+                    if (err) {
+                        console.log("An error occurred inside /editor/publisher while moving " + story_id.id + ": " + err)
+                        fb.msgs.push({ msg: "Errore: la storia " + story_id.id + " non è stata " + ita + ".", successful: false });
+                    }
+                    else {
+                        try {
+                            var data = fs.readFileSync(to + story_id.id + "/story.json");
+                        } catch (err) {
+                            console.log("error with sync reading json of story ", story_id.id)
                         }
-                        else {
-                            try {
-                            var data = fs.readFileSync(to + story_id.id+ "/story.json");
-                            } catch(err) {
-                                console.log("error with sync reading json of story ",story_id.id)
-                            }
-                            if(data) {
-                                let work = JSON.parse(data);
-                                work.published = pub;
-                                let w_err = fs.writeFileSync(to + story_id.id+ "/story.json",JSON.stringify(work),{encoding: 'utf8', mode:0o666 });
-                                if(!w_err) {
-                                    console.log('The story ' + story_id.id + 'was moved.');
-                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+".", successful: true });             
-                                    s = 200;
-                                }
-                                else {
-                                    console.log('The story ' + story_id.id + 'was moved but json was not updated due to json read error.');
-                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });             
-                                }
+                        if (data) {
+                            let work = JSON.parse(data);
+                            work.published = pub;
+                            let w_err = fs.writeFileSync(to + story_id.id + "/story.json", JSON.stringify(work), { encoding: 'utf8', mode: 0o666 });
+                            if (!w_err) {
+                                console.log('The story ' + story_id.id + 'was moved.');
+                                fb.msgs.push({ msg: "La storia " + story_id.id + " è stata " + ita + ".", successful: true });
+                                s = 200;
                             }
                             else {
-                                    console.log('The story ' + story_id.id + 'was moved but json was not updated due to json write error.');
-                                    fb.msgs.push({ msg: "La storia " + story_id.id + " è stata "+ita+", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });             
+                                console.log('The story ' + story_id.id + 'was moved but json was not updated due to json read error.');
+                                fb.msgs.push({ msg: "La storia " + story_id.id + " è stata " + ita + ", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });
                             }
                         }
-                        resolve();
-                    })
+                        else {
+                            console.log('The story ' + story_id.id + 'was moved but json was not updated due to json write error.');
+                            fb.msgs.push({ msg: "La storia " + story_id.id + " è stata " + ita + ", ma c'è stato un errore di aggiornamento, per favore contatta l'amministratore.", successful: false });
+                        }
+                    }
+                    resolve();
                 })
-                );
+            })
+            );
         })
         Promise.all(promises).then(() => {
             return res.status(s).send(JSON.stringify(fb)).end();
@@ -857,7 +874,12 @@ app.get('/valuator/activeStories', function (req, res) {
 })
 
 app.get('/valuator/activeStoryName', function (req, res) {
-    return res.status(200).send(JSON.stringify(story_name)).end();
+    if (story_name != undefined) {
+        return res.status(200).send(JSON.stringify(story_name)).end();
+    } else {
+        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
+    }
+
 })
 
 http.listen(8000, () => {

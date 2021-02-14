@@ -339,7 +339,6 @@ app.post('/player/playersActivities', function (req, res) {
         }
     } else {
         console.log("/player/playersActivities BAD REQUEST, a parameter was not provided.")
-        //TODO notify valuator of this error
         return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socket_id, story_ID, activity, time) was not provided." })).end();
     }
 })
@@ -391,6 +390,32 @@ app.get('/player/loadJSON', function (req, res) {
     }
     else {
         return res.status(200).send(JSON.stringify(storysent))
+    }
+})
+
+app.get('/editor/preview', function (req, res) {
+    let storyID = req.query.story_id;
+    let tempath = storyPath(storyID)
+    if (tempath != '404') {
+        if (tempath == pubpath + storyID) {
+            return res.status(500).send(JSON.stringify({ code: "BADPARAMETER", message: "Story is published. This call can only be done on published stories." }))
+        }
+        else {
+            fs.readFile(tempath, (err, data) => {
+                if (data) {
+                    let tempstory = JSON.parse(data);
+                    data.testing = true;
+                    return res.status(200).send(JSON.stringify(tempstory)).end();
+                }
+                else {
+                    return res.status(500).send(JSON.stringify(err)).end()
+                }
+            })
+        }
+    }
+    else {
+        console.log("An error occurred inside /editor/preview while reading the story " + storyID);
+        return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
     }
 })
 

@@ -266,7 +266,7 @@ function displayMediaPreview( media, mediatype ) {
 		
 		let newrow = $( "<div class='row'></div>" )
 		newrow.append( newpreview );
-		newrow.append( $( "<textarea placeholder='Descrizione'></textarea>"));
+		newrow.append( $( "<textarea class='w-100' placeholder='Descrizione'></textarea>"));
 		newrow.find( "textarea" ).val( media.alt );
   		newrow.append( $( '<button class="btn btn-danger" onclick="removeMediaPreview( $(this) );"><i class="fas fa-minus"></i></button>' ));
   		newrow.children().wrap( "<div class='col-sm'></div>" );

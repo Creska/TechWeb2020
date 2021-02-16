@@ -336,27 +336,34 @@ function goToNextActivity() {
 	}
 	else {
 		let player_answer = getPlayerAnswer();
+
+		let target = null; // va usato per evitare il return statement nel loop di each
+
 		$.each( activity.answer_outcome, function( i, outcome ) {
 			if ( i > 0 ) {
 				if ( outcome.condition.toLowerCase() == player_answer ) {
 					ActivityRecap.Score = parseInt( outcome.score ) || 0;
 					Status.TotalScore += ActivityRecap.Score;
 
-					goToActivity( outcome.next_activity_id );
-					return;
+					target = outcome.next_activity_id;
+					return false;
 				}
 			}	
 		});
 
-		if ( activity.answer_outcome[0].next_activity_id ) {
-			ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
-			Status.TotalScore += ActivityRecap.Score;
+		if ( target == null ) {
+			if ( activity.answer_outcome[0].next_activity_id ) {
+				ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
+				Status.TotalScore += ActivityRecap.Score;
+	
+				target = activity.answer_outcome[0].next_activity_id;
+			}
+			else {
+				target = nextStageInOrder();
+			}
+		}
 
-			goToActivity( activity.answer_outcome[0].next_activity_id );
-		}
-		else {
-			goToActivity( nextStageInOrder() );
-		}
+		goToActivity( target );
 	}
 };
 

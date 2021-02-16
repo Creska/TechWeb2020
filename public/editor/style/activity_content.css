@@ -52,18 +52,25 @@
 }
 
 #GalleryPreview {
-  margin: 10vh 0 10vh 0;
   padding: 0;
   width: 100%;
 }
 
 #GalleryPreview .row {
+  display: grid;
+  grid-template-columns: 25% 60% 1fr;
   margin-top: 2.5vh;
   width: 100%;
 }
 
+#GalleryPreview .col-sm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #GalleryPreview img {
-  width: 10vw;
+  width: 100%;
   height: auto;
 }
 

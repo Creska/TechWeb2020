@@ -2,10 +2,7 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * [WIP] Apertura della preview
 * PLAYER
-    * Non funziona il caricamento del CSS
-* STORIE DI PROVA
-    * [WIP] Completare copioni
-    * [WAITING] Rifare storie con editor
+    * [WIP] Aggiungere il caricamento del CSS
 
 APPUNTI SU NAV
 * schema:

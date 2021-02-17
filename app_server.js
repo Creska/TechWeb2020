@@ -259,9 +259,17 @@ io.on('connection', (socket) => {
 app.get('/player', function (req, res) {
     //handling GET request to /player
     var story = req.query.story;
+    var testing = req.query.testing || false;
     console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
-    fs.readFile('public/player/stories/published/' + story + "/" + "story.json", function (err, story_data) {
+    let path;
+    if (testing) {
+        path = unpubpath;
+    }
+    else {
+        path = pubpath;
+    }
+    fs.readFile(path + story + "/" + "story.json", function (err, story_data) {
         //trying to read the story file specified in the query
         if (err) {
             if (err.code == "ENOENT") {
@@ -423,31 +431,31 @@ app.get('/player/loadJSON', function (req, res) {
     }
 })
 
-app.get('/editor/preview', function (req, res) {
-    let storyID = req.query.story_id;
-    let tempath = storyPath(storyID)
-    if (tempath != '404') {
-        if (tempath == pubpath + storyID) {
-            return res.status(500).send(JSON.stringify({ code: "BADPARAMETER", message: "Story is published. This call can only be done on published stories." }))
-        }
-        else {
-            fs.readFile(tempath, (err, data) => {
-                if (data) {
-                    let tempstory = JSON.parse(data);
-                    data.testing = true;
-                    return res.status(200).send(JSON.stringify(tempstory)).end();
-                }
-                else {
-                    return res.status(500).send(JSON.stringify(err)).end()
-                }
-            })
-        }
-    }
-    else {
-        console.log("An error occurred inside /editor/preview while reading the story " + storyID);
-        return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
-    }
-})
+// app.get('/editor/preview', function (req, res) {
+//     let storyID = req.query.story_id;
+//     let tempath = storyPath(storyID)
+//     if (tempath != '404') {
+//         if (tempath == pubpath + storyID) {
+//             return res.status(500).send(JSON.stringify({ code: "BADPARAMETER", message: "Story is published. This call can only be done on published stories." }))
+//         }
+//         else {
+//             fs.readFile(tempath, (err, data) => {
+//                 if (data) {
+//                     let tempstory = JSON.parse(data);
+//                     data.testing = true;
+//                     return res.status(200).send(JSON.stringify(tempstory)).end();
+//                 }
+//                 else {
+//                     return res.status(500).send(JSON.stringify(err)).end()
+//                 }
+//             })
+//         }
+//     }
+//     else {
+//         console.log("An error occurred inside /editor/preview while reading the story " + storyID);
+//         return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
+//     }
+// })
 
 app.post('/editor/duplicate', function (req, res) {
     console.log("duplicate request received.");

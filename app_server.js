@@ -345,12 +345,14 @@ app.post('/player/playersActivities', function (req, res) {
             }
         })
         let maximum_time;
+        let chrono;
         temp_quest.activities.forEach(activity => {
             if (activity.activity_id == activityID) {
                 maximum_time = activity.expected_time;
+                chrono = activity.GET_CHRONO;
             }
         })
-        if (maximum_time && time_elapsed > maximum_time && maximum_time != 0) {
+        if (maximum_time && time_elapsed > maximum_time && chrono) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
             if (valuatorID) {

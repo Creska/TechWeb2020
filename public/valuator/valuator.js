@@ -274,7 +274,7 @@ $(function () {
         console.log("User  " + id + " left.");
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);
-        let index = players_finished.indexOf(id);
+        index = players_finished.indexOf(id);
         if (index !== -1)
             players_finished.splice(index, 1);
         let message = `  

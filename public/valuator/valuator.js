@@ -12,18 +12,18 @@ const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
 
-function renderEditor() {
-    pageLocation = 2;
-    $('#bottoneditor').fadeOut();
-    $('#bottonesupport').fadeOut();
-    $('#editor').fadeIn();
-    $('#editor-description').fadeIn();
-    $('#editor-tool').fadeIn();
-    $('#home').removeClass('active');
-    $('#defaulth1').html(defaultPageTitle + ": Editor")
-    $('#defaultdescription').html("Qui è presente un editor potenziato, rispetto all'ambiente editore, con cui potrai gestire le storie e crearne di nuove.");
-    //rendering the editor
-}
+// function renderEditor() {
+//     pageLocation = 2;
+//     $('#bottoneditor').fadeOut();
+//     $('#bottonesupport').fadeOut();
+//     $('#editor').fadeIn();
+//     $('#editor-description').fadeIn();
+//     $('#editor-tool').fadeIn();
+//     $('#home').removeClass('active');
+//     $('#defaulth1').html(defaultPageTitle + ": Editor")
+//     $('#defaultdescription').html("Qui è presente un editor potenziato, rispetto all'ambiente editore, con cui potrai gestire le storie e crearne di nuove.");
+//     //rendering the editor
+// }
 function renderSupport() {
     pageLocation = 1;
     $('#bottoneditor').fadeOut();

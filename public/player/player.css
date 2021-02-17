@@ -120,6 +120,8 @@ move_logo{
 }
 
 .StoryTitle{
+    color: whitesmoke;
+    font-weight: bold;
     text-align: center;
     margin: 0;
     text-shadow: 2px -1px #000000, -2px 1px #000000;

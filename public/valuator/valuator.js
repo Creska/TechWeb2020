@@ -270,7 +270,7 @@ $(function () {
         makeContainer(id);
     })
     socket.on('user-left', (id) => {
-        player_count++;
+        player_count--;
         console.log("User  " + id + " left.");
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);

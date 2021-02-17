@@ -207,7 +207,7 @@ move_quest{
 }
 
 .AnswerField{
-    background-image: url(../images/domanda.jpg);
+    background-image: url(./media/domanda.jpg);
     background-size: cover;
     background-attachment: scroll;
     background-position: center;

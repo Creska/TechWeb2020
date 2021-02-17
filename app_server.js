@@ -921,6 +921,8 @@ app.get('/valuator/return', function (req, res) {
     if (player_data.size > 0) {
         let temp_player_data = JSON.parse(JSON.stringify([...player_data]))// used to clone an object without reference;
         player_data.clear();
+        player_per_group_count = 0; //temp counter of players per group
+        group = 0; //last group
         return res.status(200).send(JSON.stringify(temp_player_data)).end();
     }
     else {

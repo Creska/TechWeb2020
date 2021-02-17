@@ -7,14 +7,18 @@ let players = new Map(); //key: socket.id, value: player number
 var player_count = 0;
 var socket;
 let last_unused = [];
+let players_finished = [];
 const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
+
 function renderEditor() {
     pageLocation = 2;
     $('#bottoneditor').fadeOut();
     $('#bottonesupport').fadeOut();
     $('#editor').fadeIn();
+    $('#editor-description').fadeIn();
+    $('#editor-tool').fadeIn();
     $('#home').removeClass('active');
     $('#defaulth1').html(defaultPageTitle + ": Editor")
     $('#defaultdescription').html("Qui è presente un editor potenziato, rispetto all'ambiente editore, con cui potrai gestire le storie e crearne di nuove.");
@@ -30,7 +34,6 @@ function renderSupport() {
         method: 'GET',
         success: function (story) {
             story_played = JSON.parse(story);
-            console.log(story_played);
             if (story_played) {
                 activeStoryName = story_played.story_title;
                 $('#support').fadeIn();
@@ -47,7 +50,7 @@ function renderSupport() {
             //TODO error handling
             console.error(error);
             $('#defaulth1').html(defaultPageTitle + ": Supporto")
-            $('#defaultdescription').html('Errore durante il caricamento delle storie, si prega di ritornare nel menù principale e di riprovare.');
+            $('#defaultdescription').html('Errore durante il caricamento delle storie, nessuna storia sta venendo giocata in questo momento. Si prega di ritornare nel menù principale e di riprovare.');
         }
     })
 
@@ -64,6 +67,8 @@ function toHome() {
 
             case 2:
                 $('#editor').fadeOut();
+                $('#editor-description').fadeOut();
+                $('#editor-tool').fadeOut();
                 break;
         }
         $('#bottoneditor').fadeIn();
@@ -71,6 +76,7 @@ function toHome() {
         $('#home').addClass('active');
         $('#defaulth1').html(defaultPageTitle);
         $('#defaultdescription').html(defaultDescription);
+        pageLocation = 0;
     }
 }
 function timeStamp() {
@@ -125,8 +131,7 @@ function makeChatMessage(text, id, owner) {
 
 function valuateInput(socketID) {
     let score = $('#punt-' + socketID).val() || 0;
-    let nextActivity = $('#att-' + socketID).val();
-    console.log("the score is", score, "\nthe nextActivity is", nextActivity);
+    let nextActivity = $('#att-' + socketID + ' :selected').val();
     socket.emit('validate-input-valuator', nextActivity, score, socketID)
     $(`#val-` + socketID).html('<p style="color:orange">Risposta inviata con successo.</p>');
     setTimeout(function () {
@@ -138,7 +143,6 @@ function valuateInput(socketID) {
 
 
 function makeWarningMessage(socketID, time) {
-    //probably won't use time
     if ($('#warn-' + socketID) == undefined) {
         let message = ` <div id="warn-` + socketID + `" style="border: 1px solid red">
         <div class="container-chat darker-chat overflow-auto" contenteditable="false">
@@ -158,7 +162,15 @@ function makeValuatorMessage(question, answer, socketID) {
 <label for="risposta">Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
 <label for="attivita">Prossima attività</label><br>
-<input id="att-`+ socketID + `" type="text" name="attivita" maxlength="8" size="8"><br>
+<select name="attivita" id="att-`+ socketID + `">
+`;
+    story_played.quests.forEach(quest => {
+        quest.activities.forEach(activity => {
+            message += `<option value="` + activity.activity_id + `">` + activity.activity_id + `</option>`
+        })
+    })
+    message += `
+</select>
 <button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
 </div>
 `
@@ -196,8 +208,28 @@ function deleteContainer(id) {
     $('#' + id).fadeOut();
 }
 
+function saveRecap(text) {
+    var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "recap.json");
+}
+
 $(function () {
     socket = io.connect('', { query: "type=valuator" });
+    $.ajax({
+        url: '/valuator/activeStories',
+        method: 'GET',
+        success: function (story) {
+            story_played = JSON.parse(story);
+            if (story_played) {
+                activeStoryName = story_played.story_title;
+            }
+
+        },
+        error: function (error) {
+            //TODO error handling
+            console.log("No player connected before the valuator.")
+        }
+    })
     //TODO actually store the messages
     $.get("/valuator/history", function (history) {
         history = JSON.parse(history)
@@ -212,8 +244,18 @@ $(function () {
             if (history.messages) {
                 console.log("History messages found.");
                 history.messages.forEach(element => {
-                    makeChatMessage(element.message, element.id, PLAYER)
-                    console.log("Received a chat message from " + element.id + ": " + element.message);
+                    if (element.question) {
+                        makeValuatorMessage(element.question, element.answer, element.id)
+                        console.log("Received a to be valued message from " + element.id + ": " + element.answer);
+                    }
+                    else if (element.time) {
+                        console.log("Received warning message from " + element.id + ": " + element.message);
+                        makeWarningMessage(element.id, element.time);
+                    }
+                    else {
+                        console.log("Received message from " + element.id + ": " + element.message);
+                        makeChatMessage(element.message, element.id, PLAYER)
+                    }
                 })
             }
         } else {
@@ -239,7 +281,7 @@ $(function () {
         console.log("User  " + id + " left.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
-    <p style="color: yellow">`+ 'System Message: User left.' + `</p>
+    <p style="color: yellow">`+ '<b>System Message: User left.<b>' + `</p>
     </div>     
         `
         $('#form-' + id).before(message);
@@ -251,6 +293,41 @@ $(function () {
             activeStoryName = undefined;
         }
 
+    })
+    socket.on('player-end', (socketID) => {
+        players.delete(socketID);
+        players_finished.push(socketID);
+        last_unused.push(player_count);
+        player_count--;
+        console.log("User  " + id + " has finished.");
+        let message = `  
+        <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
+    <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
+    </div>     
+        `
+        $('#form-' + id).before(message);
+        setTimeout(function () {
+            $('#' + id).fadeOut();
+        }, 5000)
+        if (player_count == 0 && players_finished.length > 0) {
+            //ending
+            $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
+
+            $.ajax({
+                url: '/valuator/return',
+                method: 'GET',
+                success: function (player_data) {
+                    let json_string;
+                    $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
+                    class="btn btn-dark" onclick="saveRecap(`+ `'` + JSON.parse(json_string) + `'` + `)">`);
+
+                },
+                error: function () {
+                    $('#defaultdescription').html('Errore Critico: player_data è vuoto.');
+                }
+            })
+
+        }
     })
     socket.on('valuate-input', (question, answer, socketID) => {
         makeValuatorMessage(question, answer, socketID);

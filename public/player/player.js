@@ -44,7 +44,7 @@ $(function () {
 
 	socket.on('input-valued', (activity_id, score) => {
 		Status.TotalScore += parseInt(score) || 0;
-		Status.ActivityRecap.Score += parseInt(score) || 0;
+		ActivityRecap.Score += parseInt(score) || 0;
 
 		goToActivity( activity_id );
 	});
@@ -593,10 +593,10 @@ function endGame() {
 
 function sendStatus() {
 	let intervalStatus = {
-		QuestID: QuestID,
-		ActivityID: ActivityID,
-		time_elapsed: time_elapsed,
-		Group: groupID,
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		time_elapsed: Status.time_elapsed,
+		Group: StoryObj.groupID,
 		socketID: socket
 	};
 

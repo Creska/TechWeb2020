@@ -8,6 +8,7 @@ var player_count = 0;
 var socket;
 let last_unused = [];
 let players_finished = [];
+let json_to_return;
 const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
@@ -183,11 +184,11 @@ function makeContainer(id) {
     let player_id;
     if (last_unused.length > 0) {
         player_id = last_unused.pop();
+        player_count++;
     }
     else {
         player_count++;
         player_id = player_count
-
     }
     players.set(id, player_count);
     $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_id + '</h3></div>')
@@ -208,8 +209,9 @@ function deleteContainer(id) {
     $('#' + id).fadeOut();
 }
 
-function saveRecap(text) {
-    var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+function saveRecap() {
+    var blob = new Blob([json_to_return], { type: "text/plain;charset=utf-8" });
+    json_to_return = undefined;
     saveAs(blob, "recap.json");
 }
 
@@ -276,6 +278,10 @@ $(function () {
     })
     socket.on('user-left', (id) => {
         players.delete(id);
+        const index = players_finished.indexOf(id);
+        if (index > -1) {
+            players_finished.splice(index, 1);
+        }
         last_unused.push(player_count);
         player_count--;
         console.log("User  " + id + " left.");
@@ -295,38 +301,125 @@ $(function () {
 
     })
     socket.on('player-end', (socketID) => {
+        console.log("player")
         players.delete(socketID);
         players_finished.push(socketID);
         last_unused.push(player_count);
-        player_count--;
-        console.log("User  " + id + " has finished.");
+        console.log("User  " + socketID + " has finished.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
     <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
     </div>     
         `
-        $('#form-' + id).before(message);
+        $('#form-' + socketID).before(message);
         setTimeout(function () {
-            $('#' + id).fadeOut();
+            $('#' + socketID).fadeOut();
         }, 5000)
-        if (player_count == 0 && players_finished.length > 0) {
+        if (player_count == 1 && players_finished.length > 0) {
             //ending
             $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
+            $.get("/valuator/return", function (player_data) {
+                //stats per socket(local, per activity)
+                let temp_player_map = new Map(JSON.parse(player_data));
+                //stats per socket(total)
+                let socket_stats = new Map();
+                let groups = [];
+                let quests = [];
+                //key: socket, value: array of activities
+                temp_player_map.forEach((v, k) => {
+                    let temp_score = 0;
+                    let temp_tta = 0;
+                    let temp_cm = 0;
+                    v.forEach(activity => {
+                        if (!groups.includes(activity.group)) {
+                            groups.push(activity.group)
+                        }
+                        if (!quests.includes(activity.questID)) {
+                            quests.push(activity.questID)
+                        }
+                        temp_score += parseInt(activity.Score);
+                        temp_tta += parseInt(activity.timeToAnswer);
+                        temp_cm += parseInt(activity.chatMessages);
+                    })
+                    socket_stats.set(k, { totalScore: temp_score, totalTimeToAnswer: temp_tta, totalChatMessages: temp_cm, averageScore: (temp_score / v.length), averageTimeToAnswer: temp_tta / v.length, averageChatMessages: temp_cm / v.length })
+                })
+                //key: group, value: array of activities
+                let group_helper = new Map();
+                groups.forEach(group => {
+                    temp_player_map.forEach((v, k) => {
+                        v.forEach(activity => {
+                            if (group == activity.group) {
+                                if (!group_helper.has(group)) {
+                                    group_helper.set(group, [activity])
+                                }
+                                else {
+                                    let temp_array = group_helper.get(group);
+                                    temp_array.push(activity);
+                                    group_helper.set(group, temp_array)
+                                }
+                            }
+                        })
 
-            $.ajax({
-                url: '/valuator/return',
-                method: 'GET',
-                success: function (player_data) {
-                    let json_string;
-                    $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
-                    class="btn btn-dark" onclick="saveRecap(`+ `'` + JSON.parse(json_string) + `'` + `)">`);
+                    })
+                })
+                //stats per group
+                let group_stats = new Map();
+                group_helper.forEach((v, k) => {
+                    let temp_g_score = 0;
+                    let temp_g_tta = 0;
+                    let temp_g_cm = 0;
+                    v.forEach(activity => {
+                        temp_g_score += parseInt(activity.Score);
+                        temp_g_tta += parseInt(activity.timeToAnswer);
+                        temp_g_cm += parseInt(activity.chatMessages);
+                    })
+                    group_stats.set(k, { totalScore: temp_g_score, totalTimeToAnswer: temp_g_tta, totalChatMessages: temp_g_cm, averageScore: (temp_g_score / v.length), averageTimeToAnswer: temp_g_tta / v.length, averageChatMessages: temp_g_cm / v.length })
+                })
+                let quest_helper = new Map();
+                quests.forEach(quest => {
+                    temp_player_map.forEach((v, k) => {
+                        v.forEach(activity => {
+                            if (quest == activity.questID) {
+                                if (!quest_helper.has(quest)) {
+                                    quest_helper.set(quest, [activity])
+                                }
+                                else {
+                                    let temp_array = quest_helper.get(quest);
+                                    temp_array.push(activity);
+                                    quest_helper.set(quest, temp_array);
 
-                },
-                error: function () {
-                    $('#defaultdescription').html('Errore Critico: player_data è vuoto.');
-                }
+                                }
+                            }
+                        })
+                    })
+                })
+                //stats per quest
+                let quests_stats = new Map();
+                quest_helper.forEach((v, k) => {
+                    let temp_q_score = 0;
+                    let temp_q_tta = 0;
+                    let temp_q_cm = 0;
+                    v.forEach(activity => {
+                        temp_q_score += parseInt(activity.Score);
+                        temp_q_tta += parseInt(activity.timeToAnswer);
+                        temp_q_cm += parseInt(activity.chatMessages);
+                    })
+                    quests_stats.set(k, { totalScore: temp_q_score, totalTimeToAnswer: temp_q_tta, totalChatMessages: temp_q_cm, averageScore: (temp_q_score / v.length), averageTimeToAnswer: temp_q_tta / v.length, averageChatMessages: temp_q_cm / v.length })
+                })
+                let recap_object = new Object();
+                recap_object.perSocketActivityStats = [...temp_player_map];
+                recap_object.perSocketGlobalStats = [...socket_stats];
+                //test if the order is correct
+                recap_object.perSocketGlobalStats.sort((a, b) => a.temp_score > b.temp_score ? 1 : -1);
+                recap_object.perGroupStats = [...group_stats];
+                recap_object.perQuestStats = [...quests_stats]
+                json_to_return = JSON.stringify(recap_object)
+                $('#storyname').remove();
+                $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
+                    class="btn btn-dark" onclick="saveRecap()">Salva</button>`);
             })
-
+            story_played = undefined;
+            activeStoryName = undefined;
         }
     })
     socket.on('valuate-input', (question, answer, socketID) => {

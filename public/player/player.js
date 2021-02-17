@@ -566,13 +566,13 @@ function endGame() {
 	sendActivityRecap();
 
 	$.ajax({
-		url: "player/end",
+		url: "/player/end",
 		type: "POST",
 		data: {
 			socketID: socket.id
 		}
 	});
-
+	socket.emit('player-end', socket.id);
 	$("footer").fadeOut("slow");
 	$("#Main").replaceWith(document.getElementById("FinishContainer").content.cloneNode(true));
 

@@ -4,7 +4,7 @@ var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
 var player_count = 0;
-var player_playing = 0;
+var players_playing = 0;
 var socket;
 let last_unused = [];
 let players_finished = [];
@@ -183,7 +183,7 @@ function makeValuatorMessage(question, answer, socketID) {
 
 function makeContainer(id) {
     player_count++;
-    player_playing++;
+    players_playing++;
     $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_count + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -273,7 +273,7 @@ $(function () {
         player_count--;
         let index = players_finished.indexOf(id);
         if (index != -1) {
-            player_playing--;
+            players_playing--;
             players_finished.splice(index, 1);
         }
         console.log("User  " + id + " left.");
@@ -289,11 +289,13 @@ $(function () {
         if (player_count == 0) {
             story_played = undefined;
             activeStoryName = undefined;
+            players_playing = 0;
+            players_finished = [];
         }
 
     })
     socket.on('player-end', (socketID) => {
-        player_playing--;
+        players_playing--;
         players_finished.push(socketID);
         console.log("User  " + socketID + " has finished.");
         let message = `  
@@ -305,7 +307,7 @@ $(function () {
         setTimeout(function () {
             $('#' + socketID).fadeOut();
         }, 5000)
-        if (player_playing == 0 && players_finished.length > 0) {
+        if (players_playing == 0 && players_finished.length > 0) {
             //ending
             $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
             $.get("/valuator/return", function (player_data) {
@@ -526,6 +528,8 @@ $(function () {
             })
             story_played = undefined;
             activeStoryName = undefined;
+            player_count = 0;
+            players_playing = 0;
             players_finished = [];
         }
     })

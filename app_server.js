@@ -881,31 +881,31 @@ app.post('/editor/publisher', function (req, res) {
 
 app.get('/valuator', function (req, res) {
     //reading valuator page
-    if (valuatorID) {
-        console.log("/valuator CONFLICT: A valuator is already in use");
-        return res.status(409).send(JSON.stringify({ code: "CONFLICT", message: "A valuator is already in use" })).end();
-    }
-    else {
-        fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
-            if (err) {
-                if (err.code == "ENOENT") {
-                    console.log("An error accourred inside /valuator, valuator page not found.");
-                    return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
-                    //the story wasn't found, so I answer with a 404 status response
-                }
-                else {
-                    console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
-                    return res.status(500).send(JSON.stringify(err)).end();
-                }
+    // if (valuatorID) {
+    //     console.log("/valuator CONFLICT: A valuator is already in use");
+    //     return res.status(409).send(JSON.stringify({ code: "CONFLICT", message: "A valuator is already in use" })).end();
+    // }
+    // else {
+    fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
+        if (err) {
+            if (err.code == "ENOENT") {
+                console.log("An error accourred inside /valuator, valuator page not found.");
+                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
+                //the story wasn't found, so I answer with a 404 status response
             }
             else {
-                console.log("Request for the valuator page received successfully. Returning the page.");
-                //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
-                const $ = cheerio.load(data);
-                return res.status(200).send($.html()).end();
+                console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
+                return res.status(500).send(JSON.stringify(err)).end();
             }
-        })
-    }
+        }
+        else {
+            console.log("Request for the valuator page received successfully. Returning the page.");
+            //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
+            const $ = cheerio.load(data);
+            return res.status(200).send($.html()).end();
+        }
+    })
+    // }
 })
 
 app.get('/valuator/history', function (req, res) {

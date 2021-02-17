@@ -642,6 +642,8 @@ function clean_folder(json, folder) {
 }
 
 app.post('/editor/saveStory', function (req, res) {
+    var return_obj;
+    var s = 200;
     var story_json = JSON.parse(req.fields.story_json);
     var published = story_json.published;
     var file_errors = [];
@@ -720,21 +722,25 @@ app.post('/editor/saveStory', function (req, res) {
     if (err != undefined) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
-        let remove_err = fs.rmdirSync(story_path + '/' + story_id, { recursive: true });
-        if (remove_err != undefined) {
-            console.log("An error occurred inside /editor/saveStory while deleting the folder " + story_id + ": " + err)
-            return res.status(500).send([err, remove_err]);
-        }
-        else {
-            console.log("Folder " + story_id + " deleted successfully.")
-            return res.status(500).send(err);
-        }
+        rmdir(story_path + '/' + story_id, err => {
+            if(err){
+                console.log("An error occurred inside /editor/saveStory while deleting the folder " + story_id + ": " + err)
+            }
+            else {
+                console.log("Folder " + story_id + " deleted successfully.")
+            }
+        });
+        return_obj = err;
+        s=500;
     }
     else {
         console.log("JSON Story file of " + story_id + " saved successfully.")
     }
-    console.log("Story " + story_id + " saved successfully.")
-    return res.status(200).send({ story_id: story_id, file_errors: file_errors, css_error: css_error }).end();
+    if(s==200) {
+        console.log("Story " + story_id + " saved successfully.")
+        return_obj = { story_id: story_id, file_errors: file_errors, css_error: css_error };
+    }
+    return res.status(s).send(return_obj).end();
 })
 
 app.post('/editor/deleteStory', function (req, res) {

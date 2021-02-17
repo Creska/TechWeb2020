@@ -151,8 +151,8 @@ io.on('connection', (socket) => {
         player_count++;
         player_per_group_count++;
         console.log("A new player arrived(" + player_count + ") for the story: " + storysent.story_title);
-        //Set an array for the current player, so I can push activities data with /update. I know that [0] is the game name
-        // player_data.set(socket.id, [storysent.story_ID]); MIGHT NOT NEED THIS ANYMORE
+        //Set an array for the current player, so I can push activities data with /update.
+        player_data.set(socket.id, []);
         if (valuatorID) {
             valuator_emit('user-joined', socket)
         }
@@ -208,13 +208,18 @@ io.on('connection', (socket) => {
             story_name = undefined;
         }
     })
-    socket.on('chat-message', (message, id) => {
-        //handler for CHAT MESSAGES (help)
-        console.log("The player " + id + " is sending the message: " + message);
-        //sending the chat event to the valuator page
+    socket.on('chat-message', (message, id_from, id_to) => {
+        //handler for CHAT MESSAGES 
         if (valuatorID) {
-            console.log("Sending the message to the valuator.")
-            valuator_emit('chat-message', socket, message);
+            if (id_from != valuatorID) {
+                console.log("The player " + id_from + " is sending the message: " + message);
+                valuator_emit('chat-message', socket, message);
+            }
+            else {
+                console.log("The valuator is sending the message: " + message + " | to: " + id_to);
+                socket.to(id_to).emit('chat-message', message);
+            }
+
         }
         else {
             console.log("Valuator is offline, storing the message.")
@@ -227,9 +232,9 @@ io.on('connection', (socket) => {
         //handling input validation to the valuator
         socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
     })
-    socket.on('validate-input-valuator', (nextQuest, nextActivity, score, socketID) => {
+    socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
         //input validation was handled, sending the result back
-        socket.to(socketID).emit('input-valued', nextQuest, nextActivity, score);
+        socket.to(socketID).emit('input-valued', nextActivity, score);
     })
 })
 app.get('/player', function (req, res) {
@@ -289,16 +294,14 @@ app.post('/player/activityUpdate', function (req, res) {
     This is needed for the summary, NOT for the warnings
     */
     var activity = req.body;
-    var questNumber = activity.QuestN;
-    var activityN = activity.ActivityN;
+    var activityID = activity.ActivityID;
     var questID = activity.QuestID;
     var timeToAnswer = activity.TimeToAnswer;
     var chatMessages = activity.ChatMessages;
     var Score = activity.Score;
-    var socketID = activity.socket || undefined;
-    if (time && help && socketID) {
-        //TODO saving player information
-        // player_data.get(socketID).push({ time: time, help: help });
+    var socketID = activity.socketID || undefined;
+    if (activityID && questID && chatMessages && timeToAnswer && Score && socketID) {
+        player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score });
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }
@@ -330,7 +333,7 @@ app.post('/player/playersActivities', function (req, res) {
                 maximum_time = activity.expected_time;
             }
         })
-        if (maximum_time && time_elapsed > maximum_time) {
+        if (maximum_time && time_elapsed > maximum_time && maximum_time != 0) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
             valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
@@ -894,12 +897,17 @@ app.get('/valuator/activeStories', function (req, res) {
     // stories_map.forEach((v, _k) => {
     //     activeStories.push({ story_name: v.story_name, story_ID: v.story_ID });
     // }) WON'T NEED THIS IF WE DON'T HANDLE MULTIPLE STORIES
-    return res.status(200).send(JSON.stringify(storysent)).end();
-    //TODO err handling?
+    if (storysent) {
+        return res.status(200).send(JSON.stringify(storysent)).end();
+    }
+    else {
+        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
+    }
+
 })
 
 app.get('/valuator/activeStoryName', function (req, res) {
-    if (story_name != undefined) {
+    if (story_name) {
         return res.status(200).send(JSON.stringify(story_name)).end();
     } else {
         return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();

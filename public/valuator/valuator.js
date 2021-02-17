@@ -1,18 +1,15 @@
-var storyNameTimer; //global timer to retrieve active stories
-var storyDataTimer; //global timer tor retrieve information for the stories
 var activeStoryName; //known active stories
+var story_played;
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
 let players = new Map(); //key: socket.id, value: player number
 var player_count = 0;
+var socket;
+let last_unused = [];
+const PLAYER = 0;
+const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
-/** TODO
- * => remove story when it gets closed 
- * => dynamic load of story
- * 
- * 
- */
 function renderEditor() {
     pageLocation = 2;
     $('#bottoneditor').fadeOut();
@@ -29,17 +26,18 @@ function renderSupport() {
     $('#bottonesupport').fadeOut();
     //rendering the dropdown stories menu
     $.ajax({
-        url: '/valuator/activeStoryName',
+        url: '/valuator/activeStories',
         method: 'GET',
-        success: function (name) {
-            let data = JSON.parse(name);
-            if (data) {
-                activeStoryName = data;
+        success: function (story) {
+            story_played = JSON.parse(story);
+            console.log(story_played);
+            if (story_played) {
+                activeStoryName = story_played.story_title;
                 $('#support').fadeIn();
                 $('#home').removeClass('active');
                 $('#defaulth1').html(defaultPageTitle + ": Supporto")
                 $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo alla storia che sta venendo giocata in questo momento.');
-                showStoryChat(data);
+                showStoryChat();
             }
             else {
                 $('#defaultdescription').html('Al momento non sono è attiva una storia. Puoi restare su questa schermata, in attesa che inizi.');
@@ -96,68 +94,110 @@ function showStoryChat() {
     $('#chatrooms').fadeIn();
 }
 
-function makeChatMessage(text, owner) {
-    //owner is the socket ID
-    if (owner == "self") {
-        let message = `  
+function sendMessageToPlayer(id) {
+    makeChatMessage($('#text-' + id).val(), id, VALUATOR)
+    socket.emit('chat-message', $('#text-' + id).val(), socket.id, id);
+    $('#text-' + id).val("");
+}
+
+function makeChatMessage(text, id, owner) {
+    let message;
+    if (owner == VALUATOR) {
+        message = `  
         <div class="container-chat darker-chat overflow-auto" contenteditable="false">
   <p>`+ text + `</p>
   <span class="time-left-chat">`+ timeStamp() + `</span>
   </div>     
         `
-        //message sent from me, this means that the container for the player already exist
-        $('#' + owner).append(message)
     }
-    else {
-        let message = `
-        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
+    else if (owner == PLAYER) {
+        message = `  
+        <div class="container-chat lighter-chat overflow-auto" contenteditable="false">
   <p>`+ text + `</p>
-  <span class="time-right-chat">`+ timeStamp() + `</span>
- </div>
+  <span class="time-left-chat">`+ timeStamp() + `</span>
+  </div>     
         `
-        //message sent from someone else
-        if (!$('#' + owner)) {
-            //the chat container for that socket doesn't exists
-            makeContainer(owner);
-        }
-        $('#' + owner).append(message)
     }
+    //message sent from me, this means that the container for the player already exist
+    $('#text-' + id).before(message)
     //https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_chat
+}
+
+function valuateInput(socketID) {
+    let score = $('#punt-' + socketID).val() || 0;
+    let nextActivity = $('#att-' + socketID).val();
+    console.log("the score is", score, "\nthe nextActivity is", nextActivity);
+    socket.emit('validate-input-valuator', nextActivity, score, socketID)
+    $(`#val-` + socketID).html('<p style="color:orange">Risposta inviata con successo.</p>');
+    setTimeout(function () {
+        $(`#val-` + socketID).fadeOut();
+        $(`#warn-` + socketID).fadeOut();
+        $('#' + socketID).css('color', 'white');
+    }, 3000)
 }
 
 
 function makeWarningMessage(socketID, time) {
-    //TODO render chat message
-    //the idea is that there will be only one warning message at a time, rendered above all else
+    //probably won't use time
+    if ($('#warn-' + socketID) == undefined) {
+        let message = ` <div id="warn-` + socketID + `" style="border: 1px solid red">
+        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
+        <p>Attenzione: questo player ha superato il tempo previsto per rispondere all'attività corrente.</p>
+        </div>
+        </div>`
+        $('#form-' + socketID).before(message);
+    }
 }
 
 function makeValuatorMessage(question, answer, socketID) {
-    //TODO render messages to be valued, they will be shown as special chat messages
+    let message = `  
+    <div id="val-`+ socketID + `" style="border: 1px solid orange">
+    <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false"">
+<p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `</p>
+</div>     
+<label for="risposta">Punteggio della risposta</label><br>
+<input id="punt-`+ socketID + `" type="number" name="risposta"><br>
+<label for="attivita">Prossima attività</label><br>
+<input id="att-`+ socketID + `" type="text" name="attivita" maxlength="8" size="8"><br>
+<button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
+</div>
+`
+    $('#' + socketID).css('color', 'orange');
+    $('#form-' + socketID).before(message);
 }
 
 
 function makeContainer(id) {
-    player_count++;
+    let player_id;
+    if (last_unused.length > 0) {
+        player_id = last_unused.pop();
+    }
+    else {
+        player_count++;
+        player_id = player_count
+
+    }
     players.set(id, player_count);
-    $('#chatrooms').append('<div id="' + id + '" class="chatroom" contenteditable="true" style="margin-right: 10px; margin-left: 10px"><h3>Player ' + player_count + '</h3></div>')
+    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_id + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
-<p style="color: yellow">`+ 'System Message: User joined.' + `</p>
+<p style="color: yellow">`+ '<b>System Message: User joined.</b>' + `</p>
 </div>     
     `
-    $('#' + id).append(message)
+    $('#' + id).append(`  <div id="form-` + id + `" class="form-group"  contenteditable="false">
+    <textarea id="text-` + id + `" class="form-control" rows="3"></textarea>
+  </div>`)
+    $('#' + id).append('<button type="button" class="btn btn-dark" contenteditable="false" onclick="sendMessageToPlayer(' + `'` + id + `'` + ')">Invia</button>')
+    $('#form-' + id).before(message);
+
 }
 
 function deleteContainer(id) {
     $('#' + id).fadeOut();
 }
 
-function valuateInput() {
-    //TODO still don't know where to get nextQuest, number and score
-    socket.emit('validate-input-valuator', nextQuest, number, score, socketID);
-}
 $(function () {
-    var socket = io.connect('', { query: "type=valuator" });
+    socket = io.connect('', { query: "type=valuator" });
     //TODO actually store the messages
     $.get("/valuator/history", function (history) {
         history = JSON.parse(history)
@@ -172,7 +212,7 @@ $(function () {
             if (history.messages) {
                 console.log("History messages found.");
                 history.messages.forEach(element => {
-                    makeChatMessage(element.message, element.id)
+                    makeChatMessage(element.message, element.id, PLAYER)
                     console.log("Received a chat message from " + element.id + ": " + element.message);
                 })
             }
@@ -180,16 +220,9 @@ $(function () {
             console.log("History was found empty.")
         }
     })
-    $('form').submit(function (e) {
-        e.preventDefault();
-        console.log(socket.id);
-        socket.emit('valuator-message', $('#message').val());
-        $('#message').val('');
-        return false;
-    })
     socket.on('chat-message', (id, message) => {
         console.log("Received a chat message from " + id + ": " + message);
-        makeChatMessage(message, id);
+        makeChatMessage(message, id, PLAYER);
     })
     socket.on('player-warning', (data) => {
         makeWarningMessage(data.socketID, data.time);
@@ -197,20 +230,29 @@ $(function () {
 
     socket.on('user-joined', (id) => {
         console.log("User  " + id + " has joined.");
-        //TODO creating a chat-room div for that room
+        makeContainer(id);
     })
     socket.on('user-left', (id) => {
+        players.delete(id);
+        last_unused.push(player_count);
+        player_count--;
         console.log("User  " + id + " left.");
-        //TODO removing the chat-room div of that room
+        let message = `  
+        <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
+    <p style="color: yellow">`+ 'System Message: User left.' + `</p>
+    </div>     
+        `
+        $('#form-' + id).before(message);
+        setTimeout(function () {
+            $('#' + id).fadeOut();
+        }, 5000)
+        if (player_count == 0) {
+            story_played = undefined;
+            activeStoryName = undefined;
+        }
+
     })
     socket.on('valuate-input', (question, answer, socketID) => {
-        /*TODO creating input field for the answer to be valued
-        It will show the question of the activity and the answer given by the player
-        Dynamically creating a prompt with jQuery for that, that will execute a function
-        I do this because I can't do callbacks between clients with socket.io, so I need
-        something to hold the values for this specific answer
-        this fragment will execute valuateInput()
-        */
         makeValuatorMessage(question, answer, socketID);
     })
 })

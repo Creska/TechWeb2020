@@ -74,6 +74,11 @@ body {
     border-color: rgb(65, 71, 74);
     background-color: rgb(45, 49, 51);
   }
+
+  .lighter-chat {
+    border-color: rgb(122, 125, 126);
+    background-color: rgb(91, 93, 93);
+  }
   
   .container-chat::after {
     content: "";

@@ -180,7 +180,7 @@ io.on('connection', (socket) => {
         if (valuatorID) {
             if (valuatorID != socket.id) {
                 //A player is disconnected
-                //sending the disconnect event to the valuator so I can remove the chat
+                //sending the disconnect event to the valuator so I can remove the chat           
                 valuator_emit('user-left', socket);
                 player_count--;
                 console.log("Removing history from this socket since it disconnected.")
@@ -208,6 +208,7 @@ io.on('connection', (socket) => {
             storedJoins = storedJoins.filter((value) => {
                 return value != socket.id;
             })
+            player_data.delete(socket.id);
         }
         if (player_count == 0) {
             console.log("Deleting the storysent since there's no more players connected.")
@@ -250,6 +251,9 @@ io.on('connection', (socket) => {
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
         //input validation was handled, sending the result back
         socket.to(socketID).emit('input-valued', nextActivity, score);
+    })
+    socket.on('player-end', (socketID) => {
+        socket.to(valuatorID).emit('player-end', socketID)
     })
 })
 app.get('/player', function (req, res) {
@@ -301,18 +305,6 @@ app.get('/player', function (req, res) {
             });
         }
     });
-})
-
-app.post('/player/end', function (req, res) {
-    var socketID = req.body.SocketID;
-    if (socketID) {
-        valuator_emit('player-end', socketID);
-        return res.status(200).end();
-    }
-    else {
-        console.log("/player/end BAD REQUEST, a parameter was not provided.")
-        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socketID) was not provided." })).end();
-    }
 })
 
 app.post('/player/activityUpdate', function (req, res) {
@@ -908,7 +900,6 @@ app.get('/valuator', function (req, res) {
 })
 
 app.get('/valuator/history', function (req, res) {
-    //DINT I probably don't even need this in the end
     var data = { messages: undefined, joins: undefined };
     if (storedMessages.length) {
         data.messages = storedMessages;
@@ -926,9 +917,11 @@ app.get('/valuator/history', function (req, res) {
     }
 })
 
-app.post('/valuator/return', function (req, res) {
+app.get('/valuator/return', function (req, res) {
     if (player_data.size > 0) {
-        return res.status(200).send(JSON.stringify(player_data)).end();
+        let temp_player_data = JSON.parse(JSON.stringify([...player_data]))// used to clone an object without reference;
+        player_data.clear();
+        return res.status(200).send(JSON.stringify(temp_player_data)).end();
     }
     else {
         console.log("An error accourred inside /valuator/return, player_data is empty");

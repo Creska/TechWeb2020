@@ -32,12 +32,12 @@ $(function () {
 	});
 
 	socket.on('chat-message', (message) => {
-		if ( message ) {
+		if (message) {
 			ActivityRecap.ChatMessages += 1;
 
-			$( "#list" ).prepend( $( "<blockquote/>", {
+			$("#list").prepend($("<blockquote/>", {
 				"class": "valuator-msg p-1",
-			}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message ));
+			}).html("<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message));
 		}
 	});
 
@@ -46,7 +46,7 @@ $(function () {
 		Status.TotalScore += parseInt(score) || 0;
 		ActivityRecap.Score += parseInt(score) || 0;
 
-		goToActivity( activity_id );
+		goToActivity(activity_id);
 	});
 });
 
@@ -56,16 +56,16 @@ $(function () {
  * @param answer --> stringa corrispondente alla risposta
  * Renderizza un loading ed invia la richiesta di valutazione al Valuator
  */
-function validateInput( question, answer ) {
-	$( ".NextActivity" ).attr( "disabled", true );
-	$( ".NextActivity" ).html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>' );
-		
+function validateInput(question, answer) {
+	$(".NextActivity").attr("disabled", true);
+	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
+
 	/*
 	// roba per debugging
 	goToActivity( nextStageInOrder() );
 	*/
 
-	socket.emit( 'validate-input-player', question, answer, socket.id );
+	socket.emit('validate-input-player', question, answer, socket.id);
 };
 
 
@@ -74,43 +74,43 @@ function validateInput( question, answer ) {
 * in generale sarebbe meglio fermare l'applicazione e basta
 */
 function handleError() {
-	$( "#Main" ).empty();
+	$("#Main").empty();
 
-	$( "footer" ).fadeOut( "slow" );
+	$("footer").fadeOut("slow");
 
-	$( "#Main" ).replaceWith( document.getElementById( "ErrorContainer" ).content.cloneNode(true) );
-	$( "#Error" ).fadeIn( "slow" );
+	$("#Main").replaceWith(document.getElementById("ErrorContainer").content.cloneNode(true));
+	$("#Error").fadeIn("slow");
 };
 
 
 /* da attivare all'apertura della finestra */
 function loadGame() {
 	buildMaps();
-	
+
 	showAccess();
 
-	if ( StoryObj.game_mode == "CLASS" && ( StoryObj.testing == false || StoryObj.testing == undefined ) ) {
-		let group_alert = $( "<div class='alert alert-info' role='alert'/>" );
-		group_alert.append( $( "<i/>", {
+	if (StoryObj.game_mode == "CLASS" && (StoryObj.testing == false || StoryObj.testing == undefined)) {
+		let group_alert = $("<div class='alert alert-info' role='alert'/>");
+		group_alert.append($("<i/>", {
 			"class": "fas fa-info-circle fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		group_alert.append( $( "<p/>" ).html( "Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>" ) );
-		$( "#StartScreen" ).children().first().after( group_alert );
-	}
-	
-	if ( StoryObj.testing ) {
-		$( "#Open" ).attr( "onclick", "" ); // disabilita la chat
+		group_alert.append($("<p/>").html("Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>"));
+		$("#StartScreen").children().first().after(group_alert);
 	}
 
-	$( "#StartBtn" ).attr( "disabled", false );
+	if (StoryObj.testing) {
+		$("#Open").attr("onclick", ""); // disabilita la chat
+	}
+
+	$("#StartBtn").attr("disabled", false);
 };
 
 
 function startGame() {
-	$( "#StartScreen" ).replaceWith( document.getElementById( "MainContainer" ).content.cloneNode(true) );
+	$("#StartScreen").replaceWith(document.getElementById("MainContainer").content.cloneNode(true));
 
-	$( "#Main" ).before( $( "<h1/>", {
+	$("#Main").before($("<h1/>", {
 		"class": "p-2 StoryTitle",
 		role: "heading",
 		"aria-live": "assertive",
@@ -118,10 +118,10 @@ function startGame() {
 		text: StoryObj.story_title
 	}));
 
-	goToActivity( StoryObj.quests[0].activities[0].activity_id );
+	goToActivity(StoryObj.quests[0].activities[0].activity_id);
 
-	if ( StoryObj.testing != true )
-		$( "footer" ).fadeIn( "slow" );
+	if (StoryObj.testing != true)
+		$("footer").fadeIn("slow");
 };
 
 
@@ -129,46 +129,46 @@ function startGame() {
 function showAccess() {
 	let alerts = [];
 
-	if ( StoryObj.accessibility.WA_visual )
-		alerts.push( "disabilità visive" );
-	
-	if ( StoryObj.accessibility.WA_motor )
-		alerts.push( "disabilità motorie" );
+	if (StoryObj.accessibility.WA_visual)
+		alerts.push("disabilità visive");
 
-	if ( StoryObj.accessibility.WA_hearing )
-		alerts.push( "disabilità uditive" );
+	if (StoryObj.accessibility.WA_motor)
+		alerts.push("disabilità motorie");
 
-	if ( StoryObj.accessibility.WA_convulsions )
-		alerts.push( "problemi legati a convulsioni e/o epilessia" );
-	
-	if ( StoryObj.accessibility.WA_cognitive )
-		alerts.push( "disabilità cognitive" );
+	if (StoryObj.accessibility.WA_hearing)
+		alerts.push("disabilità uditive");
+
+	if (StoryObj.accessibility.WA_convulsions)
+		alerts.push("problemi legati a convulsioni e/o epilessia");
+
+	if (StoryObj.accessibility.WA_cognitive)
+		alerts.push("disabilità cognitive");
 
 	let accessibility_alert;
-	if ( alerts.length ) {
-		accessibility_alert = $( '<div class="alert alert-success accessibility-alert" role="alert"/>' );
-		accessibility_alert.append( $( "<i/>", {
+	if (alerts.length) {
+		accessibility_alert = $('<div class="alert alert-success accessibility-alert" role="alert"/>');
+		accessibility_alert.append($("<i/>", {
 			"class": "fab fa-accessible-icon fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		accessibility_alert.append( $( "<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>" ) );
-		$.each( alerts, function( i, str ) {
-			accessibility_alert.find( "ul" ).append( $( "<li/>", {
+		accessibility_alert.append($("<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>"));
+		$.each(alerts, function (i, str) {
+			accessibility_alert.find("ul").append($("<li/>", {
 				"class": "m-1",
 				text: str
 			}));
 		});
 	}
 	else {
-		accessibility_alert = $( '<div class="alert alert-danger accessibility-alert" role="alert"/>' );
-		accessibility_alert.append( $( "<i/>", {
+		accessibility_alert = $('<div class="alert alert-danger accessibility-alert" role="alert"/>');
+		accessibility_alert.append($("<i/>", {
 			"class": "fab fa-accessible-icon fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		accessibility_alert.append( $( '<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>' ) );
+		accessibility_alert.append($('<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>'));
 	}
 
-	$( "#StartScreen" ).prepend( accessibility_alert );
+	$("#StartScreen").prepend(accessibility_alert);
 };
 
 
@@ -177,63 +177,59 @@ function buildMaps() {
 	questmap = new Map();
 	activitymap = new Map();
 
-	$.each( StoryObj.quests, function( qi, quest ) {
-		questmap[ quest.quest_id ] = [ quest, qi ];
+	$.each(StoryObj.quests, function (qi, quest) {
+		questmap[quest.quest_id] = [quest, qi];
 
-		$.each( StoryObj.quests[qi].activities, function( ai, activity ) {
-			activitymap[ activity.activity_id ] = [ activity, quest.quest_id, ai ];
+		$.each(StoryObj.quests[qi].activities, function (ai, activity) {
+			activitymap[activity.activity_id] = [activity, quest.quest_id, ai];
 		});
 	});
 };
 
 
-function get_media_path( name ) {
-	return "/player/stories/" + ( StoryObj.testing ? "unpublished" : "published" ) + "/" + StoryObj.story_ID + "/" + name;
+function get_media_path(name) {
+	return "/player/stories/" + (StoryObj.testing ? "unpublished" : "published") + "/" + StoryObj.story_ID + "/" + name;
 };
 
 
-function goToActivity( aid ) {
-	if ( Status.ActivityID != null )
+function goToActivity(aid) {
+	if (Status.ActivityID != null)
 		sendActivityRecap(); // evita l'invio del recap a inizio gioco
-
-	if ( aid == null || aid === "" || activitymap[ aid ] == undefined ) {
+	if (aid == null || aid === "" || activitymap[aid] == undefined) {
 		handleError();
 		return;
 	}
-
-	if ( Status.QuestID != activitymap[ aid ][1] ) {
-		goToQuest( activitymap[ aid ][1] ); // va alla nuova quest
+	if (Status.QuestID != activitymap[aid][1]) {
+		goToQuest(activitymap[aid][1]); // va alla nuova quest
 	}
-
 	Status.ActivityID = aid;
-
-	let newactivity = $( "<div/>", {
+	let newactivity = $("<div/>", {
 		"class": "Activity",
 		id: aid,
 		style: "display:none;"
 	});
 
-	newactivity.append( $( "<div class='ActivityText'/>" ) );
-	writeActivityText( newactivity.find( ".ActivityText" ) );
+	newactivity.append($("<div class='ActivityText'/>"));
+	writeActivityText(newactivity.find(".ActivityText"));
 
-	if ( StoryObj.testing ) {
-		newactivity.append( $( "<button/>", {
+	if (StoryObj.testing) {
+		newactivity.append($("<button/>", {
 			"class": "NextActivity",
 			onclick: "goToActivity( nextStageInOrder() );",
 			text: "PROSSIMA (PREVIEW)"
 		}));
 	}
 	else {
-		if ( activitymap[ aid ][0].activity_type == "READING" ) {
-			if ( activitymap[ aid ][0].FINAL ) {
-				newactivity.append( $( "<button/>", {
+		if (activitymap[aid][0].activity_type == "READING") {
+			if (activitymap[aid][0].FINAL) {
+				newactivity.append($("<button/>", {
 					"class": "CloseGameBtn",
 					onclick: "endGame();",
 					text: "FINE"
 				}));
 			}
 			else {
-				newactivity.append( $( "<button/>", {
+				newactivity.append($("<button/>", {
 					"class": "NextActivity",
 					onclick: "goToNextActivity();",
 					text: "PROSEGUI"
@@ -241,8 +237,8 @@ function goToActivity( aid ) {
 			}
 		}
 		else {
-			buildAnswerField( newactivity );
-			newactivity.append( $( "<button/>", {
+			buildAnswerField(newactivity);
+			newactivity.append($("<button/>", {
 				"class": "NextActivity",
 				onclick: "goToNextActivity();",
 				text: "PROSEGUI"
@@ -250,27 +246,27 @@ function goToActivity( aid ) {
 		}
 	}
 
-	$( "#Main .Activity" ).remove();
-	$( "#Main .Quest .sr-only" ).remove();
+	$("#Main .Activity").remove();
+	$("#Main .Quest .sr-only").remove();
 
 	/* appende l'attività e resetta tutto ciò che va resettato */
-	$( "#Main .Quest" ).append( $( "<div/>", {
+	$("#Main .Quest").append($("<div/>", {
 		role: "alert",
 		"aria-live": "assertive",
 		"class": "sr-only",
 		text: "nuova attività"
 	}));
-	$( "#Main .Quest" ).append( newactivity );
-	$( "#Main .Activity" ).fadeIn( "slow" );
+	$("#Main .Quest").append(newactivity);
+	$("#Main .Activity").fadeIn("slow");
 
-	$( "#list" ).empty();
+	$("#list").empty();
 	Status.time_elapsed = 0;
 	ActivityRecap = {
 		TimeToAnswer: 0,
 		ChatMessages: 0,
 		Score: 0
 	};
-	
+
 	IntervalTimer = setInterval(function () {
 		Status.time_elapsed += 5000;
 		ActivityRecap.TimeToAnswer += 5000;
@@ -280,61 +276,61 @@ function goToActivity( aid ) {
 };
 
 
-function goToQuest( qid ) {
-	if ( qid == null || qid === "" || questmap[ qid ] == undefined ) {
+function goToQuest(qid) {
+	if (qid == null || qid === "" || questmap[qid] == undefined) {
 		handleError();
 		return;
 	}
 
 	Status.QuestID = qid;
 
-	let newquest = $( "<section/>", {
+	let newquest = $("<section/>", {
 		"class": "Quest",
 		id: qid,
 		"aria-relevant": "additions text",
 		style: "display:none;"
 	});
 
-	newquest.append( $( "<h2/>", {
+	newquest.append($("<h2/>", {
 		"class": "QuestTitle",
 		"aria-live": "assertive",
 		"aria-level": "2",
-		text: questmap[ qid ][0].quest_title 
+		text: questmap[qid][0].quest_title
 	}));
 
-	$( "#Main .Quest" ).remove();
-	$( "#Main .sr-only" ).remove();
+	$("#Main .Quest").remove();
+	$("#Main .sr-only").remove();
 
-	$( "#Main" ).append( $( "<div/>", {
+	$("#Main").append($("<div/>", {
 		role: "alert",
 		"aria-live": "assertive",
 		"class": "sr-only",
 		text: "nuova quest"
 	}));
-	$( "#Main" ).append( newquest );
-	$( "#Main .Quest" ).fadeIn( "slow" );
+	$("#Main").append(newquest);
+	$("#Main .Quest").fadeIn("slow");
 };
 
 
 function goToNextActivity() {
-	clearInterval( IntervalTimer );
+	clearInterval(IntervalTimer);
 
-	let activity = activitymap[ Status.ActivityID ][0];
+	let activity = activitymap[Status.ActivityID][0];
 
-	if ( activity.ASK_EVAL ) {
-		validateInput( $( ".AnswerFieldDescription" ).first().text(), getPlayerAnswer() );
+	if (activity.ASK_EVAL) {
+		validateInput($(".AnswerFieldDescription").first().text(), getPlayerAnswer());
 		return;
 	}
-	
-	if ( activity.activity_type == "READING" ) {
-		if ( activity.answer_outcome[0].next_activity_id ) {
-			ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
+
+	if (activity.activity_type == "READING") {
+		if (activity.answer_outcome[0].next_activity_id) {
+			ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
 			Status.TotalScore += ActivityRecap.Score;
 
-			goToActivity( activity.answer_outcome[0].next_activity_id );
+			goToActivity(activity.answer_outcome[0].next_activity_id);
 		}
 		else {
-			goToActivity( nextStageInOrder() );
+			goToActivity(nextStageInOrder());
 		}
 	}
 	else {
@@ -342,23 +338,23 @@ function goToNextActivity() {
 
 		let target = null; // va usato per evitare il return statement nel loop di each
 
-		$.each( activity.answer_outcome, function( i, outcome ) {
-			if ( i > 0 ) {
-				if ( outcome.condition.toLowerCase() == player_answer ) {
-					ActivityRecap.Score = parseInt( outcome.score ) || 0;
+		$.each(activity.answer_outcome, function (i, outcome) {
+			if (i > 0) {
+				if (outcome.condition.toLowerCase() == player_answer) {
+					ActivityRecap.Score = parseInt(outcome.score) || 0;
 					Status.TotalScore += ActivityRecap.Score;
 
 					target = outcome.next_activity_id;
 					return false;
 				}
-			}	
+			}
 		});
 
-		if ( target == null ) {
-			if ( activity.answer_outcome[0].next_activity_id ) {
-				ActivityRecap.Score = parseInt( activity.answer_outcome[0].score ) || 0;
+		if (target == null) {
+			if (activity.answer_outcome[0].next_activity_id) {
+				ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
 				Status.TotalScore += ActivityRecap.Score;
-	
+
 				target = activity.answer_outcome[0].next_activity_id;
 			}
 			else {
@@ -366,7 +362,7 @@ function goToNextActivity() {
 			}
 		}
 
-		goToActivity( target );
+		goToActivity(target);
 	}
 };
 
@@ -375,12 +371,12 @@ function nextStageInOrder() {
 	/* se questa attività NON è l'ultima di questa quest, conduce all'attività successiva */
 	/* altrimenti, conduce alla quest successiva, sempre che la quest in corso non sia l'ultima */
 
-	if ( activitymap[ Status.ActivityID ][2] < questmap[ Status.QuestID ][0].activities.length - 1 ) {
-		return StoryObj.quests[ questmap[ Status.QuestID ][1] ].activities[ activitymap[ Status.ActivityID ][2] + 1 ].activity_id;
+	if (activitymap[Status.ActivityID][2] < questmap[Status.QuestID][0].activities.length - 1) {
+		return StoryObj.quests[questmap[Status.QuestID][1]].activities[activitymap[Status.ActivityID][2] + 1].activity_id;
 	}
 	else {
-		if ( questmap[ Status.QuestID ][1] < StoryObj.quests.length - 1  ) {
-			return StoryObj.quests[ questmap[ Status.QuestID ][1] + 1 ].activities[0].activity_id;
+		if (questmap[Status.QuestID][1] < StoryObj.quests.length - 1) {
+			return StoryObj.quests[questmap[Status.QuestID][1] + 1].activities[0].activity_id;
 		}
 	}
 
@@ -388,18 +384,18 @@ function nextStageInOrder() {
 };
 
 
-function writeActivityText( container ) {
-	let activity = activitymap[ Status.ActivityID ][0];
+function writeActivityText(container) {
+	let activity = activitymap[Status.ActivityID][0];
 
-	$.each( activity.activity_text, function( i, node ) {
-		if ( node.type == "text" ) {
-			container.append( $( "<p/>", {
+	$.each(activity.activity_text, function (i, node) {
+		if (node.type == "text") {
+			container.append($("<p/>", {
 				"class": "p-3 TextPar",
 				text: node.content
 			}));
 		}
-		else if ( node.type == "gallery" ) {
-			let newgallery = $( `
+		else if (node.type == "gallery") {
+			let newgallery = $(`
 			<div class="carousel slide p-3 ImageGallery" aria-label="Galleria di immagini" data-interval="false">
 				<div class="carousel-inner"></div>
 				<a class="carousel-control-prev" role="button" data-slide="prev">
@@ -412,49 +408,49 @@ function writeActivityText( container ) {
   				</a>
 			</div>` );
 
-			newgallery.attr( "id", "gallery" + i );
-			newgallery.find( "a" ).attr( "href", "#gallery" + i );
+			newgallery.attr("id", "gallery" + i);
+			newgallery.find("a").attr("href", "#gallery" + i);
 
 			let newimage;
-			$.each( node.content, function( pic_i, pic ) {
-				if ( pic_i === 0 )
-					newimage = $( "<div class='carousel-item active'/>" );
+			$.each(node.content, function (pic_i, pic) {
+				if (pic_i === 0)
+					newimage = $("<div class='carousel-item active'/>");
 				else
-					newimage = $( "<div class='carousel-item'/>" );
+					newimage = $("<div class='carousel-item'/>");
 
-				newimage.append( $( "<img/>", {
+				newimage.append($("<img/>", {
 					"class": "d-block w-100",
 					alt: pic.alt,
-					src: get_media_path( pic.name )
+					src: get_media_path(pic.name)
 				}));
 
-				newimage.append( $( "<div/>", {
+				newimage.append($("<div/>", {
 					"class": "carousel-caption", // le classi d-none e d-md-block fanno scomparire le captions su schermi piccoli
 					"aria-hidden": "true"
 				}));
 
-				newimage.find( ".carousel-caption" ).append( $( "<p/>", {
+				newimage.find(".carousel-caption").append($("<p/>", {
 					text: pic.alt
 				}));
 
-				newgallery.children().first().append( newimage );
+				newgallery.children().first().append(newimage);
 			});
 
-			container.append( newgallery );
+			container.append(newgallery);
 		}
-		else if ( node.type == "video" ) {
-			container.append( $( node.content ) );
+		else if (node.type == "video") {
+			container.append($(node.content));
 		}
 	});
 };
 
 
-function buildAnswerField( container ) {
-	let activity = activitymap[ Status.ActivityID ][0];
+function buildAnswerField(container) {
+	let activity = activitymap[Status.ActivityID][0];
 
-	let AF = $( "<div class='AnswerField' aria-label='Esercizio'/>" );
+	let AF = $("<div class='AnswerField' aria-label='Esercizio'/>");
 
-	AF.append( $( "<p/>", {
+	AF.append($("<p/>", {
 		"class": "AnswerFieldDescription",
 		"aria-hidden": "true",
 		text: activity.answer_field.description
@@ -462,41 +458,41 @@ function buildAnswerField( container ) {
 
 	let answerinput;
 
-	switch ( activity.answer_field.type ) {
+	switch (activity.answer_field.type) {
 		case "checklist":
-			answerinput = $( "<ul/>", {
+			answerinput = $("<ul/>", {
 				"class": "AnswerInput",
 				"aria-label": activity.answer_field.description,
 				"role": "list"
 			});
 			let answeropt;
 
-			$.each( activity.answer_field.options, function( opt_i, opt ) {
-				answeropt = $( "<li class='form-check'/>" );
-				answeropt.append( $( "<input/>", {
+			$.each(activity.answer_field.options, function (opt_i, opt) {
+				answeropt = $("<li class='form-check'/>");
+				answeropt.append($("<input/>", {
 					"class": "form-check-input",
 					type: "radio",
 					name: "AnswerInputRadio",
 					id: "opt" + opt_i,
 					value: opt_i
 				}));
-				answeropt.append( $( "<label/>", {
+				answeropt.append($("<label/>", {
 					"class": "form-check-label",
 					for: "opt" + opt_i,
 					text: opt
 				}));
-				answerinput.append( answeropt );
+				answerinput.append(answeropt);
 			});
 			break;
 		case "text":
-			answerinput = $( "<textarea/>", {
+			answerinput = $("<textarea/>", {
 				"class": "AnswerInput w-100",
 				"aria-label": activity.answer_field.description,
 				placeholder: "Risposta"
 			});
 			break;
 		case "number":
-			answerinput = $( "<input/>", {
+			answerinput = $("<input/>", {
 				"class": "AnswerInput",
 				type: "number",
 				"aria-label": activity.answer_field.description,
@@ -505,7 +501,7 @@ function buildAnswerField( container ) {
 			break;
 		case "date":
 		case "time":
-			answerinput = $( "<input/>", {
+			answerinput = $("<input/>", {
 				type: activity.answer_field.type,
 				"aria-label": activity.answer_field.description
 			});
@@ -515,44 +511,44 @@ function buildAnswerField( container ) {
 			return;
 	}
 
-	AF.append( answerinput );
+	AF.append(answerinput);
 
-	container.append( AF );
+	container.append(AF);
 };
 
 
 function getPlayerAnswer() {
-	let field = activitymap[ Status.ActivityID ][0].answer_field;
+	let field = activitymap[Status.ActivityID][0].answer_field;
 
-	switch ( field.type ) {
+	switch (field.type) {
 		case "checklist":
-			if ( $( ".AnswerInput input:checked" ).length ) {
-				return field.options[ $( ".AnswerInput input:checked" ).first().val() ].toLowerCase();
+			if ($(".AnswerInput input:checked").length) {
+				return field.options[$(".AnswerInput input:checked").first().val()].toLowerCase();
 			}
 			break;
 		case "text":
 		case "number":
 		case "date":
 		case "time":
-			return $( ".AnswerInput" ).first().val().toLowerCase();
+			return $(".AnswerInput").first().val().toLowerCase();
 	}
 
 	return null;
 };
 
 
-function sendMsg( msg ) {
-	if ( msg === "" )
+function sendMsg(msg) {
+	if (msg === "")
 		return;
-	
-	//client can't route the rooms: only the server can. I need to send the data there
-	socket.emit( 'chat-message', msg, socket.id );
 
-	$( "#chat-room input" ).val( "" );
-	
-	$( "#list" ).prepend( $( "<blockquote/>", {
+	//client can't route the rooms: only the server can. I need to send the data there
+	socket.emit('chat-message', msg, socket.id);
+
+	$("#chat-room input").val("");
+
+	$("#list").prepend($("<blockquote/>", {
 		"class": "player-msg p-1"
-	}).html( "<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>" ));
+	}).html("<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>"));
 
 	/*
 	//roba per debugging
@@ -566,28 +562,28 @@ function sendMsg( msg ) {
 
 
 function endGame() {
-	clearInterval( IntervalTimer );
+	clearInterval(IntervalTimer);
 	sendActivityRecap();
 
 	$.ajax({
 		url: "player/end",
 		type: "POST",
 		data: {
-			socketID: socket
+			socketID: socket.id
 		}
 	});
 
-	$( "footer" ).fadeOut( "slow" );
-	$( "#Main" ).replaceWith( document.getElementById( "FinishContainer" ).content.cloneNode(true) );
+	$("footer").fadeOut("slow");
+	$("#Main").replaceWith(document.getElementById("FinishContainer").content.cloneNode(true));
 
-	if ( StoryObj.show_score ) {
-		$( "#Finish .sr-only, #Finish p:nth-child(3)" ).html( "Congratulazioni!<br>Hai completato il gioco.<br>Numero di punti ottenuti: <em>" + ( parseInt(Status.TotalScore) || 0 )  + "</em>" );
+	if (StoryObj.show_score) {
+		$("#Finish .sr-only, #Finish p:nth-child(3)").html("Congratulazioni!<br>Hai completato il gioco.<br>Numero di punti ottenuti: <em>" + (parseInt(Status.TotalScore) || 0) + "</em>");
 	}
 	else {
-		$( "#Finish .sr-only, #Finish p:nth-child(3)" ).html( "Congratulazioni!<br>Hai completato il gioco." );
+		$("#Finish .sr-only, #Finish p:nth-child(3)").html("Congratulazioni!<br>Hai completato il gioco.");
 	}
 
-	$( "#Finish" ).fadeIn( "slow" );
+	$("#Finish").fadeIn("slow");
 };
 
 
@@ -597,16 +593,10 @@ function sendStatus() {
 		ActivityID: Status.ActivityID,
 		time_elapsed: Status.time_elapsed,
 		Group: StoryObj.groupID,
-		socketID: socket
+		socketID: socket.id
 	};
-
-	$.ajax({
-		url: "/player/playersActivities",
-		type: "POST",
-		data: Status
-	});
-
-	// console.log( Status ); // debugging 
+	$.post("/player/playersActivities", intervalStatus);
+	// console.log( intervalStatus ); // debugging 
 };
 
 
@@ -618,14 +608,9 @@ function sendActivityRecap() {
 		ChatMessages: ActivityRecap.ChatMessages,
 		Score: ActivityRecap.Score,
 		Group: StoryObj.groupID,
-		socketID: socket
+		socketID: socket.id
 	};
-
-	$.ajax({
-		url: "player/activityUpdate",
-		type: "POST",
-		data: recap
-	});
-
+	// console.log(recap.QuestID, recap.ActivityID, recap.TimeToAnswer, recap.ChatMessages, recap.Score, recap.Group, recap.socketID)
+	$.post("/player/activityUpdate", recap);
 	// console.log( recap ); // debugging
 };

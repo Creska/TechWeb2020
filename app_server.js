@@ -316,6 +316,7 @@ app.post('/player/end', function (req, res) {
 })
 
 app.post('/player/activityUpdate', function (req, res) {
+    console.log("/player/activityUpdate")
     var activity = req.body;
     var activityID = activity.ActivityID;
     var questID = activity.QuestID;
@@ -755,7 +756,7 @@ app.post('/editor/saveStory', function (req, res) {
         console.log("An error occurred inside /editor/saveStory while saving the JSON Story file of " + story_id + ": " + err);
         console.log("Deleting " + story_id + " folder...")
         rmdir(story_path + '/' + story_id, err => {
-            if(err){
+            if (err) {
                 console.log("An error occurred inside /editor/saveStory while deleting the folder " + story_id + ": " + err)
             }
             else {
@@ -763,12 +764,12 @@ app.post('/editor/saveStory', function (req, res) {
             }
         });
         return_obj = err;
-        s=500;
+        s = 500;
     }
     else {
         console.log("JSON Story file of " + story_id + " saved successfully.")
     }
-    if(s==200) {
+    if (s == 200) {
         console.log("Story " + story_id + " saved successfully.")
         return_obj = { story_id: story_id, file_errors: file_errors, css_error: css_error };
     }

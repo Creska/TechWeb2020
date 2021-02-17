@@ -31,8 +31,10 @@ $(function () {
 		loadGame();
 	});
 
-	socket.on('valuator-message', (message) => {
+	socket.on('chat-message', (message) => {
 		if ( message ) {
+			ActivityRecap.ChatMessages += 1;
+
 			$( "#list" ).prepend( $( "<blockquote/>", {
 				"class": "valuator-msg p-1",
 			}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message ));
@@ -191,7 +193,8 @@ function get_media_path( name ) {
 
 
 function goToActivity( aid ) {
-	sendActivityRecap();
+	if ( Status.ActivityID != null )
+		sendActivityRecap(); // evita l'invio del recap a inizio gioco
 
 	if ( aid == null || aid === "" || activitymap[ aid ] == undefined ) {
 		handleError();
@@ -546,7 +549,7 @@ function sendMsg( msg ) {
 	socket.emit( 'chat-message', msg, socket.id );
 
 	$( "#chat-room input" ).val( "" );
-	ActivityRecap.ChatMessages += 1;
+	
 	$( "#list" ).prepend( $( "<blockquote/>", {
 		"class": "player-msg p-1"
 	}).html( "<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>" ));
@@ -566,6 +569,14 @@ function endGame() {
 	clearInterval( IntervalTimer );
 	sendActivityRecap();
 
+	$.ajax({
+		url: "player/end",
+		type: "POST",
+		data: {
+			socketID: socket
+		}
+	});
+
 	$( "footer" ).fadeOut( "slow" );
 	$( "#Main" ).replaceWith( document.getElementById( "FinishContainer" ).content.cloneNode(true) );
 
@@ -581,6 +592,14 @@ function endGame() {
 
 
 function sendStatus() {
+	let intervalStatus = {
+		QuestID: QuestID,
+		ActivityID: ActivityID,
+		time_elapsed: time_elapsed,
+		Group: groupID,
+		socketID: socket
+	};
+
 	$.ajax({
 		url: "/player/playersActivities",
 		type: "POST",
@@ -597,7 +616,9 @@ function sendActivityRecap() {
 		ActivityID: Status.ActivityID,
 		TimeToAnswer: ActivityRecap.TimeToAnswer,
 		ChatMessages: ActivityRecap.ChatMessages,
-		Score: ActivityRecap.Score
+		Score: ActivityRecap.Score,
+		Group: groupID,
+		socketID: socket
 	};
 
 	$.ajax({

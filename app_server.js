@@ -183,6 +183,13 @@ io.on('connection', (socket) => {
                 //sending the disconnect event to the valuator so I can remove the chat
                 valuator_emit('user-left', socket);
                 player_count--;
+                console.log("Removing history from this socket since it disconnected.")
+                storedMessages = storedMessages.filter((value) => {
+                    return value.id != socket.id;
+                });
+                storedJoins = storedJoins.filter((value) => {
+                    return value != socket.id;
+                })
                 //removes the player(socket) from the story he's in, also decreasing the number of players for that story
                 // removePlayer(socket.id);
             } else {
@@ -230,7 +237,15 @@ io.on('connection', (socket) => {
     //TODO this need to be tested
     socket.on('validate-input-player', (question, answer, socketID) => {
         //handling input validation to the valuator
-        socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
+        if (valuatorID) {
+            socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
+        }
+        else {
+            console.log("Valuator is offline, storing to be valued message.")
+            storedMessages.push({ question: question, answer: answer, id: socketID });
+
+        }
+
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
         //input validation was handled, sending the result back
@@ -288,20 +303,29 @@ app.get('/player', function (req, res) {
     });
 })
 
+app.post('/player/end', function (req, res) {
+    var socketID = req.body.SocketID;
+    if (socketID) {
+        valuator_emit('player-end', socketID);
+        return res.status(200).end();
+    }
+    else {
+        console.log("/player/end BAD REQUEST, a parameter was not provided.")
+        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(socketID) was not provided." })).end();
+    }
+})
+
 app.post('/player/activityUpdate', function (req, res) {
-    /*Every time an activity is finished, I send the time spent, how many time a help message was sent and the ID of the socket.
-    I know that [0] cointains the game name, and every push is an activity(so I know the flow of the game)
-    This is needed for the summary, NOT for the warnings
-    */
     var activity = req.body;
     var activityID = activity.ActivityID;
     var questID = activity.QuestID;
     var timeToAnswer = activity.TimeToAnswer;
     var chatMessages = activity.ChatMessages;
     var Score = activity.Score;
+    var group = activity.Group;
     var socketID = activity.socketID || undefined;
     if (activityID && questID && chatMessages && timeToAnswer && Score && socketID) {
-        player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score });
+        player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }
@@ -336,6 +360,14 @@ app.post('/player/playersActivities', function (req, res) {
         if (maximum_time && time_elapsed > maximum_time && maximum_time != 0) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
+            if (valuatorID) {
+                valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
+                console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+            }
+            else {
+                console.log("Valuator is offline, storing the warning message");
+                storedMessages.push({ id: socketID, time: time_elapsed - maximum_time });
+            }
             valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
             console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
@@ -894,7 +926,13 @@ app.get('/valuator/history', function (req, res) {
 })
 
 app.post('/valuator/return', function (req, res) {
-    //TODO ending summary, I have to decide what to do with player_data
+    if (player_data.size > 0) {
+        return res.status(200).send(JSON.stringify(player_data)).end();
+    }
+    else {
+        console.log("An error accourred inside /valuator/return, player_data is empty");
+        return res.status(500).end();
+    }
 })
 
 app.get('/valuator/activeStories', function (req, res) {

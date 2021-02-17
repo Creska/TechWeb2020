@@ -8,6 +8,7 @@
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <title>Ambiente valutatore</title>
 </head>
+<script src="FileSaver.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
@@ -20,6 +21,7 @@
     crossorigin="anonymous"></script>
 <script src="valuator.js"></script>
 <link rel="stylesheet" href="valuator.css">
+
 <body style="background-color: black;">
     <div class="container-fluid">
         <div class="topnav">
@@ -30,32 +32,23 @@
         <p id="defaultdescription" style="color: white">Benvenuto. Qui avrai ha disposizione l'editor potenziato per le
             storie e l'applicazione per il supporto dei giocatori.</p>
         <div class="row" style="color: white">
-            <div id="bottoneditor" class="col-sm-6" style="text-align: center"><button type="button"
-                    class="btn btn-dark" onclick="renderEditor()">Bottone per
-                    l'editor
-                    potenziato. Sotto ci sarà una preview dell'editor.</button>
+            <div id="bottoneditor" class="col-sm-6" style="text-align: center; margin-bottom: 10px"><button
+                    type="button" class="btn btn-dark" onclick="renderEditor()">Funzionalità editor aggiuntive</button>
             </div>
             <div id="bottonesupport" class="col-sm-6" style="text-align: center"><button type="button"
-                    class="btn btn-dark" onclick="renderSupport()">Bottone per il
-                    supporto dei
-                    giocatori. Sotto ci sarà una preview del supporto</button></div>
+                    class="btn btn-dark" onclick="renderSupport()">Chatroom & supporto della storia in corso</button>
+            </div>
             <div id="editor" class="col-sm-12" style="display: none">
+                <div id="editor-description" class="row" style="display: none">
+                    <p style="color:white"> Per le funzionalità di base dell'editor, si prega di andare <a
+                            href="http://site192041.tw.cs.unibo.it/editor">qui.</a></p>
+                </div>
+                <div id="editor-tool" class="row" style="display: none">
+                </div>
             </div>
             <div id="support" class="col-sm-12" style="display: none">
                 <div id="chatrooms" class="row" style="display: none">
                 </div>
-                <!-- <div class="dropdown">
-                    <button id="dropdownbutton" class="btn btn-secondary dropdown-toggle" type="button"
-                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Storie
-                    </button>
-                    <div id="dropdownstories" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Storia1</a>
-                        <a class="dropdown-item" href="#">Storia2</a>
-                        <a class="dropdown-item" href="#">Storia3</a>
-                    </div>
-                </div> -->
-                <!-- <div id="notifiche" class="col-sm-12">Notifiche</div> -->
             </div>
         </div>
     </div>

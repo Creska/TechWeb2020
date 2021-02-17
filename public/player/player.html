@@ -14,9 +14,6 @@
                 crossorigin="anonymous"></script>
         <script src="player.js"></script>
         <script src="/socket.io/socket.io.js"></script>
-        <!--Script per icone
-        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-        -->
         <!--Script per le animazioni del testo-->
         <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
 
@@ -32,15 +29,17 @@
     <body>
     <div class="page-container">
         <div id="appbanner" aria-hidden="true">
-            <img id="logo" class="p-2" src="../images/logo.png" alt="M&M App Logo">
+            <img id="logo" class="p-2" src="./media/logo.png" alt="M&M App Logo">
         </div>
 
         <div role="banner" class="sr-only">M&M - Applicazione per giochi interattivi</div>
 
         <main id="StartScreen">
+            <!--
             <script>
                 ScrollReveal().reveal('#logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
             </script>
+            -->
             
             <div class="card text-center">
                 <div class="card-header" id="info-title" role="heading" aria-level="1">
@@ -51,21 +50,21 @@
                     <ul style="text-align: center;">
                         <li>
                             Domande a scelta multipla con una sola risposta selezionabile;<br>
-                            <img class="p-2" id="DomandaMultipla" src="../images/domanda_multipla.png" alt="Le domande a scelta multipla hanno due o più risposte possibili. Scegli quella che ti sembra più giusta.">
+                            <img class="p-2" id="DomandaMultipla" src="./media/domanda_multipla.png" alt="Le domande a scelta multipla hanno due o più risposte possibili. Scegli quella che ti sembra più giusta.">
                         </li>
                         <li>
                             Domande risposta numerica;<br>
-                            <img class="p-2" id="DomandaNumerica" src="../images/domanda_numerica.png" alt="Per le domande numeriche, inserisci un numero tramite tastiera o utilizza le apposite frecce per aumentare o diminuire.">
+                            <img class="p-2" id="DomandaNumerica" src="./media/domanda_numerica.png" alt="Per le domande numeriche, inserisci un numero tramite tastiera o utilizza le apposite frecce per aumentare o diminuire.">
                         </li>
                         <li>
                             Domande aperte.<br>
-                            <img class="p-2" id="DomandaAperta" src="../images/domanda_aperta.png" alt="Nelle domande aperte dovrai rispondere in modo classico, scrivendo ciò che ritieni corretto.">
+                            <img class="p-2" id="DomandaAperta" src="./media/domanda_aperta.png" alt="Nelle domande aperte dovrai rispondere in modo classico, scrivendo ciò che ritieni corretto.">
                         </li>
                     </ul>
                     <p>Per proseguire la narrazione in fondo alla pagina vi è un pulsante con la scritta <em>PROSEGUI</em>. Cliccalo per passare all'attività seguente. Per alcune domande dovrai attendere che il Valutatore controlli la tua risposta: in questo caso vedrai apparire un segnale di attesa.</p>
-                    <img class="p-2" id="Prosegui" src="../images/prosegui.png" aria-hidden="true">
+                    <img class="p-2" id="Prosegui" src="./media/prosegui.png" aria-hidden="true">
                     <p>Al termine dell'ultima attività vi è un pulsante denominato <em>FINE</em>. Cliccalo per segnalare al valutatore la fine della partita e passare alla schermata finale.</p>
-                    <img class="p-2" id="Fine" src="../images/fine.png" aria-hidden="true">
+                    <img class="p-2" id="Fine" src="./media/fine.png" aria-hidden="true">
                     <p>Nella schermata finale potrai vedere il tuo punteggio, se il Valutatore te lo avrà abilitato.</p>
                 </div>
                 <div class="card-footer text-muted" id="info-footer">
@@ -150,11 +149,6 @@
             </div>
 
             <div class="m-3">
-                <!--
-                <button type="button" id="history" class="btn m-3" data-toggle="collapse" data-target="#list" aria-expanded="false" aria-controls="list">
-                    Chat stack
-                </button>
-                -->
                 <h4 aria-level="4">Cronologia chat</h4>
                 <p class="p-3">Elenco dei messaggi scambiati col valutatore durante questa attività. In alto sono presenti i messaggi più recenti.</p>
                 <div id="list" role="log" aria-relevant="additions"></div>

@@ -9,7 +9,7 @@ html, body {
 }
 
 body {
-    background-image: url(../images/sfondo_player.jpg);
+    background-image: url(./media/sfondo_player.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -33,11 +33,20 @@ body {
     font-size: 20px;
 }
 
-#logo{
+#logo {
+    font-family: monospace;
     width: 200px;
     height: auto;
     position: relative;
     overflow: hidden;
+    animation: move_logo 0.8s;
+    animation-iteration-count: 1;
+}
+
+@keyframes
+move_logo{
+    from {top: 0px;}
+    to {top: 20px;}
 }
 
 #StartScreen {
@@ -113,10 +122,19 @@ body {
 .StoryTitle{
     text-align: center;
     margin: 0;
-    text-shadow: 2px -1px #000000, -2px 1px #000000;            
+    text-shadow: 2px -1px #000000, -2px 1px #000000;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     z-index: 10;
     position: relative;
+    animation: move_title 5s;
+    animation-iteration-count: 1;
+}
+
+@keyframes
+move_title{
+    25% {
+        transform: skewX(20deg);
+    }
 }
 
 #Main{
@@ -156,6 +174,15 @@ body {
     font-style: oblique;
     z-index: 1;
     position: relative;
+    animation: move_quest 2s ;
+    animation-iteration-count: 1;
+}
+
+@keyframes
+move_quest{
+    50% {
+        transform: scaleY(1.5);
+    }
 }
 
 .Activity {

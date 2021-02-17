@@ -160,9 +160,9 @@ function makeValuatorMessage(question, answer, socketID) {
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false"">
 <p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `</p>
 </div>     
-<label for="risposta">Punteggio della risposta</label><br>
+<label for="risposta" contenteditable="false">Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
-<label for="attivita">Prossima attività</label><br>
+<label for="attivita" contenteditable="false">Prossima attività</label><br>
 <select name="attivita" id="att-`+ socketID + `">
 `;
     story_played.quests.forEach(quest => {

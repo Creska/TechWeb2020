@@ -181,7 +181,6 @@ io.on('connection', (socket) => {
             if (valuatorID != socket.id) {
                 //A player is disconnected
                 //sending the disconnect event to the valuator so I can remove the chat           
-                player_data.delete(socket.id);
                 valuator_emit('user-left', socket);
                 player_count--;
                 console.log("Removing history from this socket since it disconnected.")
@@ -191,7 +190,6 @@ io.on('connection', (socket) => {
                 storedJoins = storedJoins.filter((value) => {
                     return value != socket.id;
                 })
-                player_data.delete(socket.id);
                 //removes the player(socket) from the story he's in, also decreasing the number of players for that story
                 // removePlayer(socket.id);
             } else {
@@ -921,7 +919,9 @@ app.get('/valuator/history', function (req, res) {
 
 app.get('/valuator/return', function (req, res) {
     if (player_data.size > 0) {
-        return res.status(200).send(JSON.stringify([...player_data])).end();
+        let temp_player_data = JSON.parse(JSON.stringify([...player_data]))// used to clone an object without reference;
+        player_data.clear();
+        return res.status(200).send(JSON.stringify(temp_player_data)).end();
     }
     else {
         console.log("An error accourred inside /valuator/return, player_data is empty");

@@ -4,7 +4,7 @@ var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
 var player_count = 0;
-var players_playing = 0;
+var players_playing_arr = [];
 var socket;
 let last_unused = [];
 let players_finished = [];
@@ -182,8 +182,6 @@ function makeValuatorMessage(question, answer, socketID) {
 
 
 function makeContainer(id) {
-    player_count++;
-    players_playing++;
     $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_count + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -266,17 +264,19 @@ $(function () {
     })
 
     socket.on('user-joined', (id) => {
+        player_count++;
         console.log("User  " + id + " has joined.");
+        players_playing_arr.push(id);
         makeContainer(id);
     })
     socket.on('user-left', (id) => {
-        player_count--;
-        let index = players_finished.indexOf(id);
-        if (index != -1) {
-            players_playing--;
-            players_finished.splice(index, 1);
-        }
+        player_count++;
         console.log("User  " + id + " left.");
+        let index = players_playing_arr.indexOf(id);
+        players_playing_arr.splice(index, 1);
+        let index = players_finished.indexOf(id);
+        if (index !== -1)
+            players_finished.splice(index, 1);
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
     <p style="color: yellow">`+ '<b>System Message: User left.<b>' + `</p>
@@ -286,17 +286,17 @@ $(function () {
         setTimeout(function () {
             $('#' + id).fadeOut();
         }, 5000)
-        if (player_count == 0) {
+        if (players_playing_arr.length == 0) {
             story_played = undefined;
             activeStoryName = undefined;
-            players_playing = 0;
             players_finished = [];
         }
 
     })
     socket.on('player-end', (socketID) => {
-        players_playing--;
         players_finished.push(socketID);
+        let index = players_playing_arr.indexOf(id);
+        players_playing_arr.splice(index, 1);
         console.log("User  " + socketID + " has finished.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -307,7 +307,7 @@ $(function () {
         setTimeout(function () {
             $('#' + socketID).fadeOut();
         }, 5000)
-        if (players_playing == 0 && players_finished.length > 0) {
+        if (players_playing_arr.length == 0 && players_finished.length > 0) {
             //ending
             $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
             $.get("/valuator/return", function (player_data) {
@@ -528,9 +528,6 @@ $(function () {
             })
             story_played = undefined;
             activeStoryName = undefined;
-            player_count = 0;
-            players_playing = 0;
-            players_finished = [];
         }
     })
     socket.on('valuate-input', (question, answer, socketID) => {

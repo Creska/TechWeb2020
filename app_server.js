@@ -83,12 +83,12 @@ function UNF() {
 => DONE check story coherence before writing them(coherence field inside the JSON)
 => DONE loadPlayer with specific JSON (?)
 => NOT NEEDED ANYMORE randomize the order of missions before sending them back to the client
-=> DOING warning about players stopped for too long on a game's specific phase
-=> DOING test to-be-valuated handling
-=> Return a JSON with the game summary, I think it'll have to contain:
-    -Rankings
-    -For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
-    -For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
+=> DONE warning about players stopped for too long on a game's specific phase
+=> DONE test to-be-valuated handling
+=> DONE Return a JSON with the game summary, I think it'll have to contain:
+    -DONE Rankings
+    -DONE For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
+    -DONE For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
 */
 
 function valuator_emit(method, socket, data) {
@@ -235,7 +235,6 @@ io.on('connection', (socket) => {
         }
 
     })
-    //TODO this need to be tested
     socket.on('validate-input-player', (question, answer, socketID) => {
         //handling input validation to the valuator
         if (valuatorID) {

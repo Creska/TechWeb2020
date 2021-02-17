@@ -617,7 +617,7 @@ function sendActivityRecap() {
 		TimeToAnswer: ActivityRecap.TimeToAnswer,
 		ChatMessages: ActivityRecap.ChatMessages,
 		Score: ActivityRecap.Score,
-		Group: groupID,
+		Group: StoryObj.groupID,
 		socketID: socket
 	};
 

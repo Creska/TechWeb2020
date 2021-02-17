@@ -49,8 +49,7 @@ function Navbar( option ) {
             CSS_Editor_Window = window.open( "../css_editor/css_editor.html", "tab" );
             break;
         case "Preview":
-            /* TODO - interfacciare col json */
-            Preview_Window = window.open( "../player/player.html", "tab" );
+            openPreview();
             break;
         case "Home":
             $( "#SavePrompt" ).modal( "toggle" );
@@ -335,4 +334,11 @@ function breadcrumbs() {
 		case "VideoSection":
 			$( "#breadcrumbs ol" ).append( $( "<li class='breadcrumb-item'/>" ).text( "parte " + CurrentNavStatus.TextPartN ) );
 	}
+};
+
+
+function openPreview() {
+	let target_url = "http://localhost:8000/player?story=" + CurrentWork.story_ID + "&testing=true";
+
+	Preview_Window = window.open( target_url, "tab" );
 };

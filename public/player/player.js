@@ -28,6 +28,10 @@ $(function () {
 	$.get("/player/loadJSON", function (data) {
 		StoryObj = JSON.parse(data);
 
+		if ( StoryObj.publishable.published == false ) {
+			StoryObj.testing = true;
+		} 
+
 		loadGame();
 	});
 

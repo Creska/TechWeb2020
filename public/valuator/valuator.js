@@ -3,8 +3,8 @@ var story_played;
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
-let players = new Map(); //key: socket.id, value: player number
 var player_count = 0;
+var player_playing = 0;
 var socket;
 let last_unused = [];
 let players_finished = [];
@@ -64,6 +64,7 @@ function toHome() {
                 $('#storyname').remove();
                 $('#support').fadeOut();
                 $('#chatrooms').fadeOut();
+                $('#charts').fadeOut();
                 break;
 
             case 2:
@@ -181,17 +182,9 @@ function makeValuatorMessage(question, answer, socketID) {
 
 
 function makeContainer(id) {
-    let player_id;
-    if (last_unused.length > 0) {
-        player_id = last_unused.pop();
-        player_count++;
-    }
-    else {
-        player_count++;
-        player_id = player_count
-    }
-    players.set(id, player_count);
-    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_id + '</h3></div>')
+    player_count++;
+    player_playing++;
+    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_count + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
 <p style="color: yellow">`+ '<b>System Message: User joined.</b>' + `</p>
@@ -277,13 +270,12 @@ $(function () {
         makeContainer(id);
     })
     socket.on('user-left', (id) => {
-        players.delete(id);
-        const index = players_finished.indexOf(id);
-        if (index > -1) {
+        player_count--;
+        let index = players_finished.indexOf(id);
+        if (index != -1) {
+            player_playing--;
             players_finished.splice(index, 1);
         }
-        last_unused.push(player_count);
-        player_count--;
         console.log("User  " + id + " left.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -301,10 +293,8 @@ $(function () {
 
     })
     socket.on('player-end', (socketID) => {
-        console.log("player")
-        players.delete(socketID);
+        player_playing--;
         players_finished.push(socketID);
-        last_unused.push(player_count);
         console.log("User  " + socketID + " has finished.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -315,7 +305,7 @@ $(function () {
         setTimeout(function () {
             $('#' + socketID).fadeOut();
         }, 5000)
-        if (player_count == 1 && players_finished.length > 0) {
+        if (player_playing == 0 && players_finished.length > 0) {
             //ending
             $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
             $.get("/valuator/return", function (player_data) {
@@ -325,6 +315,7 @@ $(function () {
                 let socket_stats = new Map();
                 let groups = [];
                 let quests = [];
+                let activities = [];
                 //key: socket, value: array of activities
                 temp_player_map.forEach((v, k) => {
                     let temp_score = 0;
@@ -336,6 +327,9 @@ $(function () {
                         }
                         if (!quests.includes(activity.questID)) {
                             quests.push(activity.questID)
+                        }
+                        if (!activities.includes(activity.activityID)) {
+                            activities.push(activity.activityID)
                         }
                         temp_score += parseInt(activity.Score);
                         temp_tta += parseInt(activity.timeToAnswer);
@@ -387,7 +381,6 @@ $(function () {
                                     let temp_array = quest_helper.get(quest);
                                     temp_array.push(activity);
                                     quest_helper.set(quest, temp_array);
-
                                 }
                             }
                         })
@@ -406,6 +399,119 @@ $(function () {
                     })
                     quests_stats.set(k, { totalScore: temp_q_score, totalTimeToAnswer: temp_q_tta, totalChatMessages: temp_q_cm, averageScore: (temp_q_score / v.length), averageTimeToAnswer: temp_q_tta / v.length, averageChatMessages: temp_q_cm / v.length })
                 })
+                let activity_helper = new Map();
+                activities.forEach(activity => {
+                    temp_player_map.forEach((v, k) => {
+                        v.forEach(sub_activity => {
+                            if (activity == sub_activity.activityID) {
+                                if (!activity_helper.has(activity)) {
+                                    activity_helper.set(activity, [sub_activity])
+                                }
+                                else {
+                                    let temp_array = activity_helper.get(activity);
+                                    temp_array.push(sub_activity);
+                                    activity_helper.set(activity, temp_array);
+                                }
+                            }
+                        })
+                    })
+                })
+                let activity_stats = new Map();
+                activity_helper.forEach((v, k) => {
+                    let temp_a_score = 0;
+                    let temp_a_tta = 0;
+                    let temp_a_cm = 0;
+                    v.forEach(activity => {
+                        temp_a_score += parseInt(activity.Score);
+                        temp_a_tta += parseInt(activity.timeToAnswer);
+                        temp_a_cm += parseInt(activity.chatMessages);
+                    })
+                    activity_stats.set(k, { totalScore: temp_a_score, totalTimeToAnswer: temp_a_tta, totalChatMessages: temp_a_cm })
+                })
+                var ctx1 = document.getElementById('chart1').getContext('2d');
+                ctx_labels = [];
+                ctx1_points = [];
+                ctx2_points = [];
+                ctx3_points = [];
+                ctx_colors = [];
+                ctx_bcolors = []
+                activity_stats.forEach((v, k) => {
+                    ctx_labels.push(k);
+                    ctx1_points.push(v.totalScore);
+                    ctx2_points.push(v.totalTimeToAnswer);
+                    ctx3_points.push(v.totalChatMessages);
+                    ctx_colors.push('rgb(255,255,255)');
+                    ctx_bcolors.push('rgb(211,211,211)');
+                })
+                var scoreChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ctx_labels,
+                        datasets: [{
+                            label: 'totalScore',
+                            data: ctx1_points,
+                            backgroundColor: ctx_colors,
+                            borderColor: ctx_bcolors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+                var ctx2 = document.getElementById('chart2').getContext('2d');
+                var ttaChart = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ctx_labels,
+                        datasets: [{
+                            label: 'TimeToAnswer',
+                            data: ctx2_points,
+                            backgroundColor: ctx_colors,
+                            borderColor: ctx_bcolors,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+                var ctx3 = document.getElementById('chart3').getContext('2d');
+                var cmChart = new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: ctx_labels,
+                        datasets: [{
+                            label: 'chatMessages',
+                            data: ctx3_points,
+                            backgroundColor: ctx_colors,
+                            borderColor: ctx_bcolors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+                $('#charts').fadeIn();
                 let recap_object = new Object();
                 recap_object.perSocketActivityStats = [...temp_player_map];
                 recap_object.perSocketGlobalStats = [...socket_stats];
@@ -420,6 +526,7 @@ $(function () {
             })
             story_played = undefined;
             activeStoryName = undefined;
+            players_finished = [];
         }
     })
     socket.on('valuate-input', (question, answer, socketID) => {

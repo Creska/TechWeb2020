@@ -127,8 +127,12 @@ function valuateInput(socketID) {
     socket.emit('validate-input-valuator', nextActivity, score, socketID)
     $(`#val-` + socketID).html('<p style="color:orange">Risposta inviata con successo.</p>');
     setTimeout(function () {
-        $(`#val-` + socketID).fadeOut();
-        $(`#warn-` + socketID).fadeOut();
+        $(`#val-` + socketID).fadeOut(function () {
+            $(`#val-` + socketID).remove();
+        });
+        $(`#warn-` + socketID).fadeOut(function () {
+            $(`#warn-` + socketID).remove();
+        });
         $('#' + socketID).css('color', 'white');
     }, 3000)
 }
@@ -189,8 +193,9 @@ function makeContainer(id) {
 }
 
 function deleteContainer(id) {
-    console.log("Fading out: " + id);
-    $('#' + id).fadeOut();
+    $('#' + id).fadeOut(function () {
+        $('#' + id).remove();
+    });
 }
 
 function saveRecap() {
@@ -272,7 +277,7 @@ $(function () {
         `
         $('#form-' + id).before(message);
         setTimeout(function () {
-            $('#' + id).fadeOut();
+            deleteContainer(id)
         }, 5000)
         if (players_playing_arr.length == 0) {
             story_played = undefined;
@@ -292,7 +297,7 @@ $(function () {
         `
         $('#form-' + socketID).before(message);
         setTimeout(function () {
-            $('#' + socketID).fadeOut();
+            deleteContainer(id)
         }, 5000)
         if (players_playing_arr.length == 0 && players_finished.length > 0) {
             //ending

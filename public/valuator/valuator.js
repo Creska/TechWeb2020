@@ -65,6 +65,7 @@ function toHome() {
                 $('#support').fadeOut();
                 $('#chatrooms').fadeOut();
                 $('#charts').fadeOut();
+                $.post('/valuator/restore');
                 break;
 
             case 2:
@@ -525,7 +526,6 @@ $(function () {
             story_played = undefined;
             activeStoryName = undefined;
             players_finished = [];
-            $.post('/valuator/restore');
         }
     })
     socket.on('valuate-input', (question, answer, socketID) => {

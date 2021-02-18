@@ -944,6 +944,7 @@ app.get('/valuator/return', function (req, res) {
 
 app.post('/valuator/restore', function (req, res) {
     recap = false;
+    return res.status(200).end();
 })
 
 app.get('/valuator/activeStories', function (req, res) {

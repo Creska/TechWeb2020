@@ -149,11 +149,11 @@ function makeWarningMessage(socketID, time) {
     }
 }
 
-function makeValuatorMessage(question, answer, socketID) {
+function makeValuatorMessage(activityID, question, answer, socketID) {
     let message = `  
     <div id="val-`+ socketID + `" style="border: 1px solid orange">
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false"">
-<p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `</p>
+<p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `<br>Attività: ` + activityID + `</p>
 </div>     
 <label for="risposta" contenteditable="false">Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
@@ -236,7 +236,7 @@ $(function () {
                 console.log("History messages found.");
                 history.messages.forEach(element => {
                     if (element.question) {
-                        makeValuatorMessage(element.question, element.answer, element.id)
+                        makeValuatorMessage(element.activityID, element.question, element.answer, element.id)
                         console.log("Received a to be valued message from " + element.id + ": " + element.answer);
                     }
                     else if (element.time) {
@@ -523,7 +523,7 @@ $(function () {
             players_finished = [];
         }
     })
-    socket.on('valuate-input', (question, answer, socketID) => {
-        makeValuatorMessage(question, answer, socketID);
+    socket.on('valuate-input', (activityID, question, answer, socketID) => {
+        makeValuatorMessage(activityID, question, answer, socketID);
     })
 })

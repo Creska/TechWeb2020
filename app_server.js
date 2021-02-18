@@ -235,14 +235,14 @@ io.on('connection', (socket) => {
         }
 
     })
-    socket.on('validate-input-player', (question, answer, socketID) => {
+    socket.on('validate-input-player', (activityID, question, answer, socketID) => {
         //handling input validation to the valuator
         if (valuatorID) {
-            socket.to(valuatorID).emit('valuate-input', question, answer, socketID)
+            socket.to(valuatorID).emit('valuate-input', activityID, question, answer, socketID)
         }
         else {
             console.log("Valuator is offline, storing to be valued message.")
-            storedMessages.push({ question: question, answer: answer, id: socketID });
+            storedMessages.push({ activityID: activityID, question: question, answer: answer, id: socketID });
         }
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {

@@ -204,7 +204,7 @@ function deleteContainer(id) {
 
 function saveRecap() {
     var blob = new Blob([json_to_return], { type: "text/plain;charset=utf-8" });
-    json_to_return = undefined;
+    json_to_return = "";
     saveAs(blob, "recap.json");
 }
 

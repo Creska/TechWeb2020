@@ -326,7 +326,9 @@ app.post('/player/activityUpdate', function (req, res) {
     var group = activity.Group;
     var socketID = activity.socketID || undefined;
     if (activityID && questID && chatMessages && timeToAnswer && Score && socketID) {
-        player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+        if (player_data.has(socketID)) {
+            player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+        }
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }

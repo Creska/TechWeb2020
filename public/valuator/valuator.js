@@ -297,7 +297,7 @@ $(function () {
         `
         $('#form-' + socketID).before(message);
         setTimeout(function () {
-            deleteContainer(id)
+            deleteContainer(socketID)
         }, 5000)
         if (players_playing_arr.length == 0 && players_finished.length > 0) {
             //ending

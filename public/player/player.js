@@ -24,17 +24,21 @@ var activitymap; // per ogni activityID indica [oggetto dell'array, id della que
 
 $(function () {
 	/* query e caricamento della storia */
-	socket = io.connect('', { query: "type=player" });
-	$.get("/player/loadJSON", function (data) {
-		StoryObj = JSON.parse(data);
-
-		if (StoryObj.publishable.published == false) {
-			StoryObj.testing = true;
-		}
-
-		loadGame();
-	});
-
+	const urlParams = new URLSearchParams(window.location.search);
+	const story_id = urlParams.get('story');
+	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "" } });
+	if (!socket.disconnected) {
+		$.get("/player/loadJSON", function (data) {
+			StoryObj = JSON.parse(data);
+			if (StoryObj.publishable.published == false) {
+				StoryObj.testing = true;
+			}
+			loadGame();
+		});
+	}
+	else {
+		//TODO notify player that his story won't work and to close the page
+	}
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;

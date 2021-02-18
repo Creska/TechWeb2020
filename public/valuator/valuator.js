@@ -274,9 +274,6 @@ $(function () {
         console.log("User  " + id + " left.");
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);
-        index = players_finished.indexOf(id);
-        if (index !== -1)
-            players_finished.splice(index, 1);
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
     <p style="color: yellow">`+ '<b>System Message: User left.<b>' + `</p>
@@ -527,6 +524,8 @@ $(function () {
             })
             story_played = undefined;
             activeStoryName = undefined;
+            players_finished = [];
+            $.post('/valuator/restore');
         }
     })
     socket.on('valuate-input', (question, answer, socketID) => {

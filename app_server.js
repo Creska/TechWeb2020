@@ -19,6 +19,7 @@ const fs = require('fs');
 const rmdir = require('rimraf');
 const ncp = require('ncp').ncp;
 const cheerio = require('cheerio')
+var recap = false;
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
@@ -208,7 +209,6 @@ io.on('connection', (socket) => {
             storedJoins = storedJoins.filter((value) => {
                 return value != socket.id;
             })
-            player_data.delete(socket.id);
         }
         if (player_count == 0) {
             console.log("Deleting the storysent since there's no more players connected.")
@@ -243,9 +243,7 @@ io.on('connection', (socket) => {
         else {
             console.log("Valuator is offline, storing to be valued message.")
             storedMessages.push({ question: question, answer: answer, id: socketID });
-
         }
-
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
         //input validation was handled, sending the result back
@@ -288,6 +286,9 @@ app.get('/player', function (req, res) {
             let tempstory = JSON.parse(story_data);
             if (story_name != undefined && tempstory.story_title != story_name) {
                 return res.status(500).send(JSON.stringify({ code: "BUSY", message: "Another story is being played." })).end();
+            }
+            if (recap) {
+                return res.status(500).send(JSON.stringify({ code: "BUSY", message: "A recap for a story is being shown." })).end();
             }
             storysent = JSON.parse(story_data);
             story_name = storysent.story_title;
@@ -928,9 +929,9 @@ app.get('/valuator/history', function (req, res) {
 
 app.get('/valuator/return', function (req, res) {
     if (player_data.size > 0) {
-
         player_per_group_count = 0; //temp counter of players per group
         group = 0; //last group
+        recap = true;
         res.status(200).send(JSON.stringify([...player_data])).end();
         player_data.clear();
         return;
@@ -939,6 +940,10 @@ app.get('/valuator/return', function (req, res) {
         console.log("An error accourred inside /valuator/return, player_data is empty");
         return res.status(500).end();
     }
+})
+
+app.post('/valuator/restore', function (req, res) {
+    recap = false;
 })
 
 app.get('/valuator/activeStories', function (req, res) {

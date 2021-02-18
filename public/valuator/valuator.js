@@ -291,7 +291,6 @@ $(function () {
             activeStoryName = undefined;
             players_finished = [];
         }
-
     })
     socket.on('player-end', (socketID) => {
         players_finished.push(socketID);

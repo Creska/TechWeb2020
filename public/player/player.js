@@ -28,9 +28,9 @@ $(function () {
 	$.get("/player/loadJSON", function (data) {
 		StoryObj = JSON.parse(data);
 
-		if ( StoryObj.publishable.published == false ) {
+		if (StoryObj.publishable.published == false) {
 			StoryObj.testing = true;
-		} 
+		}
 
 		loadGame();
 	});
@@ -568,18 +568,9 @@ function sendMsg(msg) {
 function endGame() {
 	clearInterval(IntervalTimer);
 	sendActivityRecap();
-
-	$.ajax({
-		url: "/player/end",
-		type: "POST",
-		data: {
-			socketID: socket.id
-		}
-	});
 	socket.emit('player-end', socket.id);
 	$("footer").fadeOut("slow");
 	$("#Main").replaceWith(document.getElementById("FinishContainer").content.cloneNode(true));
-
 	if (StoryObj.show_score) {
 		$("#Finish .sr-only, #Finish p:nth-child(3)").html("Congratulazioni!<br>Hai completato il gioco.<br>Numero di punti ottenuti: <em>" + (parseInt(Status.TotalScore) || 0) + "</em>");
 	}

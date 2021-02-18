@@ -5,9 +5,9 @@ var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenzia
 var pageLocation = 0;
 var player_count = 0;
 var players_playing_arr = [];
+let players_finished = [];
 var socket;
 let last_unused = [];
-let players_finished = [];
 let json_to_return;
 const PLAYER = 0;
 const VALUATOR = 1;
@@ -182,6 +182,8 @@ function makeValuatorMessage(question, answer, socketID) {
 
 
 function makeContainer(id) {
+    player_count++;
+    players_playing_arr.push(id);
     $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_count + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
@@ -264,9 +266,7 @@ $(function () {
     })
 
     socket.on('user-joined', (id) => {
-        player_count++;
         console.log("User  " + id + " has joined.");
-        players_playing_arr.push(id);
         makeContainer(id);
     })
     socket.on('user-left', (id) => {
@@ -295,7 +295,7 @@ $(function () {
     })
     socket.on('player-end', (socketID) => {
         players_finished.push(socketID);
-        let index = players_playing_arr.indexOf(id);
+        let index = players_playing_arr.indexOf(socketID);
         players_playing_arr.splice(index, 1);
         console.log("User  " + socketID + " has finished.");
         let message = `  

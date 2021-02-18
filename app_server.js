@@ -409,7 +409,7 @@ app.get('/player/loadJSON', function (req, res) {
     // console.log(player_count)
     // console.log(player_per_group_count)
     // console.log(storysent.players)
-    if (storysent.players != undefined) {
+    if (storysent.game_mode == "CLASS") {
         if (player_count == 1) {
             // console.log("player count is 1")
             groupstory = JSON.parse(JSON.stringify(storysent))// used to clone an object without reference;

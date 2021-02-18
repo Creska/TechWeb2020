@@ -36,7 +36,7 @@ $(function () {
 	});
 
 	socket.on('chat-message', (message) => {
-		if (message) {
+		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
 
 			$("#list").prepend($("<blockquote/>", {
@@ -69,7 +69,7 @@ function validateInput(question, answer) {
 	goToActivity( nextStageInOrder() );
 	*/
 
-	socket.emit('validate-input-player', question, answer, socket.id);
+	socket.emit('validate-input-player', Status.ActivityID, question, answer, socket.id);
 };
 
 
@@ -568,7 +568,9 @@ function sendMsg(msg) {
 function endGame() {
 	clearInterval(IntervalTimer);
 	sendActivityRecap();
+
 	socket.emit('player-end', socket.id);
+
 	$("footer").fadeOut("slow");
 	$("#Main").replaceWith(document.getElementById("FinishContainer").content.cloneNode(true));
 	if (StoryObj.show_score) {
@@ -579,6 +581,9 @@ function endGame() {
 	}
 
 	$("#Finish").fadeIn("slow");
+
+	Status.QuestID = null;
+	Status.ActivityID = null;
 };
 
 

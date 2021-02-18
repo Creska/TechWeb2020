@@ -1,7 +1,7 @@
 function qr(id){
-  QRCode.toCanvas(document.getElementById('qr_canvas'+id), 'http://site192041.tw.cs.unibo.it/player?story='+id, function (error) {
+  QRCode.toCanvas(document.getElementById('qr_canvas'+id), 'http://'+window.location.hostname+'/player?story='+id, function (error) {
   if (error) {
-    $("#qr_success"+id).append("C'è stato un errore, in ogni caso l'url è: http://site192041.tw.cs.unibo.it/player?story="+id); 
+    $("#qr_success"+id).append("C'è stato un errore, in ogni caso l'url è: http://"+window.location.hostname+"/player?story="+id); 
     $('#qr_canvas'+id).remove();
     $('#btn-download'+id).remove();
   //in qr_error the url has to be written

@@ -72,6 +72,7 @@ function change_navbar(how) {
             $("#back_nav").toggle( true );
             $("#delete_nav").toggle( true );
             $("#duplicate_nav").toggle( true );
+			$("#preview_nav").toggle( true );
             //$("#final_button").attr("onclick","goToSection('ChooseStoryToEdit')");
             break;   
         case "hide":
@@ -79,6 +80,7 @@ function change_navbar(how) {
             $("#back_nav").toggle( false );
             $("#delete_nav").toggle( false );
             $("#duplicate_nav").toggle( false );
+			$("#preview_nav").toggle( false );
             //$("#final_button").attr("onclick","goToSection('MainMenu')");
             break;
     }
@@ -338,7 +340,7 @@ function breadcrumbs() {
 
 
 function openPreview() {
-	let target_url = "http://localhost:8000/player?story=" + CurrentWork.story_ID + "&testing=true";
+	let target_url = "http://"+window.location.host+"/player?story=" + CurrentWork.story_ID + "&testing=true";
 
 	Preview_Window = window.open( target_url, "tab" );
 };

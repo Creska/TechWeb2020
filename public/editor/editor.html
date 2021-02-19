@@ -71,8 +71,13 @@
       $('#wait_modal').modal('hide');
     });
 
-    $(document).ajaxError(function(){
+    $(document).ajaxError(function(event,xhr){
       $('#wait_modal').modal('hide');
+      $("#ajax_err_msg").empty();
+      if( xhr.responseText )
+        $("#ajax_err_msg").text(xhr.responseText);
+      else
+        $("#ajax_err_msg").text("non c'è stata risposta, il server potrebbe essere down al momento, riprova più tardi o contatta chi di dovere.");
       $('#fail_modal').modal('show');
     });
   </script>
@@ -942,6 +947,7 @@
         <img style="width: 100%;" src="https://media.tenor.com/images/c6ee19d8a999e730174659f53b8a6362/tenor.gif" />               
         <div class="modal-body" >
           Qualcosa è andato storto nel server!
+          <p id="ajax_err_msg"></p>
         </div>
       </div>
     </div>

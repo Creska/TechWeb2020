@@ -7,9 +7,6 @@
         $('#dup_text').text(JSON.parse(data));
         $('#duplicate_modal').modal('show');
       },
-      error: function (err) {
-        $('#fail_modal').modal('show');
-      }
     });
   }
   

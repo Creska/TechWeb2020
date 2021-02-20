@@ -125,6 +125,7 @@ function valuateInput(socketID) {
     let score = $('#punt-' + socketID).val() || 0;
     let nextActivity = $('#att-' + socketID + ' :selected').val();
     socket.emit('validate-input-valuator', nextActivity, score, socketID)
+    console.log('Input valued: ', socketID);
     $(`#val-` + socketID).html('<p style="color:orange">Risposta inviata con successo.</p>');
     setTimeout(function () {
         $(`#val-` + socketID).fadeOut(function () {
@@ -258,6 +259,7 @@ $(function () {
         makeChatMessage(message, id, PLAYER);
     })
     socket.on('player-warning', (data) => {
+        console.log("Received a warning message from " + data.socketID + ": " + data.time);
         makeWarningMessage(data.socketID, data.time);
     })
 
@@ -524,6 +526,7 @@ $(function () {
         }
     })
     socket.on('valuate-input', (activityID, question, answer, socketID) => {
+        console.log("Input to be valued received: ", activityID, question, answer)
         makeValuatorMessage(activityID, question, answer, socketID);
     })
 })

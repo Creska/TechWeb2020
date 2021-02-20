@@ -135,10 +135,6 @@ io.on('connection', (socket) => {
     /* handling sockets for chat: I need to configure players and valuator separately
        sockets automatically join a room with his ID as its name
     */
-    if (storysent == undefined) {
-        socket.disconnect();
-        return;
-    }
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
         // if (stories_map.has(storysent.story_ID)) {

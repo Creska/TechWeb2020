@@ -24,36 +24,25 @@ var activitymap; // per ogni activityID indica [oggetto dell'array, id della que
 
 $(function () {
 	/* query e caricamento della storia */
-	const urlParams = new URLSearchParams(window.location.search);
-	const story_id = urlParams.get('story');
-	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "" } });
-	if (!socket.disconnected) {
-		$.get("/player/loadJSON", function (data) {
-			StoryObj = JSON.parse(data);
-			if (StoryObj.publishable.published == false) {
-				StoryObj.testing = true;
-			}
-			loadGame();
-		});
-	}
-	else {
-		//TODO notify player that his story won't work and to close the page
-	}
+	socket = io.connect('', { query: "type=player", reconnection: false });
+	$.get("/player/loadJSON", function (data) {
+		StoryObj = JSON.parse(data);
+		if (StoryObj.publishable.published == false) {
+			StoryObj.testing = true;
+		}
+		loadGame();
+	});
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
-
 			$("#list").prepend($("<blockquote/>", {
 				"class": "valuator-msg p-1",
 			}).html("<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message));
 		}
 	});
-
-
 	socket.on('input-valued', (activity_id, score) => {
 		Status.TotalScore += parseInt(score) || 0;
 		ActivityRecap.Score += parseInt(score) || 0;
-
 		goToActivity(activity_id);
 	});
 });

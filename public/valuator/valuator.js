@@ -159,18 +159,19 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 <label for="risposta" contenteditable="false">Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
 <label for="attivita" contenteditable="false">Prossima attività</label><br>
-<select name="attivita" id="att-`+ socketID + `">
-`;
+<button onclick="$('#select_modal').modal('show')"> seleziona prossima attività</button>`;
+var select = `<select name="attivita" id="att-`+ socketID + `">`;
     story_played.quests.forEach(quest => {
         quest.activities.forEach(activity => {
-            message += `<option value="` + activity.activity_id + `">` + activity.activity_id + `</option>`
+            select += `<option value="` + activity.activity_id + `">` + activity.activity_id + `</option>`
         })
     })
-    message += `
-</select>
+select += `</select>`;
+$('#select_modal .modal-body').html(select);
+message += `
 <button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
 </div>
-`
+`;
     $('#' + socketID).css('color', 'orange');
     $('#form-' + socketID).before(message);
 }

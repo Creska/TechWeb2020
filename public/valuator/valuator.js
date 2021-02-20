@@ -3,12 +3,12 @@ var story_played;
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
-var player_count = 0;
 var players_playing_arr = [];
 let players_finished = [];
 var socket;
 let last_unused = [];
 let json_to_return;
+var story_map = new Map(); //story_id(key), {json,players} (value)
 const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
@@ -22,28 +22,25 @@ function renderSupport() {
     $.ajax({
         url: '/valuator/activeStories',
         method: 'GET',
-        success: function (story) {
+        success: function (stories) {
+            //TODO handling array of stories
+            stories.forEach(story => {
+                story_map.set(story.story.story_ID, { json: story.story, players: story.players })
+            })
             story_played = JSON.parse(story);
-            if (story_played) {
+            $('#support').fadeIn();
+            $('#home').removeClass('active');
+            $('#defaulth1').html(defaultPageTitle + ": Supporto")
+            if (stories.length) {
                 activeStoryName = story_played.story_title;
-                $('#support').fadeIn();
-                $('#home').removeClass('active');
-                $('#defaulth1').html(defaultPageTitle + ": Supporto")
                 $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo alla storia che sta venendo giocata in questo momento.');
                 showStoryChat();
             }
             else {
-                $('#defaultdescription').html('Al momento non sono è attiva una storia. Puoi restare su questa schermata, in attesa che inizi.');
+                $('#defaultdescription').html('Al momento non sono è attiva una storia. Puoi restare su questa schermata, in attesa che inizino.');
             }
-        },
-        error: function (error) {
-            //TODO error handling
-            console.error(error);
-            $('#defaulth1').html(defaultPageTitle + ": Supporto")
-            $('#defaultdescription').html('Errore durante il caricamento delle storie, nessuna storia sta venendo giocata in questo momento. Si prega di ritornare nel menù principale e di riprovare.');
         }
     })
-
 }
 function toHome() {
     if (pageLocation != 0) {
@@ -176,8 +173,7 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 }
 
 
-function makeContainer(id) {
-    player_count++;
+function makeContainer(id, story_ID) {
     players_playing_arr.push(id);
     $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + id + '</h3></div>')
     let message = `  
@@ -261,12 +257,14 @@ $(function () {
         makeWarningMessage(data.socketID, data.time);
     })
 
-    socket.on('user-joined', (id) => {
-        console.log("User  " + id + " has joined.");
-        makeContainer(id);
+    socket.on('user-joined', (id, story) => {
+        console.log("User  " + id + " has joined the story " + story.story_ID);
+        if (!story_map.has(story.story_ID)) {
+            story_map.set(story.story_ID, { json: story, players: [id] })
+        }
+        makeContainer(id, story.story_ID);
     })
     socket.on('user-left', (id) => {
-        player_count--;
         console.log("User  " + id + " left.");
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);

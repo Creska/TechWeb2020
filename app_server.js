@@ -19,18 +19,16 @@ const fs = require('fs');
 const rmdir = require('rimraf');
 const ncp = require('ncp').ncp;
 const cheerio = require('cheerio')
-var recap = false;
+var recap = new Map();
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
-var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
-var story_name = undefined; //name of the story sent
-var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
-//var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+var valuators = []; //valuatorID, managing all games. There can be only one valuator online at a time.
+var stories_map = new Map(); //story_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+var storysent = undefined; //temp story holder
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
-var player_count = 0; //players online
 var player_per_group_count = 0; //temp counter of players per group
 let group = 0; //last group
 let groupstory = undefined; //last shuffled group story
@@ -42,25 +40,6 @@ function UNF() {
     }
     return id;
 }
-
-// function shuffle(array) {
-//     var currentIndex = array.length, temporaryValue, randomIndex;
-
-//     // While there remain elements to shuffle...
-//     while (0 !== currentIndex) {
-
-//         // Pick a remaining element...
-//         randomIndex = Math.floor(Math.random() * currentIndex);
-//         currentIndex -= 1;
-
-//         // And swap it with the current element.
-//         temporaryValue = array[currentIndex];
-//         array[currentIndex] = array[randomIndex];
-//         array[randomIndex] = temporaryValue;
-//     }
-
-//     return array;
-// }
 
 /*
     TEAMS
@@ -94,7 +73,9 @@ function UNF() {
 
 function valuator_emit(method, socket, data) {
     //emits the event passed with the arg to the valuator
-    socket.to(valuatorID).emit(method, socket.id, data);
+    valuators.forEach(valuator => {
+        socket.to(valuator).emit(method, socket.id, data);
+    })
     console.log("Sending the event '" + method + "' to the valuator, from: " + socket.id);
 }
 
@@ -113,23 +94,16 @@ function storyPath(id) {
         return '404'
     }
 }
-// function removePlayer(id) {
-//by passing the socket id, this specific player will be removed from the story he's playing
-// player_count--;
-// stories_map.forEach((v, k) => {
-//     if (v.players.includes(id)) {
-//         v.players = v.players.filter((value) => {
-//             return value !== id;
-//         })
-//         if (!v.players.length) {
-//             //if there's no players for this story, delete it
-//             stories_map.delete(k);
-//             console.log("The story with ID " + k + " has no more players, deleting the record.");
-//             //TODO signal the valuator that a story has been deleted due to players leaving
-//         }
-//     }
-// }) MIGHT NOT NEED THIS ANYMORE
-// }
+function removePlayer(id) {
+    // by passing the socket id, this specific player will be removed from the story he's playing
+    stories_map.forEach((v, k) => {
+        if (v.players.includes(id)) {
+            v.players = v.players.filter((value) => {
+                return value !== id;
+            })
+        }
+    })
+}
 
 io.on('connection', (socket) => {
     /* handling sockets for chat: I need to configure players and valuator separately
@@ -137,25 +111,21 @@ io.on('connection', (socket) => {
     */
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
-        // if (stories_map.has(storysent.story_ID)) {
-        //     //A player entered a game already instanciated, updating it
-        //     let temp_game = stories_map.get(storysent.story_ID);
-        //     temp_game.players.push(socket.id)
-        //     stories_map.set(storysent.story_ID, temp_game);
-        //     console.log("A new player arrived(" + temp_game.players.length + ") for the story: " + storysent.story_title);
-        // } NO MULTIPLE STORIES
-        // else {
-        //     //A player entered with a new game, creating the record for it
-        //     stories_map.set(storysent.story_ID, { story: storysent, players: [socket.id] })
-        //     console.log("A new player arrived(1) for the new story: " + storysent.story_title + ", creating the record for it.");
-        // }
-        player_count++;
+        if (stories_map.has(storysent.story_ID)) {
+            //A player entered a game already instanciated, updating it
+            stories_map.get(storysent.story_ID).players.push(socket.id);
+            console.log("A new player arrived(" + stories_map.get(storysent.story_ID).players.length + ") for the story: " + storysent.story_title);
+        }
+        else {
+            //A player entered with a new game, creating the record for it
+            stories_map.set(storysent.story_ID, { story: storysent, players: [socket.id] })
+            console.log("A new player arrived(1) for the new story: " + storysent.story_title + ", creating the record for it.");
+        }
         player_per_group_count++;
-        console.log("A new player arrived(" + player_count + ") for the story: " + storysent.story_title);
         //Set an array for the current player, so I can push activities data with /update.
         player_data.set(socket.id, []);
-        if (valuatorID) {
-            valuator_emit('user-joined', socket)
+        if (valuators.length > 0) {
+            valuator_emit('user-joined', socket, storysent)
         }
         else {
             //storing join event in case the valuator is still not connected
@@ -165,25 +135,18 @@ io.on('connection', (socket) => {
     }
     else if (socket.handshake.query['type'] == 'valuator') {
         console.log("A valuator page connected.")
-        if (!valuatorID) {
-            //saving the valuator socket ID
-            valuatorID = socket.id;
-        }
-        else {
-            console.log("A valuator tried to connect while another valuator was already connected.");
-        }
+        valuators.push(socket.id);
     }
     else {
         console.log("Someone connected without querying for player or valuator. This shouldn't be possible,probably there are some old pages's socket still online.");
     }
     socket.on('disconnect', () => {
         console.log("Disconnecting: " + socket.id)
-        if (valuatorID) {
-            if (valuatorID != socket.id) {
+        if (valuators.length > 0) {
+            if (!valuators.includes(socket.id)) {
                 //A player is disconnected
                 //sending the disconnect event to the valuator so I can remove the chat           
                 valuator_emit('user-left', socket);
-                player_count--;
                 console.log("Removing history from this socket since it disconnected.")
                 storedMessages = storedMessages.filter((value) => {
                     return value.id != socket.id;
@@ -192,10 +155,12 @@ io.on('connection', (socket) => {
                     return value != socket.id;
                 })
                 //removes the player(socket) from the story he's in, also decreasing the number of players for that story
-                // removePlayer(socket.id);
+                removePlayer(socket.id);
             } else {
                 //A valuator is disconnected
-                valuatorID = undefined;
+                valuators = valuators.filter((value) => {
+                    return value != socket.id;
+                });
                 console.log("A valuator disconnected. Setting valuatorID to undefined.")
             }
         }
@@ -218,8 +183,8 @@ io.on('connection', (socket) => {
     })
     socket.on('chat-message', (message, id_from, id_to) => {
         //handler for CHAT MESSAGES 
-        if (valuatorID) {
-            if (id_from != valuatorID) {
+        if (valuators.length > 0) {
+            if (!valuators.includes(id_from)) {
                 console.log("The player " + id_from + " is sending the message: " + message);
                 valuator_emit('chat-message', socket, message);
             }
@@ -227,18 +192,18 @@ io.on('connection', (socket) => {
                 console.log("The valuator is sending the message: " + message + " | to: " + id_to);
                 socket.to(id_to).emit('chat-message', message);
             }
-
         }
         else {
             console.log("Valuator is offline, storing the message.")
             storedMessages.push({ message: message, id: id });
         }
-
     })
     socket.on('validate-input-player', (activityID, question, answer, socketID) => {
         //handling input validation to the valuator
-        if (valuatorID) {
-            socket.to(valuatorID).emit('valuate-input', activityID, question, answer, socketID)
+        if (valuators.length) {
+            valuators.forEach(valuator => {
+                socket.to(valuator).emit('valuate-input', activityID, question, answer, socketID)
+            })
         }
         else {
             console.log("Valuator is offline, storing to be valued message.")
@@ -250,7 +215,9 @@ io.on('connection', (socket) => {
         socket.to(socketID).emit('input-valued', nextActivity, score);
     })
     socket.on('player-end', (socketID) => {
-        socket.to(valuatorID).emit('player-end', socketID)
+        valuators.forEach(valuator => {
+            socket.to(valuator).emit('player-end', socketID)
+        })
     })
 })
 app.get('/player', function (req, res) {
@@ -277,21 +244,15 @@ app.get('/player', function (req, res) {
             else {
                 console.log("An error accourred inside /player, while retrieving the story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
-
             }
         }
         else {
             console.log("Request for " + story + " received successfully. Returning the player and the story to be loaded.");
             //saving the current game
-            let tempstory = JSON.parse(story_data);
-            if (story_name != undefined && tempstory.story_title != story_name) {
-                return res.status(500).send(JSON.stringify({ code: "BUSY", message: "Another story is being played." })).end();
-            }
-            if (recap) {
+            storysent = JSON.parse(story_data);
+            if (recap.get(storysent.story_ID)) {
                 return res.status(500).send(JSON.stringify({ code: "BUSY", message: "A recap for a story is being shown." })).end();
             }
-            storysent = JSON.parse(story_data);
-            story_name = storysent.story_title;
             fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {
@@ -305,7 +266,6 @@ app.get('/player', function (req, res) {
                 }
                 else {
                     const $ = cheerio.load(player_data);
-                    // $('head').append('<template id="story-name">' + story + '</template>'); NOT NEEDED ANYMORE
                     //appending to the body a template with the JSON to load
                     return res.status(200).send($.html()).end();
                     //sending back the player page
@@ -368,7 +328,7 @@ app.post('/player/playersActivities', function (req, res) {
         if (maximum_time && time_elapsed > maximum_time && chrono) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
-            if (valuatorID) {
+            if (valuators.length > 0) {
                 valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
                 console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             }
@@ -887,31 +847,26 @@ app.post('/editor/publisher', function (req, res) {
 
 app.get('/valuator', function (req, res) {
     //reading valuator page
-    if (valuatorID) {
-        console.log("/valuator CONFLICT: A valuator is already in use");
-        return res.status(409).send("Cannot GET /valuator, busy").end().end();
-    }
-    else {
-        fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
-            if (err) {
-                if (err.code == "ENOENT") {
-                    console.log("An error accourred inside /valuator, valuator page not found.");
-                    return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
-                    //the story wasn't found, so I answer with a 404 status response
-                }
-                else {
-                    console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
-                    return res.status(500).send(JSON.stringify(err)).end();
-                }
+    fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
+        if (err) {
+            if (err.code == "ENOENT") {
+                console.log("An error accourred inside /valuator, valuator page not found.");
+                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
+                //the story wasn't found, so I answer with a 404 status response
             }
             else {
-                console.log("Request for the valuator page received successfully. Returning the page.");
-                //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
-                const $ = cheerio.load(data);
-                return res.status(200).send($.html()).end();
+                console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
+                return res.status(500).send(JSON.stringify(err)).end();
             }
-        })
-    }
+        }
+        else {
+            console.log("Request for the valuator page received successfully. Returning the page.");
+            //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
+            const $ = cheerio.load(data);
+            return res.status(200).send($.html()).end();
+        }
+    })
+
 })
 
 app.get('/valuator/history', function (req, res) {
@@ -954,27 +909,19 @@ app.post('/valuator/restore', function (req, res) {
 
 app.get('/valuator/activeStories', function (req, res) {
     //sending all current active games to the valuator
-    // var activeStories = [];
-    // stories_map.forEach((v, _k) => {
-    //     activeStories.push({ story_name: v.story_name, story_ID: v.story_ID });
-    // }) WON'T NEED THIS IF WE DON'T HANDLE MULTIPLE STORIES
-    if (storysent) {
-        return res.status(200).send(JSON.stringify(storysent)).end();
+    var activeStories = [];
+    stories_map.forEach((v, _k) => {
+        activeStories.push({ json: v.story, players: v.players });
+    })
+    if (activeStories.length > 0) {
+        return res.status(200).send(JSON.stringify(activeStories)).end();
     }
     else {
-        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
+        return res.status(200).send(JSON.stringify([])).end();
     }
 
 })
 
-app.get('/valuator/activeStoryName', function (req, res) {
-    if (story_name) {
-        return res.status(200).send(JSON.stringify(story_name)).end();
-    } else {
-        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
-    }
-
-})
 
 http.listen(8000, () => {
     console.log('Listening on *:8000');

@@ -342,6 +342,9 @@ app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
+    if (storysent == undefined) {
+        return res.status(500).send(JSON.stringify({ code: "RESTART", message: "Server was restarted" })).end();
+    }
     var activity = req.body;
     var questID = activity.QuestID;
     var activityID = activity.ActivityID;

@@ -206,7 +206,7 @@ function saveRecap() {
 }
 
 $(function () {
-    socket = io.connect('', { query: "type=valuator" });
+    socket = io.connect('', { query: "type=valuator", reconnection: false });
     $.ajax({
         url: '/valuator/activeStories',
         method: 'GET',

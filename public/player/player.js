@@ -30,7 +30,7 @@ $(function () {
 	if (!socket.disconnected) {
 		$.get("/player/loadJSON", function (data) {
 			StoryObj = JSON.parse(data);
-			if (StoryObj.publishable.published == false) {
+			if (StoryObj.published == false || StoryObj.published == undefined) {
 				StoryObj.testing = true;
 			}
 			loadGame();
@@ -159,7 +159,7 @@ function showAccess() {
 			"class": "fab fa-accessible-icon fa-2x p-2",
 			"aria-hidden": "true"
 		}));
-		accessibility_alert.append($("<p>Il gioco è accessibile per gli utenti affetti da:</p><ul class='border border-success rounded p-3'></ul>"));
+		accessibility_alert.append($("<p>Il gioco è accessibile per gli utenti con:</p><ul class='border border-success rounded p-3'></ul>"));
 		$.each(alerts, function (i, str) {
 			accessibility_alert.find("ul").append($("<li/>", {
 				"class": "m-1",
@@ -476,7 +476,7 @@ function buildAnswerField(container) {
 			let answeropt;
 
 			$.each(activity.answer_field.options, function (opt_i, opt) {
-				answeropt = $("<li class='form-check'/>");
+				answeropt = $("<li class='form-check mt-2'/>");
 				answeropt.append($("<input/>", {
 					"class": "form-check-input",
 					type: "radio",

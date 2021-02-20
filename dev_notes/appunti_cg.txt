@@ -1,7 +1,9 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * [WIP] Apertura della preview
 * PLAYER
+    * [WAITING] ricontrollare e migliorare accessibilità
+    * [WAITING] aggiungere più margine tra gli input check
+    * Aggiungere un timer associato all'attesa di valutazione
     * [WIP] Aggiungere il caricamento del CSS
 
 APPUNTI SU NAV

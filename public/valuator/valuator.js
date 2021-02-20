@@ -179,7 +179,7 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 function makeContainer(id) {
     player_count++;
     players_playing_arr.push(id);
-    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + player_count + '</h3></div>')
+    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + id + '</h3></div>')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
 <p style="color: yellow">`+ '<b>System Message: User joined.</b>' + `</p>
@@ -218,11 +218,9 @@ $(function () {
 
         },
         error: function (error) {
-            //TODO error handling
             console.log("No player connected before the valuator.")
         }
     })
-    //TODO actually store the messages
     $.get("/valuator/history", function (history) {
         history = JSON.parse(history)
         if (history) {

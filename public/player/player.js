@@ -140,8 +140,6 @@ function handleError() {
 
 /* da attivare all'apertura della finestra */
 function loadGame() {
-	buildMaps();
-
 	showAccess();
 
 	if (StoryObj.game_mode == "CLASS" && !TESTING) {
@@ -153,6 +151,9 @@ function loadGame() {
 		group_alert.append($("<p/>").html("Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>"));
 		$("#Main").children().first().after(group_alert);
 	}
+
+	buildMaps();
+	mediapath = get_media_path();
 
 	if (TESTING) {
 		$("#OpenChat").attr("disabled", true); // disabilita la chat
@@ -224,7 +225,7 @@ function buildMaps() {
 };
 
 
-function get_media_path(name) {
+function get_media_path() {
 	let folder;
 
 	if ( TESTING )
@@ -232,7 +233,7 @@ function get_media_path(name) {
 	else
 		folder = "published";
 	
-	return "/player/stories/" + folder + "/" + StoryObj.story_ID + "/" + name;
+	return "/player/stories/" + folder + "/" + StoryObj.story_ID + "/";
 };
 
 
@@ -403,7 +404,7 @@ function writeActivityText(container) {
 				newimage.append($("<img/>", {
 					"class": "d-block w-100",
 					alt: pic.alt,
-					src: get_media_path(pic.name)
+					src: mediapath + pic.name
 				}));
 
 				newimage.append($("<div/>", {
@@ -604,9 +605,11 @@ function nextStageInOrder() {
 
 
 function endGame() {
-	clearInterval(IntervalTimer);
-	sendActivityRecap();
+	$( ".CloseGameBtn" ).attr( "disabled", true ); // evita doppi click
 
+	clearInterval(IntervalTimer);
+
+	sendActivityRecap();
 	socket.emit('player-end', socket.id);
 
 	$("footer").fadeOut("slow");

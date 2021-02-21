@@ -24,14 +24,17 @@ var activitymap; // per ogni activityID indica [oggetto dell'array, id della que
 
 $(function () {
 	/* query e caricamento della storia */
-	socket = io.connect('', { query: "type=player", reconnection: false });
-	$.get("/player/loadJSON", function (data) {
-		StoryObj = JSON.parse(data);
+	const story_id = new URLSearchParams(window.location.search).get('story');
+	console.log(story_id);
+	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "" }, reconnection: false });
+	socket.on('load-json', function (data) {
+		console.log("Loading the JSON");
+		StoryObj = data;
 		if (StoryObj.published == false || StoryObj.published == undefined) {
 			StoryObj.testing = true;
 		}
 		loadGame();
-	});
+	})
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;

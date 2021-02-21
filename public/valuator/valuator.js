@@ -1,5 +1,4 @@
 var activeStoryName; //known active stories
-var story_played;
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
@@ -13,6 +12,16 @@ const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
 
+function removePlayer(socketID) {
+    // by passing the socket id, this specific player will be removed from the story he's playing
+    story_map.forEach((v, k) => {
+        if (v.players.includes(socketID)) {
+            v.players = v.players.filter((value) => {
+                return value !== socketID;
+            })
+        }
+    })
+}
 
 function renderSupport() {
     pageLocation = 1;
@@ -23,18 +32,15 @@ function renderSupport() {
         url: '/valuator/activeStories',
         method: 'GET',
         success: function (stories) {
-            //TODO handling array of stories
-            stories.forEach(story => {
-                story_map.set(story.story.story_ID, { json: story.story, players: story.players })
+            JSON.parse(stories).forEach(story => {
+                story_map.set(story.json.story_ID, { json: story.json, players: story.players })
             })
-            story_played = JSON.parse(story);
-            $('#support').fadeIn();
             $('#home').removeClass('active');
+            $('#support').fadeIn();
             $('#defaulth1').html(defaultPageTitle + ": Supporto")
             if (stories.length) {
-                activeStoryName = story_played.story_title;
                 $('#defaultdescription').html('Qui puoi fornire aiuto e vedere alcune statistiche riguardo alla storia che sta venendo giocata in questo momento.');
-                showStoryChat();
+                // showStoryChat();
             }
             else {
                 $('#defaultdescription').html('Al momento non sono è attiva una storia. Puoi restare su questa schermata, in attesa che inizino.');
@@ -84,10 +90,15 @@ function timeStamp() {
     return timestamp;
 }
 
-function showStoryChat() {
-    $('#support').prepend('<h2 id="storyname">Storia: ' + activeStoryName + '</h2>');
-    $('#chatrooms').fadeIn();
-}
+// function showStoryChat() {
+//     story_map.forEach(story => {
+//         console.log("the story is ", story);
+//         if (!$('#nav-' + story.story_ID).length) {
+//             $('#nav-tab').append('<button class="nav-link" id="nav-' + story.story_ID + '" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home">' + story.story_title + '</button>')
+//             $('#nav-tabContent').append('<div class="tab-pane fade show active" id="chat-' + story.story_ID + '" role="tabpanel" aria-labelledby="nav-' + story.story_ID + '"></div>')
+//         }
+//     })
+// }
 
 function sendMessageToPlayer(id) {
     makeChatMessage($('#text-' + id).val(), id, VALUATOR)
@@ -135,6 +146,21 @@ function valuateInput(socketID) {
     }, 3000)
 }
 
+function TabHandler(id) {
+    $('#nav-tab').children().not($('#nav-' + id)).removeClass("active");
+    $('#nav-tabContent').children().not($('#chat-' + id)).removeClass("show active");
+    $('#nav-' + id).addClass("active");
+    $('#chat-' + id).addClass("show active");
+
+
+}
+
+function makeNav(story_ID) {
+    if ($('#nav-' + story_ID).length < 1) {
+        $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
+        $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
+    }
+}
 
 function makeWarningMessage(socketID, time) {
     if ($('#warn-' + socketID) == undefined) {
@@ -156,7 +182,7 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 <label for="risposta" contenteditable="false">Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
 <label for="attivita" contenteditable="false">Prossima attività</label><br>
-<select name="attivita" id="att-`+ socketID + `">
+<select class="form-select" name="attivita" id="att-`+ socketID + `">
 `;
     story_played.quests.forEach(quest => {
         quest.activities.forEach(activity => {
@@ -175,7 +201,8 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 
 function makeContainer(id, story_ID) {
     players_playing_arr.push(id);
-    $('#chatrooms').append('<div id="' + id + '" class="chatroom col-sm-4" contenteditable="true" style="margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto"><h3>Player ' + id + '</h3></div>')
+    makeNav(story_ID)
+    $('#chat-' + story_ID).append('<div id = "' + id + '" class= "chatroom col-sm-4" contenteditable = "true" style = "margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto" > <h3>Player ' + id + '</h3></div >')
     let message = `  
     <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
 <p style="color: yellow">`+ '<b>System Message: User joined.</b>' + `</p>
@@ -208,10 +235,6 @@ $(function () {
         method: 'GET',
         success: function (story) {
             story_played = JSON.parse(story);
-            if (story_played) {
-                activeStoryName = story_played.story_title;
-            }
-
         },
         error: function (error) {
             console.log("No player connected before the valuator.")
@@ -220,30 +243,39 @@ $(function () {
     $.get("/valuator/history", function (history) {
         history = JSON.parse(history)
         if (history) {
-            if (history.joins) {
-                console.log("History joins found.");
-                history.joins.forEach(element => {
-                    makeContainer(element)
-                    console.log("User of room " + element + " has joined.");
-                });
-            }
-            if (history.messages) {
-                console.log("History messages found.");
-                history.messages.forEach(element => {
-                    if (element.question) {
-                        makeValuatorMessage(element.activityID, element.question, element.answer, element.id)
-                        console.log("Received a to be valued message from " + element.id + ": " + element.answer);
+            $.ajax({
+                url: '/valuator/activeStories',
+                method: 'GET',
+                success: function (stories) {
+                    JSON.parse(stories).forEach(story => {
+                        story_map.set(story.story_ID, { json: story.json, players: story.players })
+                    })
+                    if (history.joins) {
+                        console.log("History joins found.");
+                        history.joins.forEach(element => {
+                            makeContainer(element.id, element.story_ID)
+                            console.log("User of room " + element.id + " has joined.");
+                        });
                     }
-                    else if (element.time) {
-                        console.log("Received warning message from " + element.id + ": " + element.message);
-                        makeWarningMessage(element.id, element.time);
+                    if (history.messages) {
+                        console.log("History messages found.");
+                        history.messages.forEach(element => {
+                            if (element.question) {
+                                makeValuatorMessage(element.activityID, element.question, element.answer, element.id)
+                                console.log("Received a to be valued message from " + element.id + ": " + element.answer);
+                            }
+                            else if (element.time) {
+                                console.log("Received warning message from " + element.id + ": " + element.message);
+                                makeWarningMessage(element.id, element.time);
+                            }
+                            else {
+                                console.log("Received message from " + element.id + ": " + element.message);
+                                makeChatMessage(element.message, element.id, PLAYER)
+                            }
+                        })
                     }
-                    else {
-                        console.log("Received message from " + element.id + ": " + element.message);
-                        makeChatMessage(element.message, element.id, PLAYER)
-                    }
-                })
-            }
+                }
+            })
         } else {
             console.log("History was found empty.")
         }
@@ -262,9 +294,13 @@ $(function () {
         if (!story_map.has(story.story_ID)) {
             story_map.set(story.story_ID, { json: story, players: [id] })
         }
+        else {
+            story_map.get(story.story_ID).players.push(id);
+        }
         makeContainer(id, story.story_ID);
     })
     socket.on('user-left', (id) => {
+        removePlayer(id);
         console.log("User  " + id + " left.");
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);
@@ -279,7 +315,6 @@ $(function () {
         }, 5000)
         if (players_playing_arr.length == 0) {
             story_played = undefined;
-            activeStoryName = undefined;
             players_finished = [];
         }
     })
@@ -517,7 +552,6 @@ $(function () {
                     class="btn btn-dark" onclick="saveRecap()">Salva</button>`);
             })
             story_played = undefined;
-            activeStoryName = undefined;
             players_finished = [];
         }
     })

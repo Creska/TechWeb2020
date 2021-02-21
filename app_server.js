@@ -224,7 +224,7 @@ io.on('connection', (socket) => {
         }
         else {
             console.log("Valuator is offline, storing the message.")
-            storedMessages.push({ message: message, id: id });
+            storedMessages.push({ message: message, id: id_from });
         }
     })
     socket.on('validate-input-player', (activityID, question, answer, socketID, storyID) => {

@@ -23,6 +23,14 @@ function removePlayer(socketID) {
     })
 }
 
+function getStoryFromSocket(socketID, callback) {
+    story_map.forEach((v, k) => {
+        if (v.players.includes(socketID)) {
+            callback(v.json)
+        }
+    })
+}
+
 function renderSupport() {
     pageLocation = 1;
     $('#bottoneditor').fadeOut();
@@ -184,18 +192,20 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 <label for="attivita" contenteditable="false">Prossima attività</label><br>
 <select class="form-select" name="attivita" id="att-`+ socketID + `">
 `;
-    story_played.quests.forEach(quest => {
-        quest.activities.forEach(activity => {
-            message += `<option value="` + activity.activity_id + `">` + activity.activity_id + `</option>`
+    getStoryFromSocket(socketID, function (story) {
+        story.quests.forEach(quest => {
+            quest.activities.forEach(activity => {
+                message += `<option value="` + activity.activity_id + `">` + activity.activity_id + `</option>`
+            })
         })
+        message += `
+        </select>
+        <button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
+        </div>
+        `
+        $('#' + socketID).css('color', 'orange');
+        $('#form-' + socketID).before(message);
     })
-    message += `
-</select>
-<button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
-</div>
-`
-    $('#' + socketID).css('color', 'orange');
-    $('#form-' + socketID).before(message);
 }
 
 
@@ -230,16 +240,6 @@ function saveRecap() {
 
 $(function () {
     socket = io.connect('', { query: "type=valuator", reconnection: false });
-    $.ajax({
-        url: '/valuator/activeStories',
-        method: 'GET',
-        success: function (story) {
-            story_played = JSON.parse(story);
-        },
-        error: function (error) {
-            console.log("No player connected before the valuator.")
-        }
-    })
     $.get("/valuator/history", function (history) {
         history = JSON.parse(history)
         if (history) {
@@ -314,7 +314,6 @@ $(function () {
             deleteContainer(id)
         }, 5000)
         if (players_playing_arr.length == 0) {
-            story_played = undefined;
             players_finished = [];
         }
     })
@@ -551,7 +550,6 @@ $(function () {
                 $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
                     class="btn btn-dark" onclick="saveRecap()">Salva</button>`);
             })
-            story_played = undefined;
             players_finished = [];
         }
     })

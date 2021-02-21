@@ -2,7 +2,6 @@ var activeStoryName; //known active stories
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
-var players_playing_arr = [];
 let players_finished = [];
 var socket;
 let last_unused = [];
@@ -207,7 +206,6 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 }
 
 function makeContainer(id, story_ID) {
-    players_playing_arr.push(id);
     makeNav(story_ID)
     $('#chat-' + story_ID).append('<div id = "' + id + '" class= "chatroom col-sm-4" style = "margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto" > <h3 contenteditable="true">Player ' + id + '</h3></div >')
     let message = `  
@@ -322,8 +320,6 @@ $(function () {
     socket.on('user-left', (id) => {
         removePlayer(id);
         console.log("User  " + id + " left.");
-        let index = players_playing_arr.indexOf(id);
-        players_playing_arr.splice(index, 1);
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" >
     <p style="color: yellow">`+ '<b>System Message: User left.<b>' + `</p>
@@ -333,14 +329,8 @@ $(function () {
         setTimeout(function () {
             deleteContainer(id)
         }, 5000)
-        if (players_playing_arr.length == 0) {
-            players_finished = [];
-        }
     })
     socket.on('player-end', (socketID) => {
-        players_finished.push(socketID);
-        let index = players_playing_arr.indexOf(socketID);
-        players_playing_arr.splice(index, 1);
         console.log("User  " + socketID + " has finished.");
         let message = `  
         <div class="container-chat darker-chat col-sm overflow-auto" >
@@ -351,7 +341,8 @@ $(function () {
         setTimeout(function () {
             deleteContainer(socketID)
         }, 5000)
-        if (players_playing_arr.length == 0 && players_finished.length > 0) {
+        //TODO fix this if
+        if (something) {
             //ending
             $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
             $.get("/valuator/return", function (player_data) {
@@ -572,7 +563,6 @@ $(function () {
                 })
 
             })
-            players_finished = [];
         }
     })
     socket.on('valuate-input', (activityID, question, answer, socketID) => {

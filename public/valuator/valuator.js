@@ -156,17 +156,18 @@ function valuateInput(socketID) {
 
 function TabHandler(id) {
     $('#nav-tab').children().not($('#nav-' + id)).removeClass("active");
-    $('#nav-tabContent').children().not($('#chat-' + id)).removeClass("show active");
+    $('#nav-tabContent').children().not($('#chat-top' + id)).removeClass("show active");
     $('#nav-' + id).addClass("active");
-    $('#chat-' + id).addClass("show active");
+    $('#chat-top' + id).addClass("show active");
 
 
 }
 
 function makeNav(story_ID) {
     if ($('#nav-' + story_ID).length < 1) {
-        $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
-        $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
+        $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-top' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
+        $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-top' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
+        $('#chat-top' + story_ID).append('<div class="row" id="chat-' + story_ID + '"</div>')
     }
 }
 

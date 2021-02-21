@@ -34,14 +34,9 @@
 
         <div role="banner" class="sr-only">M&M - Applicazione per giochi interattivi</div>
 
-        <main id="StartScreen">
-            <!--
-            <script>
-                ScrollReveal().reveal('#logo', { interval: 10, origin: 'top', distance: '100px',  duration: 1000, easing: 'cubic-bezier(.215, .61, .355, 1)' });
-            </script>
-            -->
+        <main id="Main" aria-live="polite" aria-label="schermata di gioco">
             
-            <div class="card text-center">
+            <section class="card text-center" id="tutorial">
                 <div class="card-header" id="info-title" role="heading" aria-level="1">
                     Tutorial
                 </div>
@@ -71,7 +66,7 @@
                     <p>- Ora non ti resta che iniziare il gioco -</p>
                     <button id="StartBtn" onclick="startGame();" disabled>START</button>
                 </div>
-            </div>
+            </section>
 
             <script>
                 ScrollReveal().reveal('.card-header', {origin: 'top', interval: 50, duration: 1500, distance: '100px', easing: 'cubic-bezier(.215, .61, .355, 1)' })
@@ -83,25 +78,6 @@
                 ScrollReveal().reveal('#Fine', { origin: 'left', distance: '100px', interval:1400, delay: 1300, easing: 'cubic-bezier(.215, .61, .355, 1)' });
             </script>
         </main>
-
-        <template id="MainContainer">
-
-            <!-- Main = Container di tutto ciò che fa parte del gioco -->
-            <main id="Main" aria-relevant="additions text"></main>
-
-            <button id="ButtonToTop" aria-hidden="true"></button>
-            
-            <script>
-                //script per bottone che scrolla la pagina in alto
-                const ButtonToTop = document.querySelector("#ButtonToTop");
-
-                ButtonToTop.addEventListener("click", function () {
-                    
-                    $("html, body").animate({ scrollTop: 110}, "slow");
-
-                });
-            </script>
-        </template>
 
         <template id="ErrorContainer">
 
@@ -123,8 +99,8 @@
             </main>
         </template>
 
-        <template id="FinishContainer" style="display: none;">
-            <main class="text-center" id="Finish">
+        <template id="FinishContainer">
+            <main class="text-center" id="Finish" style="display: none;">
                 <p class="sr-only" role="alert" aria-live="assertive"></p>
 
                 <p class="p-3" aria-hidden="true">
@@ -134,9 +110,20 @@
             </main>
         </template>
 
-        <footer class="page-footer text-center">
+        <button id="ButtonToTop" aria-hidden="true"></button>
+            
+            <script>
+                //script per bottone che scrolla la pagina in alto
+                const ButtonToTop = document.querySelector("#ButtonToTop");
 
-            <h3 class="sr-only" aria-level="3">Chat room</h3>
+                ButtonToTop.addEventListener("click", function () {
+                    $("html, body").animate({ scrollTop: 110}, "slow");
+                });
+        </script>
+
+        <footer class="page-footer text-center" role="region">
+
+            <h1 class="sr-only" aria-level="1">Chat room</h1>
 
             <button id="OpenChat" class="btn p-2" type="button" data-toggle="collapse" data-target="#chat-room" aria-expanded="false" aria-controls="chat-room">
                 <i class='far fa-comment-dots' aria-hidden="true"></i>
@@ -149,7 +136,7 @@
             </div>
 
             <div class="m-3">
-                <h4 aria-level="4">Cronologia chat</h4>
+                <h2 aria-level="2">Cronologia chat</h2>
                 <p class="p-3">Elenco dei messaggi scambiati col valutatore durante questa attività. In alto sono presenti i messaggi più recenti.</p>
                 <div id="list" role="log" aria-relevant="additions"></div>
                 <!-- player-msg è il messaggio inviato dal player; valuator-msg è il messaggio inviato dal valutatore

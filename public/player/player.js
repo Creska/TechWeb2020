@@ -1,4 +1,5 @@
 var StoryObj; // QUESTA E' LA VARIABILE DELLA STORIA
+var TESTING = false; // se è true, indica che il player è aperto in preview
 
 var socket; // contains the socket for this specific player
 
@@ -23,23 +24,29 @@ var activitymap; // per ogni activityID indica [oggetto dell'array, id della que
 
 
 $(function () {
+
 	/* query e caricamento della storia */
 	socket = io.connect('', { query: "type=player", reconnection: false });
 	$.get("/player/loadJSON", function (data) {
 		StoryObj = JSON.parse(data);
 		if (StoryObj.published == false || StoryObj.published == undefined) {
-			StoryObj.testing = true;
+			TESTING = true;
 		}
 		loadGame();
 	});
+
+	/* ricezione messaggio chat */
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
 			$("#list").prepend($("<blockquote/>", {
 				"class": "valuator-msg p-1",
+				"aria-live": "assertive",
 			}).html("<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message));
 		}
 	});
+
+	/* ricezione valutazione */
 	socket.on('input-valued', (activity_id, score) => {
 		Status.TotalScore += parseInt(score) || 0;
 		ActivityRecap.Score += parseInt(score) || 0;
@@ -57,10 +64,7 @@ function validateInput(question, answer) {
 	$(".NextActivity").attr("disabled", true);
 	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
 
-	/*
-	// roba per debugging
-	goToActivity( nextStageInOrder() );
-	*/
+	// goToActivity( nextStageInOrder() ); // roba per debugging
 
 	socket.emit('validate-input-player', Status.ActivityID, question, answer, socket.id);
 };
@@ -86,18 +90,18 @@ function loadGame() {
 
 	showAccess();
 
-	if (StoryObj.game_mode == "CLASS" && (StoryObj.testing == false || StoryObj.testing == undefined)) {
+	if (StoryObj.game_mode == "CLASS" && !TESTING) {
 		let group_alert = $("<div class='alert alert-info' role='alert'/>");
 		group_alert.append($("<i/>", {
 			"class": "fas fa-info-circle fa-2x p-2",
 			"aria-hidden": "true"
 		}));
 		group_alert.append($("<p/>").html("Appartieni al gruppo <strong>" + StoryObj.groupID + "</strong>"));
-		$("#StartScreen").children().first().after(group_alert);
+		$("#Main").children().first().after(group_alert);
 	}
 
-	if (StoryObj.testing) {
-		$("#Open").attr("onclick", ""); // disabilita la chat
+	if (TESTING) {
+		$("#Open").attr("disabled", true); // disabilita la chat
 	}
 
 	$("#StartBtn").attr("disabled", false);
@@ -105,20 +109,20 @@ function loadGame() {
 
 
 function startGame() {
-	$("#StartScreen").replaceWith(document.getElementById("MainContainer").content.cloneNode(true));
+	$("StartBtn").attr("disabled", true); // per evitare doppio click
 
-	$("#Main").before($("<h1/>", {
+	$("#Main").empty();
+
+	$("#Main").append($("<h1/>", {
 		"class": "p-2 StoryTitle",
 		role: "heading",
 		"aria-live": "assertive",
-		"aria-level": "1",
-		text: StoryObj.story_title
-	}));
+		"aria-level": "1"
+	}).html( "<span class='sr-only'>Titolo della storia:</span>" + StoryObj.story_title ));
 
 	goToActivity(StoryObj.quests[0].activities[0].activity_id);
 
-	if (StoryObj.testing != true)
-		$("footer").fadeIn("slow");
+	$("footer").fadeIn("slow");
 };
 
 
@@ -165,7 +169,7 @@ function showAccess() {
 		accessibility_alert.append($('<p>Il gioco purtroppo <strong>non</strong> è accessibile.</p>'));
 	}
 
-	$("#StartScreen").prepend(accessibility_alert);
+	$("#Main").prepend(accessibility_alert);
 };
 
 
@@ -185,56 +189,71 @@ function buildMaps() {
 
 
 function get_media_path(name) {
-	return "/player/stories/" + (StoryObj.testing ? "unpublished" : "published") + "/" + StoryObj.story_ID + "/" + name;
+	let folder;
+
+	if ( TESTING )
+		folder = "unpublished";
+	else
+		folder = "published";
+	
+	return "/player/stories/" + folder + "/" + StoryObj.story_ID + "/" + name;
 };
 
 
 function goToActivity(aid) {
 	if (Status.ActivityID != null)
 		sendActivityRecap(); // evita l'invio del recap a inizio gioco
+	
 	if (aid == null || aid === "" || activitymap[aid] == undefined) {
 		handleError();
 		return;
 	}
+
 	if (Status.QuestID != activitymap[aid][1]) {
 		goToQuest(activitymap[aid][1]); // va alla nuova quest
 	}
+
 	Status.ActivityID = aid;
+
 	let newactivity = $("<div/>", {
 		"class": "Activity",
 		id: aid,
+		"aria-label": "attività in corso",
+		"aria-live": "polite",
+		role: "region",
 		style: "display:none;"
 	});
 
-	newactivity.append($("<div class='ActivityText'/>"));
-	writeActivityText(newactivity.find(".ActivityText"));
+	newactivity.append( $( "<h3/>", {
+		"class": "sr-only",
+		role: "heading",
+		"aria-level": "3",
+		"aria-live": "assertive",
+		text: "Attività"
+	}));
 
-	if (StoryObj.testing) {
-		newactivity.append($("<button/>", {
-			"class": "NextActivity",
-			onclick: "goToActivity( nextStageInOrder() );",
-			text: "PROSSIMA (PREVIEW)"
+	writeActivityText(newactivity);
+
+	if ( activitymap[aid][0].activity_type == "ANSWER" ) {
+		buildAnswerField( newactivity );
+	}
+
+	if ( activitymap[aid][0].FINAL ) {
+		newactivity.append( $( "<button/>", {
+			"class": "CloseGameBtn",
+			onclick: "endGame();",
+			text: "FINE"
 		}));
 	}
 	else {
-		if (activitymap[aid][0].activity_type == "READING") {
-			if (activitymap[aid][0].FINAL) {
-				newactivity.append($("<button/>", {
-					"class": "CloseGameBtn",
-					onclick: "endGame();",
-					text: "FINE"
-				}));
-			}
-			else {
-				newactivity.append($("<button/>", {
-					"class": "NextActivity",
-					onclick: "goToNextActivity();",
-					text: "PROSEGUI"
-				}));
-			}
+		if ( TESTING ) {
+			newactivity.append( $( "<button/>", {
+				"class": "NextActivity",
+				onclick: "goToActivity( nextStageInOrder() );",
+				text: "PROSSIMA ATTIVITA' IN ORDINE"
+			}));
 		}
 		else {
-			buildAnswerField(newactivity);
 			newactivity.append($("<button/>", {
 				"class": "NextActivity",
 				onclick: "goToNextActivity();",
@@ -244,18 +263,10 @@ function goToActivity(aid) {
 	}
 
 	$("#Main .Activity").remove();
-	$("#Main .Quest .sr-only").remove();
-
-	/* appende l'attività e resetta tutto ciò che va resettato */
-	$("#Main .Quest").append($("<div/>", {
-		role: "alert",
-		"aria-live": "assertive",
-		"class": "sr-only",
-		text: "nuova attività"
-	}));
 	$("#Main .Quest").append(newactivity);
 	$("#Main .Activity").fadeIn("slow");
 
+	/* resetta tutto ciò che va resettato */
 	$("#list").empty();
 	Status.time_elapsed = 0;
 	ActivityRecap = {
@@ -284,26 +295,18 @@ function goToQuest(qid) {
 	let newquest = $("<section/>", {
 		"class": "Quest",
 		id: qid,
-		"aria-relevant": "additions text",
+		"aria-label": "quest in corso",
+		"aria-live": "polite",
 		style: "display:none;"
 	});
 
 	newquest.append($("<h2/>", {
 		"class": "QuestTitle",
-		"aria-live": "assertive",
 		"aria-level": "2",
-		text: questmap[qid][0].quest_title
-	}));
+		"aria-live": "assertive"
+	}).html( "<span class='sr-only'>Quest:</span>" + questmap[qid][0].quest_title ));
 
 	$("#Main .Quest").remove();
-	$("#Main .sr-only").remove();
-
-	$("#Main").append($("<div/>", {
-		role: "alert",
-		"aria-live": "assertive",
-		"class": "sr-only",
-		text: "nuova quest"
-	}));
 	$("#Main").append(newquest);
 	$("#Main .Quest").fadeIn("slow");
 };
@@ -445,7 +448,11 @@ function writeActivityText(container) {
 function buildAnswerField(container) {
 	let activity = activitymap[Status.ActivityID][0];
 
-	let AF = $("<div class='AnswerField' aria-label='Esercizio'/>");
+	let AF = $( "<div/>", {
+		"class": "AnswerField",
+		"aria-label": "esercizio",
+		role: "form"
+	});
 
 	AF.append($("<p/>", {
 		"class": "AnswerFieldDescription",
@@ -510,6 +517,12 @@ function buildAnswerField(container) {
 
 	AF.append(answerinput);
 
+	container.append( $( "<h4/>", {
+		"class": "sr-only",
+		role: "heading",
+		"aria-level": "4",
+		text: "esercizio finale"
+	}));
 	container.append(AF);
 };
 
@@ -544,7 +557,8 @@ function sendMsg(msg) {
 	$("#chat-room input").val("");
 
 	$("#list").prepend($("<blockquote/>", {
-		"class": "player-msg p-1"
+		"class": "player-msg p-1",
+		"aria-live": "assertive",
 	}).html("<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>"));
 
 	/*
@@ -603,7 +617,7 @@ function sendActivityRecap() {
 		Group: StoryObj.groupID,
 		socketID: socket.id
 	};
-	// console.log(recap.QuestID, recap.ActivityID, recap.TimeToAnswer, recap.ChatMessages, recap.Score, recap.Group, recap.socketID)
+
 	$.post("/player/activityUpdate", recap);
 	// console.log( recap ); // debugging
 };

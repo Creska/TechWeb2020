@@ -141,16 +141,12 @@ io.on('connection', (socket) => {
                 console.log("A new player arrived(1) for the new story: " + story_data.story_title + ", creating the record for it.");
             }
             player_per_group_count++;
+            storedJoins.push({ id: socket.id, story_ID: story_data.story_ID });
             //Set an array for the current player, so I can push activities data with /update.
             //TODO maybe better setting player data since I now have the story id?
             player_data.set(socket.id, []);
             if (valuators.length > 0) {
                 valuator_emit('user-joined', socket, story_data)
-            }
-            else {
-                //storing join event in case the valuator is still not connected
-                console.log("Valuator is offline, storing the join event.")
-                storedJoins.push({ id: socket.id, storyID: story_data.story_ID });
             }
             let story_to_return = story_data;
             if (story_data.game_mode == "CLASS") {
@@ -905,7 +901,7 @@ app.get('/valuator/activeStories', function (req, res) {
     stories_map.forEach((v, _k) => {
         activeStories.push({ json: v.story, players: v.players });
     })
-    console.log("activeStories", activeStories)
+    // console.log("activeStories", activeStories)
     if (activeStories.length > 0) {
         return res.status(200).send(JSON.stringify(activeStories)).end();
     }

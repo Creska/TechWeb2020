@@ -114,16 +114,16 @@ function makeChatMessage(text, id, owner) {
     let message;
     if (owner == VALUATOR) {
         message = `  
-        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
+        <div class="container-chat darker-chat overflow-auto" >
   <p>`+ text + `</p>
   <span class="time-left-chat">`+ timeStamp() + `</span>
   </div>     
         `
-        socket.emit('valuator-ricochet', { type: 'chat-message', data: message, id: id, id_from: id });
+        socket.emit('valuator-ricochet', { type: 'chat-message', text: text, id: id, id_from: id });
     }
     else if (owner == PLAYER) {
         message = `  
-        <div class="container-chat lighter-chat overflow-auto" contenteditable="false">
+        <div class="container-chat lighter-chat overflow-auto" >
   <p>`+ text + `</p>
   <span class="time-left-chat">`+ timeStamp() + `</span>
   </div>     
@@ -160,6 +160,7 @@ function TabHandler(id) {
 }
 
 function makeNav(story_ID) {
+    console.log(story_map, story_ID);
     if ($('#nav-' + story_ID).length < 1) {
         $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-top' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
         $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-top' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
@@ -170,7 +171,7 @@ function makeNav(story_ID) {
 function makeWarningMessage(socketID, time) {
     if ($('#warn-' + socketID) == undefined) {
         let message = ` <div id="warn-` + socketID + `" style="border: 1px solid red">
-        <div class="container-chat darker-chat overflow-auto" contenteditable="false">
+        <div class="container-chat darker-chat overflow-auto" >
         <p>Attenzione: questo player ha superato il tempo previsto per rispondere all'attività corrente.</p>
         </div>
         </div>`
@@ -181,12 +182,12 @@ function makeWarningMessage(socketID, time) {
 function makeValuatorMessage(activityID, question, answer, socketID) {
     let message = `  
     <div id="val-`+ socketID + `" style="border: 1px solid orange">
-    <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false"">
+    <div class="container-chat darker-chat col-sm overflow-auto" ">
 <p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `<br>Attività: ` + activityID + `</p>
 </div>     
-<label for="risposta" contenteditable="false">Punteggio della risposta</label><br>
+<label for="risposta" >Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
-<label for="attivita" contenteditable="false">Prossima attività</label><br>
+<label for="attivita" >Prossima attività</label><br>
 <select class="form-select" name="attivita" id="att-`+ socketID + `">
 `;
     getStoryFromSocket(socketID, function (story) {
@@ -208,16 +209,16 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
 function makeContainer(id, story_ID) {
     players_playing_arr.push(id);
     makeNav(story_ID)
-    $('#chat-' + story_ID).append('<div id = "' + id + '" class= "chatroom col-sm-4" contenteditable = "true" style = "margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto" > <h3>Player ' + id + '</h3></div >')
+    $('#chat-' + story_ID).append('<div id = "' + id + '" class= "chatroom col-sm-4" style = "margin-right: 10px; margin-left: 10px; margin-bottom: 10px;overflow-y: auto" > <h3 contenteditable="true">Player ' + id + '</h3></div >')
     let message = `  
-    <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
+    <div class="container-chat darker-chat col-sm overflow-auto" >
 <p style="color: yellow">`+ '<b>System Message: User joined.</b>' + `</p>
 </div>     
     `
-    $('#' + id).append(`  <div id="form-` + id + `" class="form-group"  contenteditable="false">
+    $('#' + id).append(`  <div id="form-` + id + `" class="form-group"  >
     <textarea id="text-` + id + `" class="form-control" rows="3"></textarea>
   </div>`)
-    $('#' + id).append('<button type="button" class="btn btn-dark" contenteditable="false" onclick="sendMessageToPlayer(' + `'` + id + `'` + ')">Invia</button>')
+    $('#' + id).append('<button type="button" class="btn btn-dark"  onclick="sendMessageToPlayer(' + `'` + id + `'` + ')">Invia</button>')
     $('#form-' + id).before(message);
 
 }
@@ -244,7 +245,7 @@ $(function () {
                 method: 'GET',
                 success: function (stories) {
                     JSON.parse(stories).forEach(story => {
-                        story_map.set(story.story_ID, { json: story.json, players: story.players })
+                        story_map.set(story.json.story_ID, { json: story.json, players: story.players })
                     })
                     if (history.joins) {
                         console.log("History joins found.");
@@ -285,10 +286,14 @@ $(function () {
         makeWarningMessage(data.socketID, data.time);
     })
     socket.on('ricochet', (data) => {
-        console.log("catching ricochet")
         switch (data.type) {
             case 'chat-message':
-                $('#text-' + data.id).before(data.message)
+                message = `<div class="container-chat darker-chat overflow-auto" >
+          <p>`+ data.text + `</p>
+          <span class="time-left-chat">`+ timeStamp() + `</span>
+          </div>`
+                $('#text-' + data.id).before(message)
+                console.log('#text-' + data.id)
                 break;
             case 'valuate-message':
                 $(`#val-` + data.id).html('<p style="color:orange">Risposta inviata con successo.</p>');
@@ -320,7 +325,7 @@ $(function () {
         let index = players_playing_arr.indexOf(id);
         players_playing_arr.splice(index, 1);
         let message = `  
-        <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
+        <div class="container-chat darker-chat col-sm overflow-auto" >
     <p style="color: yellow">`+ '<b>System Message: User left.<b>' + `</p>
     </div>     
         `
@@ -338,7 +343,7 @@ $(function () {
         players_playing_arr.splice(index, 1);
         console.log("User  " + socketID + " has finished.");
         let message = `  
-        <div class="container-chat darker-chat col-sm overflow-auto" contenteditable="false">
+        <div class="container-chat darker-chat col-sm overflow-auto" >
     <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
     </div>     
         `

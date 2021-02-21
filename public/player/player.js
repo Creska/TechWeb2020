@@ -101,7 +101,7 @@ function loadGame() {
 	}
 
 	if (TESTING) {
-		$("#Open").attr("disabled", true); // disabilita la chat
+		$("#OpenChat").attr("disabled", true); // disabilita la chat
 	}
 
 	$("#StartBtn").attr("disabled", false);
@@ -240,7 +240,7 @@ function goToActivity(aid) {
 
 	if ( activitymap[aid][0].FINAL ) {
 		newactivity.append( $( "<button/>", {
-			"class": "CloseGameBtn",
+			"class": "btn btn-lg CloseGameBtn",
 			onclick: "endGame();",
 			text: "FINE"
 		}));
@@ -248,14 +248,14 @@ function goToActivity(aid) {
 	else {
 		if ( TESTING ) {
 			newactivity.append( $( "<button/>", {
-				"class": "NextActivity",
+				"class": "btn btn-lg NextActivity",
 				onclick: "goToActivity( nextStageInOrder() );",
 				text: "PROSSIMA ATTIVITA' IN ORDINE"
 			}));
 		}
 		else {
 			newactivity.append($("<button/>", {
-				"class": "NextActivity",
+				"class": "btn btn-lg NextActivity",
 				onclick: "goToNextActivity();",
 				text: "PROSEGUI"
 			}));
@@ -313,6 +313,8 @@ function goToQuest(qid) {
 
 
 function goToNextActivity() {
+	$( ".NextActivity" ).attr( "disabled", true ); // evita doppi click
+
 	clearInterval(IntervalTimer);
 
 	let activity = activitymap[Status.ActivityID][0];

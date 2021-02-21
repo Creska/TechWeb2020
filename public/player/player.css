@@ -22,7 +22,7 @@ body {
     max-width: 50em;
 }
 
-#appbanner, .StoryTitle, footer {
+#appbanner, footer {
     background-color: rgba(119, 136, 153, 0.9);
 }
 
@@ -49,13 +49,8 @@ move_logo{
     to {top: 20px;}
 }
 
-#StartScreen {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
-}
-
 .alert {
-    margin: 0;
+    text-align: center;
 }
 
 .alert ul, #info-body ul {
@@ -98,6 +93,10 @@ move_logo{
 #info-footer{
     font-size: large;
     letter-spacing: 2px;
+}
+
+.btn {
+    text-transform: uppercase;
 }
 
 #StartBtn, .NextActivity, .CloseGameBtn{
@@ -145,20 +144,7 @@ move_title{
     width: 100%;
     height: 100%;
     position: relative;
-}
-
-#Main::after{
-    content: ' ';
-    display: block;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: #000000;
-    position: absolute;
-    display: block;
-    opacity: 0.5;
-    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .Quest {
@@ -187,11 +173,7 @@ move_quest{
     }
 }
 
-.Activity {
-    text-align: center;
-}
-
-.ActivityText, #Error, #Finish {
+.Activity, #Error, #Finish {
     background-color: rgba(255, 255, 255, 0.7);
     padding: 5px;
     color: rgb(0, 10, 20);
@@ -202,13 +184,15 @@ move_quest{
     font-size: 18px;
     z-index: 1;
     position: relative;
+    text-align: center;
 }
 
-.ActivityText p {
+.Activity p {
     text-align: justify;
 }
 
 .AnswerField{
+    color: aliceblue;
     background-image: url(./media/domanda.jpg);
     background-size: cover;
     background-attachment: scroll;
@@ -280,6 +264,10 @@ footer {
     color: white;
     outline: none !important;
     box-shadow: none;
+}
+
+#OpenChat:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 #chat-room input{

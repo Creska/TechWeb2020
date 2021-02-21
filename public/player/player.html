@@ -64,7 +64,7 @@
                 </div>
                 <div class="card-footer text-muted" id="info-footer">
                     <p>- Ora non ti resta che iniziare il gioco -</p>
-                    <button id="StartBtn" onclick="startGame();" disabled>START</button>
+                    <button class="btn btn-lg" id="StartBtn" onclick="startGame();" disabled>START</button>
                 </div>
             </section>
 
@@ -125,14 +125,14 @@
 
             <h1 class="sr-only" aria-level="1">Chat room</h1>
 
-            <button id="OpenChat" class="btn p-2" type="button" data-toggle="collapse" data-target="#chat-room" aria-expanded="false" aria-controls="chat-room">
+            <button id="OpenChat" class="btn m-2" type="button" data-toggle="collapse" data-target="#chat-room" aria-expanded="false" aria-controls="chat-room">
                 <i class='far fa-comment-dots' aria-hidden="true"></i>
                 <span class="sr-only">Apri/chiudi chat</span>
             </button>
 
             <div id='chat-room' class="collapse" role="dialog">
                 <input aria-label="Messaggio da inviare" id="message" type="text" autocomplete="off" placeholder="Invia un messaggio">
-                <button id="Send" onclick="sendMsg( $(this).prev().val() );">Invia</button>
+                <button class="btn" id="Send" onclick="sendMsg( $(this).prev().val() );">Invia</button>
             </div>
 
             <div class="m-3">

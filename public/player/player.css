@@ -29,7 +29,6 @@ body {
 #appbanner {
     text-align: center;
     color: rgba(255, 255, 255);
-    font-family: fantasy;
     font-size: 20px;
 }
 
@@ -100,7 +99,6 @@ move_logo{
 }
 
 #StartBtn, .NextActivity, .CloseGameBtn{
-    align-content: center;
     text-align: center;
     width: 200px;
     background-color: rgba(25, 1, 130, 0.8);
@@ -146,6 +144,9 @@ move_title{
     position: relative;
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+
+
 
 .Quest {
     margin-top: 20px;
@@ -223,13 +224,14 @@ move_quest{
     word-wrap: break-word;
 }
 
-
-
 .carousel-caption {
     position: static;
     color: black;
     font-style: italic;
 }
+
+
+
 
 #ButtonToTop{
     position: fixed;
@@ -296,25 +298,6 @@ footer {
     background-color:rgb(100, 100, 100);
     border: 2px solid whitesmoke;
     color: rgb(255, 255, 255);
-}
-
-#history{
-    text-decoration: none;
-    outline: none;
-    display: inline-block;
-    color: white;
-    padding-top: 10px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    background-image: linear-gradient(to right, #00bfff 0%, #2200ff 50%, #00bfff 100%);
-    background-size: 200% auto;
-    box-shadow: 0 0 20px rgba(0,0,0,.1);
-    border-radius: 20px;
-    transition: .5s;
-  }
-
-#history:hover {
-    background-position: right center;
 }
 
 #list{

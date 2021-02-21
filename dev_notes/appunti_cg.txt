@@ -2,6 +2,9 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Aggiornare la guida dell'editor css in base ai cambiamenti fatti nel player
 * PLAYER
+    * Rendere più efficiente il riperimento delle immagini
+    * Aggiungere il blocco click anche sul pulsante finale 
+    * Mettere in ordine il codice
     * Aggiungere un timer associato all'attesa di valutazione
     * [WIP] Aggiungere il caricamento del CSS
 

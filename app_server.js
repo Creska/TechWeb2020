@@ -73,11 +73,21 @@ function UNF() {
 
     */
 
-function valuator_emit(method, socket, data) {
+function valuator_emit(method, socket, data, ricochet) {
     //emits the event passed with the arg to the valuator
-    valuators.forEach(valuator => {
-        socket.to(valuator).emit(method, socket.id, data);
-    })
+    let check = ricochet || false;
+    if (!check) {
+        valuators.forEach(valuator => {
+            socket.to(valuator).emit(method, socket.id, data);
+        })
+    }
+    else {
+        valuators.forEach(valuator => {
+            if (valuator != data.id_from) {
+                socket.to(valuator).emit(method, data);
+            }
+        })
+    }
     console.log("Sending the event '" + method + "' to the valuator, from: " + socket.id);
 }
 
@@ -190,7 +200,7 @@ io.on('connection', (socket) => {
                 valuators = valuators.filter((value) => {
                     return value != socket.id;
                 });
-                console.log("A valuator disconnected. Setting valuatorID to undefined.")
+                console.log("A valuator disconnected.")
             }
         }
         else {
@@ -254,6 +264,9 @@ io.on('connection', (socket) => {
         valuators.forEach(valuator => {
             socket.to(valuator).emit('player-end', socketID)
         })
+    })
+    socket.on('valuator-ricochet', (data) => {
+        valuator_emit('ricochet', socket, data, true);
     })
 })
 app.get('/player', function (req, res) {
@@ -889,10 +902,10 @@ app.post('/valuator/restore', function (req, res) {
 app.get('/valuator/activeStories', function (req, res) {
     //sending all current active games to the valuator
     var activeStories = [];
-    console.log(activeStories)
     stories_map.forEach((v, _k) => {
         activeStories.push({ json: v.story, players: v.players });
     })
+    console.log("activeStories", activeStories)
     if (activeStories.length > 0) {
         return res.status(200).send(JSON.stringify(activeStories)).end();
     }

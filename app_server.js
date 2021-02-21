@@ -202,6 +202,7 @@ io.on('connection', (socket) => {
             storedJoins = storedJoins.filter((value) => {
                 return value.id != socket.id;
             })
+            removePlayer(socket.id);
         }
         // if (player_count == 0) {
         //     console.log("Deleting the storysent since there's no more players connected.")

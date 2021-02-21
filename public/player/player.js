@@ -1,5 +1,7 @@
 var StoryObj; // QUESTA E' LA VARIABILE DELLA STORIA
+
 var TESTING = false; // se è true, indica che il player è aperto in preview
+var mediapath; // in base a TESTING, identifica il path dove cercare le immagini
 
 var socket; // contains the socket for this specific player
 
@@ -22,6 +24,9 @@ var questmap; // per ogni questID indica [oggetto dell'array, indice all'interno
 var activitymap; // per ogni activityID indica [oggetto dell'array, id della quest madre, indice all'interno dell'array]
 
 
+
+
+/* //////////////// ROBA AJAX /////////////////// */
 
 $(function () {
 
@@ -55,11 +60,6 @@ $(function () {
 });
 
 
-
-/**
- * @param answer --> stringa corrispondente alla risposta
- * Renderizza un loading ed invia la richiesta di valutazione al Valuator
- */
 function validateInput(question, answer) {
 	$(".NextActivity").attr("disabled", true);
 	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
@@ -70,10 +70,64 @@ function validateInput(question, answer) {
 };
 
 
-/**
-* funzione utilizzata per gestire le condizioni di errore all'interno del player
-* in generale sarebbe meglio fermare l'applicazione e basta
-*/
+function sendMsg(msg) {
+	if (msg === "")
+		return;
+
+	//client can't route the rooms: only the server can. I need to send the data there
+	socket.emit('chat-message', msg, socket.id);
+
+	$("#chat-room input").val("");
+
+	$("#list").prepend($("<blockquote/>", {
+		"class": "player-msg p-1",
+		"aria-live": "assertive",
+	}).html("<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>"));
+
+	/*
+	//roba per debugging
+	setTimeout( function() {
+		$( "#list" ).prepend( $( "<blockquote/>", {
+			"class": "valuator-msg p-1",
+		}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + msg ));
+	}, 10000);
+	*/
+};
+
+
+function sendStatus() {
+	let intervalStatus = {
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		time_elapsed: Status.time_elapsed,
+		Group: StoryObj.groupID,
+		socketID: socket.id
+	};
+	$.post("/player/playersActivities", intervalStatus);
+	// console.log( intervalStatus ); // debugging 
+};
+
+
+function sendActivityRecap() {
+	let recap = {
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		TimeToAnswer: ActivityRecap.TimeToAnswer,
+		ChatMessages: ActivityRecap.ChatMessages,
+		Score: ActivityRecap.Score,
+		Group: StoryObj.groupID,
+		socketID: socket.id
+	};
+
+	$.post("/player/activityUpdate", recap);
+	// console.log( recap ); // debugging
+};
+
+
+
+/* /////////////////////////////////////// */
+
+
 function handleError() {
 	$("#Main").empty();
 
@@ -105,24 +159,6 @@ function loadGame() {
 	}
 
 	$("#StartBtn").attr("disabled", false);
-};
-
-
-function startGame() {
-	$("StartBtn").attr("disabled", true); // per evitare doppio click
-
-	$("#Main").empty();
-
-	$("#Main").append($("<h1/>", {
-		"class": "p-2 StoryTitle",
-		role: "heading",
-		"aria-live": "assertive",
-		"aria-level": "1"
-	}).html( "<span class='sr-only'>Titolo della storia:</span>" + StoryObj.story_title ));
-
-	goToActivity(StoryObj.quests[0].activities[0].activity_id);
-
-	$("footer").fadeIn("slow");
 };
 
 
@@ -197,6 +233,52 @@ function get_media_path(name) {
 		folder = "published";
 	
 	return "/player/stories/" + folder + "/" + StoryObj.story_ID + "/" + name;
+};
+
+
+function startGame() {
+	$("StartBtn").attr("disabled", true); // per evitare doppio click
+
+	$("#Main").empty();
+
+	$("#Main").append($("<h1/>", {
+		"class": "p-2 StoryTitle",
+		role: "heading",
+		"aria-live": "assertive",
+		"aria-level": "1"
+	}).html( "<span class='sr-only'>Titolo della storia:</span>" + StoryObj.story_title ));
+
+	goToActivity(StoryObj.quests[0].activities[0].activity_id);
+
+	$("footer").fadeIn("slow");
+};
+
+
+function goToQuest(qid) {
+	if (qid == null || qid === "" || questmap[qid] == undefined) {
+		handleError();
+		return;
+	}
+
+	Status.QuestID = qid;
+
+	let newquest = $("<section/>", {
+		"class": "Quest",
+		id: qid,
+		"aria-label": "quest in corso",
+		"aria-live": "polite",
+		style: "display:none;"
+	});
+
+	newquest.append($("<h2/>", {
+		"class": "QuestTitle",
+		"aria-level": "2",
+		"aria-live": "assertive"
+	}).html( "<span class='sr-only'>Quest:</span>" + questmap[qid][0].quest_title ));
+
+	$("#Main .Quest").remove();
+	$("#Main").append(newquest);
+	$("#Main .Quest").fadeIn("slow");
 };
 
 
@@ -281,108 +363,6 @@ function goToActivity(aid) {
 
 		sendStatus();
 	}, 5000);
-};
-
-
-function goToQuest(qid) {
-	if (qid == null || qid === "" || questmap[qid] == undefined) {
-		handleError();
-		return;
-	}
-
-	Status.QuestID = qid;
-
-	let newquest = $("<section/>", {
-		"class": "Quest",
-		id: qid,
-		"aria-label": "quest in corso",
-		"aria-live": "polite",
-		style: "display:none;"
-	});
-
-	newquest.append($("<h2/>", {
-		"class": "QuestTitle",
-		"aria-level": "2",
-		"aria-live": "assertive"
-	}).html( "<span class='sr-only'>Quest:</span>" + questmap[qid][0].quest_title ));
-
-	$("#Main .Quest").remove();
-	$("#Main").append(newquest);
-	$("#Main .Quest").fadeIn("slow");
-};
-
-
-function goToNextActivity() {
-	$( ".NextActivity" ).attr( "disabled", true ); // evita doppi click
-
-	clearInterval(IntervalTimer);
-
-	let activity = activitymap[Status.ActivityID][0];
-
-	if (activity.ASK_EVAL) {
-		validateInput($(".AnswerFieldDescription").first().text(), getPlayerAnswer());
-		return;
-	}
-
-	if (activity.activity_type == "READING") {
-		if (activity.answer_outcome[0].next_activity_id) {
-			ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
-			Status.TotalScore += ActivityRecap.Score;
-
-			goToActivity(activity.answer_outcome[0].next_activity_id);
-		}
-		else {
-			goToActivity(nextStageInOrder());
-		}
-	}
-	else {
-		let player_answer = getPlayerAnswer();
-
-		let target = null; // va usato per evitare il return statement nel loop di each
-
-		$.each(activity.answer_outcome, function (i, outcome) {
-			if (i > 0) {
-				if (outcome.condition.toLowerCase() == player_answer) {
-					ActivityRecap.Score = parseInt(outcome.score) || 0;
-					Status.TotalScore += ActivityRecap.Score;
-
-					target = outcome.next_activity_id;
-					return false;
-				}
-			}
-		});
-
-		if (target == null) {
-			if (activity.answer_outcome[0].next_activity_id) {
-				ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
-				Status.TotalScore += ActivityRecap.Score;
-
-				target = activity.answer_outcome[0].next_activity_id;
-			}
-			else {
-				target = nextStageInOrder();
-			}
-		}
-
-		goToActivity(target);
-	}
-};
-
-
-function nextStageInOrder() {
-	/* se questa attività NON è l'ultima di questa quest, conduce all'attività successiva */
-	/* altrimenti, conduce alla quest successiva, sempre che la quest in corso non sia l'ultima */
-
-	if (activitymap[Status.ActivityID][2] < questmap[Status.QuestID][0].activities.length - 1) {
-		return StoryObj.quests[questmap[Status.QuestID][1]].activities[activitymap[Status.ActivityID][2] + 1].activity_id;
-	}
-	else {
-		if (questmap[Status.QuestID][1] < StoryObj.quests.length - 1) {
-			return StoryObj.quests[questmap[Status.QuestID][1] + 1].activities[0].activity_id;
-		}
-	}
-
-	return null;
 };
 
 
@@ -549,28 +529,77 @@ function getPlayerAnswer() {
 };
 
 
-function sendMsg(msg) {
-	if (msg === "")
+function goToNextActivity() {
+	$( ".NextActivity" ).attr( "disabled", true ); // evita doppi click
+
+	clearInterval(IntervalTimer);
+
+	let activity = activitymap[Status.ActivityID][0];
+
+	if (activity.ASK_EVAL) {
+		validateInput($(".AnswerFieldDescription").first().text(), getPlayerAnswer());
 		return;
+	}
 
-	//client can't route the rooms: only the server can. I need to send the data there
-	socket.emit('chat-message', msg, socket.id);
+	if (activity.activity_type == "READING") {
+		if (activity.answer_outcome[0].next_activity_id) {
+			ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
+			Status.TotalScore += ActivityRecap.Score;
 
-	$("#chat-room input").val("");
+			goToActivity(activity.answer_outcome[0].next_activity_id);
+		}
+		else {
+			goToActivity(nextStageInOrder());
+		}
+	}
+	else {
+		let player_answer = getPlayerAnswer();
 
-	$("#list").prepend($("<blockquote/>", {
-		"class": "player-msg p-1",
-		"aria-live": "assertive",
-	}).html("<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>"));
+		let target = null; // va usato per evitare il return statement nel loop di each
 
-	/*
-	//roba per debugging
-	setTimeout( function() {
-		$( "#list" ).prepend( $( "<blockquote/>", {
-			"class": "valuator-msg p-1",
-		}).html( "<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + msg ));
-	}, 10000);
-	*/
+		$.each(activity.answer_outcome, function (i, outcome) {
+			if (i > 0) {
+				if (outcome.condition.toLowerCase() == player_answer) {
+					ActivityRecap.Score = parseInt(outcome.score) || 0;
+					Status.TotalScore += ActivityRecap.Score;
+
+					target = outcome.next_activity_id;
+					return false;
+				}
+			}
+		});
+
+		if (target == null) {
+			if (activity.answer_outcome[0].next_activity_id) {
+				ActivityRecap.Score = parseInt(activity.answer_outcome[0].score) || 0;
+				Status.TotalScore += ActivityRecap.Score;
+
+				target = activity.answer_outcome[0].next_activity_id;
+			}
+			else {
+				target = nextStageInOrder();
+			}
+		}
+
+		goToActivity(target);
+	}
+};
+
+
+function nextStageInOrder() {
+	/* se questa attività NON è l'ultima di questa quest, conduce all'attività successiva */
+	/* altrimenti, conduce alla quest successiva, sempre che la quest in corso non sia l'ultima */
+
+	if (activitymap[Status.ActivityID][2] < questmap[Status.QuestID][0].activities.length - 1) {
+		return StoryObj.quests[questmap[Status.QuestID][1]].activities[activitymap[Status.ActivityID][2] + 1].activity_id;
+	}
+	else {
+		if (questmap[Status.QuestID][1] < StoryObj.quests.length - 1) {
+			return StoryObj.quests[questmap[Status.QuestID][1] + 1].activities[0].activity_id;
+		}
+	}
+
+	return null;
 };
 
 
@@ -593,33 +622,4 @@ function endGame() {
 
 	Status.QuestID = null;
 	Status.ActivityID = null;
-};
-
-
-function sendStatus() {
-	let intervalStatus = {
-		QuestID: Status.QuestID,
-		ActivityID: Status.ActivityID,
-		time_elapsed: Status.time_elapsed,
-		Group: StoryObj.groupID,
-		socketID: socket.id
-	};
-	$.post("/player/playersActivities", intervalStatus);
-	// console.log( intervalStatus ); // debugging 
-};
-
-
-function sendActivityRecap() {
-	let recap = {
-		QuestID: Status.QuestID,
-		ActivityID: Status.ActivityID,
-		TimeToAnswer: ActivityRecap.TimeToAnswer,
-		ChatMessages: ActivityRecap.ChatMessages,
-		Score: ActivityRecap.Score,
-		Group: StoryObj.groupID,
-		socketID: socket.id
-	};
-
-	$.post("/player/activityUpdate", recap);
-	// console.log( recap ); // debugging
 };

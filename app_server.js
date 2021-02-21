@@ -215,6 +215,7 @@ io.on('connection', (socket) => {
         if (valuators.length > 0) {
             if (!valuators.includes(id_from)) {
                 console.log("The player " + id_from + " is sending the message: " + message);
+                storedMessages.push({ message: message, id: id_from });
                 valuator_emit('chat-message', socket, message);
             }
             else {
@@ -233,15 +234,21 @@ io.on('connection', (socket) => {
             valuators.forEach(valuator => {
                 socket.to(valuator).emit('valuate-input', activityID, question, answer, socketID)
             })
+            storedMessages.push({ type: "valuate", activityID: activityID, question: question, answer: answer, id: socketID });
         }
         else {
             console.log("Valuator is offline, storing to be valued message.")
-            storedMessages.push({ activityID: activityID, question: question, answer: answer, id: socketID });
+            storedMessages.push({ type: "valuate", activityID: activityID, question: question, answer: answer, id: socketID });
         }
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
-        //input validation was handled, sending the result back
+        //input validation was handled, sending the result back, removing it from history with all the warning in case the still exist
         socket.to(socketID).emit('input-valued', nextActivity, score);
+        for (let index = 0; index < storedMessages.length; index++) {
+            if ((storedMessages[index].id == socketID) && (storedMessages[index].type == "valuate" || storedMessages[index].type == "warning")) {
+                storedMessages.splice(index, 1);
+            }
+        }
     })
     socket.on('player-end', (socketID) => {
         valuators.forEach(valuator => {
@@ -357,13 +364,12 @@ app.post('/player/playersActivities', function (req, res) {
             if (valuators.length > 0) {
                 valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
                 console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+                storedMessages.push({ type: "warning", id: socketID, time: time_elapsed - maximum_time });
             }
             else {
                 console.log("Valuator is offline, storing the warning message");
                 storedMessages.push({ id: socketID, time: time_elapsed - maximum_time });
             }
-            valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
-            console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
         }
     } else {
@@ -394,55 +400,6 @@ app.get('/editor', function (req, res) {
     })
 
 });
-
-// app.get('/player/loadJSON', function (req, res) {
-//     if (storysent.game_mode == "CLASS") {
-//         if (player_count == 1) {
-//             // console.log("player count is 1")
-//             groupstory = JSON.parse(JSON.stringify(storysent))// used to clone an object without reference;
-//             groupstory.groupID = group;
-//             //shuffle(groupstory.quests)
-
-//         }
-//         if (player_per_group_count > storysent.players) {
-//             // console.log("limit exceeded")
-//             player_per_group_count = 1;
-//             group++;
-//             groupstory.groupID = group;
-//             //shuffle(groupstory.quests)
-//         }
-//         return res.status(200).send(JSON.stringify(groupstory))
-//     }
-//     else {
-//         return res.status(200).send(JSON.stringify(storysent))
-//     }
-// })
-
-// app.get('/editor/preview', function (req, res) {
-//     let storyID = req.query.story_id;
-//     let tempath = storyPath(storyID)
-//     if (tempath != '404') {
-//         if (tempath == pubpath + storyID) {
-//             return res.status(500).send(JSON.stringify({ code: "BADPARAMETER", message: "Story is published. This call can only be done on published stories." }))
-//         }
-//         else {
-//             fs.readFile(tempath, (err, data) => {
-//                 if (data) {
-//                     let tempstory = JSON.parse(data);
-//                     data.testing = true;
-//                     return res.status(200).send(JSON.stringify(tempstory)).end();
-//                 }
-//                 else {
-//                     return res.status(500).send(JSON.stringify(err)).end()
-//                 }
-//             })
-//         }
-//     }
-//     else {
-//         console.log("An error occurred inside /editor/preview while reading the story " + storyID);
-//         return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
-//     }
-// })
 
 app.post('/editor/duplicate', function (req, res) {
     console.log("duplicate request received.");

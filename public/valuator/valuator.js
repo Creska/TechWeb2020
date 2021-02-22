@@ -7,6 +7,7 @@ var socket;
 let last_unused = [];
 let json_to_return = new Map();
 var story_map = new Map(); //story_id(key), {json,players} (value)
+var stories_finished = new Map();; //story_id(key), (value) array of sockets that have finished
 const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
@@ -69,7 +70,7 @@ function toHome() {
                 $('#support').fadeOut();
                 $('#chatrooms').fadeOut();
                 $('#charts').fadeOut();
-                $.post('/valuator/restore');
+                $.post('/valuator/restore'); //TODO parameters
                 break;
 
             case 2:
@@ -162,6 +163,7 @@ function makeNav(story_ID) {
     console.log(story_map, story_ID);
     if ($('#nav-' + story_ID).length < 1) {
         $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-top' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
+        $('#nav-tabContent').append('<p id="description-' + story_ID + '" style="color: white;display: none"></p>')
         $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-top' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
         $('#chat-top' + story_ID).append('<div class="row" id="chat-' + story_ID + '"</div>')
     }
@@ -231,6 +233,15 @@ function saveRecap(story_ID) {
     var blob = new Blob([json_to_return.get(story_ID)], { type: "text/plain;charset=utf-8" });
     json_to_return.delete(story_ID);
     saveAs(blob, "recap.json");
+    $('#description-' + story_ID).fadeOut(1000, function () {
+        $('#description-' + story_ID).remove();
+    })
+    $('#nav-' + story_ID).fadeOut(1000, function () {
+        $('#nav-' + story_ID).remove();
+    })
+    $('#chat-top' + story_ID).fadeOut(1000, function () {
+        $('chat-top' + story_ID).remove();
+    })
 }
 
 $(function () {
@@ -332,238 +343,243 @@ $(function () {
     })
     socket.on('player-end', (socketID) => {
         console.log("User  " + socketID + " has finished.");
-        let message = `  
-        <div class="container-chat darker-chat col-sm overflow-auto" >
-    <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
-    </div>     
-        `
-        $('#form-' + socketID).before(message);
-        setTimeout(function () {
-            deleteContainer(socketID)
-        }, 5000)
-        //TODO fix this if
-        if (something) {
-            //ending
-            $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo.`);
-            $.get("/valuator/return", function (player_data) {
-                //stats per socket(local, per activity)
-                let temp_player_map = new Map(JSON.parse(player_data));
-                //stats per socket(total)
-                let socket_stats = new Map();
-                let groups = [];
-                let quests = [];
-                let activities = [];
-                //key: socket, value: array of activities
-                temp_player_map.forEach((v, k) => {
-                    let temp_score = 0;
-                    let temp_tta = 0;
-                    let temp_cm = 0;
-                    v.forEach(activity => {
-                        if (!groups.includes(activity.group)) {
-                            groups.push(activity.group)
-                        }
-                        if (!quests.includes(activity.questID)) {
-                            quests.push(activity.questID)
-                        }
-                        if (!activities.includes(activity.activityID)) {
-                            activities.push(activity.activityID)
-                        }
-                        temp_score += parseInt(activity.Score);
-                        temp_tta += parseInt(activity.timeToAnswer);
-                        temp_cm += parseInt(activity.chatMessages);
-                    })
-                    socket_stats.set(k, { totalScore: temp_score, totalTimeToAnswer: temp_tta, totalChatMessages: temp_cm, averageScore: (temp_score / v.length), averageTimeToAnswer: temp_tta / v.length, averageChatMessages: temp_cm / v.length })
-                })
-                //key: group, value: array of activities
-                let group_helper = new Map();
-                groups.forEach(group => {
+        removePlayer(id);
+        getStoryFromSocket(socketID, function (story) {
+            if (stories_finished.has(story.story_ID)) {
+                stories_finished.get(story.story_ID).push(socketID)
+            }
+            else {
+                stories_finished.set(story.story_ID, [socketID])
+            }
+            let message = `  
+            <div class="container-chat darker-chat col-sm overflow-auto" >
+        <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
+        </div>     
+            `
+            $('#form-' + socketID).before(message);
+            setTimeout(function () {
+                deleteContainer(socketID)
+            }, 5000)
+            if (stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0) {
+                $.get("/valuator/return", function (player_data) { //TODO parameters
+                    //stats per socket(local, per activity)
+                    let temp_player_map = new Map(JSON.parse(player_data));
+                    //stats per socket(total)
+                    let socket_stats = new Map();
+                    let groups = [];
+                    let quests = [];
+                    let activities = [];
+                    //key: socket, value: array of activities
                     temp_player_map.forEach((v, k) => {
+                        let temp_score = 0;
+                        let temp_tta = 0;
+                        let temp_cm = 0;
                         v.forEach(activity => {
-                            if (group == activity.group) {
-                                if (!group_helper.has(group)) {
-                                    group_helper.set(group, [activity])
-                                }
-                                else {
-                                    let temp_array = group_helper.get(group);
-                                    temp_array.push(activity);
-                                    group_helper.set(group, temp_array)
-                                }
+                            if (!groups.includes(activity.group)) {
+                                groups.push(activity.group)
                             }
+                            if (!quests.includes(activity.questID)) {
+                                quests.push(activity.questID)
+                            }
+                            if (!activities.includes(activity.activityID)) {
+                                activities.push(activity.activityID)
+                            }
+                            temp_score += parseInt(activity.Score);
+                            temp_tta += parseInt(activity.timeToAnswer);
+                            temp_cm += parseInt(activity.chatMessages);
                         })
+                        socket_stats.set(k, { totalScore: temp_score, totalTimeToAnswer: temp_tta, totalChatMessages: temp_cm, averageScore: (temp_score / v.length), averageTimeToAnswer: temp_tta / v.length, averageChatMessages: temp_cm / v.length })
+                    })
+                    //key: group, value: array of activities
+                    let group_helper = new Map();
+                    groups.forEach(group => {
+                        temp_player_map.forEach((v, k) => {
+                            v.forEach(activity => {
+                                if (group == activity.group) {
+                                    if (!group_helper.has(group)) {
+                                        group_helper.set(group, [activity])
+                                    }
+                                    else {
+                                        let temp_array = group_helper.get(group);
+                                        temp_array.push(activity);
+                                        group_helper.set(group, temp_array)
+                                    }
+                                }
+                            })
 
+                        })
                     })
-                })
-                //stats per group
-                let group_stats = new Map();
-                group_helper.forEach((v, k) => {
-                    let temp_g_score = 0;
-                    let temp_g_tta = 0;
-                    let temp_g_cm = 0;
-                    v.forEach(activity => {
-                        temp_g_score += parseInt(activity.Score);
-                        temp_g_tta += parseInt(activity.timeToAnswer);
-                        temp_g_cm += parseInt(activity.chatMessages);
-                    })
-                    group_stats.set(k, { totalScore: temp_g_score, totalTimeToAnswer: temp_g_tta, totalChatMessages: temp_g_cm, averageScore: (temp_g_score / v.length), averageTimeToAnswer: temp_g_tta / v.length, averageChatMessages: temp_g_cm / v.length })
-                })
-                let quest_helper = new Map();
-                quests.forEach(quest => {
-                    temp_player_map.forEach((v, k) => {
+                    //stats per group
+                    let group_stats = new Map();
+                    group_helper.forEach((v, k) => {
+                        let temp_g_score = 0;
+                        let temp_g_tta = 0;
+                        let temp_g_cm = 0;
                         v.forEach(activity => {
-                            if (quest == activity.questID) {
-                                if (!quest_helper.has(quest)) {
-                                    quest_helper.set(quest, [activity])
+                            temp_g_score += parseInt(activity.Score);
+                            temp_g_tta += parseInt(activity.timeToAnswer);
+                            temp_g_cm += parseInt(activity.chatMessages);
+                        })
+                        group_stats.set(k, { totalScore: temp_g_score, totalTimeToAnswer: temp_g_tta, totalChatMessages: temp_g_cm, averageScore: (temp_g_score / v.length), averageTimeToAnswer: temp_g_tta / v.length, averageChatMessages: temp_g_cm / v.length })
+                    })
+                    let quest_helper = new Map();
+                    quests.forEach(quest => {
+                        temp_player_map.forEach((v, k) => {
+                            v.forEach(activity => {
+                                if (quest == activity.questID) {
+                                    if (!quest_helper.has(quest)) {
+                                        quest_helper.set(quest, [activity])
+                                    }
+                                    else {
+                                        let temp_array = quest_helper.get(quest);
+                                        temp_array.push(activity);
+                                        quest_helper.set(quest, temp_array);
+                                    }
                                 }
-                                else {
-                                    let temp_array = quest_helper.get(quest);
-                                    temp_array.push(activity);
-                                    quest_helper.set(quest, temp_array);
-                                }
-                            }
+                            })
                         })
                     })
-                })
-                //stats per quest
-                let quests_stats = new Map();
-                quest_helper.forEach((v, k) => {
-                    let temp_q_score = 0;
-                    let temp_q_tta = 0;
-                    let temp_q_cm = 0;
-                    v.forEach(activity => {
-                        temp_q_score += parseInt(activity.Score);
-                        temp_q_tta += parseInt(activity.timeToAnswer);
-                        temp_q_cm += parseInt(activity.chatMessages);
+                    //stats per quest
+                    let quests_stats = new Map();
+                    quest_helper.forEach((v, k) => {
+                        let temp_q_score = 0;
+                        let temp_q_tta = 0;
+                        let temp_q_cm = 0;
+                        v.forEach(activity => {
+                            temp_q_score += parseInt(activity.Score);
+                            temp_q_tta += parseInt(activity.timeToAnswer);
+                            temp_q_cm += parseInt(activity.chatMessages);
+                        })
+                        quests_stats.set(k, { totalScore: temp_q_score, totalTimeToAnswer: temp_q_tta, totalChatMessages: temp_q_cm, averageScore: (temp_q_score / v.length), averageTimeToAnswer: temp_q_tta / v.length, averageChatMessages: temp_q_cm / v.length })
                     })
-                    quests_stats.set(k, { totalScore: temp_q_score, totalTimeToAnswer: temp_q_tta, totalChatMessages: temp_q_cm, averageScore: (temp_q_score / v.length), averageTimeToAnswer: temp_q_tta / v.length, averageChatMessages: temp_q_cm / v.length })
-                })
-                let activity_helper = new Map();
-                activities.forEach(activity => {
-                    temp_player_map.forEach((v, k) => {
-                        v.forEach(sub_activity => {
-                            if (activity == sub_activity.activityID) {
-                                if (!activity_helper.has(activity)) {
-                                    activity_helper.set(activity, [sub_activity])
+                    let activity_helper = new Map();
+                    activities.forEach(activity => {
+                        temp_player_map.forEach((v, k) => {
+                            v.forEach(sub_activity => {
+                                if (activity == sub_activity.activityID) {
+                                    if (!activity_helper.has(activity)) {
+                                        activity_helper.set(activity, [sub_activity])
+                                    }
+                                    else {
+                                        let temp_array = activity_helper.get(activity);
+                                        temp_array.push(sub_activity);
+                                        activity_helper.set(activity, temp_array);
+                                    }
                                 }
-                                else {
-                                    let temp_array = activity_helper.get(activity);
-                                    temp_array.push(sub_activity);
-                                    activity_helper.set(activity, temp_array);
-                                }
-                            }
+                            })
                         })
                     })
-                })
-                let activity_stats = new Map();
-                activity_helper.forEach((v, k) => {
-                    let temp_a_score = 0;
-                    let temp_a_tta = 0;
-                    let temp_a_cm = 0;
-                    v.forEach(activity => {
-                        temp_a_score += parseInt(activity.Score);
-                        temp_a_tta += parseInt(activity.timeToAnswer);
-                        temp_a_cm += parseInt(activity.chatMessages);
+                    let activity_stats = new Map();
+                    activity_helper.forEach((v, k) => {
+                        let temp_a_score = 0;
+                        let temp_a_tta = 0;
+                        let temp_a_cm = 0;
+                        v.forEach(activity => {
+                            temp_a_score += parseInt(activity.Score);
+                            temp_a_tta += parseInt(activity.timeToAnswer);
+                            temp_a_cm += parseInt(activity.chatMessages);
+                        })
+                        activity_stats.set(k, { totalScore: temp_a_score, totalTimeToAnswer: temp_a_tta, totalChatMessages: temp_a_cm })
                     })
-                    activity_stats.set(k, { totalScore: temp_a_score, totalTimeToAnswer: temp_a_tta, totalChatMessages: temp_a_cm })
-                })
-                var ctx1 = document.getElementById('chart1').getContext('2d');
-                ctx_labels = [];
-                ctx1_points = [];
-                ctx2_points = [];
-                ctx3_points = [];
-                ctx_colors = [];
-                ctx_bcolors = []
-                activity_stats.forEach((v, k) => {
-                    ctx_labels.push(k);
-                    ctx1_points.push(v.totalScore);
-                    ctx2_points.push(v.totalTimeToAnswer);
-                    ctx3_points.push(v.totalChatMessages);
-                    ctx_colors.push('rgb(255,255,255)');
-                    ctx_bcolors.push('rgb(211,211,211)');
-                })
-                var scoreChart = new Chart(ctx1, {
-                    type: 'bar',
-                    data: {
-                        labels: ctx_labels,
-                        datasets: [{
-                            label: 'totalScore',
-                            data: ctx1_points,
-                            backgroundColor: ctx_colors,
-                            borderColor: ctx_bcolors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
+                    var ctx1 = document.getElementById('chart1').getContext('2d');
+                    ctx_labels = [];
+                    ctx1_points = [];
+                    ctx2_points = [];
+                    ctx3_points = [];
+                    ctx_colors = [];
+                    ctx_bcolors = []
+                    activity_stats.forEach((v, k) => {
+                        ctx_labels.push(k);
+                        ctx1_points.push(v.totalScore);
+                        ctx2_points.push(v.totalTimeToAnswer);
+                        ctx3_points.push(v.totalChatMessages);
+                        ctx_colors.push('rgb(255,255,255)');
+                        ctx_bcolors.push('rgb(211,211,211)');
+                    })
+                    var scoreChart = new Chart(ctx1, {
+                        type: 'bar',
+                        data: {
+                            labels: ctx_labels,
+                            datasets: [{
+                                label: 'totalScore',
+                                data: ctx1_points,
+                                backgroundColor: ctx_colors,
+                                borderColor: ctx_bcolors,
+                                borderWidth: 1
                             }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
                         }
-                    }
-                });
-                var ctx2 = document.getElementById('chart2').getContext('2d');
-                var ttaChart = new Chart(ctx2, {
-                    type: 'bar',
-                    data: {
-                        labels: ctx_labels,
-                        datasets: [{
-                            label: 'TimeToAnswer',
-                            data: ctx2_points,
-                            backgroundColor: ctx_colors,
-                            borderColor: ctx_bcolors,
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
+                    });
+                    var ctx2 = document.getElementById('chart2').getContext('2d');
+                    var ttaChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: ctx_labels,
+                            datasets: [{
+                                label: 'TimeToAnswer',
+                                data: ctx2_points,
+                                backgroundColor: ctx_colors,
+                                borderColor: ctx_bcolors,
+                                borderWidth: 2
                             }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
                         }
-                    }
-                });
-                var ctx3 = document.getElementById('chart3').getContext('2d');
-                var cmChart = new Chart(ctx3, {
-                    type: 'bar',
-                    data: {
-                        labels: ctx_labels,
-                        datasets: [{
-                            label: 'chatMessages',
-                            data: ctx3_points,
-                            backgroundColor: ctx_colors,
-                            borderColor: ctx_bcolors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
+                    });
+                    var ctx3 = document.getElementById('chart3').getContext('2d');
+                    var cmChart = new Chart(ctx3, {
+                        type: 'bar',
+                        data: {
+                            labels: ctx_labels,
+                            datasets: [{
+                                label: 'chatMessages',
+                                data: ctx3_points,
+                                backgroundColor: ctx_colors,
+                                borderColor: ctx_bcolors,
+                                borderWidth: 1
                             }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
                         }
-                    }
-                });
-                $('#charts').fadeIn();
-                let recap_object = new Object();
-                recap_object.perSocketActivityStats = [...temp_player_map];
-                recap_object.perSocketGlobalStats = [...socket_stats];
-                recap_object.perSocketGlobalStats.sort((a, b) => a.temp_score > b.temp_score ? 1 : -1);
-                recap_object.perGroupStats = [...group_stats];
-                recap_object.perQuestStats = [...quests_stats]
-                getStoryFromSocket(socketID, function (story) {
-                    //TODO fix those div IDs
+                    });
+                    $('#charts').fadeIn();
+                    let recap_object = new Object();
+                    recap_object.perSocketActivityStats = [...temp_player_map];
+                    recap_object.perSocketGlobalStats = [...socket_stats];
+                    recap_object.perSocketGlobalStats.sort((a, b) => a.temp_score > b.temp_score ? 1 : -1);
+                    recap_object.perGroupStats = [...group_stats];
+                    recap_object.perQuestStats = [...quests_stats]
                     json_to_return.set(story.story_ID, JSON.stringify(recap_object));
-                    $('#defaultdescription').html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
-                        class="btn btn-dark" onclick="saveRecap('`+ story.story_ID + `')">Salva</button>`);
+                    $('#description-' + story.story_ID).text(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
+                            class="btn btn-dark" onclick="saveRecap('`+ story.story_ID + `')">Salva</button>`);
+                    $('#description-' + story.story_ID).fadeIn();
+                    story_map.delete(story.story_ID);
+                    stories_finished.delete(story.story_ID);
                 })
-
-            })
-        }
+            }
+        })
     })
     socket.on('valuate-input', (activityID, question, answer, socketID) => {
         console.log("Input to be valued received: ", activityID, question, answer)

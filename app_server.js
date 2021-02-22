@@ -111,12 +111,16 @@ function removePlayer(id) {
             v.players = v.players.filter((value) => {
                 return value !== id;
             })
+            player_per_group.get(k).player_per_group_count--;
             if (v.players.length == 0) {
                 stories_map.delete(k);
+                player_per_group.delete(k);
             }
+
         }
     })
 }
+
 io.on('connection', (socket) => {
     /* handling sockets for chat: I need to configure players and valuator separately
        sockets automatically join a room with his ID as its name
@@ -145,7 +149,6 @@ io.on('connection', (socket) => {
             } else {
                 player_per_group.set(story_data.story_ID, { player_per_group_count: 1, group: 0 })
             }
-
             storedJoins.push({ id: socket.id, story_ID: story_data.story_ID });
             //Set an array for the current player, so I can push activities data with /update.
             if (!story_data_map.has(story_data.story_ID)) {
@@ -160,17 +163,17 @@ io.on('connection', (socket) => {
             }
             let story_to_return = story_data;
             if (story_data.game_mode == "CLASS") {
-                let player_count = stories_map.get(story_data.story_ID).players.length;
-                if (player_count == 1) {
-                    story_to_return = JSON.parse(JSON.stringify(story_data))// used to clone an object without reference;
-                    story_to_return.groupID = player_per_group.get(story_data.story_ID).group;
-                    //shuffle(groupstory.quests)
-                }
+                let player_count = stories_map.get(story_data.story_ID).story.players;
                 if (player_per_group.get(story_data.story_ID).player_per_group_count > player_count) {
                     // console.log("limit exceeded")
                     player_per_group.get(story_data.story_ID).player_per_group_count = 1;
                     story_to_return.groupID = ++player_per_group.get(story_data.story_ID).group;
+                    console.log(story_to_return.groupID)
                     //shuffle(groupstory.quests)
+                }
+                else {
+                    story_to_return = JSON.parse(JSON.stringify(story_data))// used to clone an object without reference;
+                    story_to_return.groupID = player_per_group.get(story_data.story_ID).group;
                 }
             }
             socket.emit('load-json', story_to_return);
@@ -189,7 +192,7 @@ io.on('connection', (socket) => {
         if (valuators.length > 0) {
             if (!valuators.includes(socket.id)) {
                 //A player is disconnected
-                //sending the disconnect event to the valuator so I can remove the chat           
+                //sending the disconnect event to the valuator so I can remove the chat   
                 valuator_emit('user-left', socket);
                 console.log("Removing history from this socket since it disconnected.")
                 storedMessages = storedMessages.filter((value) => {
@@ -888,13 +891,18 @@ app.get('/valuator/history', function (req, res) {
 })
 
 app.get('/valuator/return', function (req, res) {
+    console.log("/valuator/return")
     var story_ID = req.query.story_ID;
     var socket_ID = req.query.socket_ID;
     if (story_data_map.has((story_ID)) && story_data_map.get(story_ID).get(socket_ID).length > 0) {
         player_per_group.delete(story_ID);
         recap.set(story_ID, true);
-        res.status(200).send(JSON.stringify([...stories_map.get(story_ID)])).end();
+        console.log("/valuator/return before")
+        res.status(200).send(JSON.stringify([...story_data_map.get(story_ID)])).end();
+        console.log("/valuator/return after")
         stories_map.delete(story_ID);
+        story_data_map.delete(story_ID);
+        console.log("returning")
         return;
     }
     else {

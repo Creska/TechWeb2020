@@ -2,7 +2,6 @@ var activeStoryName; //known active stories
 var defaultPageTitle = 'Ambiente Valutatore';
 var defaultDescription = "Benvenuto. Qui avrai ha disposizione l'editor potenziato per le storie e l'applicazione per il supporto dei giocatori."
 var pageLocation = 0;
-let players_finished = [];
 var socket;
 let last_unused = [];
 let json_to_return = new Map();
@@ -21,9 +20,10 @@ function removePlayer(socketID) {
             })
         }
         if (v.players.length <= 0) {
-            $('#nav-' + v.json.story_ID).remove();
-            $('#chat--' + v.json.story_ID).remove();
-            $('#chat-top' + v.json.story_ID).remove();
+            if (!stories_finished.has(k) || stories_finished.get(k).length <= 0) {
+                $('#nav-' + v.json.story_ID).remove();
+                $('#chat-top' + v.json.story_ID).remove();
+            }
         }
     })
 }
@@ -69,8 +69,6 @@ function toHome() {
             case 1:
                 $('#support').fadeOut();
                 $('#chatrooms').fadeOut();
-                $('#charts').fadeOut();
-                $.post('/valuator/restore'); //TODO parameters
                 break;
 
             case 2:
@@ -149,7 +147,7 @@ function valuateInput(socketID) {
             $(`#warn-` + socketID).remove();
         });
         $('#' + socketID).css('color', 'white');
-    }, 3000)
+    }, 1000)
 }
 
 function TabHandler(id) {
@@ -163,8 +161,8 @@ function makeNav(story_ID) {
     console.log(story_map, story_ID);
     if ($('#nav-' + story_ID).length < 1) {
         $('#nav-tab').append('<button onclick="TabHandler(' + "'" + story_ID + "'" + ')" class="nav-link" id="nav-' + story_ID + '" data-bs-toggle="tab" data-bs-target="chat-top' + story_ID + '" type="button" role="tab" aria-controls="nav-home" aria-selected="false">' + story_map.get(story_ID).json.story_title + '</button>')
-        $('#nav-tabContent').append('<p id="description-' + story_ID + '" style="color: white;display: none"></p>')
         $('#nav-tabContent').append('<div class="tab-pane fade" id="chat-top' + story_ID + '" role="tabpanel" aria-labelledby="nav-' + story_ID + '"></div>')
+        $('#chat-top' + story_ID).append('<p id="description-' + story_ID + '" style="color: white;display: none"></p>')
         $('#chat-top' + story_ID).append('<div class="row" id="chat-' + story_ID + '"</div>')
     }
 }
@@ -233,15 +231,16 @@ function saveRecap(story_ID) {
     var blob = new Blob([json_to_return.get(story_ID)], { type: "text/plain;charset=utf-8" });
     json_to_return.delete(story_ID);
     saveAs(blob, "recap.json");
-    $('#description-' + story_ID).fadeOut(1000, function () {
-        $('#description-' + story_ID).remove();
-    })
     $('#nav-' + story_ID).fadeOut(1000, function () {
         $('#nav-' + story_ID).remove();
     })
     $('#chat-top' + story_ID).fadeOut(1000, function () {
-        $('chat-top' + story_ID).remove();
+        $('#chat-top' + story_ID).remove();
     })
+    $('#description-' + story_ID).fadeOut(1000, function () {
+        $('#description-' + story_ID).remove();
+    })
+    $.post('/valuator/restore', { story_ID: story_ID });
 }
 
 $(function () {
@@ -314,7 +313,7 @@ $(function () {
                         $(`#warn-` + data.id).remove();
                     });
                     $('#' + data.id).css('color', 'white');
-                }, 3000)
+                }, 1000)
                 break;
         }
     })
@@ -343,7 +342,6 @@ $(function () {
     })
     socket.on('player-end', (socketID) => {
         console.log("User  " + socketID + " has finished.");
-        removePlayer(id);
         getStoryFromSocket(socketID, function (story) {
             if (stories_finished.has(story.story_ID)) {
                 stories_finished.get(story.story_ID).push(socketID)
@@ -351,6 +349,7 @@ $(function () {
             else {
                 stories_finished.set(story.story_ID, [socketID])
             }
+            removePlayer(socketID);
             let message = `  
             <div class="container-chat darker-chat col-sm overflow-auto" >
         <p style="color: yellow">`+ '<b>System Message: User finished the story.<b>' + `</p>
@@ -360,9 +359,14 @@ $(function () {
             setTimeout(function () {
                 deleteContainer(socketID)
             }, 5000)
+            console.log("finished length", stories_finished.get(story.story_ID).length)
+            console.log("players length", story_map.get(story.story_ID).players.length)
+            console.log(stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0)
             if (stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0) {
-                $.get("/valuator/return", function (player_data) { //TODO parameters
+                console.log("returning")
+                $.get("/valuator/return", { story_ID: story.story_ID, socket_ID: socketID }, function (player_data) {
                     //stats per socket(local, per activity)
+                    console.log("processing...")
                     let temp_player_map = new Map(JSON.parse(player_data));
                     //stats per socket(total)
                     let socket_stats = new Map();
@@ -481,7 +485,11 @@ $(function () {
                         })
                         activity_stats.set(k, { totalScore: temp_a_score, totalTimeToAnswer: temp_a_tta, totalChatMessages: temp_a_cm })
                     })
-                    var ctx1 = document.getElementById('chart1').getContext('2d');
+                    $('#description-' + story.story_ID).after('<div id="charts-' + story.story_ID + '" class="row" style="display: none">');
+                    $('#charts-' + story.story_ID).append('<div class="col-sm-4"><canvas id="chart1-' + story.story_ID + '" width="100%" height="100%"></canvas></div>');
+                    $('#charts-' + story.story_ID).append('<div class="col-sm-4"><canvas id="chart2-' + story.story_ID + '" width="100%" height="100%"></canvas></div>');
+                    $('#charts-' + story.story_ID).append('<div class="col-sm-4"><canvas id="chart3-' + story.story_ID + '" width="100%" height="100%"></canvas></div>');
+                    var ctx1 = document.getElementById('chart1-' + story.story_ID).getContext('2d');
                     ctx_labels = [];
                     ctx1_points = [];
                     ctx2_points = [];
@@ -518,7 +526,7 @@ $(function () {
                             }
                         }
                     });
-                    var ctx2 = document.getElementById('chart2').getContext('2d');
+                    var ctx2 = document.getElementById('chart2-' + story.story_ID).getContext('2d');
                     var ttaChart = new Chart(ctx2, {
                         type: 'bar',
                         data: {
@@ -541,7 +549,7 @@ $(function () {
                             }
                         }
                     });
-                    var ctx3 = document.getElementById('chart3').getContext('2d');
+                    var ctx3 = document.getElementById('chart3-' + story.story_ID).getContext('2d');
                     var cmChart = new Chart(ctx3, {
                         type: 'bar',
                         data: {
@@ -564,17 +572,20 @@ $(function () {
                             }
                         }
                     });
-                    $('#charts').fadeIn();
                     let recap_object = new Object();
                     recap_object.perSocketActivityStats = [...temp_player_map];
                     recap_object.perSocketGlobalStats = [...socket_stats];
                     recap_object.perSocketGlobalStats.sort((a, b) => a.temp_score > b.temp_score ? 1 : -1);
-                    recap_object.perGroupStats = [...group_stats];
+                    if (!group_stats.has(undefined) && !group_stats.has(null)) {
+                        recap_object.perGroupStats = [...group_stats];
+                    }
                     recap_object.perQuestStats = [...quests_stats]
                     json_to_return.set(story.story_ID, JSON.stringify(recap_object));
-                    $('#description-' + story.story_ID).text(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
+
+                    $('#description-' + story.story_ID).html(`Tutti i player hanno concluso la storia con successo. Clicca sul pulsante sottostante per scaricare informazioni sulla partita in formato JSON.<br><button type="button"
                             class="btn btn-dark" onclick="saveRecap('`+ story.story_ID + `')">Salva</button>`);
                     $('#description-' + story.story_ID).fadeIn();
+                    $('#charts-' + story.story_ID).fadeIn();
                     story_map.delete(story.story_ID);
                     stories_finished.delete(story.story_ID);
                 })

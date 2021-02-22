@@ -22,14 +22,13 @@ body {
     max-width: 50em;
 }
 
-#appbanner, .StoryTitle, footer {
+#appbanner, footer {
     background-color: rgba(119, 136, 153, 0.9);
 }
 
 #appbanner {
     text-align: center;
     color: rgba(255, 255, 255);
-    font-family: fantasy;
     font-size: 20px;
 }
 
@@ -49,13 +48,8 @@ move_logo{
     to {top: 20px;}
 }
 
-#StartScreen {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
-}
-
 .alert {
-    margin: 0;
+    text-align: center;
 }
 
 .alert ul, #info-body ul {
@@ -100,8 +94,11 @@ move_logo{
     letter-spacing: 2px;
 }
 
+.btn {
+    text-transform: uppercase;
+}
+
 #StartBtn, .NextActivity, .CloseGameBtn{
-    align-content: center;
     text-align: center;
     width: 200px;
     background-color: rgba(25, 1, 130, 0.8);
@@ -145,21 +142,11 @@ move_title{
     width: 100%;
     height: 100%;
     position: relative;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-#Main::after{
-    content: ' ';
-    display: block;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: #000000;
-    position: absolute;
-    display: block;
-    opacity: 0.5;
-    z-index: 0;
-}
+
+
 
 .Quest {
     margin-top: 20px;
@@ -187,11 +174,7 @@ move_quest{
     }
 }
 
-.Activity {
-    text-align: center;
-}
-
-.ActivityText, #Error, #Finish {
+.Activity, #Error, #Finish {
     background-color: rgba(255, 255, 255, 0.7);
     padding: 5px;
     color: rgb(0, 10, 20);
@@ -202,13 +185,15 @@ move_quest{
     font-size: 18px;
     z-index: 1;
     position: relative;
+    text-align: center;
 }
 
-.ActivityText p {
+.Activity p {
     text-align: justify;
 }
 
 .AnswerField{
+    color: aliceblue;
     background-image: url(./media/domanda.jpg);
     background-size: cover;
     background-attachment: scroll;
@@ -239,13 +224,14 @@ move_quest{
     word-wrap: break-word;
 }
 
-
-
 .carousel-caption {
     position: static;
     color: black;
     font-style: italic;
 }
+
+
+
 
 #ButtonToTop{
     position: fixed;
@@ -282,6 +268,10 @@ footer {
     box-shadow: none;
 }
 
+#OpenChat:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 #chat-room input{
     width: 100%;
     padding: 15px;
@@ -308,25 +298,6 @@ footer {
     background-color:rgb(100, 100, 100);
     border: 2px solid whitesmoke;
     color: rgb(255, 255, 255);
-}
-
-#history{
-    text-decoration: none;
-    outline: none;
-    display: inline-block;
-    color: white;
-    padding-top: 10px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    background-image: linear-gradient(to right, #00bfff 0%, #2200ff 50%, #00bfff 100%);
-    background-size: 200% auto;
-    box-shadow: 0 0 20px rgba(0,0,0,.1);
-    border-radius: 20px;
-    transition: .5s;
-  }
-
-#history:hover {
-    background-position: right center;
 }
 
 #list{

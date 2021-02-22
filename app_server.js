@@ -19,21 +19,17 @@ const fs = require('fs');
 const rmdir = require('rimraf');
 const ncp = require('ncp').ncp;
 const cheerio = require('cheerio')
-var recap = false;
+var recap = new Map();
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
-var player_data = new Map(); //stores some player data, need this to be able to do a game summary
-var storysent = undefined; //the last game that was requested, so I can know where to put the new player.
-var story_name = undefined; //name of the story sent
-var valuatorID = undefined; //valuatorID, managing all games. There can be only one valuator online at a time.
-//var stories_map = new Map(); //game_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+var valuators = []; //valuatorID, managing all games. There can be only one valuator online at a time.
+var stories_map = new Map(); //story_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+var story_data_map = new Map(); //story_id(key), (value): player_data()
+var player_per_group = new Map(); //story_id(key), (value): player_per_group_count, group
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
-var player_count = 0; //players online
-var player_per_group_count = 0; //temp counter of players per group
-let group = 0; //last group
-let groupstory = undefined; //last shuffled group story
+
 
 function UNF() {
     let id = uniqueFilename('');
@@ -42,25 +38,6 @@ function UNF() {
     }
     return id;
 }
-
-// function shuffle(array) {
-//     var currentIndex = array.length, temporaryValue, randomIndex;
-
-//     // While there remain elements to shuffle...
-//     while (0 !== currentIndex) {
-
-//         // Pick a remaining element...
-//         randomIndex = Math.floor(Math.random() * currentIndex);
-//         currentIndex -= 1;
-
-//         // And swap it with the current element.
-//         temporaryValue = array[currentIndex];
-//         array[currentIndex] = array[randomIndex];
-//         array[randomIndex] = temporaryValue;
-//     }
-
-//     return array;
-// }
 
 /*
     TEAMS
@@ -90,11 +67,25 @@ function UNF() {
     -DONE Rankings
     -DONE For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -DONE For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
-*/
+    =>TODO preview won't work
 
-function valuator_emit(method, socket, data) {
+    */
+
+function valuator_emit(method, socket, data, ricochet) {
     //emits the event passed with the arg to the valuator
-    socket.to(valuatorID).emit(method, socket.id, data);
+    let check = ricochet || false;
+    if (!check) {
+        valuators.forEach(valuator => {
+            socket.to(valuator).emit(method, socket.id, data);
+        })
+    }
+    else {
+        valuators.forEach(valuator => {
+            if (valuator != data.id_from) {
+                socket.to(valuator).emit(method, data);
+            }
+        })
+    }
     console.log("Sending the event '" + method + "' to the valuator, from: " + socket.id);
 }
 
@@ -113,23 +104,22 @@ function storyPath(id) {
         return '404'
     }
 }
-// function removePlayer(id) {
-//by passing the socket id, this specific player will be removed from the story he's playing
-// player_count--;
-// stories_map.forEach((v, k) => {
-//     if (v.players.includes(id)) {
-//         v.players = v.players.filter((value) => {
-//             return value !== id;
-//         })
-//         if (!v.players.length) {
-//             //if there's no players for this story, delete it
-//             stories_map.delete(k);
-//             console.log("The story with ID " + k + " has no more players, deleting the record.");
-//             //TODO signal the valuator that a story has been deleted due to players leaving
-//         }
-//     }
-// }) MIGHT NOT NEED THIS ANYMORE
-// }
+function removePlayer(id) {
+    // by passing the socket id, this specific player will be removed from the story he's playing
+    stories_map.forEach((v, k) => {
+        if (v.players.includes(id)) {
+            v.players = v.players.filter((value) => {
+                return value !== id;
+            })
+            player_per_group.get(k).player_per_group_count--;
+            if (v.players.length == 0) {
+                stories_map.delete(k);
+                player_per_group.delete(k);
+            }
+
+        }
+    })
+}
 
 io.on('connection', (socket) => {
     /* handling sockets for chat: I need to configure players and valuator separately
@@ -137,120 +127,147 @@ io.on('connection', (socket) => {
     */
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
-        // if (stories_map.has(storysent.story_ID)) {
-        //     //A player entered a game already instanciated, updating it
-        //     let temp_game = stories_map.get(storysent.story_ID);
-        //     temp_game.players.push(socket.id)
-        //     stories_map.set(storysent.story_ID, temp_game);
-        //     console.log("A new player arrived(" + temp_game.players.length + ") for the story: " + storysent.story_title);
-        // } NO MULTIPLE STORIES
-        // else {
-        //     //A player entered with a new game, creating the record for it
-        //     stories_map.set(storysent.story_ID, { story: storysent, players: [socket.id] })
-        //     console.log("A new player arrived(1) for the new story: " + storysent.story_title + ", creating the record for it.");
-        // }
-        player_count++;
-        player_per_group_count++;
-        console.log("A new player arrived(" + player_count + ") for the story: " + storysent.story_title);
-        //Set an array for the current player, so I can push activities data with /update.
-        player_data.set(socket.id, []);
-        if (valuatorID) {
-            valuator_emit('user-joined', socket)
-        }
-        else {
-            //storing join event in case the valuator is still not connected
-            console.log("Valuator is offline, storing the join event.")
-            storedJoins.push(socket.id);
-        }
+        fs.readFile(pubpath + socket.handshake.query['story'] + "/" + "story.json", function (err, story_data) {
+            story_data = JSON.parse(story_data)
+            if (err) {
+                console.log("An error accourred while reading a story.json while connecting a socket: " + err)
+                socket.disconnect();
+                return;
+            }
+            if (stories_map.has(story_data.story_ID)) {
+                //A player entered a game already instanciated, updating it
+                stories_map.get(story_data.story_ID).players.push(socket.id);
+                console.log("A new player arrived(" + stories_map.get(story_data.story_ID).players.length + ") for the story: " + story_data.story_title);
+            }
+            else {
+                //A player entered with a new game, creating the record for it
+                stories_map.set(story_data.story_ID, { story: story_data, players: [socket.id] })
+                console.log("A new player arrived(1) for the new story: " + story_data.story_title + ", creating the record for it.");
+            }
+            if (player_per_group.has(story_data.story_ID)) {
+                player_per_group.get(story_data.story_ID).player_per_group_count++;
+            } else {
+                player_per_group.set(story_data.story_ID, { player_per_group_count: 1, group: 0 })
+            }
+            storedJoins.push({ id: socket.id, story_ID: story_data.story_ID });
+            //Set an array for the current player, so I can push activities data with /update.
+            if (!story_data_map.has(story_data.story_ID)) {
+                let tempmap = new Map();
+                tempmap.set(socket.id, [])
+                story_data_map.set(story_data.story_ID, tempmap);
+            } else {
+                story_data_map.get(story_data.story_ID).set(socket.id, []);
+            }
+            if (valuators.length > 0) {
+                valuator_emit('user-joined', socket, story_data)
+            }
+            let story_to_return = story_data;
+            if (story_data.game_mode == "CLASS") {
+                let player_count = stories_map.get(story_data.story_ID).story.players;
+                if (player_per_group.get(story_data.story_ID).player_per_group_count > player_count) {
+                    // console.log("limit exceeded")
+                    player_per_group.get(story_data.story_ID).player_per_group_count = 1;
+                    story_to_return.groupID = ++player_per_group.get(story_data.story_ID).group;
+                    console.log(story_to_return.groupID)
+                    //shuffle(groupstory.quests)
+                }
+                else {
+                    story_to_return = JSON.parse(JSON.stringify(story_data))// used to clone an object without reference;
+                    story_to_return.groupID = player_per_group.get(story_data.story_ID).group;
+                }
+            }
+            socket.emit('load-json', story_to_return);
+        })
     }
     else if (socket.handshake.query['type'] == 'valuator') {
         console.log("A valuator page connected.")
-        if (!valuatorID) {
-            //saving the valuator socket ID
-            valuatorID = socket.id;
-        }
-        else {
-            console.log("A valuator tried to connect while another valuator was already connected.");
-        }
+        valuators.push(socket.id);
     }
     else {
         console.log("Someone connected without querying for player or valuator. This shouldn't be possible,probably there are some old pages's socket still online.");
+        return;
     }
     socket.on('disconnect', () => {
         console.log("Disconnecting: " + socket.id)
-        if (valuatorID) {
-            if (valuatorID != socket.id) {
+        if (valuators.length > 0) {
+            if (!valuators.includes(socket.id)) {
                 //A player is disconnected
-                //sending the disconnect event to the valuator so I can remove the chat           
+                //sending the disconnect event to the valuator so I can remove the chat   
                 valuator_emit('user-left', socket);
-                player_count--;
                 console.log("Removing history from this socket since it disconnected.")
                 storedMessages = storedMessages.filter((value) => {
                     return value.id != socket.id;
                 });
                 storedJoins = storedJoins.filter((value) => {
-                    return value != socket.id;
+                    return value.id != socket.id;
                 })
                 //removes the player(socket) from the story he's in, also decreasing the number of players for that story
-                // removePlayer(socket.id);
+                removePlayer(socket.id);
             } else {
                 //A valuator is disconnected
-                valuatorID = undefined;
-                console.log("A valuator disconnected. Setting valuatorID to undefined.")
+                valuators = valuators.filter((value) => {
+                    return value != socket.id;
+                });
+                console.log("A valuator disconnected.")
             }
         }
         else {
             //Removing history from a player that connected, sent some messages and then disconnected while the valuator wasn't online
-            player_count--;
             console.log("Removing history from this socket, since the valuator is still not connected or disconnected.")
             storedMessages = storedMessages.filter((value) => {
                 return value.id != socket.id;
             });
             storedJoins = storedJoins.filter((value) => {
-                return value != socket.id;
+                return value.id != socket.id;
             })
-        }
-        if (player_count == 0) {
-            console.log("Deleting the storysent since there's no more players connected.")
-            storysent = undefined;
-            story_name = undefined;
+            removePlayer(socket.id);
         }
     })
-    socket.on('chat-message', (message, id_from, id_to) => {
+    socket.on('chat-message', (message, id_from, id_to, storyID) => {
         //handler for CHAT MESSAGES 
-        if (valuatorID) {
-            if (id_from != valuatorID) {
+        if (valuators.length > 0) {
+            if (!valuators.includes(id_from)) {
                 console.log("The player " + id_from + " is sending the message: " + message);
+                storedMessages.push({ message: message, id: id_from });
                 valuator_emit('chat-message', socket, message);
             }
             else {
                 console.log("The valuator is sending the message: " + message + " | to: " + id_to);
                 socket.to(id_to).emit('chat-message', message);
             }
-
         }
         else {
             console.log("Valuator is offline, storing the message.")
             storedMessages.push({ message: message, id: id_from });
         }
-
     })
-    socket.on('validate-input-player', (activityID, question, answer, socketID) => {
+    socket.on('validate-input-player', (activityID, question, answer, socketID, storyID) => {
         //handling input validation to the valuator
-        if (valuatorID) {
-            socket.to(valuatorID).emit('valuate-input', activityID, question, answer, socketID)
+        if (valuators.length) {
+            valuators.forEach(valuator => {
+                socket.to(valuator).emit('valuate-input', activityID, question, answer, socketID)
+            })
+            storedMessages.push({ type: "valuate", activityID: activityID, question: question, answer: answer, id: socketID });
         }
         else {
             console.log("Valuator is offline, storing to be valued message.")
-            storedMessages.push({ activityID: activityID, question: question, answer: answer, id: socketID });
+            storedMessages.push({ type: "valuate", activityID: activityID, question: question, answer: answer, id: socketID });
         }
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
-        //input validation was handled, sending the result back
+        //input validation was handled, sending the result back, removing it from history with all the warning in case the still exist
         socket.to(socketID).emit('input-valued', nextActivity, score);
+        for (let index = 0; index < storedMessages.length; index++) {
+            if ((storedMessages[index].id == socketID) && (storedMessages[index].type == "valuate" || storedMessages[index].type == "warning")) {
+                storedMessages.splice(index, 1);
+            }
+        }
     })
     socket.on('player-end', (socketID) => {
-        socket.to(valuatorID).emit('player-end', socketID)
+        valuator_emit('player-end', socket, socketID);
+    })
+    socket.on('valuator-ricochet', (data) => {
+        valuator_emit('ricochet', socket, data, true);
     })
 })
 app.get('/player', function (req, res) {
@@ -277,21 +294,11 @@ app.get('/player', function (req, res) {
             else {
                 console.log("An error accourred inside /player, while retrieving the story: " + err);
                 return res.status(500).send(JSON.stringify(err)).end();
-
             }
         }
         else {
-            console.log("Request for " + story + " received successfully. Returning the player and the story to be loaded.");
+            console.log("Request for " + story + " received successfully. Returning the player.");
             //saving the current game
-            let tempstory = JSON.parse(story_data);
-            if (story_name != undefined && tempstory.story_title != story_name) {
-                return res.status(500).send(JSON.stringify({ code: "BUSY", message: "Another story is being played." })).end();
-            }
-            if (recap) {
-                return res.status(500).send(JSON.stringify({ code: "BUSY", message: "A recap for a story is being shown." })).end();
-            }
-            storysent = JSON.parse(story_data);
-            story_name = storysent.story_title;
             fs.readFile('public/player/player.html', function (err, player_data) {
                 if (err) {
                     if (err.code == "ENOENT") {
@@ -305,7 +312,6 @@ app.get('/player', function (req, res) {
                 }
                 else {
                     const $ = cheerio.load(player_data);
-                    // $('head').append('<template id="story-name">' + story + '</template>'); NOT NEEDED ANYMORE
                     //appending to the body a template with the JSON to load
                     return res.status(200).send($.html()).end();
                     //sending back the player page
@@ -325,16 +331,21 @@ app.post('/player/activityUpdate', function (req, res) {
     var Score = activity.Score;
     var group = activity.Group;
     var socketID = activity.socketID || undefined;
-    if (activityID && questID && chatMessages && timeToAnswer && Score && socketID) {
-        if (player_data.has(socketID)) {
-            player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+    var story_ID = activity.story_ID;
+    if (activityID && questID && chatMessages && timeToAnswer && Score && socketID && story_ID) {
+        if (story_data_map.has(story_ID)) {
+            story_data_map.get(story_ID).get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+        }
+        else {
+            console.log("/player/activityUpdate SERVER ERROR, Update for a story that doesn't exist.")
+            return res.status(400).send(JSON.stringify({ code: "SERVER_ERROR", message: "Update for a story that doesn't exist." })).end();
         }
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }
     else {
         console.log("/player/activityUpdate BAD REQUEST, a parameter was not provided.")
-        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID) was not provided." })).end();
+        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID,story_ID) was not provided." })).end();
     }
 })
 
@@ -342,17 +353,21 @@ app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
-    if (storysent == undefined) {
-        return res.status(500).send(JSON.stringify({ code: "RESTART", message: "Server was restarted" })).end();
-    }
+    //TODO test warnings appearing into the valuator
+    //TODO player has to stop the interval in case of error
+    console.log("/player/playersActivities")
     var activity = req.body;
     var questID = activity.QuestID;
     var activityID = activity.ActivityID;
     var time_elapsed = activity.time_elapsed;
-    if (questID && activityID && time_elapsed) {
-        // var maximum_time = storysent.game.quests[quest_index].activities[activity_index].expected_time;
+    var storyID = activity.story_ID;
+    if (questID && activityID && time_elapsed && storyID) {
+        if (!stories_map.has(storyID)) {
+            console.log("/player/playersActivities 500")
+            return res.status(500).send(JSON.stringify({ code: "RESTART", message: "Story passed wasn't found. Probably server was restarted." })).end();
+        }
         let temp_quest;
-        storysent.quests.forEach(quest => {
+        stories_map.get(storyID).story.quests.forEach(quest => {
             if (quest.quest_id == questID) {
                 temp_quest = quest;
             }
@@ -368,16 +383,15 @@ app.post('/player/playersActivities', function (req, res) {
         if (maximum_time && time_elapsed > maximum_time && chrono) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
-            if (valuatorID) {
+            if (valuators.length > 0) {
                 valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
                 console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
+                storedMessages.push({ type: "warning", id: socketID, time: time_elapsed - maximum_time });
             }
             else {
                 console.log("Valuator is offline, storing the warning message");
                 storedMessages.push({ id: socketID, time: time_elapsed - maximum_time });
             }
-            valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
-            console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
             return res.status(200).end();
         }
     } else {
@@ -408,59 +422,6 @@ app.get('/editor', function (req, res) {
     })
 
 });
-
-app.get('/player/loadJSON', function (req, res) {
-    //loads the story being played, shuffling quests when needed
-    // console.log(player_count)
-    // console.log(player_per_group_count)
-    // console.log(storysent.players)
-    if (storysent.game_mode == "CLASS") {
-        if (player_count == 1) {
-            // console.log("player count is 1")
-            groupstory = JSON.parse(JSON.stringify(storysent))// used to clone an object without reference;
-            groupstory.groupID = group;
-            //shuffle(groupstory.quests)
-
-        }
-        if (player_per_group_count > storysent.players) {
-            // console.log("limit exceeded")
-            player_per_group_count = 1;
-            group++;
-            groupstory.groupID = group;
-            //shuffle(groupstory.quests)
-        }
-        return res.status(200).send(JSON.stringify(groupstory))
-    }
-    else {
-        return res.status(200).send(JSON.stringify(storysent))
-    }
-})
-
-// app.get('/editor/preview', function (req, res) {
-//     let storyID = req.query.story_id;
-//     let tempath = storyPath(storyID)
-//     if (tempath != '404') {
-//         if (tempath == pubpath + storyID) {
-//             return res.status(500).send(JSON.stringify({ code: "BADPARAMETER", message: "Story is published. This call can only be done on published stories." }))
-//         }
-//         else {
-//             fs.readFile(tempath, (err, data) => {
-//                 if (data) {
-//                     let tempstory = JSON.parse(data);
-//                     data.testing = true;
-//                     return res.status(200).send(JSON.stringify(tempstory)).end();
-//                 }
-//                 else {
-//                     return res.status(500).send(JSON.stringify(err)).end()
-//                 }
-//             })
-//         }
-//     }
-//     else {
-//         console.log("An error occurred inside /editor/preview while reading the story " + storyID);
-//         return res.status(500).send(JSON.stringify({ code: "ENOENT", message: "Story doesn't exist." }))
-//     }
-// })
 
 app.post('/editor/duplicate', function (req, res) {
     console.log("duplicate request received.");
@@ -887,31 +848,26 @@ app.post('/editor/publisher', function (req, res) {
 
 app.get('/valuator', function (req, res) {
     //reading valuator page
-    if (valuatorID) {
-        console.log("/valuator CONFLICT: A valuator is already in use");
-        return res.status(409).send("Cannot GET /valuator, busy").end().end();
-    }
-    else {
-        fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
-            if (err) {
-                if (err.code == "ENOENT") {
-                    console.log("An error accourred inside /valuator, valuator page not found.");
-                    return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
-                    //the story wasn't found, so I answer with a 404 status response
-                }
-                else {
-                    console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
-                    return res.status(500).send(JSON.stringify(err)).end();
-                }
+    fs.readFile('public/valuator/valuator_page.html', function read(err, data) {
+        if (err) {
+            if (err.code == "ENOENT") {
+                console.log("An error accourred inside /valuator, valuator page not found.");
+                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
+                //the story wasn't found, so I answer with a 404 status response
             }
             else {
-                console.log("Request for the valuator page received successfully. Returning the page.");
-                //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
-                const $ = cheerio.load(data);
-                return res.status(200).send($.html()).end();
+                console.log("An error accourred inside /valuator, while retrieving the valuator: " + err);
+                return res.status(500).send(JSON.stringify(err)).end();
             }
-        })
-    }
+        }
+        else {
+            console.log("Request for the valuator page received successfully. Returning the page.");
+            //returning the valuator, I'm using cheerio since it's handy...and it would be a waste not using loaded libraries ¯\_(ツ)_/¯
+            const $ = cheerio.load(data);
+            return res.status(200).send($.html()).end();
+        }
+    })
+
 })
 
 app.get('/valuator/history', function (req, res) {
@@ -933,12 +889,18 @@ app.get('/valuator/history', function (req, res) {
 })
 
 app.get('/valuator/return', function (req, res) {
-    if (player_data.size > 0) {
-        player_per_group_count = 0; //temp counter of players per group
-        group = 0; //last group
-        recap = true;
-        res.status(200).send(JSON.stringify([...player_data])).end();
-        player_data.clear();
+    console.log("/valuator/return")
+    var story_ID = req.query.story_ID;
+    var socket_ID = req.query.socket_ID;
+    if (story_data_map.has((story_ID)) && story_data_map.get(story_ID).get(socket_ID).length > 0) {
+        player_per_group.delete(story_ID);
+        recap.set(story_ID, true);
+        console.log("/valuator/return before")
+        res.status(200).send(JSON.stringify([...story_data_map.get(story_ID)])).end();
+        console.log("/valuator/return after")
+        stories_map.delete(story_ID);
+        story_data_map.delete(story_ID);
+        console.log("returning")
         return;
     }
     else {
@@ -948,33 +910,40 @@ app.get('/valuator/return', function (req, res) {
 })
 
 app.post('/valuator/restore', function (req, res) {
-    recap = false;
+    var story_ID = req.body.story_ID;
+    recap.delete(story_ID)
     return res.status(200).end();
+})
+
+app.post('/player/getPermissions', function (req, res) {
+    var story_ID = req.body.story_ID;
+    if (recap.has(story_ID)) {
+        console.log("/player/getPermissions recap is true for " + story_ID)
+        res.status(200).send(JSON.stringify(false))
+    }
+    else {
+        console.log("/player/getPermissions all clear for " + story_ID)
+        res.status(200).send(JSON.stringify(true))
+    }
+
 })
 
 app.get('/valuator/activeStories', function (req, res) {
     //sending all current active games to the valuator
-    // var activeStories = [];
-    // stories_map.forEach((v, _k) => {
-    //     activeStories.push({ story_name: v.story_name, story_ID: v.story_ID });
-    // }) WON'T NEED THIS IF WE DON'T HANDLE MULTIPLE STORIES
-    if (storysent) {
-        return res.status(200).send(JSON.stringify(storysent)).end();
+    var activeStories = [];
+    stories_map.forEach((v, _k) => {
+        activeStories.push({ json: v.story, players: v.players });
+    })
+    // console.log("activeStories", activeStories)
+    if (activeStories.length > 0) {
+        return res.status(200).send(JSON.stringify(activeStories)).end();
     }
     else {
-        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
+        return res.status(200).send(JSON.stringify([])).end();
     }
 
 })
 
-app.get('/valuator/activeStoryName', function (req, res) {
-    if (story_name) {
-        return res.status(200).send(JSON.stringify(story_name)).end();
-    } else {
-        return res.status(404).send(JSON.stringify({ code: "NOTFOUND", message: "No active story was found." })).end();
-    }
-
-})
 
 http.listen(8000, () => {
     console.log('Listening on *:8000');

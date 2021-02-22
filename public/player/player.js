@@ -31,16 +31,18 @@ var activitymap; // per ogni activityID indica [oggetto dell'array, id della que
 $(function () {
 
 	/* query e caricamento della storia */
-	socket = io.connect('', { query: "type=player", reconnection: false });
-	$.get("/player/loadJSON", function (data) {
-		StoryObj = JSON.parse(data);
+	const story_id = new URLSearchParams(window.location.search).get('story');
+	console.log(story_id);
+	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "" }, reconnection: false });
+	socket.on('load-json', function (data) {
+		console.log("Loading the JSON");
+		StoryObj = data;
 		if (StoryObj.published == false || StoryObj.published == undefined) {
 			TESTING = true;
 		}
 		loadGame();
-	});
 
-	/* ricezione messaggio chat */
+	});
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
@@ -625,4 +627,35 @@ function endGame() {
 
 	Status.QuestID = null;
 	Status.ActivityID = null;
+};
+
+
+function sendStatus() {
+	let intervalStatus = {
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		time_elapsed: Status.time_elapsed,
+		Group: StoryObj.groupID,
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
+	};
+	$.post("/player/playersActivities", intervalStatus);
+	// console.log( intervalStatus ); // debugging 
+};
+
+
+function sendActivityRecap() {
+	let recap = {
+		QuestID: Status.QuestID,
+		ActivityID: Status.ActivityID,
+		TimeToAnswer: ActivityRecap.TimeToAnswer,
+		ChatMessages: ActivityRecap.ChatMessages,
+		Score: ActivityRecap.Score,
+		Group: StoryObj.groupID,
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
+	};
+	// console.log(recap.QuestID, recap.ActivityID, recap.TimeToAnswer, recap.ChatMessages, recap.Score, recap.Group, recap.socketID)
+	$.post("/player/activityUpdate", recap);
+	// console.log( recap ); // debugging
 };

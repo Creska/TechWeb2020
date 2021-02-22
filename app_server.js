@@ -264,9 +264,7 @@ io.on('connection', (socket) => {
         }
     })
     socket.on('player-end', (socketID) => {
-        valuators.forEach(valuator => {
-            socket.to(valuator).emit('player-end', socketID)
-        })
+        valuator_emit('player-end', socket, socketID);
     })
     socket.on('valuator-ricochet', (data) => {
         valuator_emit('ricochet', socket, data, true);

@@ -338,7 +338,7 @@ $(function () {
         $('#form-' + id).before(message);
         setTimeout(function () {
             deleteContainer(id)
-        }, 5000)
+        }, 1000)
     })
     socket.on('player-end', (socketID) => {
         console.log("User  " + socketID + " has finished.");
@@ -358,7 +358,7 @@ $(function () {
             $('#form-' + socketID).before(message);
             setTimeout(function () {
                 deleteContainer(socketID)
-            }, 5000)
+            }, 1000)
             console.log("finished length", stories_finished.get(story.story_ID).length)
             console.log("players length", story_map.get(story.story_ID).players.length)
             console.log(stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0)

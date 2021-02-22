@@ -23,14 +23,13 @@ var recap = new Map();
 var uniqueFilename = require('unique-filename')
 var storedJoins = []; //storing the join event of the player in case the valuator is still not connected
 var storedMessages = []; //storing messages of the player in case the valuator is still not connected
-var player_data = new Map(); //stores some player data, need this to be able to do a game summary
 var valuators = []; //valuatorID, managing all games. There can be only one valuator online at a time.
 var stories_map = new Map(); //story_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
 var story_data_map = new Map(); //story_id(key), (value): player_data()
+var player_per_group = new Map(); //story_id(key), (value): player_per_group_count, group
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
-var player_per_group_count = 0; //temp counter of players per group
-let group = 0; //last group
+
 
 function UNF() {
     let id = uniqueFilename('');
@@ -68,7 +67,6 @@ function UNF() {
     -DONE Rankings
     -DONE For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -DONE For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
-    =>TODO handling recap exception
     =>TODO preview won't work
 
     */
@@ -125,7 +123,6 @@ io.on('connection', (socket) => {
     */
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
-        player_per_group_count++;
         fs.readFile(pubpath + socket.handshake.query['story'] + "/" + "story.json", function (err, story_data) {
             story_data = JSON.parse(story_data)
             if (err) {
@@ -143,11 +140,14 @@ io.on('connection', (socket) => {
                 stories_map.set(story_data.story_ID, { story: story_data, players: [socket.id] })
                 console.log("A new player arrived(1) for the new story: " + story_data.story_title + ", creating the record for it.");
             }
-            player_per_group_count++;
+            if (player_per_group.has(story_data.story_ID)) {
+                player_per_group.get(story_data.story_ID).player_per_group_count++;
+            } else {
+                player_per_group.set(story_data.story_ID, { player_per_group_count: 1, group: 0 })
+            }
+
             storedJoins.push({ id: socket.id, story_ID: story_data.story_ID });
             //Set an array for the current player, so I can push activities data with /update.
-            //TODO maybe better setting player data since I now have the story id?
-            player_data.set(socket.id, []);
             if (!story_data_map.has(story_data.story_ID)) {
                 let tempmap = new Map();
                 tempmap.set(socket.id, [])
@@ -163,14 +163,13 @@ io.on('connection', (socket) => {
                 let player_count = stories_map.get(story_data.story_ID).players.length;
                 if (player_count == 1) {
                     story_to_return = JSON.parse(JSON.stringify(story_data))// used to clone an object without reference;
-                    story_to_return.groupID = group;
+                    story_to_return.groupID = player_per_group.get(story_data.story_ID).group;
                     //shuffle(groupstory.quests)
                 }
-                if (player_per_group_count > player_count) {
+                if (player_per_group.get(story_data.story_ID).player_per_group_count > player_count) {
                     // console.log("limit exceeded")
-                    player_per_group_count = 1;
-                    group++;
-                    story_to_return.groupID = group;
+                    player_per_group.get(story_data.story_ID).player_per_group_count = 1;
+                    story_to_return.groupID = ++player_per_group.get(story_data.story_ID).group;
                     //shuffle(groupstory.quests)
                 }
             }
@@ -889,12 +888,13 @@ app.get('/valuator/history', function (req, res) {
 })
 
 app.get('/valuator/return', function (req, res) {
-    if (player_data.size > 0) {
-        player_per_group_count = 0; //temp counter of players per group
-        group = 0; //last group
-        recap = true;
-        res.status(200).send(JSON.stringify([...player_data])).end();
-        player_data.clear();
+    var story_ID = req.query.story_ID;
+    var socket_ID = req.query.socket_ID;
+    if (story_data_map.has((story_ID)) && story_data_map.get(story_ID).get(socket_ID).length > 0) {
+        player_per_group.delete(story_ID);
+        recap.set(story_ID, true);
+        res.status(200).send(JSON.stringify([...stories_map.get(story_ID)])).end();
+        stories_map.delete(story_ID);
         return;
     }
     else {
@@ -904,8 +904,22 @@ app.get('/valuator/return', function (req, res) {
 })
 
 app.post('/valuator/restore', function (req, res) {
-    recap = false;
+    var story_ID = req.body.story_ID;
+    recap.delete(story_ID)
     return res.status(200).end();
+})
+
+app.post('/player/getPermissions', function (req, res) {
+    var story_ID = req.body.story_ID;
+    if (recap.has(story_ID)) {
+        console.log("/player/getPermissions recap is true for " + story_ID)
+        res.status(200).send(JSON.stringify(false))
+    }
+    else {
+        console.log("/player/getPermissions all clear for " + story_ID)
+        res.status(200).send(JSON.stringify(true))
+    }
+
 })
 
 app.get('/valuator/activeStories', function (req, res) {

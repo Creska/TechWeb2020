@@ -26,7 +26,6 @@ var storedMessages = []; //storing messages of the player in case the valuator i
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
 var valuators = []; //valuatorID, managing all games. There can be only one valuator online at a time.
 var stories_map = new Map(); //story_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
-var storysent = undefined; //temp story holder
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
 var player_per_group_count = 0; //temp counter of players per group
@@ -113,6 +112,9 @@ function removePlayer(id) {
             v.players = v.players.filter((value) => {
                 return value !== id;
             })
+            if (v.players.length == 0) {
+                stories_map.delete(k);
+            }
         }
     })
 }
@@ -210,11 +212,6 @@ io.on('connection', (socket) => {
             })
             removePlayer(socket.id);
         }
-        // if (player_count == 0) {
-        //     console.log("Deleting the storysent since there's no more players connected.")
-        //     storysent = undefined;
-        //     story_name = undefined;
-        // }
     })
     socket.on('chat-message', (message, id_from, id_to, storyID) => {
         //handler for CHAT MESSAGES 
@@ -343,18 +340,21 @@ app.post('/player/playersActivities', function (req, res) {
     /*each player will send every n seconds the current activity situation(i.e. if the player is still in the same activity and for how long it has been)
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
-    if (storysent == undefined) {
-        return res.status(500).send(JSON.stringify({ code: "RESTART", message: "Server was restarted" })).end();
-    }
-    //TODO I need to ask the player for the story ID
+    //TODO test warnings appearing into the valuator
+    //TODO player has to stop the interval in case of error
+    console.log("/player/playersActivities")
     var activity = req.body;
     var questID = activity.QuestID;
     var activityID = activity.ActivityID;
     var time_elapsed = activity.time_elapsed;
     var storyID = activity.story_ID;
     if (questID && activityID && time_elapsed && storyID) {
+        if (!stories_map.has(storyID)) {
+            console.log("/player/playersActivities 500")
+            return res.status(500).send(JSON.stringify({ code: "RESTART", message: "Story passed wasn't found. Probably server was restarted." })).end();
+        }
         let temp_quest;
-        story_map.get(storyID).json.quests.forEach(quest => {
+        stories_map.get(storyID).story.quests.forEach(quest => {
             if (quest.quest_id == questID) {
                 temp_quest = quest;
             }

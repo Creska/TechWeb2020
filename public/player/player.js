@@ -589,7 +589,8 @@ function sendStatus() {
 		ActivityID: Status.ActivityID,
 		time_elapsed: Status.time_elapsed,
 		Group: StoryObj.groupID,
-		socketID: socket.id
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
 	};
 	$.post("/player/playersActivities", intervalStatus);
 	// console.log( intervalStatus ); // debugging 

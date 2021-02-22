@@ -605,7 +605,8 @@ function sendActivityRecap() {
 		ChatMessages: ActivityRecap.ChatMessages,
 		Score: ActivityRecap.Score,
 		Group: StoryObj.groupID,
-		socketID: socket.id
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
 	};
 	// console.log(recap.QuestID, recap.ActivityID, recap.TimeToAnswer, recap.ChatMessages, recap.Score, recap.Group, recap.socketID)
 	$.post("/player/activityUpdate", recap);

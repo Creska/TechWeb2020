@@ -26,6 +26,7 @@ var storedMessages = []; //storing messages of the player in case the valuator i
 var player_data = new Map(); //stores some player data, need this to be able to do a game summary
 var valuators = []; //valuatorID, managing all games. There can be only one valuator online at a time.
 var stories_map = new Map(); //story_id(key), (value) : {story: parsed json story, players: array of sockets.id of the players playing this story}. DELETE IF WE DON'T HANDLE MULTIPLE STORIES
+var story_data_map = new Map(); //story_id(key), (value): player_data()
 const pubpath = 'public/player/stories/published/';
 const unpubpath = 'public/player/stories/unpublished/';
 var player_per_group_count = 0; //temp counter of players per group
@@ -147,6 +148,13 @@ io.on('connection', (socket) => {
             //Set an array for the current player, so I can push activities data with /update.
             //TODO maybe better setting player data since I now have the story id?
             player_data.set(socket.id, []);
+            if (!story_data_map.has(story_data.story_ID)) {
+                let tempmap = new Map();
+                tempmap.set(socket.id, [])
+                story_data_map.set(story_data.story_ID, tempmap);
+            } else {
+                story_data_map.get(story_data.story_ID).set(socket.id, []);
+            }
             if (valuators.length > 0) {
                 valuator_emit('user-joined', socket, story_data)
             }
@@ -323,16 +331,21 @@ app.post('/player/activityUpdate', function (req, res) {
     var Score = activity.Score;
     var group = activity.Group;
     var socketID = activity.socketID || undefined;
-    if (activityID && questID && chatMessages && timeToAnswer && Score && socketID) {
-        if (player_data.has(socketID)) {
-            player_data.get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+    var story_ID = activity.story_ID;
+    if (activityID && questID && chatMessages && timeToAnswer && Score && socketID && story_ID) {
+        if (story_data_map.has(story_ID)) {
+            story_data_map.get(story_ID).get(socketID).push({ activityID: activityID, questID: questID, timeToAnswer: timeToAnswer, chatMessages: chatMessages, Score: Score, group: group });
+        }
+        else {
+            console.log("/player/activityUpdate SERVER ERROR, Update for a story that doesn't exist.")
+            return res.status(400).send(JSON.stringify({ code: "SERVER_ERROR", message: "Update for a story that doesn't exist." })).end();
         }
         console.log("Sending an activityUpdate for: " + socketID)
         return res.status(200).end();
     }
     else {
         console.log("/player/activityUpdate BAD REQUEST, a parameter was not provided.")
-        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID) was not provided." })).end();
+        return res.status(400).send(JSON.stringify({ code: "BAD_REQUEST", message: "A parameter(time,help,socketID,story_ID) was not provided." })).end();
     }
 })
 

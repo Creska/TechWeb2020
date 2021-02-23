@@ -53,9 +53,15 @@ function UNF() {
     I couldn't find another method to send data between clients, and socket.io is nice and fast to implement anyway...
 
     MAYBE
-=> multiple stories handling?
+
 
     TODO
+=> RECAP ricochet
+=> try to fix waiting for available socket...
+
+
+=> DONE multiple stories handling
+=> DONE multiple valuators handling
 => DONE removing the story once all sockets leave
 => DONE add a number for each group (groupID)
 => DONE check story coherence before writing them(coherence field inside the JSON)
@@ -67,7 +73,7 @@ function UNF() {
     -DONE Rankings
     -DONE For each activity, minumum, maximum and average time needed to answer(maybe some questions are too hard?)
     -DONE For each activity, minimum, maximum and average of how many time the help chat was used(maybe some questions are too hard?)
-    =>TODO preview won't work
+    
 
     */
 
@@ -371,7 +377,6 @@ app.post('/player/playersActivities', function (req, res) {
     player will need to send {socket_id, story_ID, activity, time}, so I can check if the player is taking too long to answer the question.
     */
     //TODO test warnings appearing into the valuator
-    //TODO player has to stop the interval in case of error
     console.log("/player/playersActivities")
     var activity = req.body;
     var questID = activity.QuestID;
@@ -409,6 +414,11 @@ app.post('/player/playersActivities', function (req, res) {
                 console.log("Valuator is offline, storing the warning message");
                 storedMessages.push({ id: socketID, time: time_elapsed - maximum_time });
             }
+            console.log("/player/playersActivities warning detected")
+            return res.status(200).end();
+        }
+        else {
+            console.log("/player/playersActivities nothing new")
             return res.status(200).end();
         }
     } else {
@@ -912,13 +922,11 @@ app.get('/valuator/return', function (req, res) {
     if (story_data_map.has((story_ID)) && story_data_map.get(story_ID).get(socket_ID).length > 0) {
         player_per_group.delete(story_ID);
         recap.set(story_ID, true);
-        console.log("/valuator/return before")
-        res.status(200).send(JSON.stringify([...story_data_map.get(story_ID)])).end();
-        console.log("/valuator/return after")
+        let clone = JSON.parse(JSON.stringify([...story_data_map.get(story_ID)]));
         stories_map.delete(story_ID);
         story_data_map.delete(story_ID);
         console.log("returning")
-        return;
+        return res.status(200).send(JSON.stringify(clone)).end();
     }
     else {
         console.log("An error accourred inside /valuator/return, player_data is empty");

@@ -10,6 +10,7 @@ var stories_finished = new Map();; //story_id(key), (value) array of sockets tha
 const PLAYER = 0;
 const VALUATOR = 1;
 //pagelocations: Home(0) | Support(1) | Editor(2) 
+//TODO charts ricochet
 
 function removePlayer(socketID) {
     // by passing the socket id, this specific player will be removed from the story he's playing
@@ -132,10 +133,10 @@ function makeChatMessage(text, id, owner) {
     //https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_chat
 }
 
-function valuateInput(socketID) {
+function valuateInput(socketID, oldActivityID) {
     let score = $('#punt-' + socketID).val() || 0;
     let nextActivity = $('#att-' + socketID + ' :selected').val();
-    socket.emit('validate-input-valuator', nextActivity, score, socketID)
+    socket.emit('validate-input-valuator', nextActivity, score, socketID, oldActivityID)
     console.log('Input valued: ', socketID);
     $(`#val-` + socketID).html('<p style="color:orange">Risposta inviata con successo.</p>');
     socket.emit('valuator-ricochet', { type: 'valuate-message', id: socketID })
@@ -197,9 +198,8 @@ function makeValuatorMessage(activityID, question, answer, socketID) {
         })
         message += `
         </select>
-        <button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `)">Conferma valutazione</button>
-        </div>
-        `
+        <button type="button" onclick="valuateInput(`+ `'` + socketID + `'` + `,'` + activityID + `'` + `)">Conferma valutazione</button>
+        </div>`
         $('#' + socketID).css('color', 'orange');
         $('#form-' + socketID).before(message);
     })

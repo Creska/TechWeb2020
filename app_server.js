@@ -127,13 +127,21 @@ io.on('connection', (socket) => {
     */
     console.log("Connection: " + socket.id,)
     if (socket.handshake.query['type'] == 'player') {
-        fs.readFile(pubpath + socket.handshake.query['story'] + "/" + "story.json", function (err, story_data) {
-            story_data = JSON.parse(story_data)
+        let tempath;
+        socket.handshake.query['testing'] = JSON.parse(socket.handshake.query['testing'])
+        if (socket.handshake.query['testing']) {
+            tempath = unpubpath;
+        }
+        else {
+            tempath = pubpath;
+        }
+        fs.readFile(tempath + socket.handshake.query['story'] + "/" + "story.json", function (err, story_data) {
             if (err) {
                 console.log("An error accourred while reading a story.json while connecting a socket: " + err)
                 socket.disconnect();
                 return;
             }
+            story_data = JSON.parse(story_data)
             if (stories_map.has(story_data.story_ID)) {
                 //A player entered a game already instanciated, updating it
                 stories_map.get(story_data.story_ID).players.push(socket.id);
@@ -208,6 +216,9 @@ io.on('connection', (socket) => {
                 valuators = valuators.filter((value) => {
                     return value != socket.id;
                 });
+                if (valuators.length <= 0) {
+                    recap.clear();
+                }
                 console.log("A valuator disconnected.")
             }
         }
@@ -273,7 +284,13 @@ io.on('connection', (socket) => {
 app.get('/player', function (req, res) {
     //handling GET request to /player
     var story = req.query.story;
-    var testing = req.query.testing || false;
+    let testing = req.query.testing;
+    if (recap.has(story)) {
+        return res.status(503).send('<html><body><h1>503 Service Unavailable</h1><br><p>A recap of the chosen story is being shown. Try again later.</p></body></html>').end();
+    }
+    if (testing != undefined) {
+        testing = JSON.parse(req.query.testing);
+    }
     console.log("Retrieving the player with the story " + story);
     //retrieving parameters in the URL since it's a GET request
     let path;
@@ -288,7 +305,7 @@ app.get('/player', function (req, res) {
         if (err) {
             if (err.code == "ENOENT") {
                 console.log("An error accourred inside /player, story not found.")
-                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Story not found." })).end();
+                return res.status(404).send("<html><body><h1>404 Not Found</h1><br><p>The chosen story was not found.</p></body></html>").end();
                 //the story wasn't found, so I answer with a 404 status response
             }
             else {
@@ -303,7 +320,7 @@ app.get('/player', function (req, res) {
                 if (err) {
                     if (err.code == "ENOENT") {
                         console.log("An error accourred inside /player, player not found. " + err);
-                        return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Player not found." })).end();
+                        return res.status(404).send("<html><body><h1>404 Not Found</h1><br><p>Player wasn't found.</p></body></html>").end();
                     }
                     else {
                         console.log("An error accourred inside /player, while retrieving the player: " + err);
@@ -406,7 +423,7 @@ app.get('/editor', function (req, res) {
         if (err) {
             if (err.code == "ENOENT") {
                 console.log("An error accourred inside /editor, editor page not found.");
-                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Editor page not found." })).end();
+                return res.status(404).send("<html><body><h1>404 Not Found</h1><br><p>The editor was not found.</p></body></html>").end();
                 //the story wasn't found, so I answer with a 404 status response
             }
             else {
@@ -852,7 +869,7 @@ app.get('/valuator', function (req, res) {
         if (err) {
             if (err.code == "ENOENT") {
                 console.log("An error accourred inside /valuator, valuator page not found.");
-                return res.status(404).send(JSON.stringify({ code: "ENOENT", message: "Valuator page not found." })).end();
+                return res.status(404).send("<html><body><h1>404 Not Found</h1><br><p>The valuator was not found.</p></body></html>").end();
                 //the story wasn't found, so I answer with a 404 status response
             }
             else {
@@ -910,22 +927,10 @@ app.get('/valuator/return', function (req, res) {
 })
 
 app.post('/valuator/restore', function (req, res) {
+    console.log("/valuator/restore")
     var story_ID = req.body.story_ID;
     recap.delete(story_ID)
     return res.status(200).end();
-})
-
-app.post('/player/getPermissions', function (req, res) {
-    var story_ID = req.body.story_ID;
-    if (recap.has(story_ID)) {
-        console.log("/player/getPermissions recap is true for " + story_ID)
-        res.status(200).send(JSON.stringify(false))
-    }
-    else {
-        console.log("/player/getPermissions all clear for " + story_ID)
-        res.status(200).send(JSON.stringify(true))
-    }
-
 })
 
 app.get('/valuator/activeStories', function (req, res) {
@@ -941,7 +946,6 @@ app.get('/valuator/activeStories', function (req, res) {
     else {
         return res.status(200).send(JSON.stringify([])).end();
     }
-
 })
 
 

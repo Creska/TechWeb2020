@@ -32,8 +32,9 @@ $(function () {
 
 	/* query e caricamento della storia */
 	const story_id = new URLSearchParams(window.location.search).get('story');
+	const testing = new URLSearchParams(window.location.search).get('testing');
 	console.log(story_id);
-	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "" }, reconnection: false });
+	socket = io.connect('', { query: { "type": "player", "story": "" + story_id + "", "testing": testing }, reconnection: false });
 	socket.on('load-json', function (data) {
 		console.log("Loading the JSON");
 		StoryObj = data;
@@ -41,7 +42,6 @@ $(function () {
 			TESTING = true;
 		}
 		loadGame();
-
 	});
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
@@ -143,7 +143,6 @@ function handleError() {
 /* da attivare all'apertura della finestra */
 function loadGame() {
 	showAccess();
-
 	if (StoryObj.game_mode == "CLASS" && !TESTING) {
 		let group_alert = $("<div class='alert alert-info' role='alert'/>");
 		group_alert.append($("<i/>", {
@@ -230,11 +229,11 @@ function buildMaps() {
 function get_media_path() {
 	let folder;
 
-	if ( TESTING )
+	if (TESTING)
 		folder = "unpublished";
 	else
 		folder = "published";
-	
+
 	return "/player/stories/" + folder + "/" + StoryObj.story_ID + "/";
 };
 
@@ -249,7 +248,7 @@ function startGame() {
 		role: "heading",
 		"aria-live": "assertive",
 		"aria-level": "1"
-	}).html( "<span class='sr-only'>Titolo della storia:</span>" + StoryObj.story_title ));
+	}).html("<span class='sr-only'>Titolo della storia:</span>" + StoryObj.story_title));
 
 	goToActivity(StoryObj.quests[0].activities[0].activity_id);
 
@@ -277,7 +276,7 @@ function goToQuest(qid) {
 		"class": "QuestTitle",
 		"aria-level": "2",
 		"aria-live": "assertive"
-	}).html( "<span class='sr-only'>Quest:</span>" + questmap[qid][0].quest_title ));
+	}).html("<span class='sr-only'>Quest:</span>" + questmap[qid][0].quest_title));
 
 	$("#Main .Quest").remove();
 	$("#Main").append(newquest);
@@ -288,7 +287,7 @@ function goToQuest(qid) {
 function goToActivity(aid) {
 	if (Status.ActivityID != null)
 		sendActivityRecap(); // evita l'invio del recap a inizio gioco
-	
+
 	if (aid == null || aid === "" || activitymap[aid] == undefined) {
 		handleError();
 		return;
@@ -309,7 +308,7 @@ function goToActivity(aid) {
 		style: "display:none;"
 	});
 
-	newactivity.append( $( "<h3/>", {
+	newactivity.append($("<h3/>", {
 		"class": "sr-only",
 		role: "heading",
 		"aria-level": "3",
@@ -319,20 +318,20 @@ function goToActivity(aid) {
 
 	writeActivityText(newactivity);
 
-	if ( activitymap[aid][0].activity_type == "ANSWER" ) {
-		buildAnswerField( newactivity );
+	if (activitymap[aid][0].activity_type == "ANSWER") {
+		buildAnswerField(newactivity);
 	}
 
-	if ( activitymap[aid][0].FINAL ) {
-		newactivity.append( $( "<button/>", {
+	if (activitymap[aid][0].FINAL) {
+		newactivity.append($("<button/>", {
 			"class": "btn btn-lg CloseGameBtn",
 			onclick: "endGame();",
 			text: "FINE"
 		}));
 	}
 	else {
-		if ( TESTING ) {
-			newactivity.append( $( "<button/>", {
+		if (TESTING) {
+			newactivity.append($("<button/>", {
 				"class": "btn btn-lg NextActivity",
 				onclick: "goToActivity( nextStageInOrder() );",
 				text: "PROSSIMA ATTIVITA' IN ORDINE"
@@ -433,7 +432,7 @@ function writeActivityText(container) {
 function buildAnswerField(container) {
 	let activity = activitymap[Status.ActivityID][0];
 
-	let AF = $( "<div/>", {
+	let AF = $("<div/>", {
 		"class": "AnswerField",
 		"aria-label": "esercizio",
 		role: "form"
@@ -502,7 +501,7 @@ function buildAnswerField(container) {
 
 	AF.append(answerinput);
 
-	container.append( $( "<h4/>", {
+	container.append($("<h4/>", {
 		"class": "sr-only",
 		role: "heading",
 		"aria-level": "4",
@@ -533,7 +532,7 @@ function getPlayerAnswer() {
 
 
 function goToNextActivity() {
-	$( ".NextActivity" ).attr( "disabled", true ); // evita doppi click
+	$(".NextActivity").attr("disabled", true); // evita doppi click
 
 	clearInterval(IntervalTimer);
 
@@ -607,7 +606,7 @@ function nextStageInOrder() {
 
 
 function endGame() {
-	$( ".CloseGameBtn" ).attr( "disabled", true ); // evita doppi click
+	$(".CloseGameBtn").attr("disabled", true); // evita doppi click
 
 	clearInterval(IntervalTimer);
 

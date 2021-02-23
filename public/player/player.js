@@ -57,7 +57,7 @@ $(function () {
 
 	/* ricezione valutazione */
 	socket.on('input-valued', (next_activity_id, score, old_activity_id) => {
-		if ( old_activity_id == Status.ActivityID ) {
+		if (old_activity_id == Status.ActivityID) {
 			Status.TotalScore += parseInt(score) || 0;
 			ActivityRecap.Score += parseInt(score) || 0;
 			goToActivity(next_activity_id);
@@ -70,10 +70,10 @@ function validateInput(question, answer) {
 	$(".NextActivity").attr("disabled", true);
 	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
 
-	ValuationTimer = setTimeout( function() {
-		goToActivity( nextStageInOrder() ); // va all'attività successiva se il valutatore non manda un responso entro il tempo limite
-		clearTimeout( ValuationTimer );
-	}, 300000 );
+	ValuationTimer = setTimeout(function () {
+		goToActivity(nextStageInOrder()); // va all'attività successiva se il valutatore non manda un responso entro il tempo limite
+		clearTimeout(ValuationTimer);
+	}, 300000);
 
 	// goToActivity( nextStageInOrder() ); // roba per debugging
 
@@ -112,7 +112,8 @@ function sendStatus() {
 		ActivityID: Status.ActivityID,
 		time_elapsed: Status.time_elapsed,
 		Group: StoryObj.groupID,
-		socketID: socket.id
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID,
 	};
 
 	$.ajax({
@@ -120,8 +121,8 @@ function sendStatus() {
 		type: "POST",
 		data: intervalStatus,
 		statusCode: {
-			500: function() {
-				clearInterval( IntervalTimer );
+			500: function () {
+				clearInterval(IntervalTimer);
 			}
 		}
 	});

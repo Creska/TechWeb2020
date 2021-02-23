@@ -260,6 +260,7 @@ io.on('connection', (socket) => {
     })
     socket.on('validate-input-player', (activityID, question, answer, socketID) => {
         //handling input validation to the valuator
+        console.log("validate-input-player", socketID)
         if (valuators.length) {
             valuators.forEach(valuator => {
                 socket.to(valuator).emit('valuate-input', activityID, question, answer, socketID)
@@ -273,6 +274,7 @@ io.on('connection', (socket) => {
     })
     socket.on('validate-input-valuator', (nextActivity, score, socketID, oldActivityID) => {
         //input validation was handled, sending the result back, removing it from history with all the warning in case the still exist
+        console.log("validate-input-valuator", socketID)
         socket.to(socketID).emit('input-valued', nextActivity, score, oldActivityID);
         for (let index = 0; index < storedMessages.length; index++) {
             if ((storedMessages[index].id == socketID) && (storedMessages[index].type == "valuate" || storedMessages[index].type == "warning")) {

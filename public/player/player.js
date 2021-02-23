@@ -112,7 +112,8 @@ function sendStatus() {
 		ActivityID: Status.ActivityID,
 		time_elapsed: Status.time_elapsed,
 		Group: StoryObj.groupID,
-		socketID: socket.id
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
 	};
 
 	$.ajax({
@@ -134,7 +135,8 @@ function sendActivityRecap() {
 		ChatMessages: ActivityRecap.ChatMessages,
 		Score: ActivityRecap.Score,
 		Group: StoryObj.groupID,
-		socketID: socket.id
+		socketID: socket.id,
+		story_ID: StoryObj.story_ID
 	};
 
 	$.post("/player/activityUpdate", recap);

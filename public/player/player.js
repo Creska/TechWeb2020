@@ -72,6 +72,7 @@ function validateInput(question, answer) {
 
 	ValuationTimer = setTimeout( function() {
 		goToActivity( nextStageInOrder() ); // va all'attività successiva se il valutatore non manda un responso entro il tempo limite
+		clearTimeout( ValuationTimer );
 	}, 300000 );
 
 	// goToActivity( nextStageInOrder() ); // roba per debugging
@@ -646,35 +647,4 @@ function endGame() {
 
 	Status.QuestID = null;
 	Status.ActivityID = null;
-};
-
-
-function sendStatus() {
-	let intervalStatus = {
-		QuestID: Status.QuestID,
-		ActivityID: Status.ActivityID,
-		time_elapsed: Status.time_elapsed,
-		Group: StoryObj.groupID,
-		socketID: socket.id,
-		story_ID: StoryObj.story_ID
-	};
-	$.post("/player/playersActivities", intervalStatus);
-	// console.log( intervalStatus ); // debugging 
-};
-
-
-function sendActivityRecap() {
-	let recap = {
-		QuestID: Status.QuestID,
-		ActivityID: Status.ActivityID,
-		TimeToAnswer: ActivityRecap.TimeToAnswer,
-		ChatMessages: ActivityRecap.ChatMessages,
-		Score: ActivityRecap.Score,
-		Group: StoryObj.groupID,
-		socketID: socket.id,
-		story_ID: StoryObj.story_ID
-	};
-	// console.log(recap.QuestID, recap.ActivityID, recap.TimeToAnswer, recap.ChatMessages, recap.Score, recap.Group, recap.socketID)
-	$.post("/player/activityUpdate", recap);
-	// console.log( recap ); // debugging
 };

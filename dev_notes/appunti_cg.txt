@@ -2,9 +2,7 @@ BUG E PROBLEMI DA CORREGGERE
 * EDITOR
     * Aggiornare la guida dell'editor css in base ai cambiamenti fatti nel player
 * PLAYER
-    * Rendere più efficiente il riperimento delle immagini
-    * Aggiungere il blocco click anche sul pulsante finale
-    * Aggiungere un timer associato all'attesa di valutazione
+    * [WAITING] Preview
     * [WIP] Aggiungere il caricamento del CSS
 
 APPUNTI SU NAV

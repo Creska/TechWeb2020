@@ -18,7 +18,8 @@ var ActivityRecap = {
 	Score: 0
 };
 
-var IntervalTimer;
+var IntervalTimer; // usato per l'invio dello status ogni 5s
+var ValuationTimer; // usato per dare una scadenza alla richiesta di valutazione
 
 var questmap; // per ogni questID indica [oggetto dell'array, indice all'interno di esso]
 var activitymap; // per ogni activityID indica [oggetto dell'array, id della quest madre, indice all'interno dell'array]
@@ -43,6 +44,7 @@ $(function () {
 		}
 		loadGame();
 	});
+
 	socket.on('chat-message', (message) => {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
@@ -54,10 +56,12 @@ $(function () {
 	});
 
 	/* ricezione valutazione */
-	socket.on('input-valued', (activity_id, score) => {
-		Status.TotalScore += parseInt(score) || 0;
-		ActivityRecap.Score += parseInt(score) || 0;
-		goToActivity(activity_id);
+	socket.on('input-valued', (next_activity_id, score, old_activity_id) => {
+		if ( old_activity_id == Status.ActivityID ) {
+			Status.TotalScore += parseInt(score) || 0;
+			ActivityRecap.Score += parseInt(score) || 0;
+			goToActivity(next_activity_id);
+		}
 	});
 });
 
@@ -65,6 +69,10 @@ $(function () {
 function validateInput(question, answer) {
 	$(".NextActivity").attr("disabled", true);
 	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
+
+	ValuationTimer = setTimeout( function() {
+		goToActivity( nextStageInOrder() ); // va all'attività successiva se il valutatore non manda un responso entro il tempo limite
+	}, 300000 );
 
 	// goToActivity( nextStageInOrder() ); // roba per debugging
 
@@ -105,6 +113,18 @@ function sendStatus() {
 		Group: StoryObj.groupID,
 		socketID: socket.id
 	};
+
+	$.ajax({
+		url: "/player/playersActivities",
+		type: "POST",
+		data: intervalStatus,
+		statusCode: {
+			500: function() {
+				clearInterval( IntervalTimer );
+			}
+		}
+	});
+
 	$.post("/player/playersActivities", intervalStatus);
 	// console.log( intervalStatus ); // debugging 
 };

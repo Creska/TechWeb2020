@@ -961,7 +961,7 @@ app.post('/valuator/restore', function (req, res) {
     console.log("/valuator/restore")
     var story_ID = req.body.story_ID;
     var valuator_ID = req.query.valuator;
-    recap.get(story_ID).splice(recap.get(story_ID).indexof(valuator_ID), 1);
+    recap.get(story_ID).splice(recap.get(story_ID).indexOf(valuator_ID), 1);
     if (recap.get(story_ID).length <= 0) {
         recap.delete(story_ID)
         stories_map.delete(story_ID);

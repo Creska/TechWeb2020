@@ -265,9 +265,9 @@ io.on('connection', (socket) => {
             storedMessages.push({ type: "valuate", activityID: activityID, question: question, answer: answer, id: socketID });
         }
     })
-    socket.on('validate-input-valuator', (nextActivity, score, socketID) => {
+    socket.on('validate-input-valuator', (nextActivity, score, socketID, oldActivityID) => {
         //input validation was handled, sending the result back, removing it from history with all the warning in case the still exist
-        socket.to(socketID).emit('input-valued', nextActivity, score);
+        socket.to(socketID).emit('input-valued', nextActivity, score, oldActivityID);
         for (let index = 0; index < storedMessages.length; index++) {
             if ((storedMessages[index].id == socketID) && (storedMessages[index].type == "valuate" || storedMessages[index].type == "warning")) {
                 storedMessages.splice(index, 1);

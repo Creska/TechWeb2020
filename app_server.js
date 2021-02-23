@@ -336,7 +336,7 @@ app.get('/player', function (req, res) {
                 else {
                     const $ = cheerio.load(player_data);
                     //reading the css
-                    fs.readFile(path + story + "/" + "css.json", function (err, data) {
+                    fs.readFile(path + story + "/" + "css.json", 'utf8', function (err, data) {
                         if (err) {
                             if (err.code == "ENOENT") {
                                 console.log("An error accourred inside /player, css not found. " + err);
@@ -348,9 +348,10 @@ app.get('/player', function (req, res) {
                             return res.status(200).send($.html()).end();
                         }
                         else {
+                            data = JSON.parse(data);
                             if (data.sheet != undefined) {
-                                let css = JSON.parse(data.sheet);
-                                $('head').append('<style>' + css + '</style>')
+                                $('head').append('<style>' + data.sheet + '</style>')
+                                console.log("The css file loaded.");
                             }
                             else {
                                 console.log("The css file was empty.");

@@ -112,23 +112,17 @@ function sendStatus() {
 		ActivityID: Status.ActivityID,
 		time_elapsed: Status.time_elapsed,
 		Group: StoryObj.groupID,
-		socketID: socket.id,
-		story_ID: StoryObj.story_ID,
+		socketID: socket.id
 	};
 
 	$.ajax({
 		url: "/player/playersActivities",
 		type: "POST",
 		data: intervalStatus,
-		statusCode: {
-			500: function () {
-				clearInterval(IntervalTimer);
-			}
+		error: function () {
+			clearInterval(IntervalTimer);
 		}
 	});
-
-	$.post("/player/playersActivities", intervalStatus);
-	// console.log( intervalStatus ); // debugging 
 };
 
 
@@ -396,7 +390,7 @@ function writeActivityText(container) {
 	$.each(activity.activity_text, function (i, node) {
 		if (node.type == "text") {
 			container.append($("<p/>", {
-				"class": "p-3 TextPar",
+				"class": "p-3 TextParagraph",
 				text: node.content
 			}));
 		}

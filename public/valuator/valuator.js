@@ -240,7 +240,7 @@ function saveRecap(story_ID) {
     $('#description-' + story_ID).fadeOut(1000, function () {
         $('#description-' + story_ID).remove();
     })
-    $.post('/valuator/restore', { story_ID: story_ID });
+    $.post('/valuator/restore', { story_ID: story_ID, valuator: socket.id });
 }
 
 $(function () {
@@ -364,7 +364,7 @@ $(function () {
             console.log(stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0)
             if (stories_finished.get(story.story_ID).length > 0 && story_map.get(story.story_ID).players.length <= 0) {
                 console.log("returning")
-                $.get("/valuator/return", { story_ID: story.story_ID, socket_ID: socketID }, function (player_data) {
+                $.get("/valuator/return", { story_ID: story.story_ID, socket_ID: socketID, valuator: socket.id }, function (player_data) {
                     //stats per socket(local, per activity)
                     console.log("processing...")
                     let temp_player_map = new Map(JSON.parse(player_data));

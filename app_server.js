@@ -335,9 +335,29 @@ app.get('/player', function (req, res) {
                 }
                 else {
                     const $ = cheerio.load(player_data);
-                    //appending to the body a template with the JSON to load
-                    return res.status(200).send($.html()).end();
-                    //sending back the player page
+                    //reading the css
+                    fs.readFile(path + story + "/" + "css.json", function (err, data) {
+                        if (err) {
+                            if (err.code == "ENOENT") {
+                                console.log("An error accourred inside /player, css not found. " + err);
+                            }
+                            else {
+                                console.log("An error accourred inside /player, while reading the css file:" + err);
+                            }
+                            //sending back the player page
+                            return res.status(200).send($.html()).end();
+                        }
+                        else {
+                            if (data.sheet != undefined) {
+                                let css = JSON.parse(data.sheet);
+                                $('head').append('<style>' + css + '</style>')
+                            }
+                            else {
+                                console.log("The css file was empty.");
+                            }
+                            return res.status(200).send($.html()).end();
+                        }
+                    })
                 }
             });
         }
@@ -919,13 +939,15 @@ app.get('/valuator/return', function (req, res) {
     console.log("/valuator/return")
     var story_ID = req.query.story_ID;
     var socket_ID = req.query.socket_ID;
+    var valuator_ID = req.query.valuator;
     if (story_data_map.has((story_ID)) && story_data_map.get(story_ID).get(socket_ID).length > 0) {
-        player_per_group.delete(story_ID);
-        recap.set(story_ID, true);
+        if (recap.has(story_ID)) {
+            recap.get(story_ID).push(valuator_ID);
+        }
+        else {
+            recap.set(story_ID, [valuator_ID]);
+        }
         let clone = JSON.parse(JSON.stringify([...story_data_map.get(story_ID)]));
-        stories_map.delete(story_ID);
-        story_data_map.delete(story_ID);
-        console.log("returning")
         return res.status(200).send(JSON.stringify(clone)).end();
     }
     else {
@@ -937,7 +959,14 @@ app.get('/valuator/return', function (req, res) {
 app.post('/valuator/restore', function (req, res) {
     console.log("/valuator/restore")
     var story_ID = req.body.story_ID;
-    recap.delete(story_ID)
+    var valuator_ID = req.query.valuator;
+    recap.get(story_ID).splice(recap.get(story_ID).indexof(valuator_ID), 1);
+    if (recap.get(story_ID).length <= 0) {
+        recap.delete(story_ID)
+        stories_map.delete(story_ID);
+        story_data_map.delete(story_ID);
+        player_per_group.delete(story_ID);
+    }
     return res.status(200).end();
 })
 

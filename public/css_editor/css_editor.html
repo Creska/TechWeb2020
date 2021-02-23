@@ -162,7 +162,7 @@
         </p>
 
         <p class="text-justify">
-            Per attribuire alcune regole ad una quest o ad una attività, ti basterà utilizzare il suo ID. Per poi selezionare particolari elementi di essa, è sufficiente utilizzare il sistema di parentela dei selettori CSS.
+            Per attribuire alcune regole ad una quest o ad una attività, ti basterà utilizzare il suo ID. Il container [ID quest] contiene il container [ID attività], mentre ques'ultimo avrà, al suo interno, gli elementi del testo ed il campo risposta. Per selezionare questi elementi, sarà sufficiente utilizzare il sistema di parentela dei selettori CSS.
         </p>
 
         <p class="text-justify">
@@ -171,18 +171,23 @@
 
         <code>
             <pre>
-                StoryTitle /* titolo della storia */
+                .StoryTitle /* titolo della storia */
                 
-                ActivityText /* container degli elementi del testo di ogni attività */
-                TextParagraph /* paragrafo di testo */
-                ImageGallery /* galleria di immagini */
+                /* tutti gli elementi seguenti sono figli del container quest */
 
-                AnswerField /* container dell'esercizio */
-                AnswerFieldDescription /* daomanda dell'esercizio */
-                AnswerInput /* campo di input della risposta. Può essere di tre tipi, a seconda della tipologia di domanda scelta: textarea (testo), input[type=number] (numero), ul (lista di opzioni) */
+                .QuestTitle /* titolo della quest */
 
-                NextActivity /* pulsante da cliccare per andare all'attività successiva */
-                CloseGameBtn /* pulsante per chiudere il gioco - mostrato solo nell'ultima attività */
+                /* tutti gli elementi seguenti sono figli del container attività */
+
+                .TextParagraph /* paragrafo di testo */
+                .ImageGallery /* galleria di immagini */
+
+                .AnswerField /* container dell'esercizio */
+                .AnswerFieldDescription /* domanda dell'esercizio */
+                .AnswerInput /* campo di input della risposta. Può essere di tre tipi, a seconda della tipologia di domanda scelta: textarea (testo), input[type=number] (numero), ul (lista di opzioni) */
+
+                .NextActivity /* pulsante da cliccare per andare all'attività successiva */
+                .CloseGameBtn /* pulsante per chiudere il gioco - mostrato solo nell'ultima attività */
             </pre>
         </code>
 

@@ -49,7 +49,7 @@ $(function () {
 		if (message && Status.ActivityID != null) {
 			ActivityRecap.ChatMessages += 1;
 			$("#list").prepend($("<blockquote/>", {
-				"class": "valuator-msg p-1",
+				"class": "valuator-msg p-2",
 				"aria-live": "assertive",
 			}).html("<i class='far fa-comment mr-1' aria-hidden='true'></i><span class='sr-only'>Risposta del valutatore:</span>" + message));
 		}
@@ -91,7 +91,7 @@ function sendMsg(msg) {
 	$("#chat-room input").val("");
 
 	$("#list").prepend($("<blockquote/>", {
-		"class": "player-msg p-1",
+		"class": "player-msg p-2",
 		"aria-live": "assertive",
 	}).html("<span class='sr-only'>Messaggio inviato:</span>" + msg + "<i class='far fa-comment ml-1' aria-hidden='true'>"));
 

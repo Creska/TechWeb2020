@@ -1,8 +1,6 @@
 BUG E PROBLEMI DA CORREGGERE
 * EDITOR
-    * Aggiornare la guida dell'editor css in base ai cambiamenti fatti nel player
 * PLAYER
-    * [WAITING] Preview
     * [WIP] Aggiungere il caricamento del CSS
 
 APPUNTI SU NAV

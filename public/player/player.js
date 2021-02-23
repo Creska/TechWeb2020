@@ -70,10 +70,12 @@ function validateInput(question, answer) {
 	$(".NextActivity").attr("disabled", true);
 	$(".NextActivity").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Attendi valutazione</span>');
 
+	/*
 	ValuationTimer = setTimeout(function () {
 		goToActivity(nextStageInOrder()); // va all'attività successiva se il valutatore non manda un responso entro il tempo limite
 		clearTimeout(ValuationTimer);
 	}, 300000);
+	*/
 
 	// goToActivity( nextStageInOrder() ); // roba per debugging
 

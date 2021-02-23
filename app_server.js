@@ -240,7 +240,7 @@ io.on('connection', (socket) => {
             removePlayer(socket.id);
         }
     })
-    socket.on('chat-message', (message, id_from, id_to, storyID) => {
+    socket.on('chat-message', (message, id_from, id_to) => {
         //handler for CHAT MESSAGES 
         if (valuators.length > 0) {
             if (!valuators.includes(id_from)) {
@@ -258,7 +258,7 @@ io.on('connection', (socket) => {
             storedMessages.push({ message: message, id: id_from });
         }
     })
-    socket.on('validate-input-player', (activityID, question, answer, socketID, storyID) => {
+    socket.on('validate-input-player', (activityID, question, answer, socketID) => {
         //handling input validation to the valuator
         if (valuators.length) {
             valuators.forEach(valuator => {

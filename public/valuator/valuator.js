@@ -144,9 +144,6 @@ function valuateInput(socketID, oldActivityID) {
         $(`#val-` + socketID).fadeOut(function () {
             $(`#val-` + socketID).remove();
         });
-        $(`#warn-` + socketID).fadeOut(function () {
-            $(`#warn-` + socketID).remove();
-        });
         $('#' + socketID).css('color', 'white');
     }, 1000)
 }
@@ -168,29 +165,27 @@ function makeNav(story_ID) {
     }
 }
 
-function makeWarningMessage(socketID, time) {
+function makeWarningMessage(socketID, time, activityID) {
     if ($('#warn-' + socketID) == undefined) {
         let message = ` <div id="warn-` + socketID + `" style="border: 1px solid red">
         <div class="container-chat darker-chat overflow-auto" >
-        <p style="color:red">Attenzione: questo player ha superato il tempo previsto per rispondere all'attività corrente.</p>
-        </div>
-        </div>`
+        <p style="color:red">Attenzione: questo player ha superato il tempo previsto per rispondere all'attività `+ activityID + `.</p>
+        </div >
+        </div > `
         $('#form-' + socketID).before(message);
         $('#' + socketID).css('color', 'red');
     }
 }
 
 function makeValuatorMessage(activityID, question, answer, socketID) {
-    let message = `  
-    <div id="val-`+ socketID + `" style="border: 1px solid orange">
-    <div class="container-chat darker-chat col-sm overflow-auto" ">
-<p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `<br>Attività: ` + activityID + `</p>
+    let message = `<div id = "val-` + socketID + `" style = "border: 1px solid orange">
+                <div class="container-chat darker-chat col-sm overflow-auto" ">
+                    <p style="color: orange"><b>System Message: Valuation Required</b><br>Domanda: `+ question + `<br>Risposta: ` + answer + `<br>Attività: ` + activityID + `</p>
 </div>     
 <label for="risposta" >Punteggio della risposta</label><br>
 <input id="punt-`+ socketID + `" type="number" name="risposta"><br>
 <label for="attivita" >Prossima attività</label><br>
-<select class="form-select" name="attivita" id="att-`+ socketID + `">
-`;
+<select class="form-select" name="attivita" id="att-`+ socketID + `">`;
     getStoryFromSocket(socketID, function (story) {
         story.quests.forEach(quest => {
             quest.activities.forEach(activity => {
@@ -266,13 +261,13 @@ $(function () {
                     if (history.messages) {
                         console.log("History messages found.");
                         history.messages.forEach(element => {
-                            if (element.question) {
+                            if (element.type == "valuate") {
                                 makeValuatorMessage(element.activityID, element.question, element.answer, element.id)
                                 console.log("Received a to be valued message from " + element.id + ": " + element.answer);
                             }
-                            else if (element.time) {
+                            else if (element.type == "warning") {
                                 console.log("Received warning message from " + element.id + ": " + element.message);
-                                makeWarningMessage(element.id, element.time);
+                                makeWarningMessage(element.id, element.time, element.activityID);
                             }
                             else {
                                 console.log("Received message from " + element.id + ": " + element.message);
@@ -293,6 +288,16 @@ $(function () {
     socket.on('player-warning', (data) => {
         console.log("Received a warning message from " + data.socketID + ": " + data.time);
         makeWarningMessage(data.socketID, data.time);
+    })
+    socket.on('delete-warning', (socketID) => {
+        if ($(`#warn-` + socketID).length > 0) {
+            console.log("Delete warning received from " + socketID + " , now deleting.")
+            $(`#warn-` + socketID).fadeOut(function () {
+                $(`#warn-` + socketID).remove();
+            });
+            $('#' + socketID).css('color', 'white');
+        }
+        console.log("Delete warning received from " + socketID + " , no warning was issued.")
     })
     socket.on('ricochet', (data) => {
         switch (data.type) {

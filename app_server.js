@@ -387,6 +387,12 @@ app.post('/player/activityUpdate', function (req, res) {
             return res.status(400).send(JSON.stringify({ code: "SERVER_ERROR", message: "Update for a story that doesn't exist." })).end();
         }
         console.log("Sending an activityUpdate for: " + socketID)
+        for (let index = 0; index < storedMessages.length; index++) {
+            if ((storedMessages[index].id == socketID) && storedMessages[index].type == "warning") {
+                storedMessages.splice(index, 1);
+            }
+        }
+        valuator_emit('delete-warning', io.of("/").connected[socketID], socketID);
         return res.status(200).end();
     }
     else {
@@ -428,14 +434,19 @@ app.post('/player/playersActivities', function (req, res) {
         if (maximum_time && time_elapsed > maximum_time && chrono) {
             var socket_ID = activity.socket_ID
             let tempsocket = io.sockets.connected[socket_ID];
+            for (let index = 0; index < storedMessages.length; index++) {
+                if ((storedMessages[index].id == socketID) && storedMessages[index].type == "warning") {
+                    storedMessages.splice(index, 1);
+                }
+            }
             if (valuators.length > 0) {
                 valuator_emit('player-warning', tempsocket, { id: socketID, time: time_elapsed - maximum_time });
                 console.log("Sending a player warning for: " + socketID + ". Time elapsed: " + time_elapsed + ", Maximum time: " + maximum_time);
-                storedMessages.push({ type: "warning", id: socketID, time: time_elapsed - maximum_time });
+                storedMessages.push({ type: "warning", id: socketID, time: time_elapsed - maximum_time, activityID: activityID });
             }
             else {
                 console.log("Valuator is offline, storing the warning message");
-                storedMessages.push({ id: socketID, time: time_elapsed - maximum_time });
+                storedMessages.push({ type: "warning", id: socketID, time: time_elapsed - maximum_time, activityID: activityID });
             }
             console.log("/player/playersActivities warning detected")
             return res.status(200).end();

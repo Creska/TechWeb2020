@@ -172,10 +172,11 @@ function makeWarningMessage(socketID, time) {
     if ($('#warn-' + socketID) == undefined) {
         let message = ` <div id="warn-` + socketID + `" style="border: 1px solid red">
         <div class="container-chat darker-chat overflow-auto" >
-        <p>Attenzione: questo player ha superato il tempo previsto per rispondere all'attività corrente.</p>
+        <p style="color:red">Attenzione: questo player ha superato il tempo previsto per rispondere all'attività corrente.</p>
         </div>
         </div>`
         $('#form-' + socketID).before(message);
+        $('#' + socketID).css('color', 'red');
     }
 }
 
